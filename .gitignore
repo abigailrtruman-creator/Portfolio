@@ -1,0 +1,29 @@
+# Screenshot matrix and audit tooling — 400MB+, never ships
+shots/
+
+# Working files that must not be published: NDA material, old experiments
+*.docx
+deck-reveal.html
+deck-reveal-snippet.html
+preview-list.html
+boots-reel-card1.png
+sofa-reel-motion.png
+
+# Build/authoring scripts — not part of the site
+*.py
+
+# Squarespace injection build, obsolete now the site is hosted directly
+squarespace-injection.html
+
+# Untrimmed source renders; only the -trim/-screen derivatives are used
+assets/boots-1.png
+assets/boots-2.png
+assets/boots-3.png
+assets/s2s-1.png
+assets/s2s-2.png
+assets/s2s-3.png
+assets/s2s-4.png
+assets/_src-*
+
+.vercel
+.DS_Store

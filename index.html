@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abbie Truman — Local Preview</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;700;800&family=Instrument+Serif:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+
+<style>
+  html.hp-active, html.hp-active body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    height: 100vh !important;
+    background: #0a0a0c !important;
+    color: #f5f5f5 !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .hp-root {
+    /* ---------- TYPE SYSTEM ----------
+       One governing rule, applied to every element on this page:
+
+         DISPLAY  → Manrope. Every headline and every word set above ~28px:
+                    the hero statement, the wordmark, case titles, section
+                    ledes, the footer line. 800 for short headlines, 700 for
+                    multi-line statements so long runs don't go blobby.
+         BODY/UI  → Inter. Every sentence you actually read, plus all labels,
+                    eyebrows, tags, nav and buttons. Emphasis inside body copy
+                    is Inter 500 in full white — never the serif.
+         ACCENT   → Instrument Serif italic. Reserved for exactly one phrase
+                    per section, and only ever inside DISPLAY type. It marks
+                    the human note in an otherwise structural sentence. Two
+                    uses on the whole page: hero and footer.
+  */
+    --ff-display: 'Manrope', 'Inter', -apple-system, sans-serif;
+    --ff-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --ff-accent: 'Instrument Serif', Georgia, serif;
+
+    --bg: #0a0a0c;
+    --ink: #ffffff;
+    --ink-1: rgba(255,255,255,0.74);
+    --ink-2: rgba(255,255,255,0.52);
+    --ink-3: rgba(255,255,255,0.40);
+    --rule: rgba(255,255,255,0.10);
+
+    --pad-x: clamp(28px, 6vw, 110px);
+    --shell: 1560px;
+
+    position: fixed;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: var(--bg);
+    z-index: 999999;
+    font-family: var(--ff-body);
+  }
+  .hp-root * { font-family: inherit; box-sizing: border-box; }
+
+  /* ---------- Shared primitives ---------- */
+  .hp-eyebrow {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .hp-eyebrow--rule {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hp-eyebrow--rule::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: rgba(255,255,255,0.3);
+  }
+
+  /* ---------- NAV (floating pill) ---------- */
+  .hp-nav {
+    position: fixed;
+    top: 28px;
+    left: 50%;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 12px 14px 12px 16px;
+    background: rgba(18,18,22,0.55);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 999px;
+    backdrop-filter: blur(28px) saturate(1.6);
+    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.07),
+      0 32px 80px -16px rgba(0,0,0,0.55),
+      0 6px 24px rgba(0,0,0,0.28);
+    opacity: 0;
+    transform: translate(-50%, -16px);
+    transition: opacity 0.9s cubic-bezier(0.32,0.72,0,1), transform 0.9s cubic-bezier(0.32,0.72,0,1);
+  }
+  .hp-nav.is-ready { opacity: 1; transform: translate(-50%, 0); }
+
+  .hp-nav__brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-right: 24px;
+    border-right: 1px solid rgba(255,255,255,0.09);
+  }
+  .hp-nav__avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.16);
+    display: block;
+  }
+  .hp-nav__name {
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  .hp-nav__links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .hp-nav__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: #fff;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 999px;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .hp-nav__link:hover { background: rgba(255,255,255,0.06); }
+  .hp-nav__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.55);
+    transition: color 0.25s ease, transform 0.25s cubic-bezier(0.32,0.72,0,1);
+  }
+  .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
+  .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
+
+  /* ---------- HERO ----------
+     All three pieces of copy are one block: the greeting reads into the
+     statement, the statement is the largest thing on the page, and the support
+     paragraph reads back out of it. The intervals inside that block are much
+     smaller than the intervals around it, which is what makes it read as one
+     thought rather than three stacked elements.
+     The rule used to sit between the statement and the support paragraph,
+     which cut the copy in half. It now sits below all of it and separates only
+     the scroll cue, so it still gives the composition a second horizontal edge
+     to close on — the cue is too small to hold the bottom of a full-height
+     section by itself — without splitting anything anyone reads. */
+  .hp-hero {
+    position: relative;
+    min-height: 100vh;
+    max-width: var(--shell);
+    margin: 0 auto;
+    padding: clamp(112px, 13vh, 150px) var(--pad-x) clamp(36px, 5vh, 64px);
+    display: grid;
+    /* Four tracks, two of them empty, so spare height is *divided* rather
+       than pooled. Rows 1 and 3 are the clearance above the copy block and the
+       open field below it; splitting the slack 1.55 : 1 keeps those two
+       intervals visibly unequal, which is what stops the copy reading as
+       something floating between two identical gaps — the measured failure
+       that put the rule here in the first place. The minmax() floor on row 3
+       guarantees the copy never crowds the rule, and both spacer tracks
+       collapse to nothing on short viewports where there is no slack to divide
+       in the first place.
+       The floor is set for body copy rather than display type: the support
+       paragraph now ends the block, and a 16-21px line needs more clearance
+       above a hairline than a 74px glyph does to avoid looking snagged on it. */
+    grid-template-rows: 1.55fr auto minmax(clamp(48px, 7vh, 96px), 1fr) auto;
+    gap: 0;
+  }
+  .hp-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 62% 52% at 10% 22%, rgba(94,116,178,0.13) 0%, transparent 68%);
+  }
+  /* The copy block. `gap` is the greeting-to-statement interval, deliberately
+     the tightest one in the hero so the greeting reads as a lead-in rather than
+     a separate line of text. */
+  .hp-hero__main {
+    grid-row: 2;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(18px, 2.2vh, 28px);
+  }
+  .hp-hero__greeting {
+    margin: 0;
+    font-size: clamp(17px, 1.5vw, 24px);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  .hp-hero__greeting strong { color: var(--ink); font-weight: 500; }
+
+  .hp-hero__statement {
+    margin: 0;
+    max-width: 30ch;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    /* One curve from phone to desktop. A pure-vw size needed a separate mobile
+       override, and that override capped higher than the desktop curve between
+       ~750px and ~1150px, so the statement got *smaller* as the viewport grew
+       past 900px. This is pinned to the established 390px and 1920px sizes and
+       interpolates everything between. */
+    font-size: clamp(30px, 24.7px + 2.57vw, 74px);
+    line-height: 1.03;
+    letter-spacing: -0.038em;
+    color: var(--ink);
+  }
+  .hp-hero__statement em {
+    font-family: var(--ff-accent);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.06em;
+    letter-spacing: -0.01em;
+  }
+  /* Words stay in nowrap wrappers so a multi-line heading breaks between
+     words, not between letters, once every glyph is its own inline-block. */
+  .hp-hero__word { display: inline-block; white-space: nowrap; }
+  .hp-hero__char { display: inline-block; transform: translateZ(0); }
+
+  /* Body measure, so it sets as a paragraph under the statement rather than
+     running the full width of the display type above it. The step down from
+     the statement is larger than the greeting's step up into it — display type
+     dropping to 16-21px body copy needs the optical separation — but it is
+     still a fraction of the open field below, so the paragraph belongs to the
+     copy above it and not to the rule beneath. */
+  .hp-hero__support {
+    margin: clamp(10px, 1.4vh, 18px) 0 0;
+    max-width: 46ch;
+    font-size: clamp(16px, 1.3vw, 21px);
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    color: var(--ink-1);
+  }
+  /* Emphasis inside body copy is Inter 500 in full white, per the type system —
+     the serif italic is a display-type accent and does not come down here. */
+  .hp-hero__support strong { color: var(--ink); font-weight: 500; }
+
+  /* The closing band: the hairline and the cue under it, and nothing else.
+     The cue sits on the same left axis as the copy, so the whole hero reads
+     down one column — greeting, statement, paragraph, rule, cue — instead of
+     the eye being thrown to the opposite corner at the end of it. */
+  .hp-hero__lower {
+    grid-row: 4;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding-top: clamp(20px, 2.8vh, 34px);
+    border-top: 1px solid var(--rule);
+  }
+
+  /* Scroll cue. Purely typographic — a tracked-out label and an arrow, no
+     container. The ring it used to sit in was the only circle anywhere on the
+     page and it read as a button the cue is not. Weight now comes from the
+     type: a heavier, larger, brighter label and a bigger arrow, so the corner
+     is still held down and the bottom band keeps its second anchor. */
+  .hp-hero__cue {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(11px, 0.95vw, 16px);
+    /* No ring means no 44px box; the tap target has to be declared. */
+    min-height: 44px;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-family: var(--ff-body);
+    font-size: clamp(12px, 0.85vw, 14px);
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  .hp-hero__cue:hover { color: var(--ink); }
+  .hp-hero__cue-arrow {
+    display: block;
+    width: clamp(19px, 1.55vw, 25px);
+    height: clamp(19px, 1.55vw, 25px);
+    color: var(--ink);
+    /* Constant velocity, symmetric fade. The old loop eased the whole cycle,
+       which made the arrow crawl where it was invisible and dart where it was
+       not — that was the "weird". Linear timing plus fades of equal length at
+       both ends gives one calm continuous drift, and because the arrow is
+       fully transparent at both extremes the wrap point cannot be seen. */
+    animation: hp-cue-drift 3.2s linear infinite;
+  }
+  .hp-hero__cue-arrow svg { width: 100%; height: 100%; display: block; }
+  @keyframes hp-cue-drift {
+    0%   { transform: translateY(-60%); opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateY(60%); opacity: 0; }
+  }
+
+  /* ---------- WORDMARK (3 rows converge → scale down) ----------
+     Motion, scale values and scroll cost are locked; only the mechanism has
+     changed. The section used to be 100vh and was held in place by GSAP
+     writing a transform to it on every scroll update. Inside a custom
+     overflow-y:auto scroller that transform is a main-thread write racing a
+     compositor-thread scroll, which is what made it shake.
+
+     Now the section is simply tall — 100vh of stage plus the 320vh the
+     animation is scrubbed over, matching the old pin distance exactly — and
+     the stage inside it is position:sticky. The compositor holds the stage
+     still on its own, with no JS in the loop, and GSAP is left doing the one
+     thing it is good at here: mapping scroll position onto the timeline. */
+  .hp-wordmark {
+    position: relative;
+    width: 100%;
+    height: 420vh;
+    background: #0a0a0c;
+  }
+  .hp-wordmark__stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Has to live on the stage, not the section: an overflow other than
+       visible on an ancestor would make that ancestor the sticky element's
+       scrollport and kill the stick entirely. */
+    overflow: hidden;
+    background: #0a0a0c;
+  }
+  /* Reduced motion gets the mark as a static composition, so the section
+     costs one screen of scroll instead of four with nothing happening. */
+  .hp-wordmark--static { height: 100vh; }
+  .hp-wordmark__inner {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* Promote to its own compositing layer so the scale-down is GPU
+       interpolated rather than re-rasterising glyphs every frame. */
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  .hp-wordmark__row {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    font-family: var(--ff-display);
+    font-weight: 800;
+    /* "Selected Work" sets ~6.5x its own font-size wide and must not be
+       clipped, so the vw term is what keeps it inside the viewport: 13.5vw
+       fills ~87% of the width. The vh term only engages on genuinely short
+       viewports (landscape phones), where three rows at the vw size would
+       otherwise be taller than the section and get sliced top and bottom.
+       There is deliberately no px floor — a fixed floor overflows narrow
+       screens, which is what clipped the mark below ~470px. */
+    font-size: min(13.5vw, 28vh, 210px);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: #fff;
+    white-space: nowrap;
+    background: #0a0a0c;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  /* Middle row sits above the outer two so they slide in behind it. */
+  .hp-wordmark__row:nth-child(2) { z-index: 2; }
+
+  /* ---------- CASE STUDY CARDS ----------
+     Three self-contained cards on flat, saturated colour, stacked with
+     position:sticky so each one is held in the viewport while the next slides
+     up and over it.
+
+     The pin is the compositor's job, exactly as it is for the wordmark. There
+     is no JS holding anything still here; the only thing GSAP touches on scroll
+     is the opacity of one promoted scrim per card. That matters because this
+     page scrolls inside a custom overflow container, where a main-thread
+     transform write racing a compositor-thread scroll is what made the wordmark
+     shake before it was moved to sticky.
+
+     Sticky is also fragile in a way worth restating: an ancestor with any
+     overflow other than visible becomes the sticky element's scrollport and
+     silently kills the stick. So .hp-cases stays overflow:visible, and the
+     overflow:hidden that crops the bleeding mockup lives on the card itself —
+     the sticky element — where it is harmless. */
+  .hp-cases {
+    /* Room above the stack for the nav pill, plus one step per card so the
+       cards beneath show as a stacked sliver rather than disappearing. */
+    /* Clears the fixed nav pill, which is 106px deep at desktop, 82 at tablet
+       and 72 on a phone. A stuck card whose tag row sits under the pill is the
+       one layout failure this section can produce at every width at once. */
+    --stack-top: clamp(120px, 13vh, 140px);
+    --stack-tail: clamp(14px, 2.6vh, 34px);
+    /* How much of each card the one above it leaves showing. This is not a
+       decorative ledge: a card in the stack has to keep its tags AND its whole
+       description readable, and the description wraps to two or three lines
+       depending on width, so the number cannot be guessed. JS measures the
+       real distance from each card's top to the bottom of its own description
+       and writes it here, once on load and on resize. These clamps are the
+       fallback if that never runs. */
+    --reveal-pad: clamp(10px, 1.2vh, 18px);
+    --reveal-1: clamp(96px, 15vh, 165px);
+    --reveal-2: clamp(96px, 15vh, 165px);
+    --stack-reveal: calc(var(--reveal-1) + var(--reveal-2));
+    /* Fallback ceiling on card height, as a share of card width, used only if
+       the measuring script never runs. The real ceiling is --card-max-h, set
+       by JS from the actual head height plus the actual browser-window height
+       at this width, minus the bleed we want. A ratio cannot do that job: the
+       head is a fixed few lines whatever the card measures, so the ratio it
+       implies swings from about 1.2 at 320px to 0.66 at 1440px. */
+    --card-ar: 0.66;
+    /* Floor on card height. Two full reveals plus nav clearance can eat most
+       of a short viewport, and without this the card collapses to a letterbox
+       with no room left for the mockup. Below the floor the last card's bottom
+       edge falls past the fold while the stack is assembled, which is the
+       lesser problem — it comes back into view the moment the stack releases. */
+    --card-floor: 0.5;
+    --card-w-px: min(
+      calc(min(100vw, var(--shell)) - 2 * var(--pad-x)),
+      1120px
+    );
+    --card-h: min(
+      max(
+        calc(100vh - var(--stack-top) - var(--stack-reveal) - var(--stack-tail)),
+        calc(var(--card-w-px) * var(--card-floor))
+      ),
+      760px,
+      var(--card-max-h, calc(var(--card-w-px) * var(--card-ar)))
+    );
+    --card-w: min(100%, 1120px);
+    --card-r: clamp(18px, 2.1vw, 32px);
+    --card-gap: clamp(26px, 6.5vh, 78px);
+    /* Scroll distance the finished stack holds for before it releases.
+       A sticky box is clamped to its containing block, which is .hp-cases'
+       CONTENT box - padding on the wrapper is outside it and buys nothing. So
+       the hold is a real element at the end of the list. Without it the first
+       card starts sliding out from under the pile while the last card is
+       still arriving, and the stack never exists all at once. */
+    --stack-hold: clamp(90px, 36vh, 400px);
+    /* Ceiling on the stacking dim. Read by the script that drives it and by
+       the contrast audit, so the number that ships and the number that is
+       tested cannot drift apart. Deliberately light: a card in the stack is
+       there to be read, and a heavy scrim is directly at odds with that. The
+       depth cue is carried by the incoming card's shadow instead. */
+    --scrim-max: 0.14;
+
+    max-width: var(--shell);
+    margin: 0 auto;
+    padding: 0 var(--pad-x) clamp(24px, 6vh, 80px);
+  }
+  .hp-cases__tail { height: var(--stack-hold); }
+  /* dvh so an iOS URL bar cannot make the card taller than the container it is
+     stuck inside. Same formula, better unit where it exists. */
+  @supports (height: 100dvh) {
+    .hp-cases {
+      --card-h: min(
+        max(
+          calc(100dvh - var(--stack-top) - var(--stack-reveal) - var(--stack-tail)),
+          calc(var(--card-w-px) * var(--card-floor))
+        ),
+        760px,
+        var(--card-max-h, calc(var(--card-w-px) * var(--card-ar)))
+      );
+    }
+  }
+
+  .hp-case {
+    position: sticky;
+    top: var(--stack-top);
+    z-index: calc(var(--i) + 1);
+    width: var(--card-w);
+    height: var(--card-h);
+    margin: 0 auto var(--card-gap);
+    border-radius: var(--card-r);
+    background: var(--card-bg);
+    overflow: hidden;
+    /* The upward shadow is the depth cue between stacked cards: the incoming
+       card visibly casts onto the one it is covering, with no JS involved. */
+    box-shadow:
+      0 -22px 50px -22px rgba(0,0,0,0.55),
+      0 26px 70px -34px rgba(0,0,0,0.75);
+  }
+  /* Each card parks below the reveal of every card above it, so the stack
+     builds downwards and nothing already in it gets its description covered. */
+  .hp-case:nth-of-type(2) { top: calc(var(--stack-top) + var(--reveal-1)); }
+  .hp-case:nth-of-type(3) { top: calc(var(--stack-top) + var(--stack-reveal)); }
+  .hp-case:last-child { margin-bottom: 0; }
+
+  /* One link for the whole card. The name comes from aria-label rather than
+     from the card's contents, which would otherwise read out as one long run. */
+  .hp-case__link {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: var(--card-ink);
+    text-decoration: none;
+    border-radius: var(--card-r);
+  }
+  /* Inset so the ring is not clipped away by the card's own overflow:hidden,
+     and in the card's ink so it stays visible on the bright green. */
+  .hp-case__link:focus-visible {
+    outline: 3px solid var(--card-ink);
+    outline-offset: -5px;
+  }
+
+  /* Reference shows the tags and the sentence sitting on a lighter panel with
+     its own rounded bottom corners, flush with the top of the card. This band
+     is also exactly what stays visible when the card is buried in the stack,
+     so it is a header in its own right rather than a decorative tint: an even
+     wash across the full width, not a gradient that peters out two thirds of
+     the way along. Kept weak all the same — it lightens the card under the
+     text, and on the azure card that is the difference between passing and
+     failing AA. */
+  .hp-case__head {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 auto;
+    padding: clamp(18px, 2.1vw, 32px) clamp(20px, 2.5vw, 38px) clamp(20px, 2.4vw, 34px);
+    border-radius: var(--card-r);
+    background: linear-gradient(
+      101deg,
+      rgba(255,255,255,var(--sheen)) 0%,
+      rgba(255,255,255,calc(var(--sheen) * 0.62)) 100%
+    );
+  }
+
+  /* The card is a link to the case study and nothing else says so, now that
+     there is no visible title. Same glyph and same nudge as the nav's CV and
+     LinkedIn links, so the one gesture on the page means one thing. */
+  .hp-case__arrow {
+    position: absolute;
+    /* Optically level with the tag row: same top as the head's padding, less
+       the slack the glyph carries inside its own box. */
+    top: calc(clamp(18px, 2.1vw, 32px) - 3px);
+    right: clamp(18px, 2.3vw, 34px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(20px, 1.8vw, 28px);
+    height: clamp(20px, 1.8vw, 28px);
+    color: var(--card-ink);
+    opacity: 0.72;
+    transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.32,0.72,0,1);
+  }
+  .hp-case__arrow svg { width: 100%; height: 100%; display: block; }
+  .hp-case__link:hover .hp-case__arrow,
+  .hp-case__link:focus-visible .hp-case__arrow {
+    opacity: 1;
+    transform: translate(3px, -3px);
+  }
+
+  /* Real heading, kept out of the picture. The reference carries the project
+     name only in the bold phrase of the sentence, but the document outline,
+     search engines and heading navigation all still need an h2. */
+  .hp-case__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .hp-case__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    /* Clear of the arrow, so a fourth tag wraps rather than colliding. */
+    padding-right: clamp(30px, 3.6vw, 54px);
+    margin: 0 0 clamp(14px, 1.6vw, 24px);
+  }
+  /* Secondary metadata, and set to read that way: small, Inter at a UI weight
+     per the type system, and a pale tint of the card rather than full white.
+     Opaque, though — the colour is chosen per card rather than one translucent
+     style asked to survive three very different backgrounds. Anything
+     see-through picks up whatever is behind it, including the stacking dim,
+     and on the bright green that turned a white pill into grey sludge. */
+  .hp-case__tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Symmetrical, with the glyphs centred in the box rather than sitting on
+       its baseline — the previous 4px/5px split left them riding high. */
+    padding: 0 clamp(9px, 0.85vw, 13px);
+    min-height: clamp(19px, 1.55vw, 24px);
+    border-radius: 999px;
+    background: var(--card-pill);
+    color: var(--card-tag-ink);
+    font-family: var(--ff-body);
+    font-size: clamp(9.5px, 0.68vw, 11.5px);
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 0.014em;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  /* With no visible title this sentence IS the card's headline — the largest
+     thing on the card and the first thing read — so under the page's type
+     system it is display type: Manrope, 700 because it always runs to more
+     than one line, tight leading, tight tracking. Setting it in Inter at a
+     body weight, as the first pass did, was the card quietly opting out of
+     the system the rest of the page follows. */
+  .hp-case__desc {
+    margin: 0;
+    /* em, not ch: the measure has to hold its proportion as the size changes,
+       and it is tuned so the sentence breaks in two at every width above the
+       phone band rather than leaving a short trailing line. */
+    max-width: 30em;
+    font-family: var(--ff-display);
+    font-size: clamp(16px, 1.72vw, 27px);
+    line-height: 1.2;
+    letter-spacing: -0.028em;
+    font-weight: 700;
+    color: var(--card-ink);
+    /* Even line lengths. Without it the Boots sentence breaks after "serves"
+       and drops three words onto the second line. */
+    text-wrap: balance;
+  }
+  /* One step up, not a switch to another family: at 700 the run is already
+     heavy, and 800 is what still separates the project name from it. */
+  .hp-case__desc strong { font-weight: 800; color: inherit; }
+
+  /* The lower two thirds of the card. The mockup is absolutely positioned
+     inside it so it can hang past the bottom by a fixed amount whatever the
+     card ends up measuring — the crop is then guaranteed rather than a lucky
+     consequence of the arithmetic working out at that width. */
+  .hp-case__stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  /* Scrim for the stacking dim, over the whole card. Its own compositing
+     layer, and opacity is the only thing anything ever writes to it. */
+  .hp-case__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    background: #05070c;
+    opacity: 0;
+    pointer-events: none;
+    will-change: opacity;
+  }
+
+  /* ---------- CSS BROWSER CHROME ----------
+     Drawn rather than baked into the screenshot: it stays crisp at any size,
+     scales with the card, and puts the two website projects in the same frame.
+     Top corners only — the window runs off the bottom of the card. */
+  .hp-browser {
+    position: absolute;
+    /* Insets are a share of the card, not fixed pixels: the reference sets
+       the window about 7% in from each side with a little air above it, and
+       that proportion is most of what makes it read as a card rather than a
+       banner. */
+    /* Width-derived, not a percentage of the stage: the stage height depends
+       on the card height, and the card height is derived from where this
+       window ends. Keeping the offset off that chain keeps the sum solvable. */
+    top: clamp(6px, 1.4vw, 34px);
+    left: clamp(12px, 4.2vw, 60px);
+    right: clamp(12px, 4.2vw, 60px);
+    /* Height comes from the screenshot's own aspect, never from the box. An
+       earlier version stretched the window to the card and let object-fit
+       cover sort it out, which quietly shaved up to 13% off the sides of the
+       page at some widths. The window is sized correctly and the card's
+       bottom edge does the cropping, which is the crop the reference shows. */
+    display: flex;
+    flex-direction: column;
+    max-width: 1080px;
+    margin: 0 auto;
+    border-radius: clamp(7px, 0.85vw, 13px) clamp(7px, 0.85vw, 13px) 0 0;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 22px 50px -22px rgba(0,0,0,0.5);
+  }
+  .hp-browser__bar {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1.2vw, 18px);
+    height: clamp(20px, 2.2vw, 34px);
+    padding: 0 clamp(8px, 1vw, 14px);
+    background: #16181d;
+  }
+  .hp-browser__dots {
+    display: flex;
+    gap: clamp(3px, 0.34vw, 6px);
+    flex: 0 0 auto;
+  }
+  .hp-browser__dot {
+    width: clamp(5px, 0.55vw, 9px);
+    height: clamp(5px, 0.55vw, 9px);
+    border-radius: 50%;
+    background: #3d4048;
+  }
+  .hp-browser__dot:nth-child(1) { background: #ff5f57; }
+  .hp-browser__dot:nth-child(2) { background: #febc2e; }
+  .hp-browser__dot:nth-child(3) { background: #28c840; }
+  .hp-browser__url {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 62%;
+    max-width: 62%;
+    margin: 0 auto;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: #26282e;
+    font-size: clamp(6px, 0.62vw, 10px);
+    letter-spacing: 0.01em;
+    color: rgba(255,255,255,0.62);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  /* Balances the traffic lights so the URL field sits optically centred. */
+  .hp-browser__spacer {
+    flex: 0 0 auto;
+    width: clamp(19px, 2.05vw, 33px);
+  }
+  .hp-browser__screen {
+    flex: 0 0 auto;
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* ---------- PHONE ROW ----------
+     The reference keeps the phone bezels and keeps them inside the card rather
+     than bleeding, so this row sits on the card floor. Sizes are capped in px
+     as well as in % because the source renders are only 391x793 and go soft
+     past about 1.15x on a 2x display. */
+  .hp-case__phones {
+    /* Sized to the space the design gives them, with no artificial ceiling.
+       The source renders are only 391x793, so whether that is enough is a
+       question about the assets, not something to hide by drawing them small. */
+    --phone-h: 100%;
+    position: absolute;
+    inset: clamp(6px, 1.4vh, 20px) clamp(10px, 1.8vw, 34px) clamp(10px, 2.4vh, 34px);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .hp-phone {
+    display: block;
+    width: auto;
+    height: auto;
+    max-height: var(--phone-h);
+    max-width: 34%;
+    object-fit: contain;
+  }
+  /* Outer two tuck in behind the lead and tilt away, as in the reference. */
+  .hp-phone--side {
+    max-height: calc(var(--phone-h) * 0.87);
+    margin: 0 -3.2%;
+    z-index: 1;
+  }
+  .hp-phone--left  { transform: rotate(-5deg) translate(4%, 2%); }
+  .hp-phone--right { transform: rotate(5deg) translate(-4%, 2%); }
+  .hp-phone--lead { z-index: 2; }
+
+  /* ---------- FOOTER ---------- */
+  .hp-footer {
+    min-height: 86vh;
+    padding: clamp(80px, 12vh, 160px) var(--pad-x) clamp(32px, 4vh, 52px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-top: 1px solid var(--rule);
+    background: var(--bg);
+    max-width: var(--shell);
+    margin: 0 auto;
+  }
+  .hp-footer__title {
+    margin: clamp(22px, 3vh, 40px) 0 0;
+    font-family: var(--ff-display);
+    font-size: clamp(52px, 8.4vw, 148px);
+    line-height: 0.92;
+    letter-spacing: -0.048em;
+    font-weight: 800;
+    color: var(--ink);
+    max-width: 12ch;
+  }
+  .hp-footer__title em {
+    font-family: var(--ff-accent);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+  /* The lede is the only thing between the headline and the buttons, so it
+     carries the interval on both sides itself. It used to sit in the left
+     column of a two-column band with a Based / Open to list beside it; the
+     list was removed as duplication — the sentence already says both — and a
+     grid with one item in it is not structure, so the wrapper went with it. */
+  .hp-footer__lede {
+    margin: clamp(40px, 6vh, 80px) 0 clamp(36px, 5vh, 60px);
+    max-width: 40ch;
+    font-size: clamp(17px, 1.35vw, 22px);
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    color: var(--ink-1);
+  }
+  .hp-footer__lede strong { color: var(--ink); font-weight: 500; }
+  .hp-footer__ctas {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .hp-footer__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 18px 24px;
+    background: #fff;
+    color: #0a0a0c;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+  }
+  .hp-footer__cta.is-ghost {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .hp-footer__cta:hover { transform: translateY(-3px); }
+  .hp-footer__cta-arrow { display: inline-flex; align-items: center; }
+  .hp-footer__cta-arrow svg { width: 16px; height: 16px; display: block; }
+
+  .hp-footer__base {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: clamp(56px, 9vh, 110px);
+    padding-top: clamp(20px, 2.4vw, 28px);
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+    letter-spacing: -0.003em;
+    color: var(--ink-3);
+  }
+  .hp-footer__top {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: 13px;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: color 0.25s ease;
+  }
+  .hp-footer__top:hover { color: var(--ink); }
+  .hp-footer__top svg { width: 14px; height: 14px; display: block; }
+
+  /* ---------- Responsive ----------
+     Four width bands plus a small-phone trim:
+
+       >  1100      desktop — the composition every other band steps down from
+       901 – 1100   narrow desktop / landscape tablet: the split case stacks
+       601 –  900   tablet portrait: desktop structure at tablet scale
+       401 –  600   phone
+       <=   400     small phone (nav only)
+
+     601–900 previously inherited the phone rules, so a 768px iPad was styled
+     as a 390px phone: phone gutters, phone type, a single-column approach grid
+     and two of the four device shots. It is now its own band.
+
+     Anything that can be one continuous curve — the hero statement, the
+     wordmark, the device row — is handled with clamp()/min() in the base rules
+     rather than restated per band, so there are no size jumps at the seams. */
+  /* Shared by tablet and phone. */
+  @media (max-width: 900px) {
+    /* Fills ~94% of the width instead of ~104%, which is what clipped the
+       mark at every width below 900px. */
+    .hp-wordmark__row { font-size: min(14.5vw, 28vh, 150px); }
+  }
+
+  /* ---------- Tablet portrait ---------- */
+  @media (min-width: 601px) and (max-width: 900px) {
+    .hp-nav { top: 20px; gap: 16px; padding: 8px 10px 8px 12px; }
+    .hp-nav__brand { padding-right: 16px; gap: 12px; }
+    .hp-nav__avatar { width: 44px; height: 44px; }
+    .hp-nav__name { font-size: 16px; }
+    .hp-nav__link { padding: 12px 14px; font-size: 14px; gap: 6px; }
+    .hp-nav__arrow svg { width: 14px; height: 14px; }
+
+    .hp-hero { padding: clamp(112px, 14vh, 164px) var(--pad-x) clamp(32px, 4.5vh, 52px); }
+    .hp-hero__statement { max-width: 26ch; }
+
+    /* The nav pill is shallower here, so the stack can start higher. The card
+       loosens towards square because the head takes a bigger share of it. */
+    .hp-cases { --stack-top: clamp(96px, 11vh, 118px); --card-ar: 0.70; }
+    /* The sentence is the card's headline, so it keeps growing with the card
+       rather than dropping to a body size at tablet width. */
+    /* Sized so the longest of the three sentences still breaks in two: at
+       display size a third line costs the card 30-odd pixels it has not got,
+       and the stack has to reveal every line of it. */
+    .hp-case__desc { font-size: clamp(15.5px, 2.15vw, 22px); }
+
+    .hp-footer { min-height: 0; }
+    .hp-footer__title { font-size: clamp(60px, 10vw, 92px); }
+    .hp-footer__lede { max-width: 56ch; }
+  }
+
+  /* ---------- Phone ---------- */
+  @media (max-width: 600px) {
+    .hp-nav {
+      top: 14px;
+      gap: 10px;
+      padding: 6px 6px 6px 10px;
+      max-width: calc(100vw - 24px);
+    }
+    .hp-nav__brand { padding-right: 12px; gap: 10px; }
+    .hp-nav__avatar { width: 36px; height: 36px; }
+    .hp-nav__name { font-size: 14px; }
+    .hp-nav__links { gap: 2px; }
+    /* Labels stay. Hiding them left two identical arrow glyphs with no way to
+       tell CV from LinkedIn — the arrow is the decoration, not the label. */
+    .hp-nav__link {
+      min-width: 44px;
+      padding: 11px 12px;
+      font-size: 13px;
+      gap: 0;
+    }
+    .hp-nav__arrow { display: none; }
+
+    /* Tighter spacer floors than the desktop rhythm: on a phone the hero is
+       close to content-height already, and a generous minimum open field is
+       what pushes the cue off the bottom of a small screen. */
+    .hp-hero {
+      padding: 94px 22px 30px;
+      grid-template-rows: 1.5fr auto minmax(24px, 1fr) auto;
+    }
+    .hp-hero__main { gap: 14px; }
+    .hp-hero__greeting { font-size: 15px; }
+    /* Size comes from the base clamp; this only tightens the setting. */
+    .hp-hero__statement {
+      max-width: none;
+      line-height: 1.06;
+      letter-spacing: -0.032em;
+    }
+    /* The cue takes the full width so it still reads as the thing holding the
+       bottom of the hero rather than a label tucked into a corner. */
+    .hp-hero__lower { align-items: stretch; padding-top: 20px; }
+    .hp-hero__support {
+      margin-top: 16px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .hp-hero__cue { justify-content: space-between; width: 100%; }
+
+    /* The head is a fixed few lines whatever the card measures, so on a phone
+       it has to be tightened or it eats half the card. */
+    .hp-cases {
+      --stack-top: clamp(86px, 11vh, 104px);
+      --card-ar: 0.95;
+      /* Two reveals plus nav clearance is most of a phone screen, so the
+         floor does the work here and the last card runs past the fold while
+         the stack is assembled. */
+      --card-floor: 0.95;
+      --card-r: 18px;
+      padding-bottom: 64px;
+    }
+    .hp-case__head { padding: 16px 17px 18px; }
+    .hp-case__desc { font-size: clamp(14.5px, 3.6vw, 19px); line-height: 1.22; max-width: 26em; }
+    .hp-case__tags { gap: 5px; margin-bottom: 12px; padding-right: 28px; }
+    .hp-case__tag { font-size: 10px; min-height: 18px; padding: 0 8px; }
+    .hp-case__arrow { top: 14px; right: 14px; width: 17px; height: 17px; }
+    .hp-browser { left: 4.5%; right: 4.5%; }
+    /* Two phones, and they bleed off the bottom like the browser windows do.
+       Kept inside the card they would be about 70px wide here — the head takes
+       most of a phone-sized card once it has to stay readable in the stack —
+       and a 70px phone is a smudge. Cropped, they are twice that and the card
+       reads consistently with the other two. */
+    .hp-case__phones { inset: 6px 8px -60%; }
+    .hp-phone { max-width: 46%; }
+    .hp-phone--right { display: none; }
+
+    .hp-footer { min-height: 0; padding: 76px 22px 28px; }
+    .hp-footer__title { font-size: clamp(46px, 13vw, 76px); }
+    .hp-footer__lede { margin: 32px 0 30px; max-width: 52ch; font-size: 16.5px; }
+    .hp-footer__cta { padding: 15px 20px; font-size: 14px; }
+    .hp-footer__base { margin-top: 46px; font-size: 12px; }
+  }
+
+  /* Landscape phones. Height is the scarce dimension and width is the
+     plentiful one, so the copy trades one for the other: the statement comes
+     off the desktop curve and the support paragraph spends the extra width,
+     which keeps both to three lines instead of four.
+     Even then there is no room to stack a closing band under the copy — the
+     copy block is most of a 390px-tall viewport on its own, and the cue would
+     land below the fold, which is the one thing it must never do. So there is
+     no void here to anchor and nothing for a rule to close: the copy IS the
+     composition, and the cue becomes a corner marker in the space to the right
+     of the paragraph that the short measure leaves empty anyway. */
+  @media (max-height: 560px) and (min-width: 601px) {
+    .hp-hero {
+      min-height: 0;
+      padding-top: 92px;
+      padding-bottom: 24px;
+      grid-template-rows: 0fr auto minmax(20px, 1fr) auto;
+    }
+    .hp-hero__main { gap: 10px; }
+    .hp-hero__statement { font-size: clamp(30px, 4.3vw, 46px); }
+    .hp-hero__support { margin-top: 10px; max-width: 62ch; }
+    .hp-hero__lower {
+      position: absolute;
+      right: var(--pad-x);
+      bottom: 0;
+      padding-top: 0;
+      border-top: 0;
+    }
+  }
+
+  /* ---------- Short viewports ----------
+     A sticky stack needs somewhere to stick. Under ~500px of height, a card
+     sized to fit under the nav has barely room for the sentence, let alone a
+     mockup, and three of them stuck on top of each other is a smear. Below
+     that the cards simply flow: same cards, same crop, no stacking. */
+  @media (max-height: 500px) {
+    .hp-case {
+      position: static;
+      height: auto;
+      min-height: 300px;
+      aspect-ratio: 16 / 9;
+    }
+    .hp-cases { --card-gap: 22px; }
+    .hp-case__scrim { display: none; }
+  }
+
+  /* Small phone. Boots' four tags wrap to two rows below about 360px, which
+     costs the head another line, so the card has to go taller than wide for
+     the browser window to have anywhere to sit. */
+  @media (max-width: 360px) {
+    .hp-cases { --card-ar: 1.05; }
+  }
+
+  @media (max-width: 400px) {
+    .hp-nav { gap: 8px; padding: 6px 5px 6px 8px; }
+    .hp-nav__brand { padding-right: 9px; gap: 8px; }
+    .hp-nav__name { font-size: 13px; }
+    .hp-nav__link { padding: 11px 9px; font-size: 12.5px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hp-nav { transition-duration: 0.01ms; }
+    .hp-footer__cta,
+    .hp-nav__arrow { transition-duration: 0.01ms; }
+
+    /* Cards that slide over one another are scroll-coupled movement, so the
+       stack is dropped entirely rather than merely un-animated. They become
+       three cards in a column — same size, same colour, same crop, nothing
+       hidden. The height stays on --card-h: letting it go auto leaves the
+       mockup floating at the top of a card twice its height, with the bleed
+       gone and a dead field of colour underneath. */
+    .hp-case { position: static; transition: none; }
+    .hp-case:hover { transform: none; }
+    .hp-case__scrim { display: none; }
+    /* No loop, but the arrow still has to be visible and legible — the
+       keyframes start and end at opacity 0. */
+    .hp-hero__cue-arrow {
+      animation: none;
+      transform: none;
+      opacity: 1;
+    }
+  }
+</style>
+</head>
+<body>
+
+<script>
+(function() {
+  var VERSION = 'v47';
+  console.log('HP ' + VERSION + ' loading...');
+  document.documentElement.classList.add('hp-active');
+
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var ARROW_NE = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ARROW_UP = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ARROW_DOWN = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5v14M19 12l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+  var AVATAR = 'https://images.squarespace-cdn.com/content/v1/62b5ca6e6bb8d144512e76de/7765e93a-9fb7-49df-aec2-522a5b8e0b96/Firefly_Gemini+Flash_Use+this+exact+person+but+change+her+outfit+to+a+thick+white+t+shirt++648620.png';
+
+  var HERO = {
+    greeting: 'Hey, I&rsquo;m <strong>Abbie</strong> \u2014 a Product Design Leader in the UK.',
+    // The largest type on the page has to be the thing that gets her hired.
+    statement: 'I&rsquo;ve spent over seven years designing experiences and leading teams in <em>more industries than I can count.</em>',
+    // `consultancies` and `in-house` are marked emphasis, so they are Inter 500
+    // in full white. The serif italic stays where it is — one phrase, inside
+    // display type — because that is what keeps it reading as an accent.
+    //
+    // One sentence at every width. There used to be a shorter phone variant
+    // because the copy it replaced ran to ~19 lines on a phone; this one is
+    // four lines on a tablet and six on a 390px phone, which is a paragraph
+    // rather than a wall, and running two versions of her words in the same
+    // page means the phone quietly says something she did not write.
+    support: 'Across <strong>consultancies</strong> and <strong>in-house</strong>, from redesigns to brand new launches \u2014 I bring relentless passion, stay endlessly curious about the tools around us, and always invest in people as much as the products I create.',
+    cue: 'Scroll'
+  };
+
+  var WORDMARK = 'Selected Work';
+
+  // Flat, saturated card colours sampled from the reference, replacing the
+  // dark gradients. Every one carries text, so `ink` is chosen to clear WCAG
+  // AA against `bg` plus the head panel's sheen, not by eye — white on the
+  // bright green measures 1.4:1 and is unusable there.
+  //   bg      the card
+  //   ink     description text, the arrow, and the focus ring
+  //   pill    tag background — opaque, and picked per card. A translucent
+  //           pill takes on whatever is behind it, and on the bright green
+  //           that meant a white pill reading as grey sludge, worse still
+  //           once the stacking dim was over it.
+  //   tagInk  text inside the pill
+  //   sheen   white alpha of the head band; the ceiling is set by contrast
+  var CARDS = {
+    boots: {
+      bg: '#0060c1', ink: '#ffffff',
+      pill: '#d8e6f8', tagInk: '#083a72', sheen: 0.11
+    },
+    // Bright green is the one card where a light pill has nowhere to go: it
+    // is already nearly as light as white. The pill inverts instead.
+    saddle: {
+      bg: '#6cf478', ink: '#07200c',
+      pill: '#0f3b1c', tagInk: '#dff8e6', sheen: 0.20
+    },
+    cycling: {
+      bg: '#0e2ce2', ink: '#ffffff',
+      pill: '#dce1fb', tagInk: '#101f78', sheen: 0.17
+    }
+  };
+
+  // Reference order: Boots, Sofa to Saddle, British Cycling.
+  var PROJECTS = [
+    {
+      title: 'Boots Checkout',
+      slug: 'boots',
+      card: 'boots',
+      desc: 'Modernising the <strong>Boots.com</strong> checkout experience that serves 21m customers annually.',
+      tags: ['UX & UI', 'Research', 'Strategy', 'Design system'],
+      href: '/boots-checkout',
+      mockup: {
+        type: 'browser',
+        url: 'boots.com/checkout',
+        // Screen cut out of the MacBook render by crop-screens.py, so the
+        // frame around it can be drawn in CSS instead.
+        src: 'assets/boots-2-screen.png',
+        w: 1912, h: 1174,
+        alt: 'The Boots.com checkout: contact, delivery and payment steps beside a running order summary'
+      }
+    },
+    {
+      title: 'Sofa to Saddle',
+      slug: 'saddle',
+      card: 'saddle',
+      desc: 'Britain&rsquo;s newest <strong>habit-forming cycling app</strong>, created by a team that embraced AI tooling throughout.',
+      tags: ['UX & UI', 'AI-assisted', 'Strategy'],
+      href: '/sofa-to-saddle',
+      mockup: {
+        type: 'phones',
+        shots: [
+          { src: 'assets/s2s-1-trim.png', alt: 'Sofa to Saddle home screen', role: 'left' },
+          { src: 'assets/s2s-4-trim.png', alt: 'Sofa to Saddle training plan screen', role: 'lead' },
+          { src: 'assets/s2s-3-trim.png', alt: 'Sofa to Saddle ride timer screen', role: 'right' }
+        ]
+      }
+    },
+    {
+      title: 'British Cycling',
+      slug: 'cycling',
+      card: 'cycling',
+      desc: 'Untangling <strong>British Cycling&rsquo;s website</strong> and employee experience to redefine a nationwide ecosystem of sport.',
+      tags: ['UX & UI', 'Copywriting', 'Strategy'],
+      href: '/british-cycling',
+      mockup: {
+        type: 'browser',
+        url: 'britishcycling.org.uk/events',
+        // Was a Safari window mockup. Its own chrome is cropped away so it
+        // sits in the same drawn frame as Boots.
+        src: 'assets/british-cycling-screen.png',
+        w: 1920, h: 1213,
+        alt: 'The British Cycling find-an-event page, with search and filters over a race photograph'
+      }
+    }
+  ];
+
+  var EMAIL = 'abigail.r.truman@gmail.com';
+
+  var FOOTER = {
+    eyebrow: 'Get in touch',
+    title: 'Let&rsquo;s <em>talk.</em>',
+    lede: '<strong>Open to new opportunities</strong> \u2014 product design leadership, in-house or consultancy. If you&rsquo;re hiring, building a team, or just want a second opinion, my inbox is open.'
+  };
+
+  function stripTags(html) {
+    var d = document.createElement('div');
+    d.innerHTML = html;
+    return (d.textContent || '').replace(/"/g, '&quot;');
+  }
+
+  // Wraps each character in a span, preserving inline markup. Pass a word class
+  // and each word also gets a nowrap wrapper, so a multi-line heading still
+  // breaks between words instead of mid-word once every glyph is inline-block.
+  function splitChars(text, className, wordClassName) {
+    var container = document.createElement('span');
+    container.innerHTML = text;
+    walk(container);
+    return container.innerHTML;
+
+    function charSpan(ch) {
+      var span = document.createElement('span');
+      span.className = className;
+      span.textContent = ch;
+      return span;
+    }
+
+    function walk(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function(child) {
+        if (child.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          var parts = child.nodeValue.split(/(\s+)/);
+          parts.forEach(function(part) {
+            if (!part) return;
+            if (/^\s+$/.test(part)) {
+              // A real space keeps the line-breaking opportunity intact.
+              frag.appendChild(wordClassName
+                ? document.createTextNode(' ')
+                : charSpan('\u00A0'));
+              return;
+            }
+            var host = frag;
+            if (wordClassName) {
+              host = document.createElement('span');
+              host.className = wordClassName;
+            }
+            for (var i = 0; i < part.length; i++) host.appendChild(charSpan(part.charAt(i)));
+            if (host !== frag) frag.appendChild(host);
+          });
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1) {
+          walk(child);
+        }
+      });
+    }
+  }
+
+  function tagsHtml(p) {
+    return '<div class="hp-case__tags">' + p.tags.map(function(t) {
+      return '<span class="hp-case__tag">' + t + '</span>';
+    }).join('') + '</div>';
+  }
+
+  // A window drawn in CSS around a bare screenshot. Nothing here is an image,
+  // so it stays sharp at any card size and both website projects share it.
+  function browserHtml(m) {
+    return '<div class="hp-browser">' +
+      '<div class="hp-browser__bar" aria-hidden="true">' +
+        '<span class="hp-browser__dots">' +
+          '<span class="hp-browser__dot"></span>' +
+          '<span class="hp-browser__dot"></span>' +
+          '<span class="hp-browser__dot"></span>' +
+        '</span>' +
+        '<span class="hp-browser__url">' + m.url + '</span>' +
+        '<span class="hp-browser__spacer"></span>' +
+      '</div>' +
+      // Intrinsic size on the tag, so the window reserves its true height
+      // before the screenshot has downloaded. The card's own height is derived
+      // from that measurement, and a zero-height image would collapse it.
+      '<img class="hp-browser__screen hp-case__shot" src="' + m.src +
+        '" width="' + m.w + '" height="' + m.h +
+        '" alt="' + m.alt + '" loading="lazy">' +
+    '</div>';
+  }
+
+  function phonesHtml(m) {
+    return '<div class="hp-case__phones">' + m.shots.map(function(s) {
+      var cls = 'hp-phone hp-case__shot hp-phone--' + s.role +
+        (s.role === 'lead' ? '' : ' hp-phone--side');
+      return '<img class="' + cls + '" src="' + s.src +
+        '" width="391" height="793" alt="' + s.alt + '" loading="lazy">';
+    }).join('') + '</div>';
+  }
+
+  function buildCase(p, i) {
+    var c = CARDS[p.card];
+    var style = '--i:' + i + ';--card-bg:' + c.bg + ';--card-ink:' + c.ink +
+      ';--card-pill:' + c.pill + ';--card-tag-ink:' + c.tagInk +
+      ';--sheen:' + c.sheen + ';';
+
+    return '<article class="hp-case hp-case--' + p.slug + '" style="' + style + '">' +
+      // The reference shows no visible project name — it lives in the bold
+      // phrase of the sentence. The heading still has to exist for the
+      // document outline, for heading navigation and for search, so it is
+      // present and visually hidden rather than removed.
+      '<h2 class="hp-case__title">' + p.title + '</h2>' +
+      '<a class="hp-case__link" href="' + p.href + '" ' +
+        'aria-label="' + p.title + ' \u2014 read the case study">' +
+        '<div class="hp-case__head">' +
+          '<span class="hp-case__arrow" aria-hidden="true">' + ARROW_NE + '</span>' +
+          tagsHtml(p) +
+          '<p class="hp-case__desc">' + p.desc + '</p>' +
+        '</div>' +
+        '<div class="hp-case__stage">' +
+          (p.mockup.type === 'browser' ? browserHtml(p.mockup) : phonesHtml(p.mockup)) +
+        '</div>' +
+      '</a>' +
+      '<span class="hp-case__scrim" aria-hidden="true"></span>' +
+    '</article>';
+  }
+
+  function build() {
+    var navHtml = '' +
+      '<nav class="hp-nav" aria-label="Primary">' +
+        '<div class="hp-nav__brand">' +
+          '<img class="hp-nav__avatar" src="' + AVATAR + '" alt="Abbie Truman" loading="eager">' +
+          '<span class="hp-nav__name">Abbie Truman</span>' +
+        '</div>' +
+        '<div class="hp-nav__links">' +
+          '<a class="hp-nav__link" href="#" target="_blank" rel="noopener">' +
+            '<span>CV</span>' +
+            '<span class="hp-nav__arrow" aria-hidden="true">' + ARROW_NE + '</span>' +
+          '</a>' +
+          '<a class="hp-nav__link" href="https://www.linkedin.com/in/abbie-truman" target="_blank" rel="noopener">' +
+            '<span>LinkedIn</span>' +
+            '<span class="hp-nav__arrow" aria-hidden="true">' + ARROW_NE + '</span>' +
+          '</a>' +
+        '</div>' +
+      '</nav>';
+
+    var heroHtml = '' +
+      '<section class="hp-hero" id="hp-hero">' +
+        '<div class="hp-hero__main">' +
+          '<p class="hp-hero__greeting">' + HERO.greeting + '</p>' +
+          // Per-character spans would otherwise be read out letter by letter.
+          '<h1 class="hp-hero__statement" aria-label="' + stripTags(HERO.statement) + '">' +
+            '<span aria-hidden="true">' + splitChars(HERO.statement, 'hp-hero__char', 'hp-hero__word') + '</span>' +
+          '</h1>' +
+          '<p class="hp-hero__support">' + HERO.support + '</p>' +
+        '</div>' +
+        '<div class="hp-hero__lower">' +
+          '<button class="hp-hero__cue" type="button" data-cue ' +
+            'aria-label="Scroll to selected work">' +
+            '<span>' + HERO.cue + '</span>' +
+            '<span class="hp-hero__cue-arrow" aria-hidden="true">' +
+              ARROW_DOWN +
+            '</span>' +
+          '</button>' +
+        '</div>' +
+      '</section>';
+
+    var wordmarkHtml = '' +
+      '<section class="hp-wordmark" id="hp-wordmark">' +
+        '<div class="hp-wordmark__stage">' +
+          '<div class="hp-wordmark__inner">' +
+            '<div class="hp-wordmark__row">' + WORDMARK + '</div>' +
+            '<div class="hp-wordmark__row">' + WORDMARK + '</div>' +
+            '<div class="hp-wordmark__row">' + WORDMARK + '</div>' +
+          '</div>' +
+        '</div>' +
+      '</section>';
+
+    var casesHtml = '<section class="hp-cases" id="hp-cases" aria-label="Selected work">' +
+      PROJECTS.map(buildCase).join('') +
+      '<div class="hp-cases__tail" aria-hidden="true"></div>' +
+    '</section>';
+
+    var footerHtml = '' +
+      '<footer class="hp-footer" id="hp-footer">' +
+        '<span class="hp-eyebrow hp-eyebrow--rule">' + FOOTER.eyebrow + '</span>' +
+        '<h2 class="hp-footer__title">' + FOOTER.title + '</h2>' +
+        '<p class="hp-footer__lede">' + FOOTER.lede + '</p>' +
+        '<div class="hp-footer__ctas">' +
+          '<a class="hp-footer__cta" href="mailto:' + EMAIL + '">' + EMAIL + '<span class="hp-footer__cta-arrow">' + ARROW_NE + '</span></a>' +
+          '<a class="hp-footer__cta is-ghost" href="https://www.linkedin.com/in/abbie-truman" target="_blank" rel="noopener">LinkedIn<span class="hp-footer__cta-arrow">' + ARROW_NE + '</span></a>' +
+        '</div>' +
+        '<div class="hp-footer__base">' +
+          '<span>&copy; ' + new Date().getFullYear() + ' Abbie Truman</span>' +
+          '<button class="hp-footer__top" type="button" data-top>' +
+            '<span class="hp-footer__cta-arrow" aria-hidden="true">' + ARROW_UP + '</span>Back to top' +
+          '</button>' +
+        '</div>' +
+      '</footer>';
+
+    var html = '<div class="hp-root" id="hp-root">' +
+      navHtml + heroHtml + wordmarkHtml + casesHtml + footerHtml +
+    '</div>';
+
+    document.body.insertAdjacentHTML('afterbegin', html);
+    console.log('HP ' + VERSION + ' mounted');
+  }
+
+  // How far down each card the next one is allowed to park. A card in the
+  // stack has to keep its tags and its whole description readable, and the
+  // description wraps to two or three lines depending on width, so the offset
+  // is measured rather than assumed: card top to description bottom, plus a
+  // little air.
+  //
+  // Runs on load, once the webfonts have settled, and on resize — never on
+  // scroll. It writes to the wrapper's custom properties, not to the cards, so
+  // nothing ever touches the style attribute of a sticky element.
+  function sizeStack() {
+    var wrap = document.getElementById('hp-cases');
+    if (!wrap) return;
+    var cards = wrap.querySelectorAll('.hp-case');
+    var pad = parseFloat(getComputedStyle(wrap).getPropertyValue('--reveal-pad')) || 12;
+
+    for (var i = 0; i < cards.length - 1; i++) {
+      var head = cards[i].querySelector('.hp-case__head');
+      var desc = cards[i].querySelector('.hp-case__desc');
+      if (!head || !desc) continue;
+      // offsetTop/offsetHeight, not getBoundingClientRect: the entrance
+      // animation leaves a transform on the head, and a rect would measure
+      // that too.
+      var h = head.offsetTop + desc.offsetTop + desc.offsetHeight + pad;
+      wrap.style.setProperty('--reveal-' + (i + 1), Math.ceil(h) + 'px');
+    }
+
+    // Ceiling on card height, so the browser window always runs off the bottom
+    // edge by a visible amount. Everything in the sum is measured: the head is
+    // as tall as its own copy at this width, and the window is as tall as its
+    // screenshot's aspect makes it. Guessing this as a width ratio cannot work
+    // — the head does not scale with the card.
+    // Taken per card and then minimised, because the two website cards do not
+    // agree: their screenshots have different aspects and their sentences wrap
+    // to different numbers of lines, so the shallower of the two is what has
+    // to clear the bleed.
+    var lowest = Infinity;
+    var minBleed = 26;
+    for (var k = 0; k < cards.length; k++) {
+      var win = cards[k].querySelector('.hp-browser');
+      var hd2 = cards[k].querySelector('.hp-case__head');
+      if (!win || !hd2) continue;
+      var winH = win.offsetHeight;
+      minBleed = Math.max(minBleed, winH * 0.12);
+      lowest = Math.min(lowest, hd2.offsetHeight + win.offsetTop + winH);
+    }
+    if (lowest !== Infinity) {
+      wrap.style.setProperty('--card-max-h',
+                             Math.round(lowest - minBleed) + 'px');
+    }
+  }
+
+  function revealNav() {
+    var nav = document.querySelector('.hp-nav');
+    if (nav) nav.classList.add('is-ready');
+  }
+
+  function initBackToTop() {
+    var btn = document.querySelector('[data-top]');
+    var root = document.getElementById('hp-root');
+    if (!btn || !root) return;
+    btn.addEventListener('click', function() {
+      root.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+    });
+  }
+
+  function initCue() {
+    var btn = document.querySelector('[data-cue]');
+    var root = document.getElementById('hp-root');
+    var target = document.getElementById('hp-wordmark');
+    if (!btn || !root || !target) return;
+    btn.addEventListener('click', function() {
+      root.scrollTo({
+        top: root.scrollTop + target.getBoundingClientRect().top,
+        behavior: REDUCED ? 'auto' : 'smooth'
+      });
+    });
+  }
+
+  // The hero is the opening moment — no splash gate in front of it.
+  function initHero() {
+    if (typeof gsap === 'undefined') return;
+    if (REDUCED) return;
+
+    var chars = document.querySelectorAll('.hp-hero__char');
+    var greeting = document.querySelector('.hp-hero__greeting');
+    // The support paragraph finishes the sentence the statement starts, so it
+    // arrives on the same beat, just after it; the band follows on the stagger
+    // so the hairline and the cue land together as the last thing to settle.
+    var below = document.querySelectorAll('.hp-hero__support, .hp-hero__lower');
+
+    gsap.set(chars, { yPercent: 55, opacity: 0 });
+    gsap.set([greeting], { opacity: 0, y: 16 });
+    gsap.set(below, { opacity: 0, y: 22 });
+
+    gsap.timeline({
+      defaults: { ease: 'expo.out', force3D: true },
+      onComplete: function() {
+        // yPercent is cleared before handing the glyphs to the cursor field,
+        // which drives `y` — GSAP sums the two, so they must not overlap.
+        gsap.set(chars, { yPercent: 0, y: 0 });
+        initHeroCursorField();
+      }
+    })
+      .to([greeting], { opacity: 1, y: 0, duration: 1 }, 0)
+      .to(chars, { yPercent: 0, opacity: 1, duration: 1, stagger: 0.011 }, 0.2)
+      .to(below, { opacity: 1, y: 0, duration: 1.1, stagger: 0.12 }, 0.85);
+  }
+
+  // Cursor field — glyphs lift toward the pointer so the hero stays alive
+  // without needing scroll. Deliberately a different gesture from the wordmark.
+  function initHeroCursorField() {
+    if (typeof gsap === 'undefined' || REDUCED) return;
+    if (window.matchMedia('(hover: none)').matches) return;
+
+    var chars = Array.prototype.slice.call(document.querySelectorAll('.hp-hero__char'));
+    var hero = document.getElementById('hp-hero');
+    if (!chars.length || !hero) return;
+
+    var RADIUS = 165;
+    var LIFT = 16;
+
+    var items = chars.map(function(el) {
+      return {
+        el: el,
+        setY: gsap.quickTo(el, 'y', { duration: 0.55, ease: 'power3' }),
+        setScale: gsap.quickTo(el, 'scale', { duration: 0.55, ease: 'power3' }),
+        cx: 0,
+        cy: 0,
+        last: 0
+      };
+    });
+
+    function measure() {
+      items.forEach(function(it) {
+        var r = it.el.getBoundingClientRect();
+        it.cx = r.left + r.width / 2;
+        it.cy = r.top + r.height / 2;
+      });
+    }
+    measure();
+
+    var mx = -9999, my = -9999, queued = false;
+
+    function apply() {
+      queued = false;
+      items.forEach(function(it) {
+        var dx = mx - it.cx;
+        var dy = my - it.cy;
+        var falloff = 0;
+        // Cheap reject before the sqrt — most glyphs are out of range on a
+        // statement this long, and there are well over a hundred of them.
+        if (Math.abs(dx) < RADIUS && Math.abs(dy) < RADIUS) {
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < RADIUS) {
+            falloff = 1 - dist / RADIUS;
+            // Ease the falloff so the effect has a soft shoulder, not a cone.
+            falloff = falloff * falloff * (3 - 2 * falloff);
+          }
+        }
+        // Skip glyphs that are already settled at rest.
+        if (falloff === 0 && it.last === 0) return;
+        it.last = falloff;
+        it.setY(-LIFT * falloff);
+        it.setScale(1 + 0.06 * falloff);
+      });
+    }
+
+    window.addEventListener('mousemove', function(e) {
+      mx = e.clientX;
+      my = e.clientY;
+      if (!queued) { queued = true; requestAnimationFrame(apply); }
+    }, { passive: true });
+
+    hero.addEventListener('mouseleave', function() {
+      mx = my = -9999;
+      apply();
+    });
+
+    // Positions are viewport-relative, so re-measure whenever they can shift.
+    var remeasure;
+    function scheduleMeasure() {
+      clearTimeout(remeasure);
+      remeasure = setTimeout(measure, 150);
+    }
+    window.addEventListener('resize', scheduleMeasure);
+    var root = document.getElementById('hp-root');
+    if (root) root.addEventListener('scroll', scheduleMeasure, { passive: true });
+  }
+
+  // One reveal recipe for every section below the fold.
+  function reveal(trigger, steps) {
+    if (REDUCED || !trigger) return;
+    var active = steps.filter(function(s) { return s.els && s.els.length; });
+    if (!active.length) return;
+
+    active.forEach(function(s) {
+      gsap.set(s.els, { opacity: 0, y: s.y == null ? 30 : s.y });
+    });
+
+    ScrollTrigger.create({
+      trigger: trigger,
+      start: 'top 82%',
+      once: true,
+      onEnter: function() {
+        var tl = gsap.timeline({ defaults: { ease: 'expo.out', force3D: true } });
+        active.forEach(function(s) {
+          tl.to(s.els, {
+            opacity: 1,
+            y: 0,
+            duration: s.duration || 1.1,
+            stagger: s.stagger || 0
+          }, s.at || 0);
+        });
+      }
+    });
+  }
+
+  function initScrollScenes() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+      console.warn('GSAP / ScrollTrigger unavailable — scenes static');
+      return;
+    }
+    gsap.registerPlugin(ScrollTrigger);
+
+    var root = document.getElementById('hp-root');
+    ScrollTrigger.defaults({ scroller: root });
+
+    // ---------- WORDMARK ----------
+    // The section holds itself still: it is 420vh tall with a position:sticky
+    // stage inside it, so the compositor owns the pin and GSAP never writes a
+    // transform to anything that is supposed to be stationary. ScrollTrigger's
+    // only job here is to map scroll position onto the timeline, and the
+    // timeline only ever touches transforms.
+    //
+    // 'top top' → 'bottom bottom' is exactly the span over which the stage is
+    // stuck, and it reproduces the previous pin distance (320vh) and total
+    // scroll cost (420vh) to the pixel.
+    var wordmark = document.getElementById('hp-wordmark');
+    if (wordmark) {
+      var inner = wordmark.querySelector('.hp-wordmark__inner');
+      var rows = wordmark.querySelectorAll('.hp-wordmark__row');
+      var outer = [rows[0], rows[2]];
+
+      if (REDUCED) {
+        // Nothing scroll-driven, so the extra 320vh would be dead scroll past
+        // a mark that never changes. Collapse to one screen and leave the
+        // three rows sitting at their untransformed, fully visible position.
+        wordmark.classList.add('hp-wordmark--static');
+      } else {
+        // Initial offsets live here rather than in CSS so GSAP owns the
+        // transform outright and never has to reconcile with a stylesheet value.
+        gsap.set(outer, { xPercent: 100, yPercent: 0 });
+        gsap.set(rows[1], { xPercent: -100 });
+        gsap.set(inner, { scale: 1 });
+
+        gsap.timeline({
+          defaults: { force3D: true },
+          scrollTrigger: {
+            trigger: wordmark,
+            start: 'top top',
+            end: 'bottom bottom',
+            invalidateOnRefresh: true,
+            // No smoothing. Interpolation only made sense as compensation for
+            // a pin that was already lagging; with the pin off the main
+            // thread it just adds its own lag and lets the mark drift on
+            // after the scroll has stopped.
+            scrub: true
+          }
+        })
+          // 1 — rows slide in from alternating sides
+          .to(outer,   { xPercent: 0, duration: 1, ease: 'none' }, 0)
+          .to(rows[1], { xPercent: 0, duration: 1, ease: 'none' }, 0)
+          // 2 — outer rows converge behind the middle row
+          .to(rows[0], { yPercent: 100,  duration: 1, ease: 'power1.inOut' }, 1.15)
+          .to(rows[2], { yPercent: -100, duration: 1, ease: 'power1.inOut' }, 1.15)
+          // 3 — the collapsed mark shrinks away
+          .to(inner, {
+            scale: window.innerWidth <= 900 ? 0.34 : 0.2,
+            duration: 1.2,
+            ease: 'power2.inOut'
+          }, 2.35);
+      }
+    }
+
+    // ---------- CASE CARDS ----------
+    // The stack itself is entirely CSS: position:sticky with a per-card top
+    // offset. Nothing below writes a transform to a card, to a pinned element,
+    // or to anything that is meant to hold still — the compositor owns all of
+    // that, exactly as it does for the wordmark.
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.hp-case'));
+    var casesEl = document.getElementById('hp-cases');
+    // Owned by the stylesheet so the shipped value and the audited value are
+    // the same value.
+    var scrimMax = casesEl
+      ? parseFloat(getComputedStyle(casesEl).getPropertyValue('--scrim-max'))
+      : 0.3;
+
+    cards.forEach(function(card, i) {
+      // One-shot entrance. once:true, so this costs nothing per scroll frame.
+      reveal(card, [
+        { els: [card.querySelector('.hp-case__head')], y: 24, duration: 0.9 },
+        { els: [card.querySelector('.hp-browser, .hp-case__phones')],
+          y: 32, duration: 1.1, at: 0.1 }
+      ]);
+
+      // The only scroll-mapped effect on the stack: the card being covered
+      // dims as the next one climbs over it. One element, one property,
+      // opacity, on its own compositing layer — three writes per frame across
+      // the whole section, against the 119-209 per frame that made the
+      // wordmark shake when GSAP was pinning it.
+      var next = cards[i + 1];
+      var scrim = card.querySelector('.hp-case__scrim');
+      if (REDUCED || !next || !scrim) return;
+      // The ramp runs from the moment the next card's top edge reaches this
+      // card's bottom edge - the first instant of overlap - to the moment it
+      // comes to rest on top. Anchoring it to the viewport instead started the
+      // dim while this card was still fully in view and nothing was covering
+      // it. Functions, so the offsets are re-read on refresh.
+      function stickTop(el) {
+        return parseFloat(getComputedStyle(el).top) || 0;
+      }
+      gsap.fromTo(scrim, { opacity: 0 }, {
+        opacity: scrimMax || 0.3,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: next,
+          invalidateOnRefresh: true,
+          start: function() {
+            return 'top ' + (stickTop(card) + card.offsetHeight) + 'px';
+          },
+          end: function() { return 'top ' + stickTop(next) + 'px'; },
+          scrub: true
+        }
+      });
+    });
+
+    // ---------- FOOTER ----------
+    var footer = document.getElementById('hp-footer');
+    if (footer) {
+      reveal(footer, [
+        { els: footer.querySelectorAll('.hp-eyebrow--rule, .hp-footer__title'), y: 30, stagger: 0.1 },
+        { els: footer.querySelectorAll('.hp-footer__lede, .hp-footer__ctas, .hp-footer__base'), y: 24, stagger: 0.09, at: 0.3 }
+      ]);
+    }
+
+    ScrollTrigger.refresh();
+
+    var resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() { ScrollTrigger.refresh(); }, 180);
+    });
+  }
+
+  function init() {
+    try {
+      build();
+      sizeStack();         // before ScrollTrigger measures anything
+      revealNav();
+      initBackToTop();
+      initCue();
+      initHero();          // starts the cursor field once the entrance lands
+      initScrollScenes();
+
+      // Webfont metrics change where the description wraps, which changes the
+      // offsets. Re-measure once they are in, and on resize.
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function() {
+          sizeStack();
+          if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+        });
+      }
+      var stackResize;
+      window.addEventListener('resize', function() {
+        clearTimeout(stackResize);
+        stackResize = setTimeout(function() {
+          sizeStack();
+          if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+        }, 160);
+      });
+      console.log('HP ' + VERSION + ' ready');
+    } catch (err) {
+      console.error('HP ' + VERSION + ' error:', err);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
