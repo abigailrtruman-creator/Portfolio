@@ -3,7 +3,60 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Abbie Truman — Local Preview</title>
+
+<!-- Everything from here to the <title> is document metadata, and it sits ABOVE
+     the title deliberately: build-injection.py cuts the file at the <title>
+     line, so none of this reaches the Squarespace build. That is correct — a
+     code injection cannot own the page's title, description, canonical or
+     icons, because Squarespace emits its own. It belongs to this document.
+
+     The description is 157 characters, drafted down from the hero's own copy so
+     the words in a search result are hers. It is the statement's two opening
+     sentences verbatim plus a shortened close; the full statement is 184
+     characters, which would be truncated in a snippet.
+     Both the title and the description are pending the owner's approval. -->
+<meta name="description" content="Seven years in, from consultancy pace to in-house depth. I design, I lead, and I invest in the people.">
+<link rel="canonical" href="https://abbietruman.vercel.app/">
+
+<!-- Open Graph and Twitter, so a link she sends a hiring manager unfurls as her
+     hero instead of as a bare URL. Absolute URLs throughout: scrapers do not
+     resolve relative paths against the page they found them on.
+     og:image is a static PNG and has to be. No scraper runs JavaScript, and
+     this page builds its hero in JS, so the card is a photograph of the hero
+     rather than the hero itself — see build-og-image.py, which takes it, hashes
+     it and rewrites the two URLs below. It has to be retaken whenever the hero
+     copy changes. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Abbie Truman">
+<meta property="og:url" content="https://abbietruman.vercel.app/">
+<meta property="og:title" content="Abbie Truman — Product Design Leader in the UK">
+<meta property="og:description" content="Seven years in, from consultancy pace to in-house depth. I design, I lead, and I invest in the people.">
+<meta property="og:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.86f41f1d.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Abbie Truman's homepage: her photograph and name above her opening statement, white on near-black.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Abbie Truman — Product Design Leader in the UK">
+<meta name="twitter:description" content="Seven years in, from consultancy pace to in-house depth. I design, I lead, and I invest in the people.">
+<meta name="twitter:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.86f41f1d.png">
+<meta name="twitter:image:alt" content="Abbie Truman's homepage: her photograph and name above her opening statement, white on near-black.">
+
+<!-- The circular AT monogram, built by build-favicon-at.py (prefix 'atc').
+     The PNGs are content-hashed because vercel.json serves /assets/*
+     immutable for a year; favicon.ico is at the root, where that header does
+     not apply, because browsers request /favicon.ico by default and that path
+     cannot carry a hash. It is a copy of the staged favicon-atc.ico.
+     build-favicons.py still writes the rejected photograph straight to
+     /favicon.ico, so it must not be run against this tree. -->
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-atc-16.7a5e6b0e.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-atc-32.7a5e6b0e.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-atc-180.7a5e6b0e.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-atc-192.7a5e6b0e.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-atc-512.7a5e6b0e.png">
+
+<title>Abbie Truman — Product Design Leader in the UK</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,11 +86,15 @@
                     the hero statement, the wordmark, case titles, section
                     ledes, the footer line. 800 for short headlines, 700 for
                     multi-line statements so long runs don't go blobby.
+                    The hero statement is the exception and takes 500: it is
+                    the longest run of display type on the page, and at four
+                    sentences the weight that stops a headline going blobby is
+                    itself the thing making it a wall. Nothing else varies
+                    inside it — one weight, one size, one colour — because the
+                    blank line at hp-hero__sentence does the separating.
          BODY/UI  → Inter. Every sentence you actually read, plus all labels,
                     eyebrows, tags, nav and buttons. Where a sentence needs a
                     word lifted out of it, that is Inter 500 in full white.
-                    The hero's support paragraph deliberately has none: it is
-                    one flat grey from end to end.
 
        There is no serif and no accent face. Instrument Serif italic used to
        carry one phrase per section; the sections that held those phrases were
@@ -89,7 +146,16 @@
     background: rgba(255,255,255,0.3);
   }
 
-  /* ---------- NAV (floating pill) ---------- */
+  /* ---------- NAV (floating pill) ----------
+     Content-width and centred at every width: no width is set anywhere, so the
+     pill is only ever as long as the brand and the links inside it. The phone
+     block's max-width is a guard against the screen edges, not a width.
+
+     It should not be stretched to the page's column at any breakpoint. A pill
+     wide enough to push the two groups to opposite ends leaves the brand divider
+     stranded after her name, separating a group from a few hundred pixels of
+     nothing, and the two ends stop reading as a pair. Hugging is what keeps the
+     divider doing its job. */
   .hp-nav {
     position: fixed;
     top: 28px;
@@ -98,7 +164,28 @@
     display: flex;
     align-items: center;
     gap: 24px;
-    padding: 12px 14px 12px 16px;
+    /* Left padding equals the vertical padding, which is what makes the space
+       around the avatar even rather than merely equal-looking in the stylesheet.
+       The pill's ends are fully round, so the end cap's radius is half the height,
+       which is the avatar's radius plus this padding. The avatar is therefore
+       concentric with the cap only when the left padding matches the vertical one,
+       and then the gap is the same at the far left as it is above and below.
+
+       At 12px vertical against 16px left it was not: 13px over and under, 17px at
+       the extreme left, and because the cap curves away between the two the gap
+       visibly pinched at the avatar's upper-left shoulder. Both are 15px now, so
+       the surround is a constant 16px around the whole end.
+
+       15 against a 46px avatar, down from 18 against 52: the pill was 90px deep
+       and read as a bar rather than as something floating over the page. The two
+       numbers move together or not at all — dropping the padding alone would
+       leave the avatar 3px off the centre of the round end.
+
+       This only holds while the avatar is the tallest thing in the row. Below
+       900px the link's 44px tap-target floor is taller than the avatar, so it is
+       centred in the row and the left padding has to carry that offset too; see
+       those blocks. */
+    padding: 15px 11px 15px 15px;
     background: rgba(18,18,22,0.55);
     border: 1px solid rgba(255,255,255,0.09);
     border-radius: 999px;
@@ -118,12 +205,24 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    padding-right: 24px;
+    /* Closes the brand group, and sits the same distance from her name as it does
+       from `CV`. That distance is not one value: on the name's side it is this
+       padding, but on the label's side it is the pill's gap plus the link's own
+       left padding, 24 + 18 here. Setting the padding to 24 made the two inputs
+       look equal in the stylesheet while the line sat 18px off centre between the
+       two words, which is why this is 42 and why it is derived rather than
+       matched by eye. Both inputs step down with the pill, so there is a value
+       per breakpoint; if either moves, this moves with it.
+
+       It also costs the two arrows room on a phone — this padding plus the rule
+       itself — which is why the width the arrows are dropped at is measured with
+       it in place, not without. */
+    padding-right: 42px;
     border-right: 1px solid rgba(255,255,255,0.09);
   }
   .hp-nav__avatar {
-    width: 52px;
-    height: 52px;
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
     object-fit: cover;
     border: 1px solid rgba(255,255,255,0.16);
@@ -182,6 +281,15 @@
      to close on — the cue is too small to hold the bottom of a full-height
      section by itself — without splitting anything anyone reads. */
   .hp-hero {
+    /* The hero's body size. The greeting and the scroll cue are the only two
+       pieces of non-display type left in here, and the owner's instruction is
+       that they read as one size — so it is declared once and they both take it,
+       rather than each carrying a curve of its own that has to be kept in step
+       by hand. That is what had gone wrong: the cue ran clamp(12px, 0.85vw,
+       14px) against copy at clamp(16px, 1.3vw, 21px), which measured 12.24px
+       against 18.72px at 1440.
+       The curve is the greeting's own, unchanged. */
+    --hero-body: clamp(17px, 1.5vw, 24px);
     position: relative;
     min-height: 100vh;
     max-width: var(--shell);
@@ -197,18 +305,42 @@
        guarantees the copy never crowds the rule, and both spacer tracks
        collapse to nothing on short viewports where there is no slack to divide
        in the first place.
-       The floor is set for body copy rather than display type: the support
-       paragraph now ends the block, and a 16-21px line needs more clearance
-       above a hairline than a 74px glyph does to avoid looking snagged on it. */
+       The floor is generous for display type — the statement ends the block, and
+       a 74px glyph needs less clearance above a hairline than body copy did — but
+       it is kept as-is so the open field stays the hero's largest interval. */
     grid-template-rows: 1.55fr auto minmax(clamp(48px, 7vh, 96px), 1fr) auto;
     gap: 0;
   }
+  /* Ambient glow. The copy is capped at --shell, but light in a room is not,
+     and painting the haze inside that same box put a hard vertical edge down
+     the page wherever the window was wider than the cap — the gradient still
+     had a third of its strength left when it hit the hero's left edge, so it
+     stopped dead rather than fading out.
+     So the painted area is full-bleed while the geometry stays measured off
+     the capped box. `at 10%` of a 100vw box would slide the light rightwards
+     as the window grew and unstick it from the headline, so the focal point is
+     given as an offset from the centre the hero is already aligned to instead:
+     50% - 0.40 * measure is arithmetically the old 10% of the measure, and the
+     50% is the element's own centre, so it tracks the copy rather than the
+     window. Vertical stays in percentages — the box height is unchanged.
+     Not position:fixed: this has to scroll with the hero inside .hp-root. */
   .hp-hero::before {
+    /* The hero's own width. Reading it off the viewport is a few px out below
+       the cap on platforms with classic scrollbars, which is nothing against a
+       ~540px falloff, and above the cap — where the seam was — it is exact. */
+    --glow-measure: min(100vw, var(--shell));
     content: '';
     position: absolute;
-    inset: 0;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    margin-left: -50vw;
     pointer-events: none;
-    background: radial-gradient(ellipse 62% 52% at 10% 22%, rgba(94,116,178,0.13) 0%, transparent 68%);
+    background: radial-gradient(
+      ellipse calc(0.62 * var(--glow-measure)) 52%
+      at calc(50% - 0.40 * var(--glow-measure)) 22%,
+      rgba(94,116,178,0.13) 0%, transparent 68%);
   }
   /* The copy block. `gap` is the greeting-to-statement interval, deliberately
      the tightest one in the hero so the greeting reads as a lead-in rather than
@@ -222,7 +354,7 @@
   }
   .hp-hero__greeting {
     margin: 0;
-    font-size: clamp(17px, 1.5vw, 24px);
+    font-size: var(--hero-body);
     line-height: 1.3;
     letter-spacing: -0.01em;
     font-weight: 500;
@@ -234,13 +366,32 @@
     margin: 0;
     max-width: 30ch;
     font-family: var(--ff-display);
-    font-weight: 700;
+    /* 500, against 700-800 everywhere else the display face is used. Three
+       sentences at 700 set a slab with no air in it — the weight that keeps a
+       one-line headline from going blobby is what makes a six-line one heavy.
+       At 500 the same copy reads as something said rather than announced, which
+       is the register the sentences are written in. */
+    font-weight: 500;
     /* One curve from phone to desktop. A pure-vw size needed a separate mobile
        override, and that override capped higher than the desktop curve between
        ~750px and ~1150px, so the statement got *smaller* as the viewport grew
-       past 900px. This is pinned to the established 390px and 1920px sizes and
-       interpolates everything between. */
-    font-size: clamp(30px, 24.7px + 2.57vw, 74px);
+       past 900px, so this interpolates a single line between the two ends.
+       Both ends came down ~12% when the statement lost the support paragraph and
+       grew to three sentences: 74px was set when this was one sentence of ~100
+       characters, and the same size across 184 characters is six lines of
+       display type filling the hero rather than a headline sitting in it.
+
+       The 6.5vh term is a ceiling, not a second curve. Sized on width alone, a
+       short wide window — 1280x720, a part-height browser on a 1080p monitor —
+       got desktop-sized type with no room under it, and six lines plus a blank
+       line pushed the scroll cue below the fold. min() takes whichever of the
+       two is smaller, so height only ever binds when it is the scarce dimension:
+       at 6.5vh a 1080-tall viewport asks for 70px and gets the 65px cap, while a
+       720-tall one asks for 47px and gets it. On phones the width term is always
+       the smaller of the two by a wide margin, so this never engages there and
+       the type cannot jump when mobile browser chrome collapses and vh changes
+       under it. */
+    font-size: clamp(26px, min(21.7px + 2.25vw, 6.5vh), 65px);
     line-height: 1.03;
     letter-spacing: -0.038em;
     color: var(--ink);
@@ -253,27 +404,56 @@
   .hp-hero__keep { white-space: nowrap; }
   .hp-hero__char { display: inline-block; transform: translateZ(0); }
 
-  /* Body measure, so it sets as a paragraph under the statement rather than
-     running the full width of the display type above it. The step down from
-     the statement is larger than the greeting's step up into it — display type
-     dropping to 16-21px body copy needs the optical separation — but it is
-     still a fraction of the open field below, so the paragraph belongs to the
-     copy above it and not to the rule beneath.
-     One flat tone all the way through, and it is the body grey rather than
-     white: `--ink-1` on `--bg` measures 10.8:1, so the whole paragraph clears
-     WCAG AA with room to spare at every size the clamp produces. */
-  .hp-hero__support {
-    margin: clamp(10px, 1.4vh, 18px) 0 0;
-    max-width: 46ch;
-    font-size: clamp(16px, 1.3vw, 21px);
-    line-height: 1.5;
-    letter-spacing: -0.011em;
-    color: var(--ink-1);
+  /* One sentence per block, which is the only way the four-beat structure of the
+     statement survives the width sweep. Left to flow as one paragraph the
+     sentence breaks land wherever the measure runs out: at 1920 and 1152 they
+     happened to fall at line ends and the statement read as two stanzas, while
+     at 1280-1680 the same copy set as `except the problems. I design, I lead,
+     and I` — a new sentence starting three words from the end of a line, which
+     is the one place a full stop cannot be seen. The copy is written as four
+     escalating beats, so a visitor who never sees them has been served
+     different writing to the one that was approved.
+     Blocks, not <br>: a forced break is a decision about where a line ends,
+     which is width-dependent and would need a value per breakpoint. This is a
+     decision about where a sentence ends, which is width-independent, so it
+     needs stating once. Within each block the text still wraps normally, and
+     hp-hero__keep handles the phrases that must not come apart when it does. */
+  .hp-hero__statement-inner,
+  .hp-hero__sentence { display: block; }
+  /* The blank line is the only device marking the seam, and it is enough. The
+     setup was briefly set at --ink-1 against the last sentence's full white, and
+     the objection to it is not that it was hard to see: it is that a true,
+     specific sentence about where she has worked does not need apologising for
+     by being dimmed. One colour, one weight, one size — the space says
+     everything the contrast step was saying.
+     It also leaves the statement with exactly one tone, which is what makes the
+     greeting above it legible as a different kind of line. */
+  .hp-hero__sentence:last-child {
+    /* A full blank line, so the setup and the point read as two blocks rather
+       than as one block with a wider gap in it. `lh` is exactly one line at any
+       line-height, which matters because the phone override sets 1.06 against
+       the desktop's 1.03; the em value above it is the fallback that gets within
+       a pixel or two where `lh` is unsupported. */
+    margin-top: 1.05em;
+    margin-top: 1lh;
   }
+  /* Balanced within each block, because a block per sentence fixes where the
+     full stops land but not how the words inside them distribute. Greedy
+     wrapping fills each line to the measure and hands the remainder to the last
+     one, which is how a full line ends up sitting above a stub; balancing evens
+     them instead.
+     Safe here specifically because these blocks are short: the algorithm is
+     capped at six lines per block in Chromium, and these set as two lines each
+     at every width above the phone band and three on a phone, so it never
+     silently stops applying. Where it is unsupported the hp-hero__keep
+     runs still hold the phrases that must not come apart, which is the floor
+     this is an improvement on rather than a dependency. */
+  .hp-hero__sentence { text-wrap: balance; }
+
   /* The closing band: the hairline and the cue under it, and nothing else.
      The cue sits on the same left axis as the copy, so the whole hero reads
-     down one column — greeting, statement, paragraph, rule, cue — instead of
-     the eye being thrown to the opposite corner at the end of it. */
+     down one column — greeting, statement, rule, cue — instead of the eye being
+     thrown to the opposite corner at the end of it. */
   .hp-hero__lower {
     grid-row: 4;
     position: relative;
@@ -283,49 +463,106 @@
     border-top: 1px solid var(--rule);
   }
 
-  /* Scroll cue. Purely typographic — a tracked-out label and an arrow, no
-     container. The ring it used to sit in was the only circle anywhere on the
-     page and it read as a button the cue is not. Weight now comes from the
-     type: a heavier, larger, brighter label and a bigger arrow, so the corner
-     is still held down and the bottom band keeps its second anchor. */
+  /* Scroll cue. Purely typographic — one word and an arrow, no container. The
+     ring it used to sit in was the only circle anywhere on the page and it read
+     as a button the cue is not.
+
+     The label takes --hero-body rather than a smaller curve of its own, so it is
+     the greeting's size exactly: 21.6px against 21.6px at 1440, 15px against
+     15px on a phone. It was 12.24px at 1440, and the owner read that as the word
+     being wrong rather than as a label.
+     Matching the greeting is not just the nearest available number now that the
+     support paragraph has gone — it is the better composition. The greeting and
+     the cue are the two small lines that top and tail the statement, and at one
+     size they read as a deliberate pair bracketing the display type instead of
+     as two different afterthoughts.
+
+     Same tone as well as same size, and the arrow is included in it: a grey word
+     beside a white arrow is the icon-with-a-caption reading that the stem-weight
+     matching below exists specifically to defeat, so the pair takes one colour
+     and the arrow inherits it rather than declaring its own.
+     --ink-2 rather than --ink because nothing here is a control any more — the
+     click handler is gone — and full white on the one line in the hero that does
+     nothing was the loudest thing at the bottom of the composition. At 0.52 over
+     --bg it measures 5.65:1, so it clears WCAG AA for body text at every size
+     the clamp produces, which is the floor that matters now that this is being
+     read rather than pressed. */
   .hp-hero__cue {
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
-    gap: clamp(11px, 0.95vw, 16px);
-    /* No ring means no 44px box; the tap target has to be declared. */
+    /* In em, like the arrow and the bob below: one size governs the whole pair,
+       so the cue is resized by changing font-size and nothing else. */
+    gap: 0.8em;
+    /* 44px, and no longer as a tap target — nothing here is tappable. It is the
+       height the closing band was composed against, so it stays as the band's
+       measure rather than letting the row collapse to the cap height of one
+       word and pull the hairline down onto the copy. */
     min-height: 44px;
-    padding: 0;
-    background: none;
-    border: 0;
-    font-family: var(--ff-body);
-    font-size: clamp(12px, 0.85vw, 14px);
+    font-size: var(--hero-body);
+    /* 600 against the greeting's 500. This no longer says `control`, because
+       there is no control: it says this line is not more of the copy above it.
+       It is now the only thing making that distinction — same size as the
+       greeting, and now the same colour too — so it carries more than it did
+       when the colour was helping. */
     font-weight: 600;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
+    /* Sentence case, on the owner's instruction: one capital and no shouting.
+       The 0.01em of tracking that came down with the caps has gone with the size
+       it was calibrated for — it was the residue that kept six letters at
+       12-14px from setting tight, and at 16-21px the word needs no help. */
     color: var(--ink-2);
-    cursor: pointer;
-    transition: color 0.3s ease;
   }
-  .hp-hero__cue:hover { color: var(--ink); }
+  /* No cursor, no hover, no focus ring, because there is nothing to focus: this
+     is a label on a <span aria-hidden>, not a button. The pointer cursor and the
+     focus-visible outline both went with the click handler rather than being
+     left to advertise an interaction that no longer exists — a pointer cursor
+     over dead text is a worse lie than no affordance at all, and an outline on
+     an element that cannot be reached by keyboard can never be drawn.
+     The scroll it used to perform is not replaced. It duplicated the gesture the
+     visitor is already making, and the section it jumped to is the very next
+     thing on the page. */
   .hp-hero__cue-arrow {
     display: block;
-    width: clamp(19px, 1.55vw, 25px);
-    height: clamp(19px, 1.55vw, 25px);
-    color: var(--ink);
-    /* Constant velocity, symmetric fade. The old loop eased the whole cycle,
-       which made the arrow crawl where it was invisible and dart where it was
-       not — that was the "weird". Linear timing plus fades of equal length at
-       both ends gives one calm continuous drift, and because the arrow is
-       fully transparent at both extremes the wrap point cannot be seen. */
-    animation: hp-cue-drift 3.2s linear infinite;
+    /* A share of the label, not a clamp of its own. The two independent clamps
+       were only coincidentally in step: 1.55vw against 0.85vw made the arrow
+       1.82x the label at 1440, while the 19px and 12px floors made it 1.58x on
+       a phone.
+       1.35 is the share at which the arrow's drawn line and the label's stems
+       come out the same weight. The glyph is stroke-width 2 of a 24 viewBox, so
+       its line is 2/24 of this number — 0.1125em — and Inter 600's stem is
+       0.113em. Being a ratio it holds at every size the clamp produces: 2.43px
+       against 2.44px at 1440, 1.69px against 1.70px on a phone.
+       That is what makes the two read as one object instead of as an icon with a
+       caption. Carried over whole at 1.82 the arrow's line is a third heavier
+       than the word it belongs to, which is the imbalance that made the label
+       look undersized in the first place — the arrow was doing the holding
+       because the word was too small to. */
+    --arrow: 1.35em;
+    width: var(--arrow);
+    height: var(--arrow);
+    /* No colour of its own: the SVG strokes with currentColor, so it takes the
+       label's --ink-2 by inheritance. Restating it here would be a second place
+       to forget when the pair's colour changes — which it now has. */
+    /* The bob: one arrow, always visible, floating up and down on a fixed
+       vertical axis. It replaces a drift that travelled the arrow through a
+       fade at each end and wrapped invisibly; that version was built to hide a
+       loop the owner disliked, and what she has asked for instead has no loop
+       to hide — the motion is its own return, so nothing fades and nothing
+       wraps.
+       Amplitude is a tenth of the arrow's own size, which is the difference
+       between breathing and bouncing: 2.2-2.8px either way, so the arrow is
+       never anywhere but where it belongs and the movement is only ever visible
+       as movement. Written off --arrow rather than restated as its own clamp, so
+       the tenth stays a tenth if the pair is ever resized again.
+       Eased at both ends, 2.8s per round trip — the pace of a slow breath, and
+       slow enough not to compete with the copy above it. */
+    --bob: calc(var(--arrow) / 10);
+    animation: hp-cue-bob 2.8s ease-in-out infinite;
   }
   .hp-hero__cue-arrow svg { width: 100%; height: 100%; display: block; }
-  @keyframes hp-cue-drift {
-    0%   { transform: translateY(-60%); opacity: 0; }
-    20%  { opacity: 1; }
-    80%  { opacity: 1; }
-    100% { transform: translateY(60%); opacity: 0; }
+  @keyframes hp-cue-bob {
+    0%, 100% { transform: translateY(calc(-1 * var(--bob))); }
+    50%      { transform: translateY(var(--bob)); }
   }
 
   /* ---------- WORDMARK (3 rows converge → scale down) ----------
@@ -389,7 +626,27 @@
        There is deliberately no px floor — a fixed floor overflows narrow
        screens, which is what clipped the mark below ~470px. */
     font-size: min(13.5vw, 28vh, 210px);
-    line-height: 1;
+    /* Optically centred glyphs in a row box that is still exactly one em tall.
+       Both halves of that matter.
+       Manrope's ascent and descent do not straddle the em evenly, and "Selected
+       Work" has nothing below the baseline but the overshoot of its round
+       letters, so at line-height:1 the row's box carries 0.148em of empty space
+       above the glyphs and 0.102em below them: measured, 28.8px against 19.8px
+       at the 194px desktop size. The glyphs therefore sit 4.5px low in their
+       own box, which is what makes the middle row read as hanging below centre
+       between its neighbours — the boxes are the page's own black, so the only
+       thing the eye can measure is where the ink sits inside them.
+       Half of that difference, 0.0232em, is taken out of the line-height, which
+       moves the baseline up by exactly that much and leaves 0.125em of space
+       top and bottom. `height` then puts the em back, because the row's own
+       height is the distance GSAP moves it: the convergence is yPercent 100,
+       a percentage of this element, and it has to land each outer row exactly
+       on the middle one. Trimming the box instead — text-box-trim, which this
+       Chrome does support — cannot be used for that reason: it changes the
+       height it is trimming, and the pitch and the travel are the same number.
+       Not a transform either, for the same reason: GSAP owns that. */
+    height: 1em;
+    line-height: 0.9535;
     letter-spacing: -0.05em;
     color: #fff;
     white-space: nowrap;
@@ -400,6 +657,108 @@
   }
   /* Middle row sits above the outer two so they slide in behind it. */
   .hp-wordmark__row:nth-child(2) { z-index: 2; }
+
+  /* ---------- WHERE YOU ARE IN THE SET ----------
+     An index of the work, held still in the left quarter while the cards move
+     past it. It exists because the carousel says "there is a set here" and then
+     leaves you to guess how big the set is: three cards look the same as thirty
+     until you have scrolled to the end of them.
+
+     Numerals only, down the right. It carried the project names too, and they
+     were the reason it could have a quarter of the page — but they were also
+     the third place the same five words appeared, after the card's own heading
+     and the page each one opens. Read down the column and it was an index of a
+     set you were already looking at. What is left is the part the cards
+     genuinely cannot say: how many there are, and which one this is.
+
+     On the right rather than the left, and set flush to the page's own right
+     margin, so it reads as a note in the margin of the work rather than as a
+     column the work is indented from. That is also what let the column give up
+     everything it was holding: on the left it was the thing you met first and
+     had to look like it deserved the space, and in the margin it can be 24px
+     of type and nothing else.
+
+     No separators, no ends: five numerals at two sizes, and the lit one is
+     where you are. Everything else was furniture, and every rule that came out
+     made the remaining ones look more deliberate until there were none left.
+
+     aria-hidden, and it has to be. It changes as you scroll, and a live index
+     that announces itself every time a card passes the middle of the screen is
+     noise over the top of the headings that carry the same names properly. */
+  .hp-count {
+    grid-column: 2;
+    position: sticky;
+    /* The list is centred on the card it is labelling rather than parked near
+       the top, because with five rows it is tall enough that a top-aligned
+       block would sit against the card's heading and read as part of it.
+
+       vh and not 50%. A percentage inset on a sticky box resolves against its
+       containing block, which here is the whole card stack — three cards deep,
+       so 50% is roughly 1300px and the rail would stick somewhere below the
+       fold and never be seen. The translate is what does the centring: the
+       inset puts its top edge on the middle of the screen, and the transform
+       pulls it back up by half its own height, whatever that turns out to be
+       once there are five rows in it. */
+    top: 50vh;
+    transform: translateY(-50%);
+    /* Nothing here navigates. It reports where you are, and a pointer cursor
+       over it would promise a jump it does not make. */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1);
+  }
+  .hp-count.is-on { opacity: 1; }
+
+  .hp-count__list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* The line box is a fixed 22px rather than a multiple of the type, so the
+     numeral inside it can change size without the rows below it moving. A
+     unitless line-height would be recomputed against the lit row's larger
+     font-size and push the rest of the column down every time the current card
+     changed, which is a list rearranging itself to report that nothing about it
+     has changed. */
+  .hp-count__row {
+    line-height: 22px;
+    padding: 11px 0;
+    /* Flush right, so the column has a clean edge against the page margin and
+       the lit numeral grows leftwards into the empty space rather than pushing
+       that edge around as it changes size. */
+    text-align: right;
+    color: var(--ink-3);
+    transition: color 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .hp-count__row.is-now { color: var(--ink); }
+
+  /* The lit numeral grows, which is what the name used to do. Brightness alone
+     was enough when it was lighting a word; on two digits it is a difference
+     you have to be looking for, and this rail is meant to be read out of the
+     corner of the eye.
+
+     font-size is not composited, so this is a paint on five two-character
+     strings and nothing else. A transform would be cheaper and would scale the
+     stroke weight along with the glyph, which at this size reads as the numeral
+     getting bolder rather than larger. */
+  .hp-count__n {
+    display: block;
+    font-family: var(--ff-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    /* Tabular, so 01 and 11 are the same width and the column keeps one edge. */
+    font-variant-numeric: tabular-nums;
+    opacity: 0.6;
+    transition: font-size 0.5s cubic-bezier(0.16,1,0.3,1),
+                opacity 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .hp-count__row.is-now .hp-count__n {
+    font-size: 18px;
+    opacity: 1;
+  }
 
   /* ---------- CASE STUDY CARDS ----------
      Each card is one image the owner supplied, with three pieces of text laid
@@ -425,21 +784,71 @@
     /* The card fills the shell again. Nothing constrains it from the height
        any more: the width cap that used to live here existed only so three
        cards could stack inside one viewport, and there is no stack. */
+    /* The section is two columns from 901px up: the cards, then the index that
+       counts them, down the right-hand side. Named here because three separate
+       things need the same arithmetic — the grid, the card's own width cap and
+       the corner radius — and a card that disagreed with the column it sits in
+       would be a scrollbar.
+
+       The index column is as narrow as five two-digit numerals need, where it
+       used to be a quarter of the page. A quarter was the right size for a rail
+       carrying five project names; carrying numerals, it was holding back 250px
+       of the card to set 24px of type. Everything it gives up goes to the
+       artwork, which is now at its 1120px cap on any desktop rather than 200px
+       short of it. */
+    --content-w: calc(min(100vw, var(--shell)) - 2 * var(--pad-x));
+    /* Written against --content-w rather than as a 4.5% column, so this and the
+       card width below are the same expression rather than two that have to be
+       kept saying the same thing. A percentage would be the shorter way to say
+       it in the grid and could not be reused here, because a percentage inside
+       --card-w-px would resolve against whatever property it eventually lands
+       in — and it lands in a corner radius. */
+    --rail-w: clamp(44px, calc(0.045 * var(--content-w)), 72px);
+    --rail-gap: clamp(28px, 3.4vw, 64px);
+    /* What the grid leaves for the cards: everything but the index and the gap.
+       --card-w below reaches the same number through 100%, but the radius needs
+       it as a length rather than as a share of a box it is not inside. */
     --card-w-px: min(
-      calc(min(100vw, var(--shell)) - 2 * var(--pad-x)),
+      calc(var(--content-w) - var(--rail-w) - var(--rail-gap)),
       1120px
     );
     --card-w: min(100%, 1120px);
-    /* 56/1760 of the card, taken from --card-w-px rather than in cqw because
-       this applies to the query container itself, where container units resolve
-       against an ancestor container instead of against the element.
-       It has a second job now. Her artwork's corners are rounded against black
-       rather than against transparency, so the card has to clip them or three
-       near-black wedges sit on the page's #0a0a0c. Her baked radius measures
-       30-32px of 1024 (0.030 of the width) and this is 0.0318, so the clip
-       lands just outside her curve and no black survives at the corner. */
-    --card-r: max(16px, calc(var(--card-w-px) * 0.031818));
+    /* Taken from --card-w-px rather than in cqw because this applies to the
+       query container itself, where container units resolve against an ancestor
+       container instead of against the element.
+
+       This does not set the corner the visitor sees. The artwork's own corner
+       does, because border-radius here is a clip and a clip can only round a
+       corner further than the picture already is. What this has to do is stay
+       just outside the baked curve, or the wedge of black the WebP flatten
+       leaves outside it survives and sits on the page's #0a0a0c.
+
+       Both numbers came down together: build-case-images.py now re-cuts the
+       corner at 0.0179 of the width, measured at the midpoint of the curve,
+       where it used to arrive at 0.0281. This is 0.02, which keeps the same
+       12% margin over the artwork that the old pair had.
+
+       The floor is 12px rather than 16. On a phone the top corners are the
+       clip's alone, because the crop takes the artwork's away, so the floor is
+       the corner on the one screen where the proportional term never governs —
+       and 16px was the roundest part of the page at the width where the card
+       is smallest. */
+    --card-r: max(12px, calc(var(--card-w-px) * 0.02));
     --card-gap: clamp(26px, 6.5vh, 78px);
+    /* The two ends of the carousel, declared here so the value that ships and
+       the value the audit reads are the same one, and so a breakpoint can widen
+       the range without the script knowing which band it is in. The base was
+       only ever a fallback inside the script before, which meant the desktop
+       figure was the one number in this effect that could not be found by
+       looking at the stylesheet.
+
+       Both are further from 1 than they were: 0.9 and no dim at all was a
+       change you had to be told about before you could see it. A card arriving
+       at 0.85 and half lit reads as coming forward, and the one at the middle
+       of the screen reads as the one being looked at rather than merely the one
+       in the middle. */
+    --card-scale-min: 0.85;
+    --card-dim-min: 0.5;
     /* Overlay geometry, declared here so the card and its descendants share one
        source for the description's legibility floor. */
     --sp-desc-floor: 19px;
@@ -451,6 +860,67 @@
        at tablet and 72 on a phone, so the first card does not arrive already
        underneath it. */
     padding: clamp(80px, 12vh, 132px) var(--pad-x) clamp(24px, 6vh, 80px);
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--rail-w);
+    column-gap: var(--rail-gap);
+    /* start, not stretch: the rail has to be shorter than its column for
+       position:sticky to have anywhere to travel. Stretched to the full height
+       of the card stack it would be stuck to itself and never move. */
+    align-items: start;
+  }
+  .hp-cases__list { grid-column: 1; min-width: 0; }
+
+  /* Below 901px the rail's quarter is about 170px, which is not a column, it is
+     a margin with type in it. The count survives as the small floating pill it
+     started as: same information, in the only space a phone has going spare.
+
+     Kept here, after .hp-cases rather than up with the rest of the count, so it
+     is later in the sheet than the grid it is switching off. Two rules of equal
+     weight are settled by order, and from above this one only appeared to work:
+     the pill moved, the columns did not, and the cards spent a while laid out
+     in a quarter of a phone.
+
+     It keeps the nav's treatment exactly — same fill, same hairline, same blur
+     — because that is what makes it readable everywhere it has to be. The cards
+     are full-bleed colour and one of them is nearly white, so a bare numeral in
+     the page's ink would disappear over Sofa to Saddle for the whole time that
+     card is on screen. Bottom left, diagonally opposite the nav, so the two
+     pieces of floating furniture are never in the same corner of the eye. */
+  @media (max-width: 900px) {
+    .hp-cases {
+      display: block;
+      --card-w-px: min(var(--content-w), 1120px);
+    }
+    .hp-count {
+      position: fixed;
+      left: var(--pad-x);
+      bottom: clamp(18px, 3.5vh, 34px);
+      /* Under the nav's 100. They never meet, but if a short window brought
+         them close the nav is the one that owns the space. */
+      z-index: 90;
+      top: auto;
+      transform: none;
+      padding: 9px 14px 10px;
+      border-radius: 999px;
+      background: rgba(18,18,22,0.55);
+      border: 1px solid rgba(255,255,255,0.09);
+      backdrop-filter: blur(28px) saturate(1.6);
+      -webkit-backdrop-filter: blur(28px) saturate(1.6);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+    }
+    /* Laid on one line here: 01 02 03 04 05, the current one lit.
+       Brightness does all of it, and the size step the rail uses is dropped —
+       a numeral growing inside a pill this tight would push its neighbours
+       along the row and change the width of the pill itself. In a column there
+       is room for the lit row to be larger; on one line there is not. */
+    .hp-count__list { flex-direction: row; gap: 9px; }
+    .hp-count__row { padding: 0; line-height: 1; }
+    .hp-count__n,
+    .hp-count__row.is-now .hp-count__n {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+    }
   }
 
   .hp-case {
@@ -467,10 +937,10 @@
     margin: 0 auto var(--card-gap);
     border-radius: var(--card-r);
     overflow: hidden;
-    /* The carousel scales this element, so it gets its own compositing layer
-       and the scale is interpolated rather than re-rasterising the artwork
+    /* The carousel scales and dims this element, so it gets its own compositing
+       layer and both are interpolated rather than re-rasterising the artwork
        every frame. */
-    will-change: transform;
+    will-change: transform, opacity;
     transform: translateZ(0);
     backface-visibility: hidden;
   }
@@ -501,10 +971,10 @@
      never engage.
 
      Where a value is a share of TYPE rather than of the card it is written in
-     em, so it survives the floors intact: the chip's 12/24px padding is 0.6em
-     and 1.2em of its own 20px label, and its border is 0.125em of the same.
-     Those ratios hold exactly at every size, floored or not, which px or cqw
-     could not do. */
+     em, so it survives the floors intact: the chip's padding is 0.3em and
+     0.95em of its own label and its border is 0.125em of the same. Those ratios
+     hold exactly at every size, floored or not, which px or cqw could not do —
+     and it is why the chips can be resized by moving one number. */
   .hp-case__link {
     --sp-pad: max(22px, 7.386cqw);       /* 130px */
     --sp-gap: max(18px, 6.818cqw);       /* 120px, text column -> arrow */
@@ -513,7 +983,46 @@
        so the floor is stated in one place. 0.03636 * 100cqw is 3.636cqw, the
        spec's 64/1760. */
     --sp-desc: max(var(--sp-desc-floor), calc(var(--sp-desc-ratio) * 100cqw));
-    --sp-tag: max(12px, 1.136cqw);       /* 20px */
+    /* Well below the spec's 1.136cqw (20px at its 1760 reference), on the
+       owner's instruction twice over: too loud against the sentence they label
+       on desktop, and much too loud on a phone.
+
+       The second complaint was the informative one, because the ratio in here
+       never governed. The card is capped at 1120px, so 1cqw tops out at 11.2px
+       and the floor decides the label at every width below about 1100px — the
+       old max(11px, 1cqw) measured 11px on a 264px card and 11.2px on a 1120px
+       one, which is a constant wearing a proportion's clothes. A constant is
+       the wrong shape for this, because the thing the chip has to stay
+       subordinate to is not constant: the description runs 17.5px on a phone
+       and 40.7px on desktop. So the same 24px pill was 115% of the
+       description's line box on a phone — taller than the sentence it labels —
+       and 50% of it on desktop. It only ever looked right at the top of the
+       range.
+
+       10px with the padding ratios below brings the pill to 20px: 96% of that
+       line box on a phone and 41% on desktop, so it is subordinate at both
+       ends rather than at one. It also takes the row back to one line — at
+       360px the three chips wrapped to two, which is what made the block read
+       as a slab of pills rather than as a label.
+
+       That fixed the loudness and left the scaling: 0.9cqw tops out at 10.08px
+       on the capped 1120px card, so the floor decided the label at every width
+       below about 1110px and the chip measured 10px on a phone and 10px on a
+       desktop. Which is 1.8% of the card it sits on at the top of the range and
+       7.6% of it at the bottom, so the thing that reads as a footnote beside a
+       40px sentence reads as the loudest object on the card beside a 17px one.
+
+       A clamp with both ends written out, so the label is a proportion the
+       whole way rather than a floor pretending to be one. The top is where it
+       already was and the bottom is 8px, on the owner's instruction after
+       seeing a 9px floor and asking for more.
+
+       8px is small, and it is chosen knowing that. What makes it affordable is
+       what these labels are: three or four familiar words, set in white at 500
+       on a saturated fill, on a card whose whole job is already done by the
+       sentence underneath them. They are the last thing on the card anyone
+       needs to read, and on a phone the pill was reading like the first. */
+    --sp-tag: clamp(8px, calc(7.23px + 0.292cqw), 10.5px);
     --sp-arrow: max(26px, 4.091cqw);     /* 72px */
     --sp-textcol: 74.318cqw;             /* 1308px */
 
@@ -599,7 +1108,7 @@
   .hp-case__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.8em;                       /* 16px against a 20px label */
+    gap: 0.75em;                      /* 0.75 of the label */
     margin: 0;
     font-size: var(--sp-tag);
   }
@@ -607,15 +1116,25 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.6em 1.2em;             /* 12px / 24px */
-    border: max(1.25px, 0.125em) solid var(--card-ink);   /* 2.5px */
+    /* Tighter than the 0.4/1.2 the outlined chip inherited from the solid pill
+       it replaced. A solid pill needs the room, because the fill is the shape
+       and the label has to sit inside it; an outline is already the shape, so
+       the same padding just buys empty box. Most of the size that came off here
+       came off the padding rather than the label. */
+    padding: 0.28em 0.78em;           /* 0.28 / 0.78 of the label */
+    /* The floor comes down with the label. At 1.25px it was the one part of the
+       chip that could not shrink, and on the smallest card it was a fifth of
+       the pill's height being spent on its outline. 1px still paints as a
+       hairline and the em term takes over above about a 9px label, so the
+       stroke gains weight with the box rather than in spite of it. */
+    border: max(1px, 0.115em) solid var(--card-ink);
     border-radius: 99999px;
     background: transparent;
     color: var(--card-ink);
     font-family: var(--ff-body);
     font-size: 1em;
     font-weight: 500;
-    line-height: 1.2;                 /* 24px against 20px */
+    line-height: 1.2;
     letter-spacing: -0.004em;
     text-align: center;
     white-space: nowrap;
@@ -689,6 +1208,14 @@
     height: 1px;
     background: var(--rule);
   }
+  /* This eyebrow used to have its dash suppressed, on the grounds that the
+     full-width hairline 90px above had already opened the footer and the dash
+     restated it smaller. Asked for by the owner and reinstated: the dash is not
+     doing the hairline's job of dividing the page, it is marking where a label
+     starts, and it puts the eyebrow's first ink on the same left edge as the
+     hairline, the headline and the copyright row rather than starting the label
+     40px inside them. It is the default from .hp-eyebrow--rule now, so there is
+     no exception here and the footer matches the case study's other eyebrows. */
   .hp-footer__title {
     margin: clamp(22px, 3vh, 40px) 0 0;
     font-family: var(--ff-display);
@@ -856,8 +1383,12 @@
 
   /* ---------- Tablet portrait ---------- */
   @media (min-width: 601px) and (max-width: 900px) {
-    .hp-nav { top: 20px; gap: 16px; padding: 8px 10px 8px 12px; }
-    .hp-nav__brand { padding-right: 16px; gap: 12px; }
+    /* Left matching vertical again, for the even surround described in the base
+       rule. The avatar is 44px here and so is the link's floor, so the row is the
+       avatar's own height and no centring offset is involved. */
+    .hp-nav { top: 20px; gap: 16px; padding: 14px 10px 14px 14px; }
+    /* 16 gap + 14 link padding. */
+    .hp-nav__brand { padding-right: 30px; gap: 12px; }
     .hp-nav__avatar { width: 44px; height: 44px; }
     .hp-nav__name { font-size: 16px; }
     .hp-nav__link { padding: 12px 14px; font-size: 14px; gap: 6px; }
@@ -887,10 +1418,24 @@
     .hp-nav {
       top: 14px;
       gap: 10px;
+      /* Left is vertical + 4, not vertical, because from here down the row is the
+         link's 44px tap-target floor rather than the 36px avatar: the avatar is
+         centred in it and gains 4px above and below on its own. 6 and 10 give an
+         even 11px surround. Left tracks any change to the vertical padding at this
+         breakpoint by that offset, not one for one. */
       padding: 6px 6px 6px 10px;
-      max-width: calc(100vw - 24px);
+      /* A guard, not a width: the pill still hugs, and this only stops a long
+         name taking it to the screen edges. It is close to binding on the
+         narrowest phones, which is what sets the width the arrows drop out at —
+         see the rule at the bottom of the stylesheet.
+
+         Percentage rather than 100vw: vw counts a classic scrollbar and this
+         element's containing block does not, so a narrow window on Windows or
+         Linux would allow the pill 15px more than the screen really has. */
+      max-width: calc(100% - 24px);
     }
-    .hp-nav__brand { padding-right: 12px; gap: 10px; }
+    /* 10 gap + 12 link padding. */
+    .hp-nav__brand { padding-right: 22px; gap: 10px; }
     .hp-nav__avatar { width: 36px; height: 36px; }
     .hp-nav__name { font-size: 14px; }
     .hp-nav__links { gap: 2px; }
@@ -900,19 +1445,39 @@
       min-width: 44px;
       padding: 11px 12px;
       font-size: 13px;
-      gap: 0;
+      /* The arrows are shown at this width now, so the label needs clearing
+         from the glyph again. It was 0 only because there was nothing there. */
+      gap: 4px;
     }
-    .hp-nav__arrow { display: none; }
 
     /* Tighter spacer floors than the desktop rhythm: on a phone the hero is
        close to content-height already, and a generous minimum open field is
        what pushes the cue off the bottom of a small screen. */
     .hp-hero {
+      /* The greeting's phone size, moved onto the property both it and the cue
+         read. It was on .hp-hero__greeting, where it sized only the greeting and
+         left the cue on its own 12px floor.
+
+         Capped against the viewport as well, because the greeting has to hold
+         one line on a phone and at a flat 15px it did not. It needs 353px and
+         a 390px phone gives it 346, so it wrapped at every width from 320px to
+         390px — every phone in common use — and only came together at 402px.
+         Two lines is the wrong shape for it: it is one sentence naming who she
+         is, and split with `in the UK.` alone underneath it reads as a stray
+         fragment below the statement rather than as a line of its own.
+
+         3.5vw is what the measurement asks for, not a guess. 15px still governs
+         from 429px up, and below that the type comes down only as far as the
+         line needs — 13.65px on a 390px phone, 11.2px at 320px — keeping about
+         13px of slack at the narrowest width so a font fallback with wider
+         metrics cannot tip it back onto two lines. The cue comes down with it,
+         which is the whole point of the shared property: they remain one size,
+         as the owner asked. */
+      --hero-body: min(15px, 3.5vw);
       padding: 94px 22px 30px;
       grid-template-rows: 1.5fr auto minmax(24px, 1fr) auto;
     }
     .hp-hero__main { gap: 14px; }
-    .hp-hero__greeting { font-size: 15px; }
     /* Size comes from the base clamp; this only tightens the setting. */
     .hp-hero__statement {
       max-width: none;
@@ -922,11 +1487,6 @@
     /* The cue takes the full width so it still reads as the thing holding the
        bottom of the hero rather than a label tucked into a corner. */
     .hp-hero__lower { align-items: stretch; padding-top: 20px; }
-    .hp-hero__support {
-      margin-top: 16px;
-      font-size: 16px;
-      line-height: 1.5;
-    }
     .hp-hero__cue { justify-content: space-between; width: 100%; }
 
     .hp-cases {
@@ -937,7 +1497,8 @@
          that reads clearly on a desktop is barely a change here — there is no
          surrounding space for the difference to show against. A wider range
          gives the carousel something to say at this size. */
-      --card-scale-min: 0.86;
+      --card-scale-min: 0.82;
+      --card-dim-min: 0.55;
       padding-top: clamp(56px, 9vh, 92px);
       padding-bottom: 64px;
     }
@@ -1057,16 +1618,29 @@
   }
 
   /* Landscape phones. Height is the scarce dimension and width is the
-     plentiful one, so the copy trades one for the other: the statement comes
-     off the desktop curve and the support paragraph spends the extra width,
-     which keeps both to three lines instead of four.
+     plentiful one, so the statement comes off the desktop curve and spends the
+     extra width instead of the extra height.
      Even then there is no room to stack a closing band under the copy — the
      copy block is most of a 390px-tall viewport on its own, and the cue would
      land below the fold, which is the one thing it must never do. So there is
      no void here to anchor and nothing for a rule to close: the copy IS the
      composition, and the cue becomes a corner marker in the space to the right
-     of the paragraph that the short measure leaves empty anyway. */
+     of the statement that the short measure leaves empty anyway. */
   @media (max-height: 560px) and (min-width: 601px) {
+    /* The pill comes down with everything else, because at these heights it is
+       spending the scarce dimension. Its own height plus its offset was taking 118
+       of the 92px the hero waits before starting — the greeting was running under
+       it, by 14px before the padding was evened up and 26px after. Nothing caught
+       that: the height sweep starts at 561px, one pixel above this band.
+
+       Both numbers come down. 12px of offset rather than 28, and 8px of padding
+       rather than 18, which puts the pill's underside at 82px and leaves the
+       greeting the 10px of daylight it had before. Left padding matches the
+       vertical, as everywhere: the surround stays even, at 9px instead of 19. */
+    .hp-nav {
+      top: 12px;
+      padding: 8px 10px 8px 8px;
+    }
     .hp-hero {
       min-height: 0;
       padding-top: 92px;
@@ -1074,8 +1648,25 @@
       grid-template-rows: 0fr auto minmax(20px, 1fr) auto;
     }
     .hp-hero__main { gap: 10px; }
-    .hp-hero__statement { font-size: clamp(30px, 4.3vw, 46px); }
-    .hp-hero__support { margin-top: 10px; max-width: 62ch; }
+    /* Down ~12% with the main curve, so a landscape phone stays in proportion
+       to every other width rather than becoming the one place the statement is
+       still set at its old size. */
+    .hp-hero__statement { font-size: clamp(26px, 3.8vw, 40px); max-width: 62ch; }
+    /* A third of a line rather than a whole one. This was sized against a
+       three-sentence statement, which set six lines here and left the closing
+       band without the 33px a full seam costs: at 1lh the cue landed 9px under
+       the fold on a 390px-tall viewport, which is the one thing this breakpoint
+       exists to prevent.
+       With the middle sentence gone the statement is two blocks of two lines,
+       and the cue now clears the fold at 1lh across this whole band — 17px to
+       spare at its tightest, 601x320. So the tightened seam is no longer forced
+       and is kept as a proportion: a full blank line between two blocks is a
+       third of the hero at these heights. It still reads as the seam, being the
+       only gap in the block and the only device marking it at any width. */
+    .hp-hero__sentence:last-child {
+      margin-top: 0.35em;
+      margin-top: 0.35lh;
+    }
     .hp-hero__lower {
       position: absolute;
       right: var(--pad-x);
@@ -1085,20 +1676,78 @@
     }
   }
 
+  /* The band between the landscape treatment above and the full-height layout.
+     That breakpoint stops at 560px and the height term in the statement curve
+     does not shrink the copy enough to make up the difference, so from 561px to
+     about 655px the cue was landing under the fold — 27px under at 1440x600,
+     47px at 1440x561. A part-height browser window on a laptop and a 1024x600
+     netbook both sit in here, so it is not an exotic size.
+
+     Nothing here touches type size. At these heights every vertical clamp in the
+     hero is already sitting on its floor, and the largest of those floors is the
+     112px top padding, which is there to clear the nav pill — and the pill ends
+     around 76px, so roughly 30px of it is dead space. Spending that, plus the
+     same 0.35lh seam the landscape breakpoint uses, covers the band with room to
+     spare and leaves the statement at the size it is at every other height.
+     Raising the breakpoint ceiling instead was the obvious move and the wrong
+     one: that treatment sets min-height 0 for a viewport the copy fills on its
+     own, so at 1440 wide the hero stopped filling the screen, the next section
+     pushed into the fold and the greeting slid under the nav. Tightening the vh
+     term worked too, but it is paid at every height where that term binds,
+     including the 1440x800 laptop the hero is composed for. */
+  @media (min-width: 601px) and (min-height: 561px) and (max-height: 670px) {
+    .hp-hero { padding-top: 88px; }
+    .hp-hero__sentence:last-child {
+      margin-top: 0.35em;
+      margin-top: 0.35lh;
+    }
+  }
+
   /* ---------- Short viewports ----------
      A landscape phone shows about a third of a card at a time, so a card at the
      centre of the screen is most of what is on screen and the two either side
      are barely in it. Scaling on top of that reads as the page breathing rather
      than as a carousel, so the range comes right in and the gap closes up. */
   @media (max-height: 500px) {
-    .hp-cases { --card-gap: 22px; --card-scale-min: 0.96; }
+    .hp-cases { --card-gap: 22px; --card-scale-min: 0.93; --card-dim-min: 0.7; }
   }
 
   @media (max-width: 400px) {
-    .hp-nav { gap: 8px; padding: 6px 5px 6px 8px; }
-    .hp-nav__brand { padding-right: 9px; gap: 8px; }
+    /* 10 left, not 8: same vertical + 4 as the block above. At 8 the avatar sat
+       2px nearer the end of the pill than it did the top of it, which is the one
+       breakpoint where the surround leaned the other way. */
+    .hp-nav { gap: 8px; padding: 6px 5px 6px 10px; }
+    /* 8 gap + 9 link padding. */
+    .hp-nav__brand { padding-right: 17px; gap: 8px; }
     .hp-nav__name { font-size: 13px; }
     .hp-nav__link { padding: 11px 9px; font-size: 12.5px; }
+    /* Down with everything else around it, and it buys the two arrows some of
+       the room the brand divider takes back. */
+    .hp-nav__arrow svg { width: 12px; height: 12px; }
+  }
+
+  /* Where the arrows genuinely stop fitting, measured rather than assumed. They
+     used to be dropped at 600px, which was far too early. The pill hugs, so the
+     pair costs it width rather than needing space it has not got: with them in,
+     its content comes to 305px, against a max-width allowing 296px at 320px and
+     336px at 360px. Only a 320px screen cannot hold them. Every phone above that
+     keeps them, where before none under 601px did.
+
+     Set at 340 rather than 330, which is where the measurement actually turns.
+     No device sits between 320 and 360, so every width in that gap is free, and
+     stopping at 340 leaves the narrowest real phone that keeps the arrows — 360px
+     — 31px of room, enough that a fallback face with wider metrics cannot push
+     them out.
+
+     Below this the label needs its gap closed again, or it sits out from the edge
+     of a pill with nothing in the space. */
+  @media (max-width: 339px) {
+    .hp-nav__arrow { display: none; }
+    .hp-nav__link { gap: 0; }
+    /* 8 gap + 9 link padding + the 4px the 44px tap-target floor adds either side
+       of `CV`: with the arrow out, the link's content is narrow enough for
+       min-width to bind and centre it, pushing the label further from the line. */
+    .hp-nav__brand { padding-right: 21px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1114,6 +1763,10 @@
        a compositing layer it no longer needs. */
     .hp-case {
       transform: none;
+      /* The dim goes with the scale. A card held at half light is not a
+         gentler version of the effect, it is the page rendering three of its
+         four case studies as though they were disabled. */
+      opacity: 1;
       will-change: auto;
       transition: none;
     }
@@ -1124,13 +1777,28 @@
     .hp-case__arrow { transition: none; }
     .hp-case__link:hover .hp-case__arrow,
     .hp-case__link:focus-visible .hp-case__arrow { transform: none; }
-    /* No loop, but the arrow still has to be visible and legible — the
-       keyframes start and end at opacity 0. */
+    /* The bob is ambient motion with nothing to communicate that the arrow
+       does not already say standing still, so it goes rather than being slowed.
+       transform is cleared as well: without it the arrow would keep whichever
+       end of the travel the animation was cancelled at. */
     .hp-hero__cue-arrow {
       animation: none;
       transform: none;
-      opacity: 1;
     }
+    /* The index is information, not decoration, so it stays — it just stops
+       arriving. Held on rather than left to the scroll trigger, because a rail
+       that fades itself in is doing the one thing this mode is asked not to,
+       and there is nothing gained by hiding an index until you reach it.
+       transform survives, because at desktop it is not motion: it is the
+       translateY(-50%) that centres the sticky block on its own height. */
+    .hp-count {
+      opacity: 1;
+      transition: none;
+    }
+    /* The lit numeral still lights and is still the larger one. Both are how
+       the rail reads at all; it is only the sliding between the two that goes. */
+    .hp-count__row,
+    .hp-count__n { transition: none; }
   }
 </style>
 </head>
@@ -1138,7 +1806,7 @@
 
 <script>
 (function() {
-  var VERSION = 'v55';
+  var VERSION = 'v59';
   console.log('HP ' + VERSION + ' loading...');
   document.documentElement.classList.add('hp-active');
 
@@ -1152,28 +1820,75 @@
   // shaft, which is what the spec's screenshot shows.
   var ARROW_NE_LG = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 20.5L20.5 3.5M6.5 3.5h14V17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg>';
 
-  var AVATAR = 'https://images.squarespace-cdn.com/content/v1/62b5ca6e6bb8d144512e76de/7765e93a-9fb7-49df-aec2-522a5b8e0b96/Firefly_Gemini+Flash_Use+this+exact+person+but+change+her+outfit+to+a+thick+white+t+shirt++648620.png';
+  // Her own file, in her own repo. It was hot-linked from Squarespace's CDN,
+  // which made her face on her own site a dependency on the subscription she is
+  // leaving. Built by build-avatar.py: 156px is 3x the 52px the nav lays it out
+  // at, and the hash is in the name because /assets/* is served immutable.
+  var AVATAR = 'assets/avatar-156.0b96ef89.webp';
+
+  // Copied from her Downloads folder rather than linked from anywhere. One
+  // page, and 6.7MB of it — heavy enough to be worth a re-export, which she
+  // knows about; nothing here can compress a PDF and installing something to
+  // try would be a worse trade than shipping her file as she exported it.
+  //
+  // At the site root, NOT under /assets/, and that is the whole point. She will
+  // replace this file by hand — that is what a re-export is — and /assets/* is
+  // served `immutable, max-age=31536000`, so a plain filename under there hands
+  // anyone who has opened the old CV a year-long copy of it and never asks the
+  // server for another. A hiring manager reading a superseded CV is not a
+  // theoretical failure.
+  //
+  // A content-hashed name is the fix everywhere else in this file, and it is the
+  // wrong one here. The hashed assets are all build outputs: a script renames
+  // them and rewrites these references in the same breath. Nothing can do that
+  // for a PDF she drags out of Figma, so the hash would be hers to maintain, and
+  // the failure when she forgets is silent — the old hashed file is still on
+  // disk, the link still resolves, and it keeps serving last month's CV while
+  // she believes she has replaced it. Stale either way, and harder to spot.
+  // So: a stable name at a path that revalidates. vercel.json gives root-level
+  // PDFs `max-age=0, must-revalidate`, and Vercel serves an ETag with it, so the
+  // check costs a 304 rather than 6.7MB. Same reasoning that keeps favicon.ico
+  // out of /assets/ — see build-favicons.py.
+  //
+  // Root-absolute rather than relative like the assets above it: this one is
+  // pinned to the site root, so it must not resolve against whatever page the
+  // nav is rendered on.
+  var CV = '/abbie-truman-cv.pdf';
+
+  var LINKEDIN = 'https://www.linkedin.com/in/abigail-truman/';
 
   var HERO = {
-    greeting: 'Hey, I&rsquo;m <strong>Abbie</strong> \u2014 a Product Design Leader in the UK.',
-    // The largest type on the page has to be the thing that gets her hired.
+    // Two stops rather than one em dash, so the greeting is built the way the
+    // statement under it is: short declaratives, no connective tissue.
+    //
+    // Two things lift to white: the name and the role. They are the two answers
+    // the line exists to give, and leaving the role grey made the sentence look
+    // like it was introducing her and then trailing off. `A` and `in the UK.`
+    // stay grey — they are the setting, not the substance, and holding them back
+    // is what lets the two white phrases read as a pair rather than as one long
+    // highlighted stretch. The stops sit outside the <strong>s as well:
+    // punctuation belongs to the sentence, not to the phrase it follows.
+    greeting: 'Hey I&rsquo;m <strong>Abbie</strong>. A <strong>Product Design Leader</strong> in the UK.',
+    // The largest type on the page has to be the thing that gets her hired, and
+    // here it is the only copy in the hero, carrying what a support paragraph
+    // used to carry. Two beats, the second twice the length of the first — 9
+    // words then 18 — so it ramps into its payoff rather than opening on a
+    // fragment and then repaying that fragment with two long sentences.
     // Uniform Manrope, no accent: the serif italic that used to close this
     // sentence was dropped on the owner's instruction.
-    // The closing two words are tied together: at 430, 834 and 901 the
-    // statement breaks into four or six lines with "count." alone on the last
-    // one, and a one-word last line in type this large reads as a mistake.
-    statement: 'I&rsquo;ve spent over seven years designing experiences and leading teams in more industries than I <span class="hp-hero__keep">can count.</span>',
-    // One flat tone, no emphasis anywhere in it. `consultancies` and `in-house`
-    // were briefly set in Inter 500 white; the owner asked for the paragraph to
-    // read as a single even grey instead, so the markup for them is gone rather
-    // than left as spans that style nothing.
-    //
-    // One sentence at every width. There used to be a shorter phone variant
-    // because the copy it replaced ran to ~19 lines on a phone; this one is
-    // four lines on a tablet and six on a 390px phone, which is a paragraph
-    // rather than a wall, and running two versions of her words in the same
-    // page means the phone quietly says something she did not write.
-    support: 'Across consultancies and in-house, from redesigns to brand new launches \u2014 I bring relentless passion, stay endlessly curious about the tools around us, and always invest in people as much as the products I create.',
+    // The closing words are tied together because a one-word last line in type
+    // this large reads as a mistake rather than a pause, and `I design, I lead,`
+    // is tied because a break inside it severs the triad at its hinge.
+    // One span per sentence, each one a block, so every full stop lands at the
+    // end of a line at every width. The spaces between the spans are what keeps
+    // the aria-label a readable sentence; between block boxes they render as
+    // nothing.
+    // The three hp-hero__keep runs are the phrases that a normal wrap inside a
+    // block still gets wrong: `in-house depth.` breaks after the hyphen and
+    // strands `depth.` on the 26ch measure, `the product.` ends up alone on a
+    // last line, and `I design, I lead,` splits at the triad's hinge.
+    statement: '<span class="hp-hero__sentence">Seven years in, from consultancy pace to <span class="hp-hero__keep">in-house depth.</span></span> ' +
+      '<span class="hp-hero__sentence"><span class="hp-hero__keep">I design, I lead,</span> and I put as much into the people as I do <span class="hp-hero__keep">the product.</span></span>',
     cue: 'Scroll'
   };
 
@@ -1192,17 +1907,66 @@
   //        card is her image edge to edge and this is never seen. It exists for
   //        the phone layout, where the text moves above the artwork and the
   //        band it sits in has to be a continuation of her card rather than a
-  //        new surface. Sampled, not chosen — the cleared regions measure
-  //        exactly #0060bf, #e1eaf9 and #00237d.
+  //        new surface. Sampled, not chosen: every bg below is twenty samples
+  //        across the cleared band of her export, all of which came back as one
+  //        value, so these are the colours and not approximations of them.
+  //
+  // Which ink each card gets is decided by measuring, not by whether the card
+  // looks light. White is the intent across the set and four of the five take
+  // it, the artwork having been drawn dark enough to carry it.
+  //
+  // The bar is 4.5:1, because the chip labels are small text and the 3:1 that
+  // large type may use is not the bar anything here has to meet. Two of the five
+  // do not meet it against white, and both are settled positions rather than
+  // open items: Saddle is pale by intent and takes the near-black, PwC is a
+  // knowing shortfall in white. The reasoning is at each entry. Neither is
+  // waiting on a change in this file, and both will look like mistakes to anyone
+  // who checks the ratios without reading why they are what they are.
+  //
+  // Every ratio below is measured against the export currently in assets/, so a
+  // re-export is a reason to run the numbers again rather than to assume the
+  // pairing survived.
   var CARDS = {
-    boots:   { bg: '#0060bf', ink: '#ffffff' },
-    // The light card. Near-black navy, sampled from the darkest glyph cores in
-    // her composite, where the text is drawn.
+    boots:   { bg: '#0060bf', ink: '#ffffff' },   // white 6.13:1
+    // The one light card in the set, and it is light on purpose rather than by
+    // omission. On #e1eaf9 white measures 1.21:1, so there is no version of this
+    // card that carries white type at all; the near-black — sampled from the
+    // darkest glyph cores in her composite, where the text is drawn — clears at
+    // 16.55:1, which is the widest margin of any card here.
+    //
+    // The pale band and the inverted ink are one decision, not a gap left by the
+    // other four moving darker. Darkening this export to match them would trade
+    // the card for the set's uniformity, and the uniformity buys nothing: the
+    // whole overlay reads var(--card-ink), so a card that inverts is data rather
+    // than a special case and costs the layout nothing.
     saddle:  { bg: '#e1eaf9', ink: '#020814' },
-    cycling: { bg: '#00237d', ink: '#ffffff' }
+    cycling: { bg: '#00247d', ink: '#ffffff' },   // white 13.56:1
+    // Redrawn from a bright pink to this deep crimson, and the darkening did
+    // exactly what it was meant to: white was 3.42:1 on the first export and
+    // 3.65:1 on the second, both under the bar and both needing the chips to be
+    // given a darkened backing that no longer exists. At #b22152 white is
+    // 6.50:1 and needs nothing holding it up.
+    api:     { bg: '#b22152', ink: '#ffffff' },
+    // The one measured shortfall in the set, and an accepted one. White on
+    // #ca501d is 4.4905:1, under the 4.5:1 the chip labels need by a hundredth.
+    // The near-black is 4.46 on the same colour, so nothing clears AA here and
+    // white is both the higher of the two and the pairing her artwork uses.
+    //
+    // So white is set knowing the number, and the number is the cost of the
+    // choice rather than a defect to repair here. Inverting the ink makes it
+    // measurably worse, and this colour is genuinely on the boundary: the
+    // description clears comfortably at its size and it is only the ~10px chip
+    // labels that are held to 4.5:1 and miss.
+    //
+    // The only thing that closes it is the artwork, so for whoever re-exports
+    // this card the target is about one percent darker: the band's relative
+    // luminance is 0.18383 and has to reach 0.18333, which #c84f1d does at white
+    // 4.57:1. That leaves the hue at 17.7 where it already is, so the case study
+    // page's --glow-tint is derived from it unchanged and does not move.
+    pwc:     { bg: '#ca501d', ink: '#ffffff' }
   };
 
-  // Reference order: Boots, Sofa to Saddle, British Cycling.
+  // Reference order: Boots, the cycling app, the cycling site.
   //
   // `art` is the owner's finished card, used whole and unaltered — colour,
   // corners, mockup and every shadow are hers. `base` and `tag` name the
@@ -1215,68 +1979,137 @@
   // at the top — the area she left for the overlay. Measured off each file
   // rather than eyeballed: scanning down from the top with an 8% horizontal
   // inset to skip the rounded corners, the last row that is still 100% the card
-  // colour is 0.358, 0.406 and 0.362 of the height. The values below are the
-  // ones measured off the earlier 1024px exports, kept because they sit just
-  // inside those bands: erring shallow leaves a hair of flat colour, erring
-  // deep would crop into the top of her mockup. It is only used by the phone
+  // colour is what the build script prints. Every value below is that number or
+  // a hair under it, because erring shallow leaves a sliver of flat colour and
+  // erring deep crops into the top of her mockup. It is only used by the phone
   // layout, where the text moves above the artwork and that band would
   // otherwise become a stretch of empty colour between the sentence and the
   // mockup.
   //
-  // The copy is read off her composite of the three cards with their text on.
-  // The tags are not: at the size she sent that composite each chip label is
-  // about four pixels of glyph and none of the three sets is legible, so these
-  // are the previous labels and the discrepancy is reported rather than
-  // guessed at. Her composite shows three chips per card where Boots has four
-  // here, and chips on the other two whose widths do not match these words.
+  // The copy on the first three is read off her composite of those cards with
+  // their text on, and the tags on them are hers, given directly. The last two
+  // are marked below: their artwork is hers, their words are mine and are meant
+  // to be replaced.
   var PROJECTS = [
     {
-      title: 'Boots Checkout',
+      title: 'Boots website',
       slug: 'boots',
       card: 'boots',
       desc: 'Modernising the <strong>Boots.com</strong> checkout experience that serves 21m customers annually.',
-      tags: ['UX & UI', 'Research', 'Strategy', 'Design system'],
+      tags: ['UX & UI', 'Research', 'Strategy'],
       href: '/boots-checkout',
       art: {
-        base: 'assets/case-boots', tag: '4cd556c3',
+        base: 'assets/case-boots', tag: '1eb0b10b',
         w: 3024, h: 2708,
-        clear: 0.349,
+        clear: 0.358,
         alt: 'The Boots.com checkout in a browser window: contact, delivery and payment steps beside a running order summary'
       }
     },
     {
-      title: 'Sofa to Saddle',
+      title: 'British Cycling app',
       slug: 'saddle',
       card: 'saddle',
       // "0 to 1" is scope — the shape of the work, not a result. Nothing in
       // this sentence is an outcome number.
       desc: '0 to 1 creation of Britain&rsquo;s newest <strong>habit-forming cycling app</strong>, launched at record pace by embracing AI throughout.',
-      tags: ['UX & UI', 'AI-assisted', 'Strategy'],
+      tags: ['UX & UI', 'AI Development', 'Strategy'],
       href: '/sofa-to-saddle',
       art: {
-        base: 'assets/case-sofa-to-saddle', tag: '80e65a8b',
+        base: 'assets/case-sofa-to-saddle', tag: 'c1855966',
         w: 3024, h: 2798,
-        clear: 0.405,
+        clear: 0.406,
         alt: 'Three Sofa to Saddle app screens: the home feed, a training plan and a ride timer'
       }
     },
     {
-      title: 'British Cycling',
+      title: 'British Cycling website',
       slug: 'cycling',
       card: 'cycling',
       desc: 'Untangling <strong>British Cycling&rsquo;s</strong> web and employee experience to redefine a nationwide ecosystem of sport.',
-      tags: ['UX & UI', 'Copywriting', 'Strategy'],
+      tags: ['UX & UI', 'Content', 'Strategy'],
       href: '/british-cycling',
       art: {
-        base: 'assets/case-british-cycling', tag: 'a4d74fe1',
+        base: 'assets/case-british-cycling', tag: '523cb6a5',
         w: 3024, h: 2708,
-        clear: 0.354,
+        clear: 0.362,
         alt: 'The British Cycling find-an-event page in a browser window, with search and filters over a race photograph'
+      }
+    },
+    // Her sentence, unaltered. An earlier and longer version of it ran to five
+    // lines and crossed into the browser mockup, which is why this one is worth
+    // leaving alone: at three lines it has room to spare at every width.
+    //
+    // The conflict between the name and the artwork has gone. The earlier export
+    // was the partner-facing dashboard, which read oddly against a card called a
+    // developer portal proof of concept and needed a note here explaining that
+    // the discovery covered three experiences and the picture was a different one
+    // of them. This export is the developer portal itself, so the picture and the
+    // project now say the same thing and the note is only history.
+    //
+    // Her sentence, unaltered. The lifted phrase is the client, as it is on
+    // every other card, and it is what the sentence is about — the work is
+    // named by what it did for them rather than by a product.
+    //
+    // Her tags, given directly, and in her order: the strategy before the
+    // content strategy. They were a guess of mine before, which shortened the
+    // third to "Content" and put it second.
+    //
+    // Content Strategy is title case because AI Development on the Saddle card
+    // is, and those two are the only tags here that run to more than one word.
+    // /api-portal's chips are updated to match, as every card matches its
+    // page's.
+    {
+      title: 'Full-fibre provider portals',
+      slug: 'api',
+      card: 'api',
+      desc: 'Leading discovery for a <strong>wholesale full-fibre provider</strong>, shaping new digital experiences built to outpace the rest of the industry.',
+      tags: ['UX & UI', 'Strategy', 'Content Strategy'],
+      href: '/api-portal',
+      art: {
+        base: 'assets/case-api-portal', tag: 'c8c9f159',
+        w: 3024, h: 2708,
+        clear: 0.358,
+        // Names the client although the label above it does not, and that is
+        // not an inconsistency to fix: the artwork has APFN in the browser
+        // chrome and the page this card links to is titled "APFN developer
+        // portal". Alt text describes the picture, and the picture says APFN.
+        alt: 'The APFN developer portal in a browser window: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request'
+      }
+    },
+    // Her sentence. The only change is the apostrophe in "PwC's", which is the
+    // typographic one here as it is in Britain's and British Cycling's above —
+    // a straight quote next to three curled ones is the kind of thing that only
+    // shows up once all five are on screen together.
+    //
+    // The lifted phrase is the product name, matching Boots.com on the first
+    // card. It is the one word on this card a reader might already know.
+    //
+    // Her tags, given directly. They were read off the credit line on her draft
+    // of the case study before, which ended Copywriting where she wants
+    // Strategy. /pwc-client-portal's chips are updated to match.
+    {
+      title: 'PwC client portal',
+      slug: 'pwc',
+      card: 'pwc',
+      desc: 'Shaping the next set of <strong>Junction</strong> enhancements, transforming how PwC&rsquo;s Deals practitioners and clients worldwide collaborate in real time.',
+      tags: ['UX & UI', 'Research', 'Strategy'],
+      href: '/pwc-client-portal',
+      art: {
+        base: 'assets/case-pwc', tag: '776fde20',
+        w: 3024, h: 2798,
+        clear: 0.409,
+        alt: 'Three PwC app screens: setting up a new project, a key focus areas feed with a chart synced from a workbook, and a quality of earnings summary with its adjustments table'
       }
     }
   ];
 
   var EMAIL = 'abigail.r.truman@gmail.com';
+
+  // Two forms of the same number: the one to read and the one to dial. Written
+  // as it is spoken here, linked in international form, so the link works from a
+  // phone abroad as well as a phone here.
+  var PHONE = '07387 382836';
+  var PHONE_TEL = '+447387382836';
 
   var FOOTER = {
     eyebrow: 'Get in touch',
@@ -1389,6 +2222,16 @@
   // The card is her image with a link laid over it. Nothing is drawn under the
   // image and nothing is drawn over it except the three things she left room
   // for — the chips, the sentence and the arrow.
+  // One name per project, used by the rail, the card's heading and the link's
+  // accessible name alike. It was a client and a project held apart, because
+  // the rail set them on two lines at two sizes; on one line there is nothing
+  // to hold apart, and a single string is one thing to write rather than three
+  // places for two halves to disagree.
+  //
+  // The names have to do their own disambiguating now, which is why two of them
+  // name British Cycling and say app and website: there is no second line left
+  // to tell those two apart.
+
   function buildCase(p, i) {
     var c = CARDS[p.card];
     // Both as shares of the card's WIDTH, because every other measurement on
@@ -1405,8 +2248,10 @@
       // the document outline, for heading navigation and for search, so it is
       // present and visually hidden rather than removed.
       '<h2 class="hp-case__title">' + p.title + '</h2>' +
+      // Comma rather than a dash: "Boots website, read the case study" is a
+      // name and then an instruction, which is what it has to be read aloud as.
       '<a class="hp-case__link" href="' + p.href + '" ' +
-        'aria-label="' + p.title + ' \u2014 read the case study">' +
+        'aria-label="' + p.title + ', read the case study">' +
         // Head before art in the source. On a wide card it makes no visual
         // difference — the head is absolutely positioned into the cleared band
         // — but on a phone the two are in flow and this is the order they have
@@ -1439,11 +2284,11 @@
           '<span class="hp-nav__name">Abbie Truman</span>' +
         '</div>' +
         '<div class="hp-nav__links">' +
-          '<a class="hp-nav__link" href="#" target="_blank" rel="noopener">' +
+          '<a class="hp-nav__link" href="' + CV + '" target="_blank" rel="noopener">' +
             '<span>CV</span>' +
             '<span class="hp-nav__arrow" aria-hidden="true">' + ARROW_NE + '</span>' +
           '</a>' +
-          '<a class="hp-nav__link" href="https://www.linkedin.com/in/abbie-truman" target="_blank" rel="noopener">' +
+          '<a class="hp-nav__link" href="' + LINKEDIN + '" target="_blank" rel="noopener">' +
             '<span>LinkedIn</span>' +
             '<span class="hp-nav__arrow" aria-hidden="true">' + ARROW_NE + '</span>' +
           '</a>' +
@@ -1456,18 +2301,21 @@
           '<p class="hp-hero__greeting">' + HERO.greeting + '</p>' +
           // Per-character spans would otherwise be read out letter by letter.
           '<h1 class="hp-hero__statement" aria-label="' + stripTags(HERO.statement) + '">' +
-            '<span aria-hidden="true">' + splitChars(HERO.statement, 'hp-hero__char', 'hp-hero__word') + '</span>' +
+            '<span class="hp-hero__statement-inner" aria-hidden="true">' + splitChars(HERO.statement, 'hp-hero__char', 'hp-hero__word') + '</span>' +
           '</h1>' +
-          '<p class="hp-hero__support">' + HERO.support + '</p>' +
         '</div>' +
         '<div class="hp-hero__lower">' +
-          '<button class="hp-hero__cue" type="button" data-cue ' +
-            'aria-label="Scroll to selected work">' +
+          // A span, not a button: this reports that the page continues, and the
+          // whole thing is aria-hidden because "Scroll" describes a mouse gesture
+          // to someone who may not be making one. A screen reader reaching the end
+          // of the hero is told the next section's heading, which is the same
+          // information without the instruction.
+          '<span class="hp-hero__cue" aria-hidden="true">' +
             '<span>' + HERO.cue + '</span>' +
-            '<span class="hp-hero__cue-arrow" aria-hidden="true">' +
+            '<span class="hp-hero__cue-arrow">' +
               ARROW_DOWN +
             '</span>' +
-          '</button>' +
+          '</span>' +
         '</div>' +
       '</section>';
 
@@ -1482,8 +2330,30 @@
         '</div>' +
       '</section>';
 
+    // Built from the same array the cards are, so the index cannot disagree
+    // with how many case studies there are, and row three is card three because
+    // both are walking one list. Adding a sixth is an edit to PROJECTS and
+    // nothing else.
+    //
+    // aria-hidden, and it has to be. It changes as you scroll, and a live
+    // readout announcing "two of five, British Cycling app" every time a card
+    // passes the middle of the screen is noise over the top of the headings
+    // that carry the same information properly.
+    var countHtml = '<div class="hp-count" id="hp-count" aria-hidden="true">' +
+        '<ol class="hp-count__list">' +
+          PROJECTS.map(function(p, i) {
+            return '<li class="hp-count__row' + (i ? '' : ' is-now') + '">' +
+                '<span class="hp-count__n">' + pad(i + 1) + '</span>' +
+              '</li>';
+          }).join('') +
+        '</ol>' +
+      '</div>';
+
     var casesHtml = '<section class="hp-cases" id="hp-cases" aria-label="Selected work">' +
-      PROJECTS.map(buildCase).join('') +
+      countHtml +
+      '<div class="hp-cases__list">' +
+        PROJECTS.map(buildCase).join('') +
+      '</div>' +
     '</section>';
 
     var footerHtml = '' +
@@ -1491,9 +2361,12 @@
         '<span class="hp-eyebrow hp-eyebrow--rule">' + FOOTER.eyebrow + '</span>' +
         '<h2 class="hp-footer__title">' + FOOTER.title + '</h2>' +
         '<p class="hp-footer__lede">' + FOOTER.lede + '</p>' +
+        // A phone number where LinkedIn used to be. LinkedIn is still one tap
+        // away in the nav, and repeating it here spent the ghost button on a
+        // link the page already has rather than on a second way to make contact.
         '<div class="hp-footer__ctas">' +
           '<a class="hp-footer__cta" href="mailto:' + EMAIL + '">' + EMAIL + '<span class="hp-footer__cta-arrow">' + ARROW_NE + '</span></a>' +
-          '<a class="hp-footer__cta is-ghost" href="https://www.linkedin.com/in/abbie-truman" target="_blank" rel="noopener">LinkedIn<span class="hp-footer__cta-arrow">' + ARROW_NE + '</span></a>' +
+          '<a class="hp-footer__cta is-ghost" href="tel:' + PHONE_TEL + '">' + PHONE + '<span class="hp-footer__cta-arrow">' + ARROW_NE + '</span></a>' +
         '</div>' +
         '<div class="hp-footer__base">' +
           '<span>&copy; ' + new Date().getFullYear() + ' Abbie Truman</span>' +
@@ -1511,6 +2384,12 @@
     console.log('HP ' + VERSION + ' mounted');
   }
 
+  // Two digits, because a count that runs 9 then 10 changes width mid-scroll
+  // and shifts the slash along with it.
+  function pad(n) {
+    return (n < 10 ? '0' : '') + n;
+  }
+
   function revealNav() {
     var nav = document.querySelector('.hp-nav');
     if (nav) nav.classList.add('is-ready');
@@ -1525,16 +2404,66 @@
     });
   }
 
-  function initCue() {
-    var btn = document.querySelector('[data-cue]');
+  // A case study's "Back to selected work" link arrives here as /#work, and the
+  // browser cannot honour that fragment for two separate reasons: at the moment
+  // it would act on one this script has not built the page yet, and the target
+  // does not sit in the document scroller but inside #hp-root, which is fixed
+  // and scrolls its own contents. So it is read by hand, writing to that
+  // scroller the same way the back-to-top button does.
+  //
+  // #work rather than #hp-cases: the id is this file's own naming and the URL is
+  // something a visitor sees and shares.
+  function initWorkAnchor() {
     var root = document.getElementById('hp-root');
-    var target = document.getElementById('hp-wordmark');
-    if (!btn || !root || !target) return;
-    btn.addEventListener('click', function() {
-      root.scrollTo({
-        top: root.scrollTop + target.getBoundingClientRect().top,
-        behavior: REDUCED ? 'auto' : 'smooth'
-      });
+    var cases = document.getElementById('hp-cases');
+    if (!root || !cases) return;
+
+    // Where this last put the page, or null once the visitor has moved it and
+    // it stops being ours to set.
+    var held = null;
+
+    function go(smooth) {
+      if (window.location.hash !== '#work') return;
+      var top = root.scrollTop
+        + cases.getBoundingClientRect().top
+        - root.getBoundingClientRect().top;
+      smooth = smooth && !REDUCED;
+      root.scrollTo({ top: top, behavior: smooth ? 'smooth' : 'auto' });
+      // Where it went, which is not always where it was sent: an instant scroll
+      // aimed past the end of a page that is still filling in gets clamped, and
+      // re-reading is what lets the correction below tell that from a visitor
+      // who has taken over. Nothing to read mid-flight on a smooth one, and by
+      // then the page has settled anyway.
+      held = smooth ? null : Math.round(root.scrollTop);
+    }
+
+    // The cards do not stay where they were aimed at. The hero above them is
+    // set in a webfont that has not arrived yet and wraps to a different depth
+    // in the fallback, the artwork is still loading, and a phone that turns
+    // re-lays the column. So it is re-aimed each time one of those lands — but
+    // only while the page is still where this put it, because moving it under
+    // someone who has started reading is the rudest thing this could do.
+    function again() {
+      if (held === null) return;
+      if (Math.abs(root.scrollTop - held) > 2) { held = null; return; }
+      go(false);
+    }
+
+    // On arrival, land there outright. Someone coming back from a case study
+    // asked for the work, not to watch the hero go past on the way to it.
+    go(false);
+    // Following the same link while already on the homepage sets the hash
+    // without navigating, and nothing above runs again. Here the travel is the
+    // only feedback that the click did anything, so this one is smooth.
+    window.addEventListener('hashchange', function() { go(true); });
+
+    if (document.readyState === 'complete') setTimeout(again, 0);
+    else window.addEventListener('load', again);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(again);
+    var settleTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(again, 200);
     });
   }
 
@@ -1545,10 +2474,12 @@
 
     var chars = document.querySelectorAll('.hp-hero__char');
     var greeting = document.querySelector('.hp-hero__greeting');
-    // The support paragraph finishes the sentence the statement starts, so it
-    // arrives on the same beat, just after it; the band follows on the stagger
-    // so the hairline and the cue land together as the last thing to settle.
-    var below = document.querySelectorAll('.hp-hero__support, .hp-hero__lower');
+    // The hairline and the cue arrive together, on a beat late enough to read as
+    // the composition closing rather than as part of the copy. They settle while
+    // the statement is still writing — a ~150-glyph stagger outruns them — which
+    // is why they get their own slower duration instead of a later start: the
+    // band should be arriving underneath the sentence, not queueing behind it.
+    var below = document.querySelectorAll('.hp-hero__lower');
 
     gsap.set(chars, { yPercent: 55, opacity: 0 });
     gsap.set([greeting], { opacity: 0, y: 16 });
@@ -1770,40 +2701,164 @@
     // Owned by the stylesheet, so the value that ships and the value that is
     // audited are the same value, and so the phone band can widen the range
     // without JS knowing which band it is in.
-    var scaleMin = casesEl
-      ? parseFloat(getComputedStyle(casesEl).getPropertyValue('--card-scale-min'))
-      : 0.9;
-    if (!(scaleMin > 0) || scaleMin > 1) scaleMin = 0.9;
+    function token(name, fallback) {
+      var v = casesEl
+        ? parseFloat(getComputedStyle(casesEl).getPropertyValue(name))
+        : NaN;
+      return (v > 0 && v <= 1) ? v : fallback;
+    }
+    var scaleMin = token('--card-scale-min', 0.85);
+    var dimMin = token('--card-dim-min', 0.5);
 
-    cards.forEach(function(card) {
-      // One-shot entrance for the text. once:true, so it costs nothing per
-      // scroll frame. The artwork is not faded in separately any more — it is
-      // the card, and fading the card in under a carousel that is already
-      // scaling it is two effects arguing.
-      reveal(card, [
-        { els: [card.querySelector('.hp-case__head')], y: 24, duration: 0.9 }
-      ]);
+    // TEMPORARY — carousel comparison switch, ?fx=0..3. Delete once one is
+    // chosen and fold its values into the code below.
+    //
+    // Why it exists: measured on a 1440x900 desktop, the carousel moves 0.2% of
+    // its scale range and 0.2% of its opacity range during the whole time the
+    // card is more than 90% on screen. It reaches full size and full brightness
+    // while it is still a sliver at the bottom edge. A card is 808px tall in a
+    // 900px viewport, so no second card is ever in frame to compare it with
+    // either — the effect is real, correctly wired, and invisible.
+    //
+    // The cause is the easing, and it was chosen on purpose: power2.out
+    // front-loads the change so the card is at rest while you are looking at
+    // it. These variants walk that decision back by degrees.
+    var FX = (function() {
+      var m = /[?&]fx=(\d)/.exec(location.search);
+      return m ? +m[1] : 0;
+    })();
+    var FXS = [
+      // 0 — as shipped. All the change happens off-screen.
+      { inEase: 'power2.out', outEase: 'power2.in', s: scaleMin, o: dimMin },
+      // 1 — same range, easing reversed. The card stays small while it climbs
+      // the screen and comes up to size as it reaches the middle, so the change
+      // lands where you are looking instead of before you get there.
+      { inEase: 'power2.in', outEase: 'power2.out', s: scaleMin, o: dimMin },
+      // 2 — the same again, linear. The most obvious, and the one most at risk
+      // of the drift the original easing was there to avoid.
+      { inEase: 'none', outEase: 'none', s: scaleMin, o: dimMin },
+      // 3 — depth carried by light rather than size. The card barely changes
+      // shape, so there is almost no edge movement under the eye, but it comes
+      // up out of the dark much harder than it does now.
+      { inEase: 'power2.in', outEase: 'power2.out', s: 0.955, o: 0.22 }
+    ];
+    var fx = FXS[FX] || FXS[0];
 
-      if (REDUCED) return;
+    // ---------- WHERE YOU ARE IN THE SET ----------
+    // Shown while the cards are what is on screen and taken away either side of
+    // them, so it never floats over the hero or the footer, where there is
+    // nothing for it to be counting.
+    //
+    // This runs under reduced motion as well. It is a readout, not an effect —
+    // the only thing the preference takes off it is the way the digit changes.
+    var counter = document.getElementById('hp-count');
+    var rows = counter ? counter.querySelectorAll('.hp-count__row') : [];
+    var shown = 1;
 
-      // Eased at both ends rather than linear, so the card is close to full
-      // size for the whole time it is the one you are looking at and does its
-      // growing while it is still arriving. A linear ramp makes the size change
-      // constantly under the cursor, which reads as drift.
-      gsap.timeline({
-        defaults: { force3D: true },
-        scrollTrigger: {
+    // Nothing to sequence. Every row is already on the page with its own colour
+    // and size transition, so moving the lit one is a class swap and the CSS
+    // crossfades the two against each other.
+    function setCount(n) {
+      if (n === shown || !rows.length) return;
+      shown = n;
+      for (var i = 0; i < rows.length; i++) {
+        rows[i].classList.toggle('is-now', i === n - 1);
+      }
+    }
+
+    if (counter && casesEl) {
+      ScrollTrigger.create({
+        trigger: casesEl,
+        start: 'top 72%',
+        end: 'bottom 28%',
+        onToggle: function(self) {
+          counter.classList.toggle('is-on', self.isActive);
+        }
+      });
+    }
+
+    // ---------- THE CARDS ----------
+    // Eased at both ends rather than linear, so the card is close to full size
+    // for the whole time it is the one you are looking at and does its growing
+    // while it is still arriving. A linear ramp makes the size change
+    // constantly under the cursor, which reads as drift.
+    //
+    // opacity rides along with the scale. It is the second compositor-only
+    // property there is — no width, no filter, nothing that returns the card to
+    // layout or to the paint step on a scroll frame — so rule 2 above still
+    // holds. Scale alone was carrying the whole effect and a 10% size change
+    // across a screen of travel is not much to carry it with; light is what the
+    // eye actually reads as depth.
+    function carousel(card, st) {
+      gsap.timeline({ defaults: { force3D: true }, scrollTrigger: st })
+        .fromTo(card,
+          { scale: fx.s, opacity: fx.o },
+          { scale: 1, opacity: 1, duration: 1, ease: fx.inEase }, 0)
+        .to(card, {
+          scale: fx.s, opacity: fx.o, duration: 1, ease: fx.outEase
+        }, 1);
+    }
+
+    // One-shot entrance for the text, once:true so it costs nothing per scroll
+    // frame. The artwork is not faded in separately — it is the card, and
+    // fading it in under a carousel that is already scaling it is two effects
+    // arguing.
+    function headIn(card, st) {
+      var head = card.querySelector('.hp-case__head');
+      if (!head) return;
+      gsap.set(head, { opacity: 0, y: 24 });
+      st.once = true;
+      st.onEnter = function() {
+        gsap.to(head, {
+          opacity: 1, y: 0, duration: 0.9, ease: 'expo.out', force3D: true
+        });
+      };
+      ScrollTrigger.create(st);
+    }
+
+    // A card owns the count from the moment its top passes the middle of the
+    // screen until its bottom does. Between two cards neither is over the
+    // middle and the last one there keeps it, which is the right answer: in the
+    // gap you are still leaving the card you just read.
+    //
+    // Both edges are computed rather than written as 'top center'. A keyword
+    // resolves against the element's bounding box, and the carousel has a
+    // transform on every one of these cards: one sitting at its resting 0.85
+    // measures as a box smaller than the card and about 60px further down the
+    // page than the card occupies, so a trigger built from it fires late by
+    // roughly that much. Card three had the middle of the screen while the
+    // index still said two.
+    //
+    // offsetTop and offsetHeight are the layout box, which no transform
+    // touches, so the edges come from those and are handed over as scroll
+    // positions. Functions, so a resize or the webfont swap re-measures them on
+    // the same refresh as everything else.
+    function layoutTop(el) {
+      var y = 0;
+      for (var n = el; n && n !== root; n = n.offsetParent) y += n.offsetTop;
+      return y;
+    }
+
+    cards.forEach(function(card, i) {
+      if (!REDUCED) {
+        headIn(card, { trigger: card, start: 'top 82%' });
+        carousel(card, {
           trigger: card,
           start: 'top bottom',
           end: 'bottom top',
           invalidateOnRefresh: true,
           scrub: true
-        }
-      })
-        .fromTo(card,
-          { scale: scaleMin },
-          { scale: 1, duration: 1, ease: 'power2.out' }, 0)
-        .to(card, { scale: scaleMin, duration: 1, ease: 'power2.in' }, 1);
+        });
+      }
+      ScrollTrigger.create({
+        trigger: card,
+        start: function() { return layoutTop(card) - window.innerHeight / 2; },
+        end: function() {
+          return layoutTop(card) + card.offsetHeight - window.innerHeight / 2;
+        },
+        onEnter: function() { setCount(i + 1); },
+        onEnterBack: function() { setCount(i + 1); }
+      });
     });
 
     // ---------- FOOTER ----------
@@ -1829,7 +2884,7 @@
       build();
       revealNav();
       initBackToTop();
-      initCue();
+      initWorkAnchor();
       initHero();          // starts the cursor field once the entrance lands
       initScrollScenes();
 

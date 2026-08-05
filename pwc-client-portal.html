@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="description" content="Designing user management across PwC&#39;s interconnected Deals delivery platforms, and running the research behind Junction&#39;s report builder.">
+<link rel="canonical" href="https://abbietruman.vercel.app/pwc-client-portal">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Abbie Truman">
+<meta property="og:url" content="https://abbietruman.vercel.app/pwc-client-portal">
+<meta property="og:title" content="PwC Junction — Abbie Truman">
+<meta property="og:description" content="Designing user management across PwC&#39;s interconnected Deals delivery platforms, and running the research behind Junction&#39;s report builder.">
+<meta property="og:image" content="https://abbietruman.vercel.app/assets/pwc-og-1200x630.b945b4fa.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Two phones on a concrete surface in hard sunlight, running PwC Junction: a key focus areas feed and a quality of earnings summary.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PwC Junction — Abbie Truman">
+<meta name="twitter:description" content="Designing user management across PwC&#39;s interconnected Deals delivery platforms, and running the research behind Junction&#39;s report builder.">
+<meta name="twitter:image" content="https://abbietruman.vercel.app/assets/pwc-og-1200x630.b945b4fa.jpg">
+<meta name="twitter:image:alt" content="Two phones on a concrete surface in hard sunlight, running PwC Junction: a key focus areas feed and a quality of earnings summary.">
+
+<!-- The same circular AT monogram both other pages carry, and deliberately the
+     same hashed filenames rather than a set of its own: one icon per site, and
+     a second copy would be a second thing to forget when it is redrawn. See
+     the note above these links in index.html for why /favicon.ico sits at the
+     root unhashed while the PNGs are hashed and under /assets. -->
+<link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-atc-16.7a5e6b0e.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-atc-32.7a5e6b0e.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon-atc-180.7a5e6b0e.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-atc-192.7a5e6b0e.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-atc-512.7a5e6b0e.png">
+
+<title>PwC Junction — Abbie Truman</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+
+<style>
+  /* ---------- WHAT THIS PAGE IS
+     The third case study, and deliberately the same document as the other two:
+     boots-checkout.html's tokens, nav, chapter grid and footer, copied rather
+     than imported for the reason given there — there is no shared stylesheet on
+     this site to import from, index.html carries its CSS inline because it was
+     built as a Squarespace injection, and extracting one is a change to files
+     that have been tuned against a screenshot matrix. Copying keeps the class
+     names, so grepping .cs-chapter returns all three case studies and a change
+     to one is findable from the others. This is sofa-to-saddle.html's copy of
+     that stylesheet unaltered, so a diff between the two files is the writing.
+
+     Three things the Boots page has and this one does not:
+
+     The image viewer. That page's figures are artboards carrying two or three
+     full screens each, drawn small enough that the interface's own 14px type
+     lands at four or five pixels, and the lightbox exists to open a 3360px copy.
+     There is one picture here and the page already draws it from the largest
+     copy that exists. See build-pwc-figures.py.
+
+     Chapter figures. This client's work is under NDA and the hero render is what
+     has been cleared, so .cs-figure appears once on this page where it appears
+     four times on the last one. Every rule for it is still below, untouched,
+     because that is what makes adding a screen later a paste rather than a
+     rebuild.
+
+     ScrollTrigger. It is loaded there and drives nothing; every animation on all
+     three pages is an entrance fired once by an IntersectionObserver. GSAP
+     itself stays, because the hero's letters need it. ---------- */
+  :root {
+    --ff-display: 'Manrope', 'Inter', -apple-system, sans-serif;
+    --ff-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    --bg: #0a0a0c;
+    --ink: #ffffff;
+    --ink-1: rgba(255,255,255,0.74);
+    --ink-2: rgba(255,255,255,0.52);
+    --ink-3: rgba(255,255,255,0.40);
+    --rule: rgba(255,255,255,0.10);
+
+    /* Her homepage card colour for this project, tinting the glow under the
+       hero so each case study carries its own colour rather than the same grey
+       on all five. The card hex is the right hue and the wrong value: those were
+       picked to sit behind card text, and over a near-black page the same alpha
+       reads very differently from one hue to the next. So strength is what the
+       pages share — every tint is solved for the same lift off the background
+       and the same chroma — and hue is what separates them. The alpha carries
+       most of the level, and has to: at the 0.13 this used to run at, reaching
+       this much light would need a tint brighter than sRGB can state.
+
+       Her card for this project has now been re-exported three times — #d04a02,
+       then a brighter #fc510b, now #ca501d — and this value barely moved with any
+       of it, because all three sit within a few degrees of the same hue and only
+       the lightness changed. Hue is the only thing this takes from the card; the
+       level is the set's, not hers. A re-export that actually turns the hue is
+       the one that needs this recomputed. */
+    --glow-tint: rgba(201,81,42,0.30);
+
+    --pad-x: clamp(28px, 6vw, 110px);
+    --shell: 1560px;
+    /* The reading column. 1120px is the homepage card's cap, so a figure on
+       this page is the same width as the card the visitor clicked to get
+       here — the artwork does not change size on arrival. */
+    --measure: 1120px;
+
+    /* The interval between one section and the next. Stated once because the
+       page is a stack of them and the rhythm is the only thing holding the
+       stack together. */
+    --section: clamp(88px, 13vh, 168px);
+
+    /* Clears the fixed nav pill, which is 106px deep at desktop — 28px of offset
+       and a 78px pill. Used by :target/anchor scrolling, so it has to be
+       re-checked whenever the pill's padding changes or an anchored heading
+       lands under it. */
+    --nav-clear: 132px;
+
+    /* How tall a figure is allowed to get, and the same 64vh as the Boots page
+       so the two read at one scale. Two things are derived from it: the
+       picture's own height, and the width of the caption under it, which has to
+       match the picture rather than the column. */
+    --fig-max-h: 64vh;
+  }
+
+  html {
+    background: var(--bg);
+    scroll-padding-top: var(--nav-clear);
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--ff-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  * { box-sizing: border-box; }
+
+  /* Keyboard users land on the nav pill first; without this the only way past
+     it to the case study is tabbing through every link on the page. */
+  .cs-skip {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 200;
+    padding: 14px 20px;
+    background: #fff;
+    color: #0a0a0c;
+    border-radius: 0 0 12px 0;
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .cs-skip:focus { left: 0; }
+
+  /* ---------- Shared primitives (homepage) ---------- */
+  .hp-eyebrow {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .hp-eyebrow--rule {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hp-eyebrow--rule::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: rgba(255,255,255,0.3);
+  }
+
+  /* ---------- NAV (floating pill, from the homepage) ----------
+     Content-width and centred at every width: no width is set anywhere, and the
+     phone max-width is a guard against the screen edges rather than a layout.
+     Every value in here is the homepage's — see index.html for why each is what
+     it is, and boots-checkout.html for the two differences a case study page
+     needs (the brand is a link home, and there is no entrance animation because
+     the pill is not on a GSAP timeline here). */
+  .hp-nav {
+    position: fixed;
+    top: 28px;
+    left: 50%;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    /* Left padding equals the vertical padding, which is what makes the space
+       around the avatar even: the pill's ends are fully round, so the cap's
+       radius is half the height and the avatar is concentric with it only when
+       the two paddings match. */
+    padding: 15px 11px 15px 15px;
+    background: rgba(18,18,22,0.55);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 999px;
+    backdrop-filter: blur(28px) saturate(1.6);
+    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.07),
+      0 32px 80px -16px rgba(0,0,0,0.55),
+      0 6px 24px rgba(0,0,0,0.28);
+    transform: translateX(-50%);
+  }
+  .hp-nav__brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    /* Sits the same distance from her name as it does from `CV`, and that is not
+       one value: the name's side is this padding, the label's side is the pill's
+       gap plus the link's own left padding, 24 + 18 here. */
+    padding-right: 42px;
+    border-right: 1px solid rgba(255,255,255,0.09);
+    text-decoration: none;
+    /* The brand is an <a> here and a plain div on the homepage, so without this
+       it computes to the browser's default link blue. */
+    color: inherit;
+  }
+  .hp-nav__avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(255,255,255,0.16);
+    display: block;
+  }
+  .hp-nav__name {
+    font-size: 17px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  .hp-nav__links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .hp-nav__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    color: #fff;
+    text-decoration: none;
+    white-space: nowrap;
+    border-radius: 999px;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .hp-nav__link:hover { background: rgba(255,255,255,0.06); }
+  .hp-nav__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.55);
+    transition: color 0.25s ease, transform 0.25s cubic-bezier(0.32,0.72,0,1);
+  }
+  .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
+  .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
+
+  /* ---------- Page shell ---------- */
+  /* Longhands, not `padding: 0 var(--pad-x)`. Every section below sets its own
+     padding-top off --section, and .cs-wrap is on those same elements, so the
+     shorthand's implied `padding-top: 0` competes with them — and inside the
+     phone media query it wins. Naming only the two sides this rule is about
+     removes the argument rather than settling it by declaration order. */
+  .cs-wrap {
+    max-width: var(--shell);
+    margin: 0 auto;
+    padding-left: var(--pad-x);
+    padding-right: var(--pad-x);
+  }
+  /* The reading column sits inside the shell's gutters rather than replacing
+     them, so at 1920 the column is centred in a page that still has its
+     margins, and below ~1340 the gutters are what hold it off the edge. */
+  .cs-col {
+    max-width: var(--measure);
+    margin: 0 auto;
+  }
+
+  /* ---------- HERO ----------
+     One screen, and the picture has to be whole inside it. The hero is a fixed
+     budget — the height of the window — that the copy takes its share of and the
+     picture is given the rest of.
+
+     svh rather than vh. On a phone, vh is the viewport with the address bar
+     retracted, so a hero sized in vh is taller than the screen at the moment
+     the page loads, which is the one moment this layout exists to get right. */
+  .cs-hero {
+    position: relative;
+    z-index: 1;
+    /* height, not min-height. With a minimum the box still grows to whatever
+       its contents come to, so there is no leftover space for the figure to be
+       given a share of. Fixing the height is what turns the screen into a
+       budget. */
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    /* Enough to clear the nav pill, which ends 106px down, and no more: every
+       pixel above the eyebrow is a pixel off the picture. The 118px floor is
+       that clearance and does not move. What is a step under the other pages' is
+       the vh term and the ceiling: the pill is 106px tall on every window, so
+       scaling its clearance with the viewport was buying air on tall screens and
+       paying for it in picture. 12vh only overtakes the floor above ~985px of
+       window, and the cap is 134 rather than 152. */
+    padding-top: clamp(118px, 12vh, 134px);
+    /* Also a step under. The picture is height-bound in this hero, so the bottom
+       margin is in direct competition with it, and at 3vh it was reserving more
+       than a full-bleed photograph needs in order to read as finished. */
+    padding-bottom: clamp(16px, 2vh, 32px);
+  }
+  .cs-hero > .cs-col {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    /* Without this the column refuses to shrink below its contents and the
+       figure's share is computed against a height the screen does not have. */
+    min-height: 0;
+  }
+
+  /* The page's heading, and what the project was rather than what it was called
+     — the eyebrow above it already reads "Case study · PwC Junction".
+
+     The size clamp carries a vh term as well as a vw one, which the rest of the
+     page's type does not. Ordinary headings can afford to be sized off the
+     width alone because whatever they push down the page is only pushed. Here
+     it is taken: every line this gains is a line the picture loses, so on a
+     short window the type has to give way.
+
+     This sentence is 135 characters against the Boots page's 80, so it takes a
+     third line at every width the two share, and a line of this heading is about
+     50px of height. That used to be the reason this hero drew narrower than that
+     one, and for a while this clamp was held a step under the other pages' to
+     claw some of it back.
+
+     It is not held under any more, and the size and margin here are the same as
+     theirs. The picture's shape is what was actually wrong: it was her 4:3
+     render, and at a fixed leftover height a 4:3 crop is the narrowest useful
+     thing to put in that space. Cropping it to 1.6 in build-pwc-figures.py is
+     worth about three times what shrinking this heading was, so the heading went
+     back to full size. Type is not the lever here. */
+  .cs-hero__statement {
+    margin: clamp(18px, 2.6vh, 30px) 0 0;
+    max-width: min(38ch, 100%);
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh), 46px);
+    line-height: 1.14;
+    letter-spacing: -0.028em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-hero__statement strong { color: var(--ink); font-weight: 500; }
+  .cs-hero__statement-inner { display: block; }
+  /* The pieces the splitter leaves behind. Words stay whole so the sentence
+     still breaks at spaces; letters are the things that move. */
+  .cs-hero__word { display: inline-block; white-space: nowrap; }
+  .cs-hero__char { display: inline-block; transform: translateZ(0); }
+
+  /* Two windows where holding the screen open stops being worth it, and the
+     hero goes back to running as tall as its contents.
+
+     A phone held sideways is 390px tall: one screen there gives the copy
+     everything and leaves the picture almost none of it.
+
+     A phone held upright is the opposite. The picture runs out of width long
+     before it runs out of height, so it cannot grow into the space a full
+     screen would reserve, and what that reserves is a stretch of empty page
+     underneath it. Sized to its contents it still lands whole inside the first
+     screen, and the room that was empty is the top of the first chapter
+     instead. */
+  @media (max-height: 560px) and (min-width: 601px), (max-width: 600px) {
+    .cs-hero {
+      height: auto;
+      padding-top: 116px;
+    }
+    .cs-hero .cs-figure--full { flex: 0 0 auto; }
+    .cs-hero .cs-figure--full img { height: auto; }
+  }
+
+  /* The homepage's ambient glow. A separate element rather than a pseudo on the
+     hero, and stretched with left/right rather than the usual
+     100vw-and-pull-it-back: 100vw counts the scrollbar, so that idiom is a page
+     wider than its window on every desktop that reserves room for one. With no
+     positioned ancestor, 0 and 0 here are the viewport's content edges exactly.
+
+     The measure inside the gradient does use vw, which the element's own width
+     could not. A percentage there is rejected — Chrome will not accept one
+     inside a calc for an ellipse's radius, and drops the whole declaration
+     rather than the one value — and the scrollbar stops mattering once the
+     number is only deciding how far the light reaches.
+
+     Right of centre, which is where the hero's empty half is. Everything in it
+     is left-aligned inside the measure, and the figure is contained top-left in
+     a box the full width of that, so the picture never reaches the right side at
+     any of these aspect ratios. Left of centre the brightest part of the light
+     sat behind the eyebrow and the tag chips, which are the two smallest things
+     on the page; here it falls on background, and the only type it reaches is
+     the tail of the longest heading lines, which are white and large. */
+  .cs-glow {
+    --glow-measure: min(100vw, var(--shell));
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100svh;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse calc(0.62 * var(--glow-measure)) 52%
+      at calc(50% + 0.40 * var(--glow-measure)) 22%,
+      var(--glow-tint) 0%, transparent 68%);
+  }
+
+  /* Same chip as the homepage card's, in the page's ink instead of the card's.
+     Padding and gap are em of the label, so the row is resized by moving
+     font-size alone — which is the only thing that changed to take these down
+     from 11.5px. The border is the one exception: it is a hairline at any size,
+     and scaling it with the text would only make it heavier here than it is on
+     the card these came from. */
+  .cs-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8em;
+    margin: clamp(20px, 2.8vh, 30px) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 10.5px;
+  }
+  .cs-tags li {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6em 1.2em;
+    border: 1px solid var(--ink-2);
+    border-radius: 99999px;
+    color: var(--ink-1);
+    font-size: 1em;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.004em;
+    white-space: nowrap;
+  }
+
+  /* ---------- Figures ----------
+     No frame, no radius and no border here on purpose, the same as on the other
+     two pages: the device edges, the surface and its shadows are all inside her
+     render, and anything drawn around them would be a second frame around a
+     frame. This page's one figure is a photographic scene that fills its own
+     rectangle edge to edge, so unlike the Sofa to Saddle figures there are no
+     corners to composite — see build-pwc-figures.py.
+
+     Capped at one screenful of height, not width, so each figure's width follows
+     its own proportions. It is also what keeps this sharp: the render is 4500px
+     wide and the page draws it at 1120 at most. */
+  /* The gap between the writing and the picture it belongs to. It has to stay
+     clearly smaller than the gap between one chapter and the next, or the
+     figure stops reading as the end of this chapter and starts looking like
+     the opening of the following one. The pair is kept at roughly 0.7: see
+     .cs-chapter + .cs-chapter, which moves with this. */
+  .cs-figure {
+    margin: clamp(64px, 9vh, 108px) 0 0;
+  }
+  .cs-figure img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: var(--fig-max-h);
+    margin-inline: auto;
+  }
+  /* The caption is exactly as wide as the picture above it, whatever that
+     picture happens to be. It cannot be a fixed measure: the figures are capped
+     by height, so a phone comes out about 340px wide and the hero about 700, and
+     one number is either too wide for the phone or a stubby line under the hero.
+
+     --ar is the picture's own width/height, set per figure. The picture is drawn
+     at min(100% of the column, --fig-max-h × --ar), so the caption is given the
+     same expression and lands on the same edges. Pure CSS, so it is right
+     before the image has loaded and right without script.
+
+     Given an outline rather than left loose under the picture. Centred grey text
+     with nothing around it was the quietest thing on the page and read as a
+     stray line rather than as part of the figure. The border is --rule, the same
+     value as the line between chapters, so the commentary is drawn in the page's
+     existing vocabulary instead of introducing a second one. */
+  .cs-figure figcaption {
+    margin: 26px auto 0;
+    max-width: min(100%, calc(var(--fig-max-h) * var(--ar, 1)));
+    /* Bottom a shade over the top: the eyebrow's cap-height leaves the box
+       looking heavier above than below when the four sides are equal. */
+    padding: 19px 22px 20px;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.004em;
+    /* A step up from --ink-3. Inside a box the text is being presented rather
+       than tucked away, and at 0.40 it looked like a disabled control. */
+    color: var(--ink-2);
+    text-align: left;
+  }
+  /* The eyebrow pattern the page uses above every section heading, one size
+     down: it sits inside a 14px block here rather than over a display title,
+     and at the full 12px it competed with the sentence it introduces.
+
+     aria-hidden because a figcaption is already announced as the caption of its
+     figure. Spelling that out again is repetition for the one visitor who
+     cannot see the layout that makes it useful. */
+  .cs-figure__label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink-3);
+  }
+  /* The hero figure takes what the copy above it did not, and the picture is
+     drawn to fit that rather than the picture setting the height. contain is
+     what makes it a fit rather than a crop: on a wide short window the width
+     runs out first and on a tall narrow one the height does, and either way the
+     whole card is inside the box. */
+  /* The gap between the tag row and the picture, and the one measurement in this
+     hero that was asked to get bigger rather than smaller. It costs the picture
+     about 7px of height on a 900px window, which the crop pays for many times
+     over. */
+  .cs-hero .cs-figure--full {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-top: clamp(30px, 4.2vh, 56px);
+  }
+  /* The box is the whole of the leftover space; object-position decides where
+     the picture sits inside it once contain has made it smaller. Top left, so
+     that it starts directly under the tags and its left edge is the same left
+     edge as the eyebrow and the sentence. Centred, it would float free of the
+     column on every window where the height runs out before the width — which
+     is most of them — and the slack on a phone would open as a gap between the
+     copy and the picture rather than closing up the page after it. */
+  .cs-hero .cs-figure--full img {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: none;
+    object-fit: contain;
+    object-position: left top;
+  }
+
+  /* ---------- Overview ----------
+     The two paragraphs the draft calls the facts and the reframe. They are set
+     larger than chapter body copy and they are the only place on the page that
+     is: everything after this is reported at a normal reading size, and these
+     two are the standing-back before it starts. */
+  .cs-overview {
+    padding-top: var(--section);
+  }
+  .cs-overview__body {
+    margin: clamp(28px, 4vh, 44px) 0 0;
+    max-width: 58ch;
+  }
+  .cs-overview__body p {
+    margin: 0 0 1.1em;
+    font-size: clamp(17.5px, 1.35vw, 22px);
+    line-height: 1.55;
+    letter-spacing: -0.011em;
+    color: var(--ink-1);
+  }
+  .cs-overview__body p:last-child { margin-bottom: 0; }
+  .cs-overview__body strong { color: var(--ink); font-weight: 500; }
+
+  /* ---------- Chapters ----------
+     Two columns: a rail carrying the chapter's number and its beat, and the
+     writing. The rail is not sticky — on the Boots page it was, tracking down
+     the page and brightening as you entered the chapter, and it came out on the
+     owner's instruction: a number pinned level with the top of the screen for
+     the length of a chapter reads as a thing that has failed to scroll rather
+     than as a marker. */
+  .cs-chapters {
+    padding-top: var(--section);
+  }
+  .cs-chapter {
+    display: grid;
+    grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
+    column-gap: clamp(28px, 4.5vw, 88px);
+    padding-top: clamp(56px, 8vh, 104px);
+  }
+  /* The hairline opens each chapter across the full column, so the chapters
+     read as a numbered series rather than as a run of headings. The first one
+     has none: it would be a line ruled directly under the overview's last
+     paragraph, closing it rather than opening anything. */
+  .cs-chapter + .cs-chapter {
+    margin-top: clamp(92px, 13vh, 154px);
+    border-top: 1px solid var(--rule);
+  }
+  .cs-chapter__rail {
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cs-chapter__no {
+    font-family: var(--ff-display);
+    font-weight: 800;
+    font-size: clamp(24px, 2vw, 34px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    /* 3:1 is the floor at which large text resolves at all, and below it the
+       number is not quietly subordinate, it is illegible. --ink-3 is 3.77:1:
+       over the line, and still obviously second to a white title. */
+    color: var(--ink-3);
+  }
+  /* The total, sized and dimmed as an annotation on the number rather than as
+     part of it. Its job is to say how much of the article is left, which is a
+     thing to glance at; matched to the number it would double the width of the
+     rail to carry information nobody is reading it for. Baseline-aligned by
+     default, which is what makes the pair read as a fraction.
+
+     Same ink as the number: small text needs more contrast than large text to
+     read as clearly, not less, so dimming it as well as shrinking it would be
+     the same demotion applied twice. The size is what puts it second. */
+  .cs-chapter__of {
+    font-size: 0.48em;
+    letter-spacing: -0.01em;
+  }
+  /* Brighter than the number above it, which looks backwards written down and
+     is right on the page: 11px of letterspaced uppercase needs 4.5:1 where the
+     34px number needs 3:1, so matching their inks would leave the small one
+     harder to read than the large one. The size is what ranks them. */
+  .cs-chapter__beat {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+  .cs-chapter__body { max-width: 62ch; }
+  .cs-chapter__title {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(25px, 2.35vw, 42px);
+    line-height: 1.08;
+    letter-spacing: -0.032em;
+    color: var(--ink);
+    /* Balanced so a two-line headline breaks near its middle instead of leaving
+       one word on the second line. Two of these titles run to a full sentence
+       rather than the draft's "under 8 words" — 04 and 05 — and this is what
+       stops those setting as a ragged block. */
+    text-wrap: balance;
+  }
+  /* The page's reading size, and the one curve here worth stating a reason
+     for: 1.32vw is what puts it at 19px at 1440 rather than somewhere in the
+     16s, which is where a vw term picked to hit the cap at 1650 leaves it. The
+     ceiling is a hair above that so the growth stops just past the width it
+     was set for instead of exactly on it. */
+  .cs-chapter__body p {
+    margin: 1.25em 0 0;
+    font-size: clamp(17px, 1.32vw, 19.5px);
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-chapter__body strong { color: var(--ink); font-weight: 500; }
+  /* The figure belongs to the chapter but not to its measure: it spans the
+     rail as well, so every image on the page is placed against the same edges
+     regardless of which column its writing sits in. */
+  .cs-chapter .cs-figure { grid-column: 1 / -1; }
+
+  /* ---------- Reflection ---------- */
+  .cs-reflection {
+    padding-top: var(--section);
+  }
+  .cs-reflection__title {
+    margin: clamp(20px, 3vh, 34px) 0 0;
+    font-family: var(--ff-display);
+    font-weight: 800;
+    font-size: clamp(32px, 3.9vw, 62px);
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    max-width: 18ch;
+  }
+  .cs-reflection__body {
+    margin: clamp(30px, 4.5vh, 52px) 0 0;
+    max-width: 60ch;
+  }
+  .cs-reflection__body p {
+    margin: 0 0 1.2em;
+    font-size: clamp(17px, 1.32vw, 19.5px);
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-reflection__body p:last-child { margin-bottom: 0; }
+  .cs-reflection__body strong { color: var(--ink); font-weight: 500; }
+  /* The opening line is a lead-in, not the first of the two things, and at body
+     size and body grey it reads as a paragraph that forgot to say anything.
+     Lifting it to full ink and a step up in size is what makes the two
+     paragraphs under it read as its list. */
+  .cs-reflection__body p:first-child {
+    margin-bottom: 1.5em;
+    font-size: clamp(18px, 1.42vw, 21px);
+    color: var(--ink);
+  }
+
+  /* ---------- FOOTER ----------
+     The homepage's footer, minus its pitch. There, "Open to new opportunities"
+     is the point of the page; here it is a paragraph a reader has to get past
+     to reach the two things they came to the bottom for, and it says the same
+     thing twice on a visit that takes in both pages. So this footer is the
+     contact card only: the heading, an email address, a phone number.
+
+     Back to selected work used to be a line of its own above this block. It is
+     now in the base row beside Back to top, because the two are the same kind
+     of control — where to go now that the reading is done — and separating them
+     put one of the pair 190px above the other with a hairline between. */
+  .hp-footer {
+    --foot-x: var(--pad-x);
+    margin-top: var(--section);
+    padding: clamp(64px, 10vh, 130px) var(--foot-x) clamp(32px, 4vh, 52px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--bg);
+    max-width: var(--shell);
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hp-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: var(--foot-x);
+    right: var(--foot-x);
+    height: 1px;
+    background: var(--rule);
+  }
+  .hp-footer__title {
+    margin: clamp(22px, 3vh, 40px) 0 0;
+    font-family: var(--ff-display);
+    font-size: clamp(52px, 8.4vw, 148px);
+    line-height: 0.92;
+    letter-spacing: -0.048em;
+    font-weight: 800;
+    color: var(--ink);
+    max-width: 12ch;
+  }
+  /* The gap the lede used to hold open, now stated here. It is the lede's own
+     top margin rather than the sum of the space it occupied: the buttons move up
+     to where the paragraph started, which is what makes the block read as
+     shorter instead of as a paragraph gone missing. */
+  .hp-footer__ctas {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: clamp(40px, 6vh, 80px);
+  }
+  .hp-footer__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    padding: 18px 24px;
+    background: #fff;
+    color: #0a0a0c;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    text-decoration: none;
+    transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+  }
+  .hp-footer__cta.is-ghost {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .hp-footer__cta:hover { transform: translateY(-3px); }
+  .hp-footer__cta-arrow { display: inline-flex; align-items: center; }
+  .hp-footer__cta-arrow svg { width: 16px; height: 16px; display: block; }
+
+  .hp-footer__base {
+    --base-gap: clamp(20px, 2.4vw, 28px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-left: calc(-1 * var(--foot-x));
+    margin-right: calc(-1 * var(--foot-x));
+    margin-top: clamp(56px, 9vh, 110px);
+    padding: var(--base-gap) var(--foot-x) 0;
+    font-size: 13px;
+    letter-spacing: -0.003em;
+    color: var(--ink-3);
+  }
+  .hp-footer__base::before {
+    content: '';
+    position: absolute;
+    align-self: flex-start;
+    transform: translateY(calc(-1 * var(--base-gap)));
+    left: var(--foot-x);
+    right: var(--foot-x);
+    height: 1px;
+    background: var(--rule);
+  }
+  /* The pair. Both controls answer "where now", so they are one group at the end
+     of the base row rather than two things at opposite ends of it. The gap is
+     wide enough that they do not read as one control with two labels. */
+  .hp-footer__nav {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: clamp(18px, 2.2vw, 32px);
+  }
+  /* .hp-footer__back is this page's, not the homepage's — the homepage has no
+     set to go back to. It is grouped with __top rather than given its own copy
+     of the same eight declarations, so the pair cannot drift apart. */
+  .hp-footer__back,
+  .hp-footer__top {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-family: var(--ff-body);
+    font-size: 13px;
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: color 0.25s ease;
+  }
+  .hp-footer__back { text-decoration: none; }
+  .hp-footer__back:hover,
+  .hp-footer__top:hover { color: var(--ink); }
+  .hp-footer__back svg,
+  .hp-footer__top svg { width: 14px; height: 14px; display: block; }
+  /* Travels left, where Back to top's arrow does not move at all: one of these
+     is a direction and the other is already pointing at the only place it
+     goes. */
+  .hp-footer__back .hp-footer__cta-arrow {
+    transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
+  }
+  .hp-footer__back:hover .hp-footer__cta-arrow,
+  .hp-footer__back:focus-visible .hp-footer__cta-arrow {
+    transform: translateX(-4px);
+  }
+
+  /* One focus ring for everything on the page, in the page's ink. */
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+    border-radius: 3px;
+  }
+
+  /* ---------- Reveal ----------
+     Opt-in from JS, never opt-out. The hidden state is scoped to a class the
+     script adds to <html>, so a visitor whose JS fails or is blocked gets the
+     article at full opacity rather than a blank page with an intact DOM.
+     expo.out as a bezier, matching the homepage's GSAP default so all three
+     pages settle with the same easing. */
+  .cs-motion [data-reveal]:not([data-stagger]) {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  .cs-motion [data-reveal]:not([data-stagger]).is-in {
+    opacity: 1;
+    transform: none;
+    transition: opacity 1s cubic-bezier(0.16,1,0.3,1),
+                transform 1s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  /* A block whose parts arrive in the order you read them rather than all at
+     once. The delay is on the children and the observer still watches the one
+     wrapper, so the sequence is a property of the block and not ten more
+     things for the observer to track. Capped at the fourth child: past that
+     the last paragraph of a long chapter is waiting on an animation, which is
+     the point where a stagger stops being an entrance and becomes a queue. */
+  .cs-motion [data-stagger] > * {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .cs-motion [data-stagger].is-in > * {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1),
+                transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  }
+  .cs-motion [data-stagger].is-in > :nth-child(2) { transition-delay: 90ms; }
+  .cs-motion [data-stagger].is-in > :nth-child(3) { transition-delay: 165ms; }
+  .cs-motion [data-stagger].is-in > :nth-child(n+4) { transition-delay: 225ms; }
+
+  /* ---------- Headings, a line at a time ----------
+     The one motion here that is about the writing rather than the pictures.
+     Each line sits in a box the height of itself and starts below it, so the
+     heading is uncovered rather than moved: nothing slides in from off to the
+     side, and a heading half-read during the transition is still on its own
+     baseline. The lines are measured, not guessed — see splitLines below. */
+  .cs-line {
+    display: block;
+    overflow: hidden;
+    /* A line box clipped to its own height cuts the tails off g, j, p and y.
+       This gives them room and then takes the room back out of the stack, so
+       the heading's leading is what it was before it was split. */
+    padding-bottom: 0.16em;
+    margin-bottom: -0.16em;
+  }
+  .cs-line__in { display: block; }
+  .cs-motion .cs-split .cs-line__in { transform: translateY(115%); }
+  .cs-motion .cs-split.is-in .cs-line__in,
+  .cs-motion .is-in .cs-split .cs-line__in {
+    transform: none;
+    transition: transform 1.05s cubic-bezier(0.16,1,0.3,1);
+  }
+  /* A split heading opts out of the entrance its staggered parent would give
+     it. The lines are the entrance; doing both slides the whole heading up
+     while its lines are separately sliding up inside it, which reads as the
+     heading arriving twice. */
+  .cs-motion [data-stagger] > .cs-split,
+  .cs-motion [data-stagger].is-in > .cs-split {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  /* The hero's sequence. Everything else on this page is released by the scroll
+     reaching it, so its order is whatever order the reader arrives in. This one
+     is released on load, which makes it the only place where the order of
+     arrival is composed: rule, then title, then what the title is about. */
+  .cs-motion .cs-hero .hp-eyebrow,
+  .cs-motion .cs-tags {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  .cs-motion .cs-hero.is-in .hp-eyebrow,
+  .cs-motion .cs-hero.is-in .cs-tags {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.95s cubic-bezier(0.16,1,0.3,1),
+                transform 0.95s cubic-bezier(0.16,1,0.3,1);
+  }
+  .cs-motion .cs-hero.is-in .cs-tags { transition-delay: 0.54s; }
+
+  /* Figures have no entrance of their own: they fade and rise on the generic
+     [data-reveal] above, the same as a heading or a paragraph. On the Boots page
+     they used to open out of an inset window with a scale riding along, and both
+     came out — a screenshot of an interface has no tolerance for anything that
+     moves it, because the thing being looked at is the fine detail. */
+
+  /* ---------- Responsive ----------
+     The same bands as the homepage, for the same reasons — see its stylesheet.
+     Everything that can be a continuous curve already is one in the base
+     rules, so these bands only carry things that genuinely change shape: the
+     nav pill's density, and the chapter rail going from a column to a row. */
+  @media (min-width: 601px) and (max-width: 900px) {
+    /* 20px of offset and a 74px pill. */
+    :root { --nav-clear: 120px; }
+    /* Left matching vertical again, for the even surround. Avatar and link floor
+       are both 44px here, so there is no centring offset to carry. */
+    .hp-nav { top: 20px; gap: 16px; padding: 14px 10px 14px 14px; }
+    /* 16 gap + 14 link padding. */
+    .hp-nav__brand { padding-right: 30px; gap: 12px; }
+    .hp-nav__avatar { width: 44px; height: 44px; }
+    .hp-nav__name { font-size: 16px; }
+    .hp-nav__link { padding: 12px 14px; font-size: 14px; gap: 6px; }
+    .hp-nav__arrow svg { width: 14px; height: 14px; }
+  }
+
+  @media (max-width: 600px) {
+    .hp-nav {
+      top: 14px;
+      gap: 10px;
+      /* Left is vertical + 4 from here down, not vertical: the row is the link's
+         44px tap-target floor rather than the 36px avatar, so the avatar is
+         centred and gains 4px above and below on its own. 6 and 10 give an even
+         11px. */
+      padding: 6px 6px 6px 10px;
+      /* A guard, not a width: the pill still hugs, and this only stops a long
+         name taking it to the screen edges. Percentage rather than 100vw, which
+         counts a classic scrollbar this element's containing block does not. */
+      max-width: calc(100% - 24px);
+    }
+    /* 10 gap + 12 link padding. */
+    .hp-nav__brand { padding-right: 22px; gap: 10px; }
+    .hp-nav__avatar { width: 36px; height: 36px; }
+    .hp-nav__name { font-size: 14px; }
+    .hp-nav__links { gap: 2px; }
+    .hp-nav__link {
+      min-width: 44px;
+      padding: 11px 12px;
+      font-size: 13px;
+      gap: 4px;
+    }
+
+    .cs-wrap { padding-left: 22px; padding-right: 22px; }
+
+    /* The rail stops being a column beside the writing and becomes a line
+       above it. A 13ch column on a 346px screen leaves the body 20ch, which is
+       not a measure. */
+    .cs-chapter {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 18px;
+    }
+    .cs-chapter__rail {
+      flex-direction: row;
+      align-items: baseline;
+      gap: 14px;
+    }
+    .cs-chapter__no { font-size: 20px; }
+    .cs-chapter__body { max-width: none; }
+
+    .hp-footer { --foot-x: 22px; padding: 66px var(--foot-x) 28px; }
+    .hp-footer__title { font-size: clamp(46px, 13vw, 76px); }
+    .hp-footer__ctas { margin-top: 32px; }
+    .hp-footer__cta { padding: 15px 20px; font-size: 14px; }
+    .hp-footer__base { margin-top: 46px; font-size: 12px; }
+  }
+
+  @media (max-width: 400px) {
+    /* 10 left, not 8: same vertical + 4 as the block above. */
+    .hp-nav { gap: 8px; padding: 6px 5px 6px 10px; }
+    /* 8 gap + 9 link padding. */
+    .hp-nav__brand { padding-right: 17px; gap: 8px; }
+    .hp-nav__name { font-size: 13px; }
+    .hp-nav__link { padding: 11px 9px; font-size: 12.5px; }
+    /* Down with everything else around it, and it buys the two arrows some of
+       the room the brand divider takes back. */
+    .hp-nav__arrow svg { width: 12px; height: 12px; }
+  }
+
+  /* Where the arrows stop fitting, as measured on the homepage — the pill hugs,
+     so the pair costs it width, and the phone max-width is what runs out. Only a
+     320px screen cannot hold them. Set at 340 rather than at the exact turn
+     because no device sits between 320 and 360. */
+  @media (max-width: 339px) {
+    .hp-nav__arrow { display: none; }
+    .hp-nav__link { gap: 0; }
+    /* 8 gap + 9 link padding + the 4px the 44px tap-target floor adds either
+       side of `CV` once the arrow is out and min-width binds. */
+    .hp-nav__brand { padding-right: 21px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    /* The reveal is dropped rather than shortened: it is an entrance with
+       nothing to communicate, and the state it animates to is the page. */
+    .cs-motion [data-reveal] { opacity: 1; transform: none; }
+    .cs-motion [data-reveal].is-in { transition: none; }
+    .cs-motion [data-stagger] > * { opacity: 1; transform: none; }
+    .cs-motion [data-stagger].is-in > * { transition: none; }
+    /* The split still happens: the lines are how the heading is built, not an
+       effect applied to it. What goes is the travel. */
+    .cs-motion .cs-split .cs-line__in { transform: none; }
+    .cs-motion .cs-split.is-in .cs-line__in,
+    .cs-motion .is-in .cs-split .cs-line__in { transition: none; }
+    .hp-footer__cta,
+    .hp-nav__arrow,
+    .hp-footer__back .hp-footer__cta-arrow { transition-duration: 0.01ms; }
+    .hp-footer__back:hover .hp-footer__cta-arrow,
+    .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="cs-skip" href="#cs-main">Skip to the case study</a>
+
+<nav class="hp-nav" aria-label="Primary">
+  <a class="hp-nav__brand" href="/" aria-label="Abbie Truman — home">
+    <img class="hp-nav__avatar" src="/assets/avatar-156.0b96ef89.webp" alt="" width="46" height="46">
+    <span class="hp-nav__name">Abbie Truman</span>
+  </a>
+  <!-- CV and LinkedIn only, as on the homepage and the other two case studies.
+       The way back to the set is the link at the end of the article, where
+       someone who has finished reading actually is. -->
+  <div class="hp-nav__links">
+    <a class="hp-nav__link" href="/abbie-truman-cv.pdf" target="_blank" rel="noopener">
+      <span>CV</span>
+      <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </a>
+    <a class="hp-nav__link" href="https://www.linkedin.com/in/abigail-truman/" target="_blank" rel="noopener">
+      <span>LinkedIn</span>
+      <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    </a>
+  </div>
+</nav>
+
+<main id="cs-main">
+
+<article>
+
+  <div class="cs-glow" aria-hidden="true"></div>
+
+  <header class="cs-hero cs-wrap">
+    <div class="cs-col">
+      <span class="hp-eyebrow hp-eyebrow--rule">Case study &middot; PwC Junction</span>
+      <!-- The homepage card's sentence, word for word, the same as on the Boots
+           page: the card is what the visitor clicked to get here, and a heading
+           that rephrases it makes them check whether they arrived somewhere
+           else.
+
+           aria-label carries the sentence intact, because the inner span is
+           about to be taken apart into one element per letter and a screen
+           reader given that reads it out a letter at a time. -->
+      <h1 class="cs-hero__statement" aria-label="Shaping the next set of Junction enhancements, transforming how PwC’s Deals practitioners and clients worldwide collaborate in real time.">
+        <span class="cs-hero__statement-inner" aria-hidden="true">Shaping the next set of <strong>Junction</strong> enhancements, transforming how PwC&rsquo;s Deals practitioners and clients worldwide collaborate in real time.</span>
+      </h1>
+      <ul class="cs-tags">
+        <li>UX &amp; UI</li>
+        <li>Research</li>
+        <li>Strategy</li>
+      </ul>
+
+      <figure class="cs-figure cs-figure--full">
+        <img src="/assets/pwc-hero-1120.b945b4fa.webp"
+             srcset="/assets/pwc-hero-1120.b945b4fa.webp 1120w,
+                     /assets/pwc-hero-1680.b945b4fa.webp 1680w,
+                     /assets/pwc-hero-2240.b945b4fa.webp 2240w"
+             sizes="(min-width: 1280px) 1120px, 92vw"
+             width="4500" height="2813"
+             alt="Two phones on a concrete surface in hard sunlight, running PwC Junction: a key focus areas feed with an EBITDA chart, and a quality of earnings summary with its adjustments table."
+             fetchpriority="high" decoding="async">
+      </figure>
+    </div>
+  </header>
+
+  <section class="cs-overview cs-wrap" aria-label="Overview">
+    <div class="cs-col">
+      <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
+      <div class="cs-overview__body" data-reveal data-stagger>
+        <p>I joined <strong>Junction</strong>, PwC&rsquo;s client delivery platform for Deals, after the core product had already been built. Historically practitioners handed clients their analysis as 200-page reports, burdensome at both ends; Junction replaced that with something continuous &mdash; less project management overhead, better collaboration, and expert insight reaching clients early enough to shorten their decision-making. My role was to assess the experience as it stood, find where it was costing people time, and deliver the improvements that came out of that.</p>
+        <p>On the surface, this was feature work on a platform that already worked. Underneath, it was an <strong>alignment problem</strong>. Junction did not operate alone: territories had built their own tools around it, so a decision about something as ordinary as who can see what needed agreement from senior stakeholders across regions who each wanted a different end state. What follows is one feature and one research study, as the example.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cs-chapters cs-wrap" aria-label="The work, chapter by chapter">
+    <div class="cs-col">
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">01<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">State</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">A platform already live, and a seam around it.</h2>
+          <p>No blank page here and no rebuild. Junction was built, shipped and in use, which made the work a different shape: finding where a product people already depended on was quietly costing them time, and fixing it without disrupting the engagements running on it.</p>
+          <p>When a Deals engagement begins there are numerous workspaces to stand up before any work can be delivered, and each one wants much the same information &mdash; users, roles, client, project type. Several territories had solved that locally, building their own provisioning tools so that <strong>one project initiation journey</strong> could set all of them up at once.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">02<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">Insight</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Roles that didn&rsquo;t travel between the tools.</h2>
+          <p>Research surfaced user management between the platforms as the pain point. Roles didn&rsquo;t mean the same thing in each tool, and a permission changed in one didn&rsquo;t reliably reach the others. People ended up holding access they shouldn&rsquo;t have had, or without access they had been given.</p>
+          <p>Individually these were small errors. Together they did something worse than waste time: they <strong>cost people confidence in the tools</strong>, which took the value straight back out of provisioning everything in one pass. I was asked to help the business align on a strategy, then design the solution across the connected platforms.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">03<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">Alignment</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Options with their costs attached.</h2>
+          <p>Alignment was the hard part. The decision landed on multiple territories and multiple groups of users, which meant agreement from several senior stakeholders who each held a different vision of where this should end up.</p>
+          <p>I mapped the feasible options and set out how roles and permissions would flow between the tools under each one, then made <strong>balanced recommendations</strong> rather than arguing for a favourite: what each option bought the user, what it cost to build, and what it was genuinely worth to the business.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">04<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">Trade-off</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">A quick win, chosen with the cost known.</h2>
+          <p>The client was under pressure to move fast and rebuild confidence across territories, so the quick win won. That meant accepting an experience that wasn&rsquo;t the one I&rsquo;d have designed with more room: users could configure roles as they needed, on a platform that was stable and reliable, and the business logic underneath stayed more complicated than it should have been.</p>
+          <p>It was the right call for that moment. <strong>It was also a debt</strong> &mdash; quick wins of this kind get repaid later at a higher rate, sometimes by undoing the work.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">05<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">Craft</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Designing around logic I couldn&rsquo;t change.</h2>
+          <p>With the deadline set, the job was to build an experience that either kept the agreed logic out of the user&rsquo;s way or signposted it so plainly it stopped being a trap. Working from the design system, I designed each affected journey and set the responsiveness guidance for the agreed breakpoints &mdash; scrollable tabs on narrow screens, a more compact user card &mdash; iterating with design leadership and the client through to sign-off.</p>
+          <p>Users were sectioned by the role they held, which made the page scannable and let someone be added straight into a role rather than added and then assigned. Alongside it I explored a master table of every user, with filtering, conditional logic, global search and a single point of action for adding someone. And where the logic was genuinely confusing, <strong>large, unmissable banners said so</strong> and named the platform or process that actually handled it.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">06<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">Detail</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">The mechanics that decide whether a page is quick.</h2>
+          <p>Accepting a new user took one click, but an admin was rarely accepting one. A multi-select with a <strong>global checkbox</strong> at the top meant selecting everybody and deselecting the few exceptions, so a large intake was approved in one pass rather than forty.</p>
+          <p>Switching someone&rsquo;s role moved into the more menu on their row. Before that, changing a role meant deleting the user and adding them back: a destructive operation standing in for a routine one, and a reliable way to lose somebody&rsquo;s access by accident.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">07<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">Signal</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">A tag that knows when to leave.</h2>
+          <p>A new user arrives with a success toast and a <strong>&lsquo;new&rsquo; tag</strong> beside their name. The toast is for whoever added them; the tag is for everybody else &mdash; the practitioners who didn&rsquo;t make the change and would otherwise have no way of noticing it.</p>
+          <p>It lasts up to a week, and it clears once someone has opened the page and left again. Acknowledged is a better trigger than expired, and it keeps the table from slowly filling with badges that no longer mean anything.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">08<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">Leadership</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">The week in Tampa that reopened it.</h2>
+          <p>Quick wins need investment later, and sometimes that means undoing what shipped. Armed with user feedback and the case for the better experience, we reopened the strategy during a week of planning with core leadership in Tampa: the pain points, the opportunities to improve, and several routes out of it.</p>
+          <p>Being physically in the room was the whole difference. I documented each approach as it was discussed so there was always something to point at, and <strong>business directors started sketching their own ideas</strong> on top of it. By the end of the week, addressing this properly was agreed as a priority.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">09<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">Impact</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">The feature nobody will ever praise.</h2>
+          <p>Deployed, this let <strong>thousands of users</strong> manage their project participants and clients with confidence: permissions assigned correctly, and terminology that meant the same thing whichever region you were working in.</p>
+          <p>There are no metrics to put against it, and there shouldn&rsquo;t be. User management is a hygiene factor &mdash; an indispensable part of the tool that is simply expected to work. The value of getting it right is that people went back to thinking about the engagement instead of about the software.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">10<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">Research</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Does the report builder actually save anyone time?</h2>
+          <p>The report builder takes everything uploaded to Junction &mdash; content, data, analysis &mdash; and automates a fully formatted report ready to share with a client. A round of design iterations had added several things to it: more than one way to organise the content, the option to organise from the table of contents rather than only by sliders, one action to add and remove dividers, report templates, and editable table of contents titles. All of it needed usability testing before it went further.</p>
+          <p>I ran semi-structured interviews for the context &mdash; how a report actually gets made in PowerPoint today, how much of it is customised, whether templates are used at all &mdash; then had participants work through an interactive prototype covering adding and removing sections, customising titles, and organising content.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">11<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__beat">Outcome</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Findings, and what they changed.</h2>
+          <p>I verified every note against the recordings, mapped all the responses against each question across the topics, and categorised the verbatim answers into themes. That is the unglamorous half of research and it is the half that makes a trend something you can show rather than something you remember.</p>
+          <p>The report set out the as-is process for creating a report, the pain points inside it, and the usability improvements to make. In the playback with the designers and product owners we went through the findings in detail, refined the recommendations together, and <strong>agreed the specific actions</strong> we would take.</p>
+        </div>
+      </section>
+
+    </div>
+  </section>
+
+  <!-- The three lessons from her draft, rewritten to the voice the other two
+       pages use rather than reproduced as the numbered list she wrote them as.
+       The substance is hers in all three; the Tampa sentence in the second is
+       the only cross-reference added, and it points at chapter 08 rather than
+       claiming anything the chapter does not. -->
+  <section class="cs-reflection cs-wrap" aria-labelledby="cs-reflection-h">
+    <div class="cs-col">
+      <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Reflection</span>
+      <h2 class="cs-reflection__title" id="cs-reflection-h" data-reveal>What I&rsquo;m taking from this one.</h2>
+      <div class="cs-reflection__body" data-reveal data-stagger>
+        <p>Three things, and the first is the one I argue about most.</p>
+        <p>Stakeholders reach for the quick win because it hits a target now, and sometimes that instinct is right &mdash; it puts something in front of users and buys real feedback. But on a feature people have no choice but to use, <strong>the quick win is a loan</strong>. The thorough version is harder to build and it is the one that keeps people on the platform, which is what keeps the business funding it. Making that case early, with the cost of the alternative attached, is part of the job rather than something to raise afterwards.</p>
+        <p>Managing several senior stakeholders is mostly a scheduling problem wearing a strategy problem&rsquo;s clothes. Relaying one director&rsquo;s vision to another in separate rooms isn&rsquo;t alignment, and defending an idea in siloes is slower than waiting a week to get everyone into one meeting. <strong>Tampa is the evidence</strong>: a week in the same room moved something that separate conversations hadn&rsquo;t.</p>
+        <p>And it is fine to prioritise a research sample. Our users spanned territories and business units with genuinely different needs, and there was never resource to test with all of them. Choosing the groups most likely to adopt first, then phasing a wider sample in behind them, isn&rsquo;t a compromised study. It&rsquo;s the study that actually happens.</p>
+      </div>
+    </div>
+  </section>
+
+</article>
+
+</main>
+
+<footer class="hp-footer">
+  <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Get in touch</span>
+  <h2 class="hp-footer__title" data-reveal>Let&rsquo;s talk.</h2>
+  <!-- Two ways to reach her and nothing else. The email is the filled button
+       because it is still the one most people will use; the number is written
+       the way it is dialled and linked in international form, so it works from
+       a phone abroad as well as a phone here. -->
+  <div class="hp-footer__ctas" data-reveal>
+    <a class="hp-footer__cta" href="mailto:abigail.r.truman@gmail.com">abigail.r.truman@gmail.com<span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+    <a class="hp-footer__cta is-ghost" href="tel:+447387382836">07387 382836<span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+  </div>
+  <div class="hp-footer__base" data-reveal>
+    <span>&copy; <span data-year>2026</span> Abbie Truman</span>
+    <!-- /#work rather than /, so it lands on the cards rather than the hero. The
+         homepage builds itself in JS and scrolls inside a fixed element, so the
+         browser cannot act on that fragment on its own; index.html reads it —
+         see initWorkAnchor there. -->
+    <div class="hp-footer__nav">
+      <a class="hp-footer__back" href="/#work">
+        <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to selected work
+      </a>
+      <button class="hp-footer__top" type="button" data-top>
+        <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to top
+      </button>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
+<script>
+(function() {
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelector('[data-year]').textContent = new Date().getFullYear();
+
+  // Assigned at the bottom of this file if the smoothing library arrives.
+  // Declared here because back-to-top, which has to be able to interrupt the
+  // scroll, is above it.
+  var lenis = null;
+
+  document.querySelector('[data-top]').addEventListener('click', function() {
+    if (lenis) { lenis.scrollTo(0); return; }
+    window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+  });
+
+  // ---------- Motion ----------
+  // The class that arms every hidden state in the stylesheet, set only once we
+  // know the reveal can actually run. Before this line every [data-reveal] is at
+  // full opacity, so the failure mode of everything below is a page that does
+  // not fade rather than a page that is not there.
+  var els = document.querySelectorAll('[data-reveal]');
+  if (REDUCED || !('IntersectionObserver' in window)) return;
+  document.documentElement.classList.add('cs-motion');
+
+  // ---------- Headings into lines ----------
+  // GSAP's SplitText is a Club plugin and the GSAP here comes off a public CDN,
+  // so this is the small version of it: put every word in a span, ask the
+  // browser where each one landed, and rebuild the heading as one block per
+  // distinct top. Doing it by measurement rather than by re-implementing line
+  // breaking means it inherits whatever the browser did, including the
+  // text-wrap: balance on the chapter titles and the hyphenation rules of
+  // whatever language the page is in.
+  //
+  // It runs before the hero is released and before the observer is attached, so
+  // no heading is ever rebuilt underneath its own transition.
+  function splitLines(el) {
+    var text = el.getAttribute('data-text');
+    if (text === null) {
+      // Markup inside would not survive being rebuilt from textContent. Every
+      // heading this is pointed at is plain text; this is what keeps it true.
+      if (el.children.length) return;
+      text = el.textContent.replace(/\s+/g, ' ').trim();
+      if (!text) return;
+      el.setAttribute('data-text', text);
+    }
+
+    el.textContent = '';
+    var probe = document.createDocumentFragment();
+    text.split(' ').forEach(function(word, i) {
+      if (i) probe.appendChild(document.createTextNode(' '));
+      var s = document.createElement('span');
+      s.className = 'cs-word';
+      s.textContent = word;
+      probe.appendChild(s);
+    });
+    el.appendChild(probe);
+
+    var rows = [];
+    var last = null;
+    [].forEach.call(el.querySelectorAll('.cs-word'), function(w) {
+      var top = w.offsetTop;
+      // Not equality: a line containing something taller than the rest of it
+      // sits its shorter words a pixel or two lower.
+      if (last === null || Math.abs(top - last) > 1) { rows.push([]); last = top; }
+      rows[rows.length - 1].push(w.textContent);
+    });
+
+    el.textContent = '';
+    rows.forEach(function(words, i) {
+      var line = document.createElement('span');
+      line.className = 'cs-line';
+      var inner = document.createElement('span');
+      inner.className = 'cs-line__in';
+      inner.textContent = words.join(' ');
+      // 70ms apart. Much slower and a four-line heading is still assembling
+      // itself after the eye has finished reading the first line of it.
+      inner.style.transitionDelay = (i * 0.07) + 's';
+      line.appendChild(inner);
+      el.appendChild(line);
+    });
+    el.classList.add('cs-split');
+  }
+
+  var splits = [].slice.call(document.querySelectorAll(
+    '.cs-chapter__title, .cs-reflection__title'));
+
+  // Where the lines fall is a function of the width, so a width change
+  // invalidates every one of them. Height changes are ignored: on a phone the
+  // address bar sliding away fires resize on every scroll, and re-splitting ten
+  // headings each time is a scroll jank generator.
+  var splitW = window.innerWidth;
+  var splitTimer;
+  window.addEventListener('resize', function() {
+    if (window.innerWidth === splitW) return;
+    splitW = window.innerWidth;
+    clearTimeout(splitTimer);
+    splitTimer = setTimeout(function() { splits.forEach(splitLines); }, 220);
+  });
+
+  // The hero has no scroll position to be triggered by — it is already on
+  // screen — so it is released a frame after the class above has been applied
+  // and the closed state has actually taken.
+  //
+  // Both of those wait on the webfont. Fallback metrics break lines in
+  // different places, so a heading split before Manrope lands is split against
+  // a face the reader never sees, and re-splitting to fix that mid-transition
+  // would replace the animating lines with new ones that snap. Waiting is the
+  // cheaper answer, capped so that a font which never arrives cannot mean a
+  // page which never animates.
+  var hero = document.querySelector('.cs-hero');
+
+  // ---------- The statement, one letter at a time ----------
+  // The homepage's signature, brought over so all three pages open the same way.
+  //
+  // Split in the DOM rather than from a string, which is how the homepage does
+  // it, because the sentence here already contains a <strong> and rebuilding it
+  // as markup would mean parsing that back out.
+  function splitChars(el) {
+    (function walk(node) {
+      [].slice.call(node.childNodes).forEach(function(child) {
+        if (child.nodeType === 1) { walk(child); return; }
+        if (child.nodeType !== 3) return;
+        var frag = document.createDocumentFragment();
+        child.nodeValue.split(/(\s+)/).forEach(function(part) {
+          if (!part) return;
+          // A real space, not a span: the line has to be allowed to break here.
+          if (/^\s+$/.test(part)) {
+            frag.appendChild(document.createTextNode(' '));
+            return;
+          }
+          var word = document.createElement('span');
+          word.className = 'cs-hero__word';
+          for (var i = 0; i < part.length; i++) {
+            var ch = document.createElement('span');
+            ch.className = 'cs-hero__char';
+            ch.textContent = part.charAt(i);
+            word.appendChild(ch);
+          }
+          frag.appendChild(word);
+        });
+        node.replaceChild(frag, child);
+      });
+    })(el);
+    return [].slice.call(el.querySelectorAll('.cs-hero__char'));
+  }
+
+  // Letters lift and swell towards the pointer and settle back as it leaves.
+  // The one piece of motion on the page that answers the reader rather than the
+  // scroll, which is the point: it cannot be triggered by accident and it
+  // cannot get in the way of reading, because it only happens where the cursor
+  // already is.
+  function cursorField(chars) {
+    if (window.matchMedia('(hover: none)').matches) return;
+    var RADIUS = 165, LIFT = 16;
+    var items = chars.map(function(el) {
+      return {
+        el: el,
+        setY: gsap.quickTo(el, 'y', { duration: 0.55, ease: 'power3' }),
+        setScale: gsap.quickTo(el, 'scale', { duration: 0.55, ease: 'power3' }),
+        cx: 0, cy: 0
+      };
+    });
+    function measure() {
+      items.forEach(function(it) {
+        var r = it.el.getBoundingClientRect();
+        it.cx = r.left + r.width / 2;
+        it.cy = r.top + r.height / 2;
+      });
+    }
+    var mx = -9999, my = -9999, queued = false;
+    function apply() {
+      queued = false;
+      items.forEach(function(it) {
+        var dx = mx - it.cx, dy = my - it.cy;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        var f = 0;
+        if (dist < RADIUS) {
+          f = 1 - dist / RADIUS;
+          f = f * f * (3 - 2 * f);
+        }
+        it.setY(-LIFT * f);
+        it.setScale(1 + 0.06 * f);
+      });
+    }
+    measure();
+    var reMeasure;
+    function scheduleMeasure() {
+      clearTimeout(reMeasure);
+      reMeasure = setTimeout(measure, 120);
+    }
+    window.addEventListener('resize', scheduleMeasure);
+    window.addEventListener('scroll', scheduleMeasure, { passive: true });
+    window.addEventListener('mousemove', function(e) {
+      mx = e.clientX;
+      my = e.clientY;
+      if (!queued) { queued = true; requestAnimationFrame(apply); }
+    });
+    hero.addEventListener('mouseleave', function() {
+      mx = my = -9999;
+      apply();
+    });
+  }
+
+  // Hidden here rather than in the stylesheet, so that a page which never gets
+  // GSAP shows the sentence instead of hiding it forever. The library is a
+  // blocking script above this one, so when it is coming it is already here and
+  // the letters are set down before the first paint.
+  var statement = document.querySelector('.cs-hero__statement-inner');
+  var heroChars = null;
+  if (statement && !REDUCED && typeof gsap !== 'undefined') {
+    heroChars = splitChars(statement);
+    gsap.set(heroChars, { yPercent: 55, opacity: 0 });
+  }
+
+  var started = false;
+  function start() {
+    if (started) return;
+    started = true;
+    splits.forEach(splitLines);
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        hero.classList.add('is-in');
+        if (!heroChars) return;
+        // The eyebrow is already on its way up on the CSS transition above, and
+        // the letters start a beat into it, so the rule appears to be what
+        // releases the sentence. Timings are the homepage's.
+        gsap.timeline({
+          defaults: { ease: 'expo.out', force3D: true },
+          onComplete: function() {
+            // yPercent is cleared before the field takes over, because the
+            // field drives y and GSAP would otherwise add the two together.
+            gsap.set(heroChars, { yPercent: 0, y: 0 });
+            cursorField(heroChars);
+          }
+        }).to(heroChars, {
+          yPercent: 0, opacity: 1, duration: 1, stagger: 0.011
+        }, 0.22);
+      });
+    });
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(start);
+    setTimeout(start, 1200);
+  } else {
+    start();
+  }
+
+  // rootMargin's bottom is negative so a section starts its fade once it is
+  // 12% of the way up the screen rather than the instant its first pixel
+  // appears — the homepage's 'top 82%' start, in the units this API has.
+  var io = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-in');
+      io.unobserve(entry.target);
+    });
+  }, { rootMargin: '0px 0px -12% 0px', threshold: 0 });
+
+  els.forEach(function(el) { io.observe(el); });
+
+  // That shrunk root has a hole in the bottom of it. An element that comes to
+  // rest within the last 12% of the viewport at maximum scroll never enters
+  // the observed area at all, so it stays at opacity 0 permanently — present
+  // in the DOM, present to a screen reader, and invisible. The footer's
+  // copyright bar sits 96px off the page bottom and did exactly that.
+  //
+  // Revealing whatever is left once the page bottom is reached cannot drift:
+  // there is nothing below the bottom.
+  function sweep() {
+    if (window.innerHeight + window.scrollY
+        < document.documentElement.scrollHeight - 2) return;
+    els.forEach(function(el) {
+      el.classList.add('is-in');
+      io.unobserve(el);
+    });
+    window.removeEventListener('scroll', sweep);
+  }
+  window.addEventListener('scroll', sweep, { passive: true });
+  // A viewport taller than the page is already at the bottom on arrival.
+  sweep();
+
+  // ---------- Scroll feel ----------
+  // This page is a long read and a wheel moves it in ~100px jumps. Lenis puts a
+  // short ease on each of those, so the page arrives at positions instead of
+  // cutting between them, which is most of the difference between a long page
+  // that feels built and one that feels long.
+  //
+  // It drives nothing else: no scroll-linked transforms, no pinning. Every
+  // animation on this page is still an entrance triggered once. Third party and
+  // on a CDN, so its absence has to be survivable, and it is — the page scrolls
+  // the way the browser scrolls it.
+  if (typeof gsap === 'undefined' || typeof Lenis === 'undefined') return;
+  lenis = new Lenis({
+    duration: 1.05,
+    // Fast at the front so the first frame answers the wheel, long tail so it
+    // settles rather than stops. An ease that is gentle at both ends reads as
+    // input lag, which is the failure mode this whole idea has.
+    easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+    touchMultiplier: 1.6
+  });
+  // One clock. Lenis and GSAP both want a rAF loop, and two of them means two
+  // slightly different ideas of what time it is. lagSmoothing off because Lenis
+  // is doing the smoothing.
+  gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+  gsap.ticker.lagSmoothing(0);
+})();
+</script>
+</body>
+</html>
