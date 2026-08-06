@@ -10,7 +10,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Abbie Truman">
 <meta property="og:url" content="https://abbietruman.vercel.app/boots-checkout">
-<meta property="og:title" content="Boots.com checkout — Abbie Truman">
+<meta property="og:title" content="Boots website — Abbie Truman">
 <meta property="og:description" content="Lead product designer on the Boots.com checkout rebuild: one page, three steps, no progress bar, and the same-day collection flow that never shipped.">
 <meta property="og:image" content="https://abbietruman.vercel.app/assets/boots-og-1200x630.a62517b9.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -18,7 +18,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The rebuilt Boots.com checkout on a laptop screen.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Boots.com checkout — Abbie Truman">
+<meta name="twitter:title" content="Boots website — Abbie Truman">
 <meta name="twitter:description" content="Lead product designer on the Boots.com checkout rebuild: one page, three steps, no progress bar, and the same-day collection flow that never shipped.">
 <meta name="twitter:image" content="https://abbietruman.vercel.app/assets/boots-og-1200x630.a62517b9.jpg">
 <meta name="twitter:image:alt" content="The rebuilt Boots.com checkout on a laptop screen.">
@@ -35,7 +35,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-atc-192.7a5e6b0e.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-atc-512.7a5e6b0e.png">
 
-<title>Boots.com checkout — Abbie Truman</title>
+<title>Boots website — Abbie Truman</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -82,14 +82,28 @@
        be told apart from the grey. This is the same construction pitched up
        until each colour is legible as that colour. The alpha carries most of the
        rise, and has to: at the 0.13 this used to run at, reaching this much
-       light would need a tint brighter than sRGB can state. */
-    --glow-tint: rgba(43,117,209,0.30);
+       light would need a tint brighter than sRGB can state.
+
+       Re-solved when her card moved from #0060bf to #0f0f64, which is 30 degrees
+       round from blue into indigo — far enough that the old tint would have read
+       as a different colour from the card the visitor clicked. This is the one
+       hue in the set where the sRGB ceiling actually bites: blue contributes
+       least of the three channels to luminance, so at the chroma the other pages
+       run at, the target lift is simply not reachable here. The trade is made
+       towards light rather than saturation, because a glow that is the wrong
+       brightness reads as a mistake and one that is slightly less saturated
+       reads as this colour. At 58.8% the composite chroma is just inside the
+       range the other four already span, and the lift lands on target. */
+    --glow-tint: rgba(104,94,255,0.30);
 
     --pad-x: clamp(28px, 6vw, 110px);
     --shell: 1560px;
     /* The reading column. 1120px is the homepage card's cap, so a figure on
        this page is the same width as the card the visitor clicked to get
-       here — the artwork does not change size on arrival. */
+       here, on a screen tall enough for the card to reach that cap. Below that
+       the card is sized from the viewport height instead and arrives here
+       larger than it left, which is the price of the card fitting the screen
+       it was on. See --card-cap-h in index.html. */
     --measure: 1120px;
 
     /* The interval between one section and the next. Stated once because the
@@ -311,55 +325,77 @@
   }
 
   /* ---------- HERO ----------
-     One screen, and the picture has to be whole inside it. Everything here
-     follows from that. The old hero was a title block that ran as tall as its
-     contents and let the figure fall past the fold; this one is a fixed budget
-     — the height of the window — that the copy takes its share of and the
-     picture is given the rest of.
+     The picture sets the height, and the hero runs as tall as its contents.
 
-     svh rather than vh. On a phone, vh is the viewport with the address bar
-     retracted, so a hero sized in vh is taller than the screen at the moment
-     the page loads, which is the one moment this layout exists to get right. */
+     It was the other way round for a long time. The hero was fixed at one screen
+     with `height: 100svh`, the copy took its share, and the figure was given
+     whatever was left and drawn to fit inside it with object-fit: contain. That
+     guaranteed the whole photograph landed above the fold, and width is what it
+     paid to do it. This render is 4:3, so it needs 840px of height to fill a
+     1120px column, and one screen minus the copy left about 630 — which drew the
+     picture 837px wide inside a 1120px box and left 283px of empty column down
+     its right-hand side.
+
+     The owner chose the width. The picture is now drawn at the column's full
+     1120 and the hero is however tall that comes to, about 1280px here, so the
+     bottom of the photograph falls below the fold on a 1080 window and the first
+     scroll finishes it. The machinery that existed to ration height — the fixed
+     height, the figure's flex share, object-fit — has gone with it. */
   .cs-hero {
     position: relative;
     z-index: 1;
-    /* height, not min-height. With a minimum the box still grows to whatever
-       its contents come to, so there is no leftover space for the figure to be
-       given a share of and the picture is drawn at its full size again. Fixing
-       the height is what turns the screen into a budget. */
-    height: 100svh;
     display: flex;
     flex-direction: column;
-    /* Enough to clear the nav pill, which ends 106px down, and no more: every
-       pixel above the eyebrow is a pixel off the picture. */
-    padding-top: clamp(118px, 13vh, 152px);
+    /* Clearance under the nav pill, which ends 106px down. This was the tightest
+       number that cleared it — 118px, twelve pixels of daylight — on the
+       reasoning that every pixel above the eyebrow was a pixel off the picture.
+       At the owner's request the pill now gets a margin rather than the minimum
+       it can survive on: 148px leaves 42px under it, which reads as space the
+       nav was given rather than as space it happened to have left.
+
+       Nothing competes for this any more. With the hero sized to its contents,
+       what this adds it adds to the page rather than taking it off the
+       photograph. */
+    padding-top: clamp(148px, 15vh, 168px);
     padding-bottom: clamp(24px, 3vh, 44px);
   }
   .cs-hero > .cs-col {
-    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    /* Without this the column refuses to shrink below its contents and the
-       figure's share is computed against a height the screen does not have. */
-    min-height: 0;
   }
 
   /* The lede promoted to the page's heading, at something close to the size the
      old title was. Two sentences of ordinary weight rather than two words of
      800: this says what the project was, where the old title said its name
-     twice — the eyebrow above it already reads "Case study · Boots.com".
+     twice — the eyebrow above it already reads "Case study · Boots website".
+
+     Two constraints that pull against each other: three quarters of the column,
+     and three lines, never four. This is the shortest statement in the set at 97
+     characters, so unlike the other three pages the width is what does the work
+     here rather than the size — 840px is what keeps it at three lines, where the
+     full 1120 gave it two very long ones. 38px is the set's shared ceiling, and
+     it is the size at which the longer statements elsewhere still hold three
+     lines across 840px, so this page carries it for consistency rather than
+     because 97 characters demanded it.
+
+     max-width is a fraction of --measure rather than a percentage, so the three
+     quarters is of the page's column and not of whatever box this ends up in.
+     100% is the floor: below about 1120px of window the column is already
+     narrower than 840 and the sentence should have all of it.
 
      The size clamp carries a vh term as well as a vw one, which the rest of the
-     page's type does not. Ordinary headings can afford to be sized off the
-     width alone because whatever they push down the page is only pushed. Here
-     it is taken: every line this gains is a line the picture loses, so on a
-     short window the type has to give way. */
+     page's type does not. That was load-bearing when the hero was one fixed
+     screen: every line this gained was a line the picture lost, so on a short
+     window the type had to give way. The picture sets its own size now and
+     nothing is taken from it, so the vh term is only holding the heading in
+     proportion to short windows. It binds only below 704px of window height,
+     which is where 5.4vh drops under the 38px ceiling. */
   .cs-hero__statement {
     margin: clamp(18px, 2.6vh, 30px) 0 0;
-    max-width: min(38ch, 100%);
+    max-width: min(calc(0.75 * var(--measure)), 100%);
     font-family: var(--ff-display);
     font-weight: 500;
-    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh), 46px);
+    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh), 38px);
     line-height: 1.14;
     letter-spacing: -0.028em;
     color: var(--ink);
@@ -372,26 +408,13 @@
   .cs-hero__word { display: inline-block; white-space: nowrap; }
   .cs-hero__char { display: inline-block; transform: translateZ(0); }
 
-  /* Two windows where holding the screen open stops being worth it, and the
-     hero goes back to running as tall as its contents.
-
-     A phone held sideways is 390px tall: one screen there gives the copy
-     everything and leaves the picture about fifty pixels of it.
-
-     A phone held upright is the opposite. The picture runs out of width long
-     before it runs out of height, so it cannot grow into the space a full
-     screen would reserve, and what that reserves is a quarter of the phone left
-     blank underneath it. Sized to its contents it still lands whole inside the
-     first screen — around 590px of 844 — and the 250px that were empty are the
-     top of the first chapter instead. */
-  @media (max-height: 560px) and (min-width: 601px), (max-width: 600px) {
-    .cs-hero {
-      height: auto;
-      padding-top: 116px;
-    }
-    .cs-hero .cs-figure--full { flex: 0 0 auto; }
-    .cs-hero .cs-figure--full img { height: auto; }
-  }
+  /* There used to be a media query here for the two windows where holding the
+     hero open at one screen stopped being worth it — a phone on its side, where
+     one screen gave the copy everything and the picture about fifty pixels, and
+     a phone upright, where a full screen reserved a quarter of the page as blank
+     space the picture could not grow into. Both were opting out of the fixed
+     height. The hero is sized to its contents everywhere now, which is what
+     those two windows were asking for, so the exception went with the rule. */
 
   /* The homepage's ambient glow, which this page did not have. A separate
      element rather than a pseudo on the hero, and stretched with left/right
@@ -406,13 +429,17 @@
      rather than the one value — and the scrollbar stops mattering once the
      number is only deciding how far the light reaches.
 
-     Right of centre, which is where the hero's empty half is. Everything in it
-     is left-aligned inside the measure, and the figure is contained top-left in
-     a box the full width of that, so the picture never reaches the right side at
-     any of these aspect ratios. Left of centre the brightest part of the light
-     sat behind the eyebrow and the tag chips, which are the two smallest things
-     on the page; here it falls on background, and the only type it reaches is
-     the tail of the longest heading lines, which are white and large. */
+     Right of centre, because left of centre the brightest part of the light sat
+     behind the eyebrow and the tag chips, which are the two smallest things on
+     the page. Over there the only type it reaches is the tail of the longest
+     heading lines, which are white and large.
+
+     It used to fall on empty background as well, since the picture was contained
+     top-left and never reached the right side of the column. Now that the
+     picture fills the column the light lands behind it for the height they
+     share, and what stays visible is the part above the photograph and the part
+     outside the column. That is a quieter glow than it was, which is the right
+     direction for something ambient. */
   .cs-glow {
     --glow-measure: min(100vw, var(--shell));
     position: absolute;
@@ -428,12 +455,23 @@
       var(--glow-tint) 0%, transparent 68%);
   }
 
-  /* Same chip as the homepage card's, in the page's ink instead of the card's.
-     Padding and gap are em of the label, so the row is resized by moving
-     font-size alone — which is the only thing that changed to take these down
-     from 11.5px. The border is the one exception: it is a hairline at any size,
+  /* The homepage card's chip in the page's ink: the same 38% hairline around the
+     same full-strength label, and the same em padding and gap. These were a 52%
+     outline around a 74% label for a while, which read the wrong way round — on
+     the card the outline is the quiet part and the label carries the chip, and
+     at those strengths this was an outline with text inside it instead.
+
+     Size is the deliberate difference. The card's chip is sized against a 40.7px
+     sentence and runs 10px to 15px on a curve; this one sits in body copy, where
+     15px would be close enough to the text around it to stop reading as a label
+     at all. Padding and gap are em of the label, so the row is resized by moving
+     font-size alone. The border is the exception: it is a hairline at any size,
      and scaling it with the text would only make it heavier here than it is on
      the card these came from.
+
+     The 0.38 is written out rather than reaching for --ink-3 at 0.40. Two
+     hundredths is invisible, but this number's job is to be the card's number,
+     and a token that moves for its own reasons would quietly break that.
 
      The size is deliberately the same on all three case studies. These pills are
      one component wearing one size, and a page whose pills were a point larger
@@ -441,7 +479,7 @@
   .cs-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.8em;
+    gap: 0.6em;
     margin: clamp(20px, 2.8vh, 30px) 0 0;
     padding: 0;
     list-style: none;
@@ -450,10 +488,10 @@
   .cs-tags li {
     display: inline-flex;
     align-items: center;
-    padding: 0.6em 1.2em;
-    border: 1px solid var(--ink-2);
+    padding: 0.34em 0.85em;
+    border: 1px solid rgba(255,255,255,0.38);
     border-radius: 99999px;
-    color: var(--ink-1);
+    color: var(--ink);
     font-size: 1em;
     font-weight: 500;
     line-height: 1.2;
@@ -580,32 +618,38 @@
     font-weight: 500;
     color: var(--ink-3);
   }
-  /* The figure takes what the copy above it did not, and the picture is drawn
-     to fit that rather than the picture setting the height. contain is what
-     makes it a fit rather than a crop: on a wide short window the width runs
-     out first and on a tall narrow one the height does, and either way the
-     whole artboard is inside the box. It reaches the column's full 1120px when
-     the window is tall enough to allow 840px of picture, and comes in narrower
-     when it is not. */
+  /* The gap between the copy and the picture, widened at the owner's request
+     from 22/3.4vh/48. It was the smallest gap that still separated the two, and
+     a hero whose picture starts almost immediately under the tags reads as one
+     block rather than as a title and then a photograph. This is the only
+     vertical space in the hero that is purely a judgement — the padding above is
+     nav clearance and the margins between the eyebrow, sentence and tags are
+     type spacing, but nothing forces this number except how the two want to sit
+     together. */
   .cs-hero .cs-figure--full {
-    flex: 1 1 auto;
-    min-height: 0;
-    margin-top: clamp(22px, 3.4vh, 48px);
+    flex: 0 0 auto;
+    margin-top: clamp(36px, 5.2vh, 76px);
   }
-  /* The box is the whole of the leftover space; object-position decides where
-     the picture sits inside it once contain has made it smaller. Top left, so
-     that it starts directly under the tags and its left edge is the same left
-     edge as the eyebrow and the sentence. Centred, it would float free of the
-     column on every window where the height runs out before the width — which
-     is most of them — and the slack on a phone would open as a gap between the
-     copy and the picture rather than closing up the page after it. */
+  /* The picture at the column's full width, and as tall as that makes it. No
+     object-fit and no object-position: both existed to place a picture inside a
+     box bigger than itself, and there is no such box now — the height is a
+     result of the width rather than a budget the width has to fit into.
+     width:100% with height:auto is the whole of it.
+
+     The intrinsic width and height on the <img> matter more than they used to.
+     They are what reserves the right amount of page before the file arrives, and
+     with the hero no longer a fixed height there is nothing else holding that
+     space open. */
   .cs-hero .cs-figure--full img {
+    display: block;
     width: 100%;
-    height: 100%;
-    max-width: 100%;
+    height: auto;
+    /* .cs-figure img caps every picture on the page at --fig-max-h, which is
+       right for a chapter figure and wrong for this one. The hero picture is the
+       only one whose height is allowed to be whatever its width makes it, and
+       without this the cap quietly takes it back to 64vh — 691px on a 1080
+       window against the 840 a 4:3 render at full column width comes to. */
     max-height: none;
-    object-fit: contain;
-    object-position: left top;
   }
 
 
@@ -705,7 +749,13 @@
     margin: 0;
     font-family: var(--ff-display);
     font-weight: 700;
-    font-size: clamp(25px, 2.35vw, 42px);
+    /* Under the hero statement's 38px ceiling, deliberately. At the old 42px a
+       chapter heading was both larger and heavier than the page's own h1, which
+       inverted the hierarchy at every chapter: the thing introducing a section
+       outranked the thing introducing the article. 34px puts the order back —
+       statement, then chapter, then body. The 2.35vw term is untouched, so this
+       changes only the wide end where the ceiling is what binds. */
+    font-size: clamp(25px, 2.35vw, 34px);
     line-height: 1.08;
     letter-spacing: -0.032em;
     color: var(--ink);
@@ -1355,13 +1405,13 @@
 
   <header class="cs-hero cs-wrap">
     <div class="cs-col">
-      <span class="hp-eyebrow hp-eyebrow--rule">Case study &middot; Boots.com</span>
+      <span class="hp-eyebrow hp-eyebrow--rule">Case study &middot; Boots website</span>
       <!-- The statement is the page's h1 now that "Checkout, rebuilt." has gone.
            aria-label carries the sentence intact, because the inner span is about
            to be taken apart into one element per letter and a screen reader given
            that reads it out a letter at a time. -->
-      <h1 class="cs-hero__statement" aria-label="Modernising the Boots.com checkout experience that serves 21m customers annually.">
-        <span class="cs-hero__statement-inner" aria-hidden="true">Modernising the <strong>Boots.com</strong> checkout experience that serves 21m customers annually.</span>
+      <h1 class="cs-hero__statement" aria-label="Modernising the Boots.com checkout and &lsquo;last mile&rsquo; experience that serves 21m customers annually.">
+        <span class="cs-hero__statement-inner" aria-hidden="true">Modernising the <strong>Boots.com</strong> checkout and &lsquo;last mile&rsquo; experience that serves 21m customers annually.</span>
       </h1>
       <ul class="cs-tags">
         <li>UX &amp; UI</li>

@@ -93,7 +93,7 @@
                     inside it — one weight, one size, one colour — because the
                     blank line at hp-hero__sentence does the separating.
          BODY/UI  → Inter. Every sentence you actually read, plus all labels,
-                    eyebrows, tags, nav and buttons. Where a sentence needs a
+                    eyebrows, nav and buttons. Where a sentence needs a
                     word lifted out of it, that is Inter 500 in full white.
 
        There is no serif and no accent face. Instrument Serif italic used to
@@ -761,13 +761,13 @@
   }
 
   /* ---------- CASE STUDY CARDS ----------
-     Each card is one image the owner supplied, with three pieces of text laid
+     Each card is one image the owner supplied, with a sentence and an arrow laid
      into the empty area she left at the top of it.
 
      Nothing here draws a card any more. The colour, the rounded corners, the
      browser window and its chrome, the phone composition and every shadow are
      baked into her artwork, so the only work left is to place her image and put
-     the tags, the sentence and the arrow back where she had them in the
+     the sentence and the arrow back where she had them in the
      composite. Anything this stylesheet drew over that would be a second
      designer's opinion arriving uninvited, which is what the previous version
      of this section had become.
@@ -781,9 +781,11 @@
      write races a compositor-thread scroll; on a stationary element that race
      is visible as jitter, on a scale it is not. */
   .hp-cases {
-    /* The card fills the shell again. Nothing constrains it from the height
-       any more: the width cap that used to live here existed only so three
-       cards could stack inside one viewport, and there is no stack. */
+    /* The card is constrained from the height again, and by a different thing
+       than it used to be. The old cap here existed so three cards could stack
+       inside one viewport; there is no stack, so that reason went. What replaced
+       it is one card having to fit one viewport, which is not the same
+       requirement and produces a different number. See --card-cap-h. */
     /* The section is two columns from 901px up: the cards, then the index that
        counts them, down the right-hand side. Named here because three separate
        things need the same arithmetic — the grid, the card's own width cap and
@@ -794,8 +796,9 @@
        used to be a quarter of the page. A quarter was the right size for a rail
        carrying five project names; carrying numerals, it was holding back 250px
        of the card to set 24px of type. Everything it gives up goes to the
-       artwork, which is now at its 1120px cap on any desktop rather than 200px
-       short of it. */
+       artwork, which reaches its 1120px cap where the screen is tall enough to
+       allow it rather than staying 200px short of it on width grounds. On a
+       laptop it is --card-cap-h that decides, not this. */
     --content-w: calc(min(100vw, var(--shell)) - 2 * var(--pad-x));
     /* Written against --content-w rather than as a 4.5% column, so this and the
        card width below are the same expression rather than two that have to be
@@ -808,11 +811,34 @@
     /* What the grid leaves for the cards: everything but the index and the gap.
        --card-w below reaches the same number through 100%, but the radius needs
        it as a length rather than as a share of a box it is not inside. */
+    /* The tallest card's aspect ratio, and it is the tallest rather than each
+       card's own because all five have to be one width — a column whose cards
+       changed width card to card would read as a mistake. So the one needing the
+       most height decides for the set. Saddle and PwC are 3024x2798, which is
+       0.9253; the other three are 0.8955 and get slightly more room than they
+       need. A future export taller than this has to move this number with it. */
+    --art-ar-max: 0.9253;
+    /* The widest the card can be and still fit the screen it is on.
+       Without this the card was sized from width alone, and on the laptops
+       people actually use it came out taller than the viewport: 1003px of card
+       in 900px at 1440x900, and 987px in 768px at 1366x768. Both mean the card
+       can never be seen whole at any scroll position, which is what this fixes.
+       It only governs where it needs to — above about 1140px of viewport height
+       the 1120px cap is still the smaller number and nothing changes.
+
+       svh rather than vh because the smallest viewport height is the one the
+       card has to fit inside; the conservative end is the right end here.
+
+       The allowance is one --card-gap, so the room held clear above and below a
+       card is the room that already sits between two of them. That is the
+       section's own rhythm rather than a number invented for this. */
+    --card-cap-h: calc((100svh - var(--card-gap)) / var(--art-ar-max));
     --card-w-px: min(
       calc(var(--content-w) - var(--rail-w) - var(--rail-gap)),
+      var(--card-cap-h),
       1120px
     );
-    --card-w: min(100%, 1120px);
+    --card-w: min(100%, var(--card-cap-h), 1120px);
     /* Taken from --card-w-px rather than in cqw because this applies to the
        query container itself, where container units resolve against an ancestor
        container instead of against the element.
@@ -883,10 +909,13 @@
 
      It keeps the nav's treatment exactly — same fill, same hairline, same blur
      — because that is what makes it readable everywhere it has to be. The cards
-     are full-bleed colour and one of them is nearly white, so a bare numeral in
-     the page's ink would disappear over Sofa to Saddle for the whole time that
-     card is on screen. Bottom left, diagonally opposite the nav, so the two
-     pieces of floating furniture are never in the same corner of the eye. */
+     are full-bleed colour and the lightest of them carries white at 2.6:1, so a
+     bare numeral in the page's ink would all but disappear over Sofa to Saddle
+     for the whole time that card is on screen. That card has been near-white
+     and is now a mid green, and the number barely moved, which is the point:
+     the pill is not sized to one export. Bottom left, diagonally opposite the
+     nav, so the two pieces of floating furniture are never in the same corner
+     of the eye. */
   @media (max-width: 900px) {
     .hp-cases {
       display: block;
@@ -962,67 +991,71 @@
 
      The overlay geometry, once, as shares of the card. Every number is the
      Figma value at the 1760px reference divided by 17.6, which is also what her
-     composite measures: its cards are 330px wide with the chip row starting
+     composite measures: its cards are 330px wide with the overlay starting
      24px in, and 24/330 is 7.27% against this 7.386%.
 
      The max() floors are what keep the card usable on a phone: a 346px-wide
-     card would otherwise set the description at 12.6px and the chip border at
-     0.5px. Above roughly a 520px card the proportions govern and the floors
+     card would otherwise set the description at 12.6px.
+     Above roughly a 520px card the proportions govern and the floors
      never engage.
 
-     Where a value is a share of TYPE rather than of the card it is written in
-     em, so it survives the floors intact: the chip's padding is 0.3em and
-     0.95em of its own label and its border is 0.125em of the same. Those ratios
-     hold exactly at every size, floored or not, which px or cqw could not do —
-     and it is why the chips can be resized by moving one number. */
+     The chip row above the sentence was removed once and is back at the owner's
+     request, so what matters here is why its sizing is different this time.
+
+     The old label was clamp(8px, 7.23px + 0.292cqw, 10.5px), and that ratio
+     never governed anything. The card is capped at 1120px, so 0.292cqw tops out
+     at 3.3px and the floor decided the label at every width in the range — 8px
+     on a phone and 10.5px on a desktop. That is a constant wearing a
+     proportion's clothes, and a constant is the wrong shape for this, because
+     the thing the chip has to stay subordinate to is not constant: the sentence
+     runs 17.5px on a phone and 40.7px on desktop. So one pill was 115% of the
+     sentence's line box on a phone and 50% of it on desktop. It was too loud at
+     one end and too quiet at the other, which is how it managed to be both the
+     complaint that shrank it and, later, the complaint that removed it.
+
+     --sp-tag is a curve that actually moves: 10.1px on a 320px viewport, 10.5px
+     at 390px and 15px on the capped desktop card. The pill lands at 89% of the
+     sentence's line box on a phone and 69% of it on desktop, so it is
+     subordinate at both ends rather than at one.
+
+     What follows is the history, kept because it is the argument for the curve:
+     a row of outlined chips used to sit above the sentence, carrying three or
+     four words of discipline each — UX & UI, Research, Strategy. The owner's
+     read was that they were not earning their place, and they were not: the
+     sentence underneath names the work and the client in one line, so the chips
+     were a second, vaguer answer to a question the card had already answered. A
+     good deal of the reasoning that used to live in this block was about how to
+     keep them quiet enough to be worth having, which was the argument for
+     removing them rather than for tuning them again. Tuning them again is what
+     this is, and the difference is that the sizing is now a proportion instead
+     of a floor, so the pill cannot be loud on a phone and quiet on a desktop at
+     the same time. */
   .hp-case__link {
     --sp-pad: max(22px, 7.386cqw);       /* 130px */
     --sp-gap: max(18px, 6.818cqw);       /* 120px, text column -> arrow */
-    --sp-headgap: max(14px, 2.727cqw);   /* 48px, tags -> description */
     /* Written from the properties the wrapper declares rather than as literals,
        so the floor is stated in one place. 0.03636 * 100cqw is 3.636cqw, the
        spec's 64/1760. */
     --sp-desc: max(var(--sp-desc-floor), calc(var(--sp-desc-ratio) * 100cqw));
-    /* Well below the spec's 1.136cqw (20px at its 1760 reference), on the
-       owner's instruction twice over: too loud against the sentence they label
-       on desktop, and much too loud on a phone.
+    /* Both ends written out, so the label is a proportion the whole way rather
+       than a floor pretending to be one. 15px is where the label starts reading
+       as type rather than as a caption beside a 40.7px sentence; 10px is the
+       floor below which it is not worth setting at all. */
+    --sp-tag: clamp(10px, calc(8.6px + 0.57cqw), 15px);
+    /* Ratios of the label, so the pill keeps its proportions at any size. They
+       tighten in the phone band, which is the one thing an em ratio cannot do
+       for itself: see that block for why.
 
-       The second complaint was the informative one, because the ratio in here
-       never governed. The card is capped at 1120px, so 1cqw tops out at 11.2px
-       and the floor decides the label at every width below about 1100px — the
-       old max(11px, 1cqw) measured 11px on a 264px card and 11.2px on a 1120px
-       one, which is a constant wearing a proportion's clothes. A constant is
-       the wrong shape for this, because the thing the chip has to stay
-       subordinate to is not constant: the description runs 17.5px on a phone
-       and 40.7px on desktop. So the same 24px pill was 115% of the
-       description's line box on a phone — taller than the sentence it labels —
-       and 50% of it on desktop. It only ever looked right at the top of the
-       range.
-
-       10px with the padding ratios below brings the pill to 20px: 96% of that
-       line box on a phone and 41% on desktop, so it is subordinate at both
-       ends rather than at one. It also takes the row back to one line — at
-       360px the three chips wrapped to two, which is what made the block read
-       as a slab of pills rather than as a label.
-
-       That fixed the loudness and left the scaling: 0.9cqw tops out at 10.08px
-       on the capped 1120px card, so the floor decided the label at every width
-       below about 1110px and the chip measured 10px on a phone and 10px on a
-       desktop. Which is 1.8% of the card it sits on at the top of the range and
-       7.6% of it at the bottom, so the thing that reads as a footnote beside a
-       40px sentence reads as the loudest object on the card beside a 17px one.
-
-       A clamp with both ends written out, so the label is a proportion the
-       whole way rather than a floor pretending to be one. The top is where it
-       already was and the bottom is 8px, on the owner's instruction after
-       seeing a 9px floor and asking for more.
-
-       8px is small, and it is chosen knowing that. What makes it affordable is
-       what these labels are: three or four familiar words, set in white at 500
-       on a saturated fill, on a card whose whole job is already done by the
-       sentence underneath them. They are the last thing on the card anyone
-       needs to read, and on a phone the pill was reading like the first. */
-    --sp-tag: clamp(8px, calc(7.23px + 0.292cqw), 10.5px);
+       Brought in from 0.45/1.05 at the owner's request. That pair drew a 31px
+       pill around a 13.8px label on the desktop card, which is a button's
+       proportion rather than a label's; this is 28px around the same word. The
+       cut is larger vertically than horizontally — 24% against 19% — because
+       the height is what made the chip read as a control, and taking the sides
+       in as far would start crowding "Content Strategy" on card 04, the longest
+       label in the set and the only one that has ever been near wrapping. */
+    --sp-tag-py: 0.34em;
+    --sp-tag-px: 0.85em;
+    --sp-headgap: max(12px, 2.2cqw);     /* chips -> sentence */
     --sp-arrow: max(26px, 4.091cqw);     /* 72px */
     --sp-textcol: 74.318cqw;             /* 1308px */
 
@@ -1031,7 +1064,7 @@
     text-decoration: none;
   }
   /* Inset so the ring is not clipped away by the card's own overflow:hidden,
-     and in the card's ink so it stays visible on the pale card. */
+     and in the card's ink so it stays visible on the light card too. */
   .hp-case__link:focus-visible {
     outline: 3px solid var(--card-ink);
     outline-offset: -5px;
@@ -1054,6 +1087,9 @@
     align-items: flex-start;
     gap: var(--sp-gap);
   }
+  /* The text side of that row: the chip row stacked over the sentence. It went
+     away while the sentence was the only thing in the column and is back now
+     that there are two things to stack. */
   .hp-case__head-text {
     flex: 1 1 auto;
     min-width: 0;
@@ -1102,44 +1138,6 @@
     border: 0;
   }
 
-  /* Outlined chips, replacing the solid per-card pills. The font-size is set
-     on the row so the chips' own padding, gap and border can all be em and
-     therefore hold their ratio to the label at any size. */
-  .hp-case__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75em;                      /* 0.75 of the label */
-    margin: 0;
-    font-size: var(--sp-tag);
-  }
-  .hp-case__tag {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    /* Tighter than the 0.4/1.2 the outlined chip inherited from the solid pill
-       it replaced. A solid pill needs the room, because the fill is the shape
-       and the label has to sit inside it; an outline is already the shape, so
-       the same padding just buys empty box. Most of the size that came off here
-       came off the padding rather than the label. */
-    padding: 0.28em 0.78em;           /* 0.28 / 0.78 of the label */
-    /* The floor comes down with the label. At 1.25px it was the one part of the
-       chip that could not shrink, and on the smallest card it was a fifth of
-       the pill's height being spent on its outline. 1px still paints as a
-       hairline and the em term takes over above about a 9px label, so the
-       stroke gains weight with the box rather than in spite of it. */
-    border: max(1px, 0.115em) solid var(--card-ink);
-    border-radius: 99999px;
-    background: transparent;
-    color: var(--card-ink);
-    font-family: var(--ff-body);
-    font-size: 1em;
-    font-weight: 500;
-    line-height: 1.2;
-    letter-spacing: -0.004em;
-    text-align: center;
-    white-space: nowrap;
-  }
-
   /* With no visible title this sentence IS the card's headline. The spec sets
      it at 400 rather than the 700 it carried before, so it reads considerably
      lighter — that is the spec's intent, not a regression.
@@ -1149,12 +1147,12 @@
      this size would not match it — its geometry is much rounder. */
   .hp-case__desc {
     margin: 0;
-    /* No measure of its own: the sentence fills the text column. The old
-       16.52em (the spec's 1057px against a 64px size) is 60% of the card, and
-       measuring her composite shows her own longest line running to 74.5% —
-       the full width of the column. That difference is not cosmetic: at 60%
-       both British Cycling and Sofa to Saddle wrap to four lines where her
-       artwork has three, and the fourth line is what pushed the text out of
+    /* No measure of its own: the sentence fills the column its wrapper holds
+       open. The old 16.52em (the spec's 1057px against a 64px size) is 60% of
+       the card, and measuring her composite shows her own longest line running
+       to 74.5% — the full width of the column. That difference is not cosmetic:
+       at 60% both British Cycling and Sofa to Saddle wrap to four lines where
+       her artwork has three, and the fourth line is what pushed the text out of
        the area she cleared for it and onto her mockup. */
     font-family: var(--ff-body);
     font-size: var(--sp-desc);
@@ -1167,6 +1165,51 @@
      screenshot. Against a 400 run, 600 is the step that reads as emphasis
      without turning the phrase into a different voice. */
   .hp-case__desc strong { font-weight: 600; color: inherit; }
+
+  /* Outlined chips. The font-size is set on the row so the chips' padding and
+     gap can be em of the label and hold their ratio to it at any size.
+
+     The outline is a hairline at 38% of the card's ink, not the full-strength
+     ink the earlier version drew. That is most of what makes this quieter than
+     the chips that were removed: at full strength three outlines carry the same
+     weight as the sentence underneath them and the eye reads the row first,
+     which is the wrong order for the card.
+
+     The border stays 1px at every size rather than scaling with the label. It
+     is the one part of the pill that should not be a ratio — a hairline is a
+     hairline, and an em border only makes the outline heavier on the desktop
+     card where it is already the loudest thing about the chip. This matches
+     .cs-tags on the case study pages, which reached the same conclusion. */
+  .hp-case__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;                       /* 0.6 of the label */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--sp-tag);
+  }
+  .hp-case__tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--sp-tag-py) var(--sp-tag-px);
+    /* The ink at full strength first, then the softened version. If a browser
+       does not understand rgb()'s slash alpha or has no --card-ink-rgb to read,
+       the chip keeps a visible outline rather than losing its shape entirely. */
+    border: 1px solid var(--card-ink);
+    border-color: rgb(var(--card-ink-rgb) / 0.38);
+    border-radius: 99999px;
+    background: transparent;
+    color: var(--card-ink);
+    font-family: var(--ff-body);
+    font-size: 1em;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.004em;
+    text-align: center;
+    white-space: nowrap;
+  }
 
   /* ---------- FOOTER ---------- */
   .hp-footer {
@@ -1490,9 +1533,26 @@
     .hp-hero__cue { justify-content: space-between; width: 100%; }
 
     .hp-cases {
-      /* The description is the whole measure on a phone, so its floor can come
-         down a little and still leave it the largest thing on the card. */
-      --sp-desc-floor: 17.5px;
+      /* The height cap comes off here, and here rather than at 900px, because
+         this is where the crop starts. Below 601px the artwork loses its cleared
+         band to object-fit and the head moves into the flow, so the card's height
+         is no longer the artwork's ratio times its width and a cap written from
+         that ratio would shrink it for nothing. Between 601 and 900 the card is
+         still the desktop composition at full aspect, so the cap belongs there
+         and does the same job it does above 900.
+
+         Set large rather than removed, so --card-w reads identically in every
+         band and this is the only value that differs. */
+      --card-cap-h: 9999px;
+      /* The floor decides the line count on a phone, not the ratio. At 17.5px
+         the sentence ran to four lines at 390 and five at 320: the type stopped
+         shrinking while the column kept narrowing, and three lines is the
+         composition at every other width. 11px is the largest floor that still
+         holds three at 320, the narrowest this lays out for. Above about 360
+         the ratio is already the larger of the two and this stops applying, so
+         the curve runs continuously into the band above rather than stepping at
+         the breakpoint. */
+      --sp-desc-floor: 11px;
       /* A phone card is nearly the full width of the screen, so the same 0.9
          that reads clearly on a desktop is barely a change here — there is no
          surrounding space for the difference to show against. A wider range
@@ -1555,14 +1615,36 @@
        instead of holding a column open. In the spec's proportions it costs 72
        of 1500 and the sentence never notices; at a 264px card the floored arrow
        plus the gap was taking 44px of a 214px measure, which put the Boots
-       sentence on seven lines. The tag row keeps clear of it. */
+       sentence on seven lines. */
     .hp-case__head-text { max-width: 100%; }
     .hp-case__arrow {
       position: absolute;
       top: var(--sp-pad);
       right: var(--sp-pad);
     }
-    .hp-case__tags { padding-right: calc(var(--sp-arrow) + 8px); }
+    /* The chip row is level with that arrow, so the row is what has to keep
+       clear of it and the sentence below it can run the full measure. While the
+       sentence was at the top of the head this was a float on the sentence
+       itself; with the chips back the clearance belongs here again.
+
+       Holding the desktop text column at 74.3% in this band costs the row about
+       40px, which on the fibre card is the difference between one line of chips
+       and two — hence the release above, which is the same one the sentence
+       already had. */
+    .hp-case__tags { padding-right: calc(var(--sp-arrow) + 10px); }
+    /* The padding ratios tighten here, which is the one thing an em cannot do
+       for itself. An em ratio holds the pill's proportion to its own label at
+       any size, but not its proportion to the sentence beside it: that goes from
+       17.5px to 40.7px while the label only goes 10.5 to 15. Left at the desktop
+       ratios the pill stands as tall as the line it labels, which is exactly the
+       complaint that removed these.
+
+       Cut by the same factors as the desktop pair above, so the two bands stay
+       in proportion instead of drifting apart at the seam. The pill is 19px
+       against a 20.8px line box; the 0.28/0.8 before it was 20.5px and level
+       with the line. An earlier note here put that pair at 18.5px and 89% — the
+       arithmetic had left out the 1px border on each edge. */
+    .hp-case__link { --sp-tag-py: 0.21em; --sp-tag-px: 0.65em; }
     /* Stays max() against the proportional value: a floor must never end up
        capping, which is what a bare px would do at the top of this band. */
     .hp-case__link { --sp-arrow: max(24px, 4.091cqw); }
@@ -1900,8 +1982,8 @@
   //        everything this page draws on top of the owner's artwork. It has to
   //        clear WCAG AA against the flat colour she cleared for it. Every rule
   //        in the overlay reads var(--card-ink) rather than a literal white,
-  //        which is what lets the pale card invert as data rather than as a
-  //        special case.
+  //        which is what lets a card invert as data rather than as a special
+  //        case.
   //   bg   the colour of that cleared area, read straight off her image. It is
   //        not used to draw a card: at every width above the phone band the
   //        card is her image edge to edge and this is never seen. It exists for
@@ -1913,41 +1995,77 @@
   //
   // Which ink each card gets is decided by measuring, not by whether the card
   // looks light. White is the intent across the set and four of the five take
-  // it, the artwork having been drawn dark enough to carry it.
+  // it, the artwork having mostly been drawn dark enough to carry it.
   //
   // The bar is 4.5:1, because the chip labels are small text and the 3:1 that
-  // large type may use is not the bar anything here has to meet. Two of the five
-  // do not meet it against white, and both are settled positions rather than
-  // open items: Saddle is pale by intent and takes the near-black, PwC is a
-  // knowing shortfall in white. The reasoning is at each entry. Neither is
-  // waiting on a change in this file, and both will look like mistakes to anyone
-  // who checks the ratios without reading why they are what they are.
+  // large type may use is not the bar anything here has to meet. Three of the
+  // five do not clear it against white, and the reasoning is at each entry:
+  //
+  //   Saddle  inverts to the near-black and clears at 7.634:1. Settled.
+  //   API     stays white at 3.951:1 on the owner's chosen export. Over the 3:1
+  //           the sentence may use, under the 4.5:1 the chips need. Set as
+  //           asked, and the one open shortfall here the ink alone could close.
+  //   PwC     stays white at 4.4905:1, a hundredth under, because inverting it
+  //           measures worse. A knowing shortfall.
+  //
+  // So one of those is closed and two are not. Both open ones are the same
+  // shape — the sentence clears at its size and only the ~10px chip labels
+  // miss — and neither will look like a decision to anyone who checks the
+  // ratios without reading why it is what it is, which is why each carries its
+  // own numbers below.
   //
   // Every ratio below is measured against the export currently in assets/, so a
   // re-export is a reason to run the numbers again rather than to assume the
-  // pairing survived.
+  // pairing survived. All five were replaced at once on the last pass and every
+  // number here was re-taken, including on the two cards whose flat colour came
+  // back unchanged.
   var CARDS = {
-    boots:   { bg: '#0060bf', ink: '#ffffff' },   // white 6.13:1
-    // The one light card in the set, and it is light on purpose rather than by
-    // omission. On #e1eaf9 white measures 1.21:1, so there is no version of this
-    // card that carries white type at all; the near-black — sampled from the
-    // darkest glyph cores in her composite, where the text is drawn — clears at
-    // 16.55:1, which is the widest margin of any card here.
+    // Was #0060bf, a mid blue carrying white at 6.13:1. This export is the same
+    // family three tones down and the ink got much cheaper for it: white now
+    // measures 16.551:1, the widest margin on any card in the set.
+    boots:   { bg: '#0f0f64', ink: '#ffffff' },
+    // The one inverted card, and it inverts on the measurement rather than on
+    // appearance. Green is the most luminous hue at a given saturation, and at
+    // 71% value this one is bright enough that white comes back at 2.626:1 —
+    // the lowest number in this file — while the near-black clears at 7.634:1.
     //
-    // The pale band and the inverted ink are one decision, not a gap left by the
-    // other four moving darker. Darkening this export to match them would trade
-    // the card for the set's uniformity, and the uniformity buys nothing: the
-    // whole overlay reads var(--card-ink), so a card that inverts is data rather
-    // than a special case and costs the layout nothing.
-    saddle:  { bg: '#e1eaf9', ink: '#020814' },
-    cycling: { bg: '#00247d', ink: '#ffffff' },   // white 13.56:1
-    // Redrawn from a bright pink to this deep crimson, and the darkening did
-    // exactly what it was meant to: white was 3.42:1 on the first export and
-    // 3.65:1 on the second, both under the bar and both needing the chips to be
-    // given a darkened backing that no longer exists. At #b22152 white is
-    // 6.50:1 and needs nothing holding it up.
-    api:     { bg: '#b22152', ink: '#ffffff' },
-    // The one measured shortfall in the set, and an accepted one. White on
+    // That near-black is sampled from the darkest glyph cores in her composite,
+    // where the text is drawn, and it survived the recolour: the artwork's own
+    // dark cluster still sits at (3,12,41), a shade off this.
+    //
+    // This card used to be pale — #e1eaf9, a near-white — and inverted for the
+    // obvious reason. The colour has changed completely and the ink has not,
+    // which is the case for writing the overlay in var(--card-ink) throughout:
+    // a card can go from near-white to mid green without a single rule on the
+    // page needing to know which card is which.
+    saddle:  { bg: '#11b67a', ink: '#020814' },
+    cycling: { bg: '#00247d', ink: '#ffffff' },   // white 13.606:1
+    // The second inverted card, and the entry in this file with the longest
+    // history of not clearing. It was pink through seven exports and white was
+    // measured on every one of them — #ea5587 3.42:1, #ea497f 3.65:1, #b22152
+    // 6.50:1, #ff4885 3.22:1, #ff5b97 2.919:1, #df467e 3.951:1 — so only the
+    // deep crimson ever passed, and the accepted cost was three ~10px chip
+    // labels failing on all the rest.
+    //
+    // The owner has since taken the card off pink entirely, to this pale cyan,
+    // because the pink read as jarring against the case study page it opens.
+    // That ends the argument rather than settling it: white on #d1eced is
+    // 1.240:1, which is not a shortfall but an unreadable card, and the
+    // near-black is 16.166:1 — the widest margin on any card in the set,
+    // clearing AAA on every element including the chips.
+    //
+    // The near-black is the same #020814 the cycling app card uses rather than
+    // one sampled from this artwork, which keeps the set to two inks. Sampling
+    // would have changed nothing worth having: the darkest cluster in this
+    // composite is the browser chrome at essentially black, and it measures
+    // 16.895:1 against the 16.166:1 below.
+    //
+    // The colour is also why api-portal.html's --glow-tint moved. That tint
+    // takes its hue from this card and its level from the set, and the hue has
+    // gone from 338deg to 182.1 — the one kind of re-export the note there says
+    // needs it recomputed.
+    api:     { bg: '#d1eced', ink: '#020814' },
+    // The other accepted shortfall, and the narrower of the two. White on
     // #ca501d is 4.4905:1, under the 4.5:1 the chip labels need by a hundredth.
     // The near-black is 4.46 on the same colour, so nothing clears AA here and
     // white is both the higher of the two and the pairing her artwork uses.
@@ -1987,21 +2105,39 @@
   // mockup.
   //
   // The copy on the first three is read off her composite of those cards with
-  // their text on, and the tags on them are hers, given directly. The last two
-  // are marked below: their artwork is hers, their words are mine and are meant
-  // to be replaced.
+  // their text on; the last two she gave directly. All five are hers — this
+  // said the last two were placeholder words of mine, which stopped being true
+  // once she supplied them and is corrected here so nobody trims them thinking
+  // they are nobody's.
+  //
+  // Every sentence lands on exactly three lines from 768px up, which is what
+  // her artwork draws. That is a constraint on the copy, not on the CSS: the
+  // measure is 20.4em, so three lines hold about 54em of sentence and a longer
+  // one silently takes a fourth. Cards 04 and 05 both did, and both were cut
+  // to fit rather than being set smaller or given a wider column, because the
+  // type and the column are the spec's.
+  //
+  // The `tags` array on each card is three words of discipline, drawn as
+  // outlined chips above the sentence. They were removed once, on the reading
+  // that the sentence already said what the work was, and are back at the
+  // owner's request with the sizing rebuilt — see .hp-case__tags for what
+  // changed and why the old version could not be kept as it was.
+  //
+  // The labels are hers, given directly, and in her order. Content Strategy on
+  // card 04 is title case because AI Development on card 02 is, and those two
+  // are the only labels here that run to more than one word.
   var PROJECTS = [
     {
       title: 'Boots website',
       slug: 'boots',
       card: 'boots',
-      desc: 'Modernising the <strong>Boots.com</strong> checkout experience that serves 21m customers annually.',
+      desc: 'Modernising the <strong>Boots.com</strong> checkout and &lsquo;last mile&rsquo; experience that serves 21m customers annually.',
       tags: ['UX & UI', 'Research', 'Strategy'],
       href: '/boots-checkout',
       art: {
-        base: 'assets/case-boots', tag: '1eb0b10b',
+        base: 'assets/case-boots', tag: '070ff984',
         w: 3024, h: 2708,
-        clear: 0.358,
+        clear: 0.363,
         alt: 'The Boots.com checkout in a browser window: contact, delivery and payment steps beside a running order summary'
       }
     },
@@ -2015,7 +2151,7 @@
       tags: ['UX & UI', 'AI Development', 'Strategy'],
       href: '/sofa-to-saddle',
       art: {
-        base: 'assets/case-sofa-to-saddle', tag: 'c1855966',
+        base: 'assets/case-sofa-to-saddle', tag: '5b587559',
         w: 3024, h: 2798,
         clear: 0.406,
         alt: 'Three Sofa to Saddle app screens: the home feed, a training plan and a ride timer'
@@ -2029,15 +2165,18 @@
       tags: ['UX & UI', 'Content', 'Strategy'],
       href: '/british-cycling',
       art: {
-        base: 'assets/case-british-cycling', tag: '523cb6a5',
+        base: 'assets/case-british-cycling', tag: '2b834c42',
         w: 3024, h: 2708,
         clear: 0.362,
         alt: 'The British Cycling find-an-event page in a browser window, with search and filters over a race photograph'
       }
     },
-    // Her sentence, unaltered. An earlier and longer version of it ran to five
-    // lines and crossed into the browser mockup, which is why this one is worth
-    // leaving alone: at three lines it has room to spare at every width.
+    // Her sentence with "the rest of" cut from the tail, which is what brings
+    // it onto three lines like the first three cards. The full version measures
+    // 59.4em against a 20.4em line and needed a fourth; "outpace the industry"
+    // says what "outpace the rest of the industry" said. An earlier and much
+    // longer version ran to five lines and crossed into the browser mockup,
+    // which is the failure this is staying clear of.
     //
     // The conflict between the name and the artwork has gone. The earlier export
     // was the partner-facing dashboard, which read oddly against a card called a
@@ -2046,52 +2185,52 @@
     // of them. This export is the developer portal itself, so the picture and the
     // project now say the same thing and the note is only history.
     //
-    // Her sentence, unaltered. The lifted phrase is the client, as it is on
-    // every other card, and it is what the sentence is about — the work is
-    // named by what it did for them rather than by a product.
-    //
-    // Her tags, given directly, and in her order: the strategy before the
-    // content strategy. They were a guess of mine before, which shortened the
-    // third to "Content" and put it second.
-    //
-    // Content Strategy is title case because AI Development on the Saddle card
-    // is, and those two are the only tags here that run to more than one word.
-    // /api-portal's chips are updated to match, as every card matches its
-    // page's.
+    // The lifted phrase is the client, as it is on every other card, and it is
+    // what the sentence is about — the work is named by what it did for them
+    // rather than by a product.
     {
       title: 'Full-fibre provider portals',
       slug: 'api',
       card: 'api',
-      desc: 'Leading discovery for a <strong>wholesale full-fibre provider</strong>, shaping new digital experiences built to outpace the rest of the industry.',
+      desc: 'Leading discovery for a <strong>wholesale full-fibre provider</strong>, shaping new digital experiences built to outpace the industry.',
       tags: ['UX & UI', 'Strategy', 'Content Strategy'],
       href: '/api-portal',
       art: {
-        base: 'assets/case-api-portal', tag: 'c8c9f159',
+        base: 'assets/case-api-portal', tag: 'a37d64d9',
         w: 3024, h: 2708,
-        clear: 0.358,
-        // Names the client although the label above it does not, and that is
-        // not an inconsistency to fix: the artwork has APFN in the browser
-        // chrome and the page this card links to is titled "APFN developer
-        // portal". Alt text describes the picture, and the picture says APFN.
-        alt: 'The APFN developer portal in a browser window: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request'
+        clear: 0.356,
+        alt: 'A developer portal in a browser window: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request'
       }
     },
-    // Her sentence. The only change is the apostrophe in "PwC's", which is the
-    // typographic one here as it is in Britain's and British Cycling's above —
-    // a straight quote next to three curled ones is the kind of thing that only
-    // shows up once all five are on screen together.
+    // Her rewrite, cut by one phrase to reach three lines. She sent it as "The
+    // next set of Junction enhancements, transforming how PwC's Deals
+    // practitioners and clients worldwide collaborate in real-time", which
+    // measures 61.7em against a three-line budget of about 54em and took a
+    // fourth line at every desktop width. Dropping "The next set of" is the
+    // smallest edit that fits, and it keeps every word doing work:
+    // practitioners, worldwide and real-time are hers and all still here.
+    //
+    // Swapping "transforming how" for "so" fits exactly as well and keeps the
+    // opening instead, at 54.3em either way. It reads as a purpose clause
+    // wanting a "that", which is the only reason this one was preferred.
+    //
+    // "real-time" is her spelling. The adverbial is conventionally open — "in
+    // real time", which is what this said before — so it is a change she made,
+    // not a typo to tidy away.
+    //
+    // The apostrophe in "PwC's" is the typographic one, as in Britain's and
+    // British Cycling's above: a straight quote next to three curled ones is
+    // the kind of thing that only shows up once all five are on screen.
     //
     // The lifted phrase is the product name, matching Boots.com on the first
-    // card. It is the one word on this card a reader might already know.
-    //
-    // Her tags, given directly. They were read off the credit line on her draft
-    // of the case study before, which ended Copywriting where she wants
-    // Strategy. /pwc-client-portal's chips are updated to match.
+    // card. It is the one word here a reader might already know, and it is now
+    // also the first word, which no other card does — a consequence of the cut
+    // rather than a decision.
     {
       title: 'PwC client portal',
       slug: 'pwc',
       card: 'pwc',
-      desc: 'Shaping the next set of <strong>Junction</strong> enhancements, transforming how PwC&rsquo;s Deals practitioners and clients worldwide collaborate in real time.',
+      desc: '<strong>Junction</strong> enhancements, transforming how PwC&rsquo;s Deals practitioners and clients worldwide collaborate in real-time.',
       tags: ['UX & UI', 'Research', 'Strategy'],
       href: '/pwc-client-portal',
       art: {
@@ -2172,10 +2311,30 @@
     }
   }
 
+  // The ink as an "r g b" triple, so the stylesheet can put an alpha on it with
+  // rgb(var(--card-ink-rgb) / 0.38) for the chip's hairline. The percentage is a
+  // design value and stays in the CSS; this is only the colour, which is data.
+  //
+  // Derived from --card-ink rather than listed beside it, so the two can never
+  // disagree: a card whose ink changed and whose triple did not would draw a
+  // chip outline in the old colour and there is nothing on screen that would
+  // make that obvious.
+  function inkRgb(hex) {
+    var n = parseInt(hex.replace('#', ''), 16);
+    return [(n >> 16) & 255, (n >> 8) & 255, n & 255].join(' ');
+  }
+
+  // A list, as it is on every case study page's own hero: three labels are a set
+  // and nothing about them is sequential prose. The earlier version of this row
+  // used div and span, which lost that for no stated reason.
+  //
+  // It sits inside the card's anchor, which is allowed — a's content model is
+  // transparent, and a list is not interactive content. It does not touch the
+  // link's accessible name either, since that comes from aria-label.
   function tagsHtml(p) {
-    return '<div class="hp-case__tags">' + p.tags.map(function(t) {
-      return '<span class="hp-case__tag">' + t + '</span>';
-    }).join('') + '</div>';
+    return '<ul class="hp-case__tags">' + p.tags.map(function(t) {
+      return '<li class="hp-case__tag">' + t + '</li>';
+    }).join('') + '</ul>';
   }
 
   // One glyph. The hover is a short lift handled entirely in CSS, so there is
@@ -2192,9 +2351,13 @@
   // would pull the 3024px file to paint roughly 350px of screen, which for
   // British Cycling is 234KB in place of 57KB.
   //
-  // WebP because these are screenshots on flat fields and it is worth 6-11x
-  // here: the four rungs are 237/355/530KB against 1.4/2.7/5.2MB as PNG, at
-  // 43-46dB PSNR. No PNG fallback and no <picture> to hold one. Every shipping
+  // WebP because these are screenshots on flat fields and it is worth 5-9x here.
+  // Each card's whole four-rung ladder, against those same four rungs written as
+  // optimised PNG: Boots 233KB/1.2MB, Saddle 351KB/2.6MB, British Cycling
+  // 529KB/4.5MB, fibre 322KB/1.9MB, PwC 318KB/1.8MB. This listed the first three
+  // only, from when there were three cards.
+  //
+  // No PNG fallback and no <picture> to hold one. Every shipping
   // browser has decoded WebP since about 2020, Safari included from 14, so a
   // fallback would not be protecting anyone — it would be a second format to
   // keep in step on every re-export and 4.6MB of PNG in the repo for a
@@ -2206,6 +2369,19 @@
   // made to find out otherwise; a new name is simply a different entry. It is a
   // digest of the source export, so a re-export changes every URL and a rebuild
   // that changes nothing changes none of them.
+  //
+  // Do not hand-build these. build-case-images.py at the repo root owns the
+  // whole ladder and the tag is sha256 over the source export plus the build
+  // settings — quality, the width list and the corner radius — so changing any
+  // setting renames every file too. That salt is why the tag is not the plain
+  // digest of the PNG beside it, which is worth knowing before assuming, as this
+  // comment once did, that the tags were unreproducible.
+  //
+  // The script also does two things CSS cannot: it re-cuts the corner tighter
+  // than the export's own curve, and it flattens onto black. Rebuilding a ladder
+  // without those gives a card whose corner is the CSS clip's rather than the
+  // artwork's. Re-exported a card? Drop the PNG in as assets/_src-case-<name>.png
+  // and run the script; it prints the tag, w/h and clear for this map.
   var ART_WEBP_W = [1008, 1512, 2016, 3024];
   var ART_SIZES = '(min-width: 1280px) 1008px, 79vw';
 
@@ -2239,6 +2415,7 @@
     // phone crop drift with each image's aspect.
     var ar = p.art.h / p.art.w;
     var style = '--i:' + i + ';--card-bg:' + c.bg + ';--card-ink:' + c.ink +
+      ';--card-ink-rgb:' + inkRgb(c.ink) +
       ';--art-ar:' + ar.toFixed(4) +
       ';--art-crop:' + (p.art.clear * ar).toFixed(4) + ';';
 

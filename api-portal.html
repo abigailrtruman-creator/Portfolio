@@ -4,24 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Leading discovery for APFN, a wholesale full-fibre provider: prioritising a developer portal's feature set, and mapping the three connected experiences it belonged inside.">
+<meta name="description" content="Leading discovery for a wholesale full-fibre provider: prioritising a developer portal's feature set, and mapping the three connected experiences it belonged inside.">
 <link rel="canonical" href="https://abbietruman.vercel.app/api-portal">
 
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Abbie Truman">
 <meta property="og:url" content="https://abbietruman.vercel.app/api-portal">
-<meta property="og:title" content="APFN developer portal — Abbie Truman">
-<meta property="og:description" content="Leading discovery for APFN, a wholesale full-fibre provider: prioritising a developer portal's feature set, and mapping the three connected experiences it belonged inside.">
-<meta property="og:image" content="https://abbietruman.vercel.app/assets/api-og-1200x630.297a25e4.jpg">
+<meta property="og:title" content="Full-fibre provider portals — Abbie Truman">
+<meta property="og:description" content="Leading discovery for a wholesale full-fibre provider: prioritising a developer portal's feature set, and mapping the three connected experiences it belonged inside.">
+<meta property="og:image" content="https://abbietruman.vercel.app/assets/api-og-1200x630.d2e9ef74.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The APFN developer portal in a browser window: reference documentation for a Get Appointment endpoint beside a console for testing the request.">
+<meta property="og:image:alt" content="A laptop on a dark iridescent surface running the developer portal: reference documentation for a Get Appointment endpoint beside a console for testing the request.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="APFN developer portal — Abbie Truman">
-<meta name="twitter:description" content="Leading discovery for APFN, a wholesale full-fibre provider: prioritising a developer portal's feature set, and mapping the three connected experiences it belonged inside.">
-<meta name="twitter:image" content="https://abbietruman.vercel.app/assets/api-og-1200x630.297a25e4.jpg">
-<meta name="twitter:image:alt" content="The APFN developer portal in a browser window: reference documentation for a Get Appointment endpoint beside a console for testing the request.">
+<meta name="twitter:title" content="Full-fibre provider portals — Abbie Truman">
+<meta name="twitter:description" content="Leading discovery for a wholesale full-fibre provider: prioritising a developer portal's feature set, and mapping the three connected experiences it belonged inside.">
+<meta name="twitter:image" content="https://abbietruman.vercel.app/assets/api-og-1200x630.d2e9ef74.jpg">
+<meta name="twitter:image:alt" content="A laptop on a dark iridescent surface running the developer portal: reference documentation for a Get Appointment endpoint beside a console for testing the request.">
 
 <!-- The same circular AT monogram the other pages carry, and deliberately the
      same hashed filenames rather than a set of its own: one icon per site, and
@@ -35,7 +35,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-atc-192.7a5e6b0e.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-atc-512.7a5e6b0e.png">
 
-<title>APFN developer portal — Abbie Truman</title>
+<title>Full-fibre provider portals — Abbie Truman</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,19 +52,27 @@
      names, so grepping .cs-chapter returns all three case studies and a change
      to one is findable from the others.
 
+     This page used to carry one figure, the hero, on the grounds that what the
+     discovery produced was client material that was not hers to publish. That
+     has been cleared, so the eight artboards are here — the workshop, the
+     prioritisation board, the benchmarked templates, the journey map, the site
+     map, the content specification and the two rows of design templates — and
+     with them the captions and the viewer this page had been written without.
+     Both were taken from pwc-client-portal.html rather than rewritten, so
+     .cs-figure figcaption, .cs-figure__label, .cs-figure__open and the whole
+     .cs-lb block are that page's, unaltered.
+
+     The viewer is here for the reason it is there: these are artboards, not
+     device renders. A journey map nine stages wide and a row of three design
+     templates 12,300px across are drawn at 1120 on the page, which is a map of
+     them rather than a reading of them. build-fibre-figures.py cuts the 3360px
+     copy each one opens. The hero is skipped, the same as the other two pages
+     skip theirs — it is a photograph, there is nothing in it to read closely,
+     and build-api-figures.py gives it no zoom copy to open.
+
      Two differences from sofa-to-saddle.html, which is what this was copied
-     from:
-
-     There is one figure on this page and it is the hero. This project paused
-     after discovery, and what it produced — a journey map, a site map, a
-     content specification, a set of templates — is client material that is not
-     hers to publish. So the figcaption and .cs-figure__label rules are not
-     carried across: nothing here has a caption, and dead rules for a picture
-     that does not exist are the kind of thing that gets copied into a fourth
-     page. If a figure is ever added below the hero, take them from
-     sofa-to-saddle.html rather than writing them again.
-
-     .cs-terms, which is this page's own and is explained where it is defined.
+     from: the viewer above, and .cs-terms, which is this page's own and is
+     explained where it is defined.
      ---------- */
   :root {
     --ff-display: 'Manrope', 'Inter', -apple-system, sans-serif;
@@ -87,17 +95,29 @@
        most of the level, and has to: at the 0.13 this used to run at, reaching
        this much light would need a tint brighter than sRGB can state.
 
-       Her card has been re-exported twice — #ea5587, then #ea497f, now the deeper
-       #b22152 — and this value barely moved with any of it, because all three are
-       within a few degrees of the same hue and only the lightness changed. Hue is
-       the only thing this takes from the card; the level is the set's, not hers. */
-    --glow-tint: rgba(202,74,103,0.30);
+       Her card was re-exported six times without this number moving — #ea5587,
+       #ea497f, the deep #b22152, #ff4885, #ff5b97, #df467e — because all six
+       sat between 338.0 and 340.0 degrees of hue, a two-degree spread across
+       exports ranging from 70% to 100% in value. Only lightness changed, and
+       lightness is the one thing this does not take from the card.
+
+       The seventh export is the one the old note here said would need this
+       recomputed: the card has gone from pink to a pale cyan, #d1eced, which
+       is a 156-degree turn. So this is now solved at 182.1 degrees, and only
+       the hue came from her — the card's own 11.8% saturation did not, any
+       more than the pink's 68.6% did. Composited at this alpha over --bg it
+       lands 13.78 of L* above the page at 58.7% saturation, which is where
+       every other page in the set sits. */
+    --glow-tint: rgba(40,127,125,0.30);
 
     --pad-x: clamp(28px, 6vw, 110px);
     --shell: 1560px;
     /* The reading column. 1120px is the homepage card's cap, so a figure on
        this page is the same width as the card the visitor clicked to get
-       here — the artwork does not change size on arrival. */
+       here, on a screen tall enough for the card to reach that cap. Below that
+       the card is sized from the viewport height instead and arrives here
+       larger than it left, which is the price of the card fitting the screen
+       it was on. See --card-cap-h in index.html. */
     --measure: 1120px;
 
     /* The interval between one section and the next. Stated once because the
@@ -315,19 +335,34 @@
   }
 
   /* The page's heading, and what the project was rather than what it was called
-     — the eyebrow above it already reads "Case study · APFN".
+     — the eyebrow above it already reads "Case study · Full-fibre provider
+     portals".
+
+     Two constraints that pull against each other: three quarters of the column,
+     and three lines, never four. The sentence is 140 characters, so at 46px it
+     needed nearly the whole 1120 to hold three lines, which is what made it read
+     as a wall of type rather than as a statement. 38px is the size at which 140
+     characters still land in three lines across 840px, found by measuring rather
+     than by arithmetic — 40px is four, and ch is the width of a zero and tells
+     you very little about a real sentence in Manrope.
+
+     max-width is a fraction of --measure rather than a percentage, so the three
+     quarters is of the page's column and not of whatever box this ends up in.
+     100% is the floor: below about 1120px of window the column is already
+     narrower than 840 and the sentence should have all of it.
 
      The size clamp carries a vh term as well as a vw one, which the rest of the
      page's type does not. Ordinary headings can afford to be sized off the
      width alone because whatever they push down the page is only pushed. Here
      it is taken: every line this gains is a line the picture loses, so on a
-     short window the type has to give way. */
+     short window the type has to give way. It binds only below 704px of window
+     height, which is where 5.4vh drops under the 38px ceiling. */
   .cs-hero__statement {
     margin: clamp(18px, 2.6vh, 30px) 0 0;
-    max-width: min(38ch, 100%);
+    max-width: min(calc(0.75 * var(--measure)), 100%);
     font-family: var(--ff-display);
     font-weight: 500;
-    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh), 46px);
+    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh), 38px);
     line-height: 1.14;
     letter-spacing: -0.028em;
     color: var(--ink);
@@ -395,11 +430,22 @@
       var(--glow-tint) 0%, transparent 68%);
   }
 
-  /* Same chip as the homepage card's, in the page's ink instead of the card's.
+  /* The same pill as the homepage card's, in the page's ink instead of the
+     card's — but no longer at the same size, and that is a decision rather than
+     drift. The card's chip is sized against a 40.7px sentence and runs 10px to
+     15px on a curve; this one sits in body copy, where 15px would be close
+     enough to the text around it to stop reading as a label at all.
      Padding and gap are em of the label, so the row is resized by moving
      font-size alone. The border is the one exception: it is a hairline at any
      size, and scaling it with the text would only make it heavier here than it
-     is on the card these came from. */
+     is on the card these came from.
+
+     That claim was not true until now. This page carried 0.6em/1.2em while the
+     card and the other three case studies carried 0.45em/1.05em, so the pill
+     was a different shape here and not merely a different size. Both have since
+     been cut — the card to 0.34em/0.85em at the owner's request — and this now
+     runs the same pair as everything else, which leaves font-size as the only
+     thing that differs, as the paragraph above always said it was. */
   .cs-tags {
     display: flex;
     flex-wrap: wrap;
@@ -412,7 +458,7 @@
   .cs-tags li {
     display: inline-flex;
     align-items: center;
-    padding: 0.6em 1.2em;
+    padding: 0.34em 0.85em;
     border: 1px solid var(--ink-2);
     border-radius: 99999px;
     color: var(--ink-1);
@@ -425,14 +471,19 @@
 
   /* ---------- Figures ----------
      No frame, no radius and no border here on purpose, the same as on the other
-     two pages: the rounded surfaces, the device edges and their shadows are in
-     her artwork, and anything drawn around them would be a second frame around
-     a frame. build-api-figures.py composites the hero onto this page's
-     background so those corners are the page showing through rather than a
-     notch of white or black.
+     pages: the device edges, the surface and its shadows are all inside her
+     hero render, and the artboards below reach their own edges. Anything drawn
+     around either would be a second frame around a frame.
 
-     Capped at one screenful of height, not width, so the figure's width follows
-     its own proportions. */
+     Capped at one screenful of height, not width, so each figure's width
+     follows its own proportions. It is also what keeps them sharp: the widest
+     artboard here is 12,300px and the page draws it at 1120 at most.
+
+     The gap between the writing and the picture it belongs to has to stay
+     clearly smaller than the gap between one chapter and the next, or the
+     figure stops reading as the end of this chapter and starts looking like the
+     opening of the following one. The pair is kept at roughly 0.7: see
+     .cs-chapter + .cs-chapter, which moves with this. */
   .cs-figure {
     margin: clamp(64px, 9vh, 108px) 0 0;
   }
@@ -443,6 +494,70 @@
     height: auto;
     max-height: var(--fig-max-h);
     margin-inline: auto;
+  }
+  /* The caption is exactly as wide as the picture above it, whatever that
+     picture happens to be. It cannot be a fixed measure: the figures are capped
+     by height, so the benchmark sheet comes out about 590px wide and a row of
+     templates about 1120, and one number is either too wide for the first or a
+     stubby line under the second.
+
+     --ar is the picture's own width/height, set per figure. The picture is drawn
+     at min(100% of the column, --fig-max-h × --ar), so the caption is given the
+     same expression and lands on the same edges. Pure CSS, so it is right
+     before the image has loaded and right without script. */
+  .cs-figure figcaption {
+    margin: 26px auto 0;
+    max-width: min(100%, calc(var(--fig-max-h) * var(--ar, 1)));
+    /* Bottom a shade over the top: the eyebrow's cap-height leaves the box
+       looking heavier above than below when the four sides are equal. */
+    padding: 19px 22px 20px;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.004em;
+    /* A step up from --ink-3. Inside a box the text is being presented rather
+       than tucked away, and at 0.40 it looked like a disabled control. */
+    color: var(--ink-2);
+    text-align: left;
+  }
+  /* The eyebrow pattern the page uses above every section heading, one size
+     down: it sits inside a 14px block here rather than over a display title,
+     and at the full 12px it competed with the sentence it introduces.
+
+     aria-hidden because a figcaption is already announced as the caption of its
+     figure. Spelling that out again is repetition for the one visitor who
+     cannot see the layout that makes it useful. */
+  .cs-figure__label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--ink-3);
+  }
+  /* The button the script wraps each figure's picture in, so that opening the
+     viewer is a real control with a real label rather than a click handler on
+     an image. It hugs the picture rather than the column: these are capped by
+     height, so most of them are narrower than the measure, and a button the
+     width of the column would open the viewer from the empty space beside one.
+     No label drawn over the artwork — a pill floating over a screenshot reads
+     as part of it. */
+  .cs-figure__open {
+    position: relative;
+    display: block;
+    width: -moz-fit-content;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: zoom-in;
   }
   /* The hero figure takes what the copy above it did not, and the picture is
      drawn to fit that rather than the picture setting the height. contain is
@@ -562,7 +677,13 @@
     margin: 0;
     font-family: var(--ff-display);
     font-weight: 700;
-    font-size: clamp(25px, 2.35vw, 42px);
+    /* Under the hero statement's 38px ceiling, deliberately. At the old 42px a
+       chapter heading was both larger and heavier than the page's own h1, which
+       inverted the hierarchy at every chapter: the thing introducing a section
+       outranked the thing introducing the article. 34px puts the order back —
+       statement, then chapter, then body. The 2.35vw term is untouched, so this
+       changes only the wide end where the ceiling is what binds. */
+    font-size: clamp(25px, 2.35vw, 34px);
     line-height: 1.08;
     letter-spacing: -0.032em;
     color: var(--ink);
@@ -906,6 +1027,103 @@
   }
   .cs-motion .cs-hero.is-in .cs-tags { transition-delay: 0.54s; }
 
+  /* Figures have no entrance of their own: they fade and rise on the generic
+     [data-reveal] above, the same as a heading or a paragraph. */
+
+  /* ---------- Viewer ----------
+     Lifted from pwc-client-portal.html unaltered, which took it from the Boots
+     page. One state: the picture at the width of the screen, scrolled down like
+     the page it is a picture of. It had two on Boots, fit and actual size, and
+     fit turned out to be the problem the viewer exists to solve wearing the
+     viewer's clothes. */
+  .cs-lb[hidden] { display: none; }
+  .cs-lb {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(6,6,8,0.94);
+    -webkit-backdrop-filter: blur(22px);
+            backdrop-filter: blur(22px);
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  .cs-lb.is-open { opacity: 1; }
+  .cs-lb__stage {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* The page underneath is already locked, but a trackpad that reaches the
+       end of this still hands the rest of its momentum to the document behind
+       on iOS unless told not to. */
+    overscroll-behavior: contain;
+    /* Enough headroom for the close button to sit over the backdrop rather than
+       over the artboard's first row of pixels. */
+    padding: clamp(64px, 9vh, 104px) clamp(14px, 3vw, 44px) clamp(28px, 6vh, 72px);
+    text-align: center;
+    cursor: zoom-out;
+  }
+  /* Touch only, and only while the viewer is up. Handing every gesture to the
+     script is what makes a pinch interpretable, but it also means giving up the
+     browser's own scrolling, which is a bad trade anywhere a wheel exists. */
+  .cs-lb.is-touch .cs-lb__stage { touch-action: none; }
+  .cs-lb__img {
+    display: inline-block;
+    width: 100%;
+    /* Past this the artboard is being drawn larger than it was authored and
+       starts to soften; the 3360px copy is the ceiling the build produces. */
+    max-width: 1680px;
+    height: auto;
+    border-radius: 10px;
+    cursor: default;
+    opacity: 0;
+    transform: translateY(14px) scale(0.988);
+  }
+  .cs-lb.is-open .cs-lb__img {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.5s ease 0.06s,
+                transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.06s;
+  }
+  .cs-lb__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 99999px;
+    background: rgba(20,20,24,0.82);
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+    color: var(--ink-1);
+    font: inherit;
+    font-size: 13px;
+    letter-spacing: -0.004em;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .cs-lb__btn:hover { color: var(--ink); border-color: rgba(255,255,255,0.32); }
+  .cs-lb__btn svg { width: 14px; height: 14px; display: block; }
+  .cs-lb__close {
+    position: absolute;
+    top: clamp(14px, 2.4vh, 26px);
+    right: clamp(14px, 2.4vw, 26px);
+    z-index: 2;
+    padding: 11px;
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  /* Last in, so the picture is what arrives and the control is what turns up
+     once you are looking at it. */
+  .cs-lb.is-open .cs-lb__close {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.4s ease 0.24s,
+                transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.24s,
+                color 0.25s ease, border-color 0.25s ease;
+  }
+
   /* ---------- Responsive ----------
      The same bands as the homepage, for the same reasons — see its stylesheet.
      Everything that can be a continuous curve already is one in the base
@@ -1017,6 +1235,14 @@
     .hp-footer__back .hp-footer__cta-arrow { transition-duration: 0.01ms; }
     .hp-footer__back:hover .hp-footer__cta-arrow,
     .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
+    /* The viewer still opens — reading a screenshot is not an animation, and
+       someone who has asked for reduced motion has not asked for smaller
+       pictures. What goes is the fade and the rise it opens with. */
+    .cs-lb,
+    .cs-lb.is-open .cs-lb__img,
+    .cs-lb.is-open .cs-lb__close { transition: none; }
+    .cs-lb__img { opacity: 1; transform: none; }
+    .cs-lb__close { opacity: 1; transform: none; }
   }
 </style>
 </head>
@@ -1052,7 +1278,7 @@
 
   <header class="cs-hero cs-wrap">
     <div class="cs-col">
-      <span class="hp-eyebrow hp-eyebrow--rule">Case study &middot; APFN</span>
+      <span class="hp-eyebrow hp-eyebrow--rule">Case study &middot; Full-fibre provider portals</span>
       <!-- aria-label carries the sentence intact, because the inner span is
            about to be taken apart into one element per letter and a screen
            reader given that reads it out a letter at a time.
@@ -1079,23 +1305,19 @@
       </ul>
 
       <figure class="cs-figure cs-figure--full">
-        <!-- The hero ladder, not the homepage card's. Both are struck from the
-             same export, so this is the same picture the visitor clicked; what
-             differs is the crop. The card keeps a band of flat brand pink across
-             its top for the homepage's overlay text, which makes it 1.117 wide
-             — and this figure is drawn with object-fit: contain into a box that
-             is wide and short, so a near-square picture is sized by its height
-             and came out barely half the column, pinned left, with the rest of
-             the measure empty beside it. build-api-figures.py crops that band
-             off and re-cuts the corners, which is where the 1.575 below comes
-             from. See that script. -->
-        <img src="/assets/api-hero-1120.297a25e4.webp"
-             srcset="/assets/api-hero-1120.297a25e4.webp 1120w,
-                     /assets/api-hero-1680.297a25e4.webp 1680w,
-                     /assets/api-hero-2240.297a25e4.webp 2240w"
+        <!-- Her render, not the homepage card. The two used to be one file —
+             the card cropped off its flat overlay band — and are now two
+             pictures of the same interface, so a visitor clicks a pale cyan
+             card and lands on a laptop on black. That is deliberate; see
+             build-api-figures.py, which also explains where the 1.6 below comes
+             from. -->
+        <img src="/assets/api-hero-1120.d2e9ef74.webp"
+             srcset="/assets/api-hero-1120.d2e9ef74.webp 1120w,
+                     /assets/api-hero-1680.d2e9ef74.webp 1680w,
+                     /assets/api-hero-2240.d2e9ef74.webp 2240w"
              sizes="(min-width: 1280px) 1120px, 92vw"
-             width="5280" height="3352"
-             alt="The APFN developer portal in a browser window: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request."
+             width="6765" height="4229"
+             alt="A laptop on a dark iridescent surface running the developer portal: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request."
              fetchpriority="high" decoding="async">
       </figure>
     </div>
@@ -1157,6 +1379,28 @@
           </dl>
           <p>We came out of it with a value proposition and a prioritised feature list. Set against the client&rsquo;s own vision, that was a clear enough path forward to get the work moving.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 1.6980" data-reveal>
+          <img src="/assets/fibre-workshop-1120.93d3a498.webp"
+               srcset="/assets/fibre-workshop-1120.93d3a498.webp 1120w,
+                       /assets/fibre-workshop-1680.93d3a498.webp 1680w,
+                       /assets/fibre-workshop-2240.93d3a498.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="5466" height="3219"
+               alt="Workshop attendees standing at a wall of printed feature cards, one of them reaching up to a card. The cards are headed API Documentation, Tutorials and Use Case Examples, and Configuration Audit."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The workshop the feature list came out of: every candidate printed, on a wall, in front of the people who had to agree on it.</span></figcaption>
+        </figure>
+        <figure class="cs-figure" style="--ar: 1.8933" data-reveal>
+          <img src="/assets/fibre-priorities-1120.74412c25.webp"
+               srcset="/assets/fibre-priorities-1120.74412c25.webp 1120w,
+                       /assets/fibre-priorities-1680.74412c25.webp 1680w,
+                       /assets/fibre-priorities-2240.74412c25.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="5430" height="2868"
+               alt="A board headed Feature Prioritisation. Its features are grouped into an MVP band dated June 2024, a Next Phase band dated October 2024 and a Backlog band dated March 2025, each band with a paragraph explaining what qualifies for it, and each feature card shaded to show whether it came from the core requirements, from developer input, or from the workshop."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The same list once it had been cut into three bands and dated. The shading is a second reading of it: which features were already required, which the developers asked for, and which the room invented.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
@@ -1169,6 +1413,17 @@
           <p>A prioritised feature list is not a specification, and refining the requirements underneath it ran straight back into the constraints: a two-person team, a release date the client was ambitious about, and a stakeholder we could not iterate with slowly.</p>
           <p>So I reviewed best-in-class examples and wrote the high-level requirements as <strong>user stories grounded in that practice</strong>, then took them to the client to be validated and iterated on together. Presenting a considered draft turned the few sessions we had from elicitation into decisions, and we aligned on high-level requirements that way.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 0.9216" data-reveal>
+          <img src="/assets/fibre-benchmark-1120.24f67b52.webp"
+               srcset="/assets/fibre-benchmark-1120.24f67b52.webp 1120w,
+                       /assets/fibre-benchmark-1680.24f67b52.webp 1680w,
+                       /assets/fibre-benchmark-2240.24f67b52.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="3622" height="3930"
+               alt="Two feature sheets side by side, FNC-03 API Explorer and FNC-01 API Documentation. Each has a numbered greyscale wireframe at the top, panels of user stories and considerations beneath it, and below those a wall of screenshots of other companies' developer portals, among them Google, Azure, BT, Mapbox, Stripe, Spotify and Shell."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">How a requirement was arrived at, read from the bottom up: the portals reviewed, the user stories written from them, and the wireframe those produced.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
@@ -1182,6 +1437,17 @@
           <p>A marketing site to advertise the offering and generate new leads. The developer portal we were already contracted to build. And a partner portal, where organisations could manage their users, permissions, payments and services, and see updates on order and service statistics.</p>
           <p>To bring that connected journey to life I built a <strong>journey map</strong> covering both the developer and the partner experience. It set out the key touchpoints, the places the two overlapped, and the content types each stage depended on. That last part mattered more than it sounds: the client had no content yet and no content strategist, so naming content as part of the journey was the only way it was going to become anyone&rsquo;s job.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 1.2309" data-reveal>
+          <img src="/assets/fibre-journey-1120.3275a771.webp"
+               srcset="/assets/fibre-journey-1120.3275a771.webp 1120w,
+                       /assets/fibre-journey-1680.3275a771.webp 1680w,
+                       /assets/fibre-journey-2240.3275a771.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="8556" height="6951"
+               alt="A journey map headed End-to-End Partner and Developer Journey, running from Awareness through Consideration, Conversion, Fulfilment, Usage and Support, Retention and Advocacy. Each stage has a row for the partner journey, a row for the developer journey, a row of tags naming which of the marketing website, developer portal and partner portal it touches, and a row setting out the content it needs with examples."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The two journeys on one map, with the sites each stage touches tagged between them. The bottom row is the one that changed the engagement: the content every stage depends on, named while there was still nobody whose job it was.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
@@ -1194,6 +1460,17 @@
           <p>A developer portal leans almost entirely on content, and at this stage there was none of it. To help the client see the volume involved and where it would all have to sit, I drafted a site map that put features and content pages into one structure.</p>
           <p>It did a second job at the same time. Laying the pages out is what <strong>identified which ones would need design work</strong>, and that list is what the following phase could be scoped against.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 1.4156" data-reveal>
+          <img src="/assets/fibre-sitemap-1120.e007e7c3.webp"
+               srcset="/assets/fibre-sitemap-1120.e007e7c3.webp 1120w,
+                       /assets/fibre-sitemap-1680.e007e7c3.webp 1680w,
+                       /assets/fibre-sitemap-2240.e007e7c3.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="7725" height="5457"
+               alt="A draft site map. Home and Search sit above a row of primary navigation items — Products, APIs, Resources, Community, Support and My Dashboard — each with its secondary pages hanging beneath it and the features it relates to listed inside, with a footer block at the bottom."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Every page the portal needed, in one structure. Drawing it is what turned an open-ended content problem into a countable one.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
@@ -1207,6 +1484,17 @@
           <p>It separated <strong>timely from evergreen</strong>, so the ongoing effort was visible up front rather than discovered a year later. It carried metrics, so effectiveness could be judged rather than assumed. And it recorded what each piece was for &mdash; supporting a sale, deepening engagement, or teaching someone something.</p>
           <p>For a client with no content function, that did more than set expectations. It turned content creation into something that could be planned, resourced and handed to somebody.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 1.5120" data-reveal>
+          <img src="/assets/fibre-content-1120.57e83232.webp"
+               srcset="/assets/fibre-content-1120.57e83232.webp 1120w,
+                       /assets/fibre-content-1680.57e83232.webp 1680w,
+                       /assets/fibre-content-2240.57e83232.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="4731" height="3129"
+               alt="A spreadsheet with a row per piece of content, grouped by feature — homepage, products, SDKs, API status and health, changelog. Its columns run from a description and the detail behind it through the content types and assets required, whether the content already exists or is new, the key copy messaging, the metrics it answers to, whether it is evergreen or timely, and its sign-off status."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The content specification. Format and messaging on the left, and on the right the two columns that made it plannable: what each piece is measured by, and whether it has to be maintained forever.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
@@ -1232,6 +1520,28 @@
           </dl>
           <p>The last of those is the one I would defend hardest. A discovery ends with things unresolved; writing them into the deliverable is the difference between <strong>a known gap and a thing quietly overlooked</strong>.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 2.2308" data-reveal>
+          <img src="/assets/fibre-templates-1-1120.1715154b.webp"
+               srcset="/assets/fibre-templates-1-1120.1715154b.webp 1120w,
+                       /assets/fibre-templates-1-1680.1715154b.webp 1680w,
+                       /assets/fibre-templates-1-2240.1715154b.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="12303" height="5515"
+               alt="Three design templates side by side — Homepage, Product Landing Page and API Documentation. Each is a greyscale wireframe of the full page with a definition, user stories, key content inputs and key considerations set out in a column beside it."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Three of the templates. The wireframe is the left half of each sheet; the four written blocks beside it are the rest of what the next phase inherits.</span></figcaption>
+        </figure>
+        <figure class="cs-figure" style="--ar: 2.2313" data-reveal>
+          <img src="/assets/fibre-templates-2-1120.60cc1812.webp"
+               srcset="/assets/fibre-templates-2-1120.60cc1812.webp 1120w,
+                       /assets/fibre-templates-2-1680.60cc1812.webp 1680w,
+                       /assets/fibre-templates-2-2240.60cc1812.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="12292" height="5509"
+               alt="Three more design templates side by side — API Catalogue, Changelog, and Feedback and Support — each a greyscale wireframe of the full page with a definition, user stories, key content inputs and key considerations set out in a column beside it."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">And three more. Key considerations closes every sheet, which is the point: the questions still open at the end of discovery, written into the deliverable rather than left in someone&rsquo;s head.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
@@ -1301,6 +1611,24 @@
   </div>
 </footer>
 
+<!-- The viewer. Empty markup rather than markup built from JS so the dialog's
+     role, its label and its control are in the document being reviewed rather
+     than in a string. It carries hidden until it is opened. -->
+<!-- data-lenis-prevent is load-bearing, not decoration. The smoothing library
+     binds a wheel listener to the document and calls preventDefault on every
+     event it sees, so with the viewer open the wheel would reach neither the
+     page (correctly, it is locked) nor the picture (not correctly at all): the
+     viewer would open on the top of a 3600px artboard with no way down it. This
+     attribute is how that listener is told to keep its hands off a scroller. -->
+<div class="cs-lb" id="cs-lb" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
+  <div class="cs-lb__stage" data-lb-stage data-lenis-prevent>
+    <img class="cs-lb__img" alt="">
+  </div>
+  <button class="cs-lb__btn cs-lb__close" type="button" data-lb-close aria-label="Close viewer">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
 <script>
@@ -1317,6 +1645,247 @@
   document.querySelector('[data-top]').addEventListener('click', function() {
     if (lenis) { lenis.scrollTo(0); return; }
     window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+  });
+
+  var figures = [].slice.call(document.querySelectorAll('.cs-figure'));
+
+  // ---------- Viewer ----------
+  // Lifted from pwc-client-portal.html. Deliberately outside the motion gate
+  // below: being able to read an artboard is not an animation, and someone who
+  // has asked for reduced motion has not asked for smaller pictures.
+  var lb = document.getElementById('cs-lb');
+  var lbStage = lb.querySelector('[data-lb-stage]');
+  var lbImg = lb.querySelector('.cs-lb__img');
+  var lbClose = lb.querySelector('[data-lb-close]');
+  var opener = null;
+
+  // The 3360px copy sits beside the page's rungs under the same content hash,
+  // so it is the src with its width swapped — no second attribute per figure to
+  // keep in step with the build, and a rebuild moves both together or neither.
+  function zoomSrc(src) {
+    return /-\d+\.[a-f0-9]{8}\.webp$/.test(src)
+      ? src.replace(/-\d+\.([a-f0-9]{8})\.webp$/, '-zoom.$1.webp')
+      : null;
+  }
+
+  function openLb(img, src) {
+    opener = document.activeElement;
+    lbImg.src = src;
+    lbImg.alt = img.alt;
+    lb.hidden = false;
+    lbStage.scrollTop = 0;
+    resetZoom();
+
+    // The scrollbar's width is given back as padding so that locking the page
+    // does not shift everything under the overlay sideways by 15px.
+    var bar = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = 'hidden';
+    if (bar > 0) document.body.style.paddingRight = bar + 'px';
+    // overflow:hidden stops the browser scrolling the page. It does not stop
+    // the smoothing library, which is writing scroll positions itself and would
+    // carry on running the page underneath the overlay.
+    if (lenis) lenis.stop();
+    requestAnimationFrame(function() { lb.classList.add('is-open'); });
+    lbClose.focus();
+    document.addEventListener('keydown', onKey);
+  }
+
+  function closeLb() {
+    lb.classList.remove('is-open');
+    document.removeEventListener('keydown', onKey);
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    if (lenis) lenis.start();
+    // Held until the fade is over, so the image is not pulled out from under
+    // its own exit. src is dropped with it: a 700KB decode has no business
+    // staying resident for a viewer nobody is looking at.
+    var finish = function() { lb.hidden = true; lbImg.removeAttribute('src'); };
+    if (REDUCED) finish(); else setTimeout(finish, 340);
+    if (opener && opener.focus) opener.focus();
+    opener = null;
+  }
+
+  function onKey(e) {
+    if (e.key === 'Escape') { closeLb(); return; }
+    // One control, so the trap is to keep it. Tab from anywhere lands back on
+    // the close button rather than walking into the page behind the overlay.
+    if (e.key === 'Tab') { e.preventDefault(); lbClose.focus(); }
+  }
+
+  lbClose.addEventListener('click', closeLb);
+
+  // ---------- Pinch ----------
+  // A phone draws every figure edge to edge on the page already, so opening one
+  // gains about five per cent and the artboards stay unreadable. There is no
+  // width at which a row of three design templates is legible inside 390px, so
+  // the only real answer is to let it be drawn bigger than the screen and moved
+  // around.
+  //
+  // Nothing moves sideways until that has been asked for. The stage keeps
+  // overflow-x hidden throughout, and panning is done by writing scrollLeft,
+  // which a hidden overflow still allows a script to do. At rest the picture is
+  // exactly the width of the stage and there is nothing there to move.
+  var TOUCH = window.matchMedia('(hover: none)').matches;
+  var MAXZ = 4;
+  var zoom = 1;
+  var pts = new Map();
+  var pinch = null, last = null, moved = false, downOn = null;
+  var vx = 0, vy = 0, glide = 0, lastTap = 0;
+
+  function fitWidth() {
+    var cs = getComputedStyle(lbStage);
+    return lbStage.clientWidth
+      - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  }
+
+  function resetZoom() {
+    zoom = 1;
+    lbImg.style.width = '';
+    lbImg.style.maxWidth = '';
+    lbStage.scrollLeft = 0;
+  }
+
+  // mx/my is the point the gesture is centred on, and it is held still while
+  // the picture grows under it: zooming towards a corner should move that
+  // corner nowhere, or the thing being looked at slides out from under the
+  // fingers looking at it. Measured off the rendered box before and after
+  // rather than computed, so the stage's padding and the centring of a picture
+  // narrower than the stage are accounted for without being modelled.
+  function setZoom(next, mx, my) {
+    next = Math.max(1, Math.min(MAXZ, next));
+    if (Math.abs(next - zoom) < 0.001) return;
+
+    var r0 = lbImg.getBoundingClientRect();
+    var fx = r0.width ? (mx - r0.left) / r0.width : 0.5;
+    var fy = r0.height ? (my - r0.top) / r0.height : 0.5;
+
+    zoom = next;
+    if (zoom === 1) {
+      lbImg.style.width = '';
+      lbImg.style.maxWidth = '';
+    } else {
+      lbImg.style.maxWidth = 'none';
+      lbImg.style.width = (fitWidth() * zoom) + 'px';
+    }
+
+    var r1 = lbImg.getBoundingClientRect();
+    lbStage.scrollLeft += (r1.left + fx * r1.width) - mx;
+    lbStage.scrollTop += (r1.top + fy * r1.height) - my;
+  }
+
+  function gap(p) {
+    return Math.sqrt(Math.pow(p[1].x - p[0].x, 2) + Math.pow(p[1].y - p[0].y, 2));
+  }
+
+  function onDown(e) {
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (lbStage.setPointerCapture) lbStage.setPointerCapture(e.pointerId);
+    cancelAnimationFrame(glide);
+    downOn = e.target;
+    moved = false;
+    vx = vy = 0;
+    last = { x: e.clientX, y: e.clientY, t: e.timeStamp };
+    if (pts.size === 2) {
+      var p = Array.from(pts.values());
+      pinch = { d: gap(p) || 1, z: zoom };
+    }
+  }
+
+  function onMove(e) {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    var p = Array.from(pts.values());
+
+    if (p.length >= 2 && pinch) {
+      moved = true;
+      setZoom(pinch.z * (gap(p) / pinch.d),
+              (p[0].x + p[1].x) / 2, (p[0].y + p[1].y) / 2);
+      return;
+    }
+    // A finger lifting out of a pinch leaves the other one mid-gesture, so the
+    // first move after that re-seats the origin instead of panning by the whole
+    // distance between two fingers.
+    if (!last) { last = { x: e.clientX, y: e.clientY, t: e.timeStamp }; return; }
+
+    var dx = e.clientX - last.x, dy = e.clientY - last.y;
+    var dt = Math.max(1, e.timeStamp - last.t);
+    if (Math.abs(dx) > 2 || Math.abs(dy) > 2) moved = true;
+    vx = dx / dt; vy = dy / dt;
+    lbStage.scrollLeft -= dx;
+    lbStage.scrollTop -= dy;
+    last = { x: e.clientX, y: e.clientY, t: e.timeStamp };
+  }
+
+  function onUp(e) {
+    pts.delete(e.pointerId);
+    if (pts.size < 2) pinch = null;
+    last = null;
+    if (pts.size) return;
+
+    // Even fitted to the width, the journey map runs several screenfuls, and
+    // dragging it a hand's width at a time is not reading it.
+    if (Math.abs(vx) > 0.25 || Math.abs(vy) > 0.25) {
+      var sx = vx * 15, sy = vy * 15;
+      var step = function() {
+        sx *= 0.94; sy *= 0.94;
+        lbStage.scrollLeft -= sx;
+        lbStage.scrollTop -= sy;
+        if (Math.abs(sx) > 0.4 || Math.abs(sy) > 0.4) glide = requestAnimationFrame(step);
+      };
+      glide = requestAnimationFrame(step);
+    }
+
+    if (e.pointerType !== 'mouse' && !moved) {
+      if (e.timeStamp - lastTap < 320) {
+        // Straight to something readable and straight back, for anyone who does
+        // not want to negotiate with two fingers.
+        setZoom(zoom > 1 ? 1 : 2.5, e.clientX, e.clientY);
+        moved = true;
+        lastTap = 0;
+      } else {
+        lastTap = e.timeStamp;
+      }
+    }
+  }
+
+  if (TOUCH) {
+    lb.classList.add('is-touch');
+    lbStage.addEventListener('pointerdown', onDown);
+    lbStage.addEventListener('pointermove', onMove);
+    lbStage.addEventListener('pointerup', onUp);
+    lbStage.addEventListener('pointercancel', onUp);
+  }
+
+  // Anywhere off the picture closes. Not the picture itself: it is scrolled
+  // through, and a click that lands at the end of a flick to move down it
+  // should not be read as asking to leave. downOn rather than the click's own
+  // target because capturing the pointer above re-aims the click at the stage,
+  // which would otherwise read a tap on the picture as a tap beside it.
+  lbStage.addEventListener('click', function(e) {
+    var on = downOn || e.target;
+    downOn = null;
+    if (moved) { moved = false; return; }
+    if (on !== lbImg) closeLb();
+  });
+
+  figures.forEach(function(fig) {
+    var img = fig.querySelector('img');
+    // The hero is a photograph: nothing in it is meant to be read closely, and
+    // build-api-figures.py does not give it a zoom copy to open.
+    if (!img || fig.closest('.cs-hero')) return;
+    var src = zoomSrc(img.getAttribute('src'));
+    if (!src) return;
+
+    var figcap = fig.querySelector('.cs-figure__text')
+                 || fig.querySelector('figcaption');
+    var caption = figcap ? figcap.textContent.trim() : '';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cs-figure__open';
+    btn.setAttribute('aria-label', 'Enlarge: ' + (caption || img.alt));
+    img.parentNode.insertBefore(btn, img);
+    btn.appendChild(img);
+    btn.addEventListener('click', function() { openLb(img, src); });
   });
 
   // ---------- Motion ----------

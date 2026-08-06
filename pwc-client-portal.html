@@ -10,7 +10,7 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Abbie Truman">
 <meta property="og:url" content="https://abbietruman.vercel.app/pwc-client-portal">
-<meta property="og:title" content="PwC Junction — Abbie Truman">
+<meta property="og:title" content="PwC client portal — Abbie Truman">
 <meta property="og:description" content="Designing user management across PwC&#39;s interconnected Deals delivery platforms, and running the research behind Junction&#39;s report builder.">
 <meta property="og:image" content="https://abbietruman.vercel.app/assets/pwc-og-1200x630.b945b4fa.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -18,7 +18,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Two phones on a concrete surface in hard sunlight, running PwC Junction: a key focus areas feed and a quality of earnings summary.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="PwC Junction — Abbie Truman">
+<meta name="twitter:title" content="PwC client portal — Abbie Truman">
 <meta name="twitter:description" content="Designing user management across PwC&#39;s interconnected Deals delivery platforms, and running the research behind Junction&#39;s report builder.">
 <meta name="twitter:image" content="https://abbietruman.vercel.app/assets/pwc-og-1200x630.b945b4fa.jpg">
 <meta name="twitter:image:alt" content="Two phones on a concrete surface in hard sunlight, running PwC Junction: a key focus areas feed and a quality of earnings summary.">
@@ -35,7 +35,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/assets/favicon-atc-192.7a5e6b0e.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon-atc-512.7a5e6b0e.png">
 
-<title>PwC Junction — Abbie Truman</title>
+<title>PwC client portal — Abbie Truman</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,26 +50,29 @@
      built as a Squarespace injection, and extracting one is a change to files
      that have been tuned against a screenshot matrix. Copying keeps the class
      names, so grepping .cs-chapter returns all three case studies and a change
-     to one is findable from the others. This is sofa-to-saddle.html's copy of
-     that stylesheet unaltered, so a diff between the two files is the writing.
+     to one is findable from the others.
 
-     Three things the Boots page has and this one does not:
+     This page began as sofa-to-saddle.html's copy of that stylesheet and has
+     since taken the viewer back off the Boots page, so it is the two of them
+     joined: Saddle's document, Boots' lightbox.
 
-     The image viewer. That page's figures are artboards carrying two or three
-     full screens each, drawn small enough that the interface's own 14px type
-     lands at four or five pixels, and the lightbox exists to open a 3360px copy.
-     There is one picture here and the page already draws it from the largest
-     copy that exists. See build-pwc-figures.py.
+     The viewer is here because of what the figures are. Saddle's are single
+     device renders at 390px of phone, where a viewer would open the pixels it
+     was launched from — which is why that page does not have one. These are
+     artboards: whole settings pages at two breakpoints, three option maps side
+     by side, and a wall of research stickies where a note's label lands at
+     about three pixels at column width. The page is a map of them and the
+     viewer is how they are read. See build-junction-figures.py, which cuts the
+     3360px copy each one opens.
 
-     Chapter figures. This client's work is under NDA and the hero render is what
-     has been cleared, so .cs-figure appears once on this page where it appears
-     four times on the last one. Every rule for it is still below, untouched,
-     because that is what makes adding a screen later a paste rather than a
-     rebuild.
+     The hero is the exception and is skipped, the same as Boots' is: it is a
+     photograph rather than a document, there is nothing in it to read closely,
+     and build-pwc-figures.py gives it no zoom copy to open.
 
-     ScrollTrigger. It is loaded there and drives nothing; every animation on all
-     three pages is an entrance fired once by an IntersectionObserver. GSAP
-     itself stays, because the hero's letters need it. ---------- */
+     ScrollTrigger is the one thing the Boots page loads that this does not. It
+     drives nothing there; every animation on all three pages is an entrance
+     fired once by an IntersectionObserver. GSAP itself stays, because the
+     hero's letters need it. ---------- */
   :root {
     --ff-display: 'Manrope', 'Inter', -apple-system, sans-serif;
     --ff-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -103,7 +106,10 @@
     --shell: 1560px;
     /* The reading column. 1120px is the homepage card's cap, so a figure on
        this page is the same width as the card the visitor clicked to get
-       here — the artwork does not change size on arrival. */
+       here, on a screen tall enough for the card to reach that cap. Below that
+       the card is sized from the viewport height instead and arrives here
+       larger than it left, which is the price of the card fitting the screen
+       it was on. See --card-cap-h in index.html. */
     --measure: 1120px;
 
     /* The interval between one section and the next. Stated once because the
@@ -291,72 +297,81 @@
   }
 
   /* ---------- HERO ----------
-     One screen, and the picture has to be whole inside it. The hero is a fixed
-     budget — the height of the window — that the copy takes its share of and the
-     picture is given the rest of.
+     The picture sets the height, and the hero runs as tall as its contents.
 
-     svh rather than vh. On a phone, vh is the viewport with the address bar
-     retracted, so a hero sized in vh is taller than the screen at the moment
-     the page loads, which is the one moment this layout exists to get right. */
+     It was the other way round for a long time. The hero was fixed at one screen
+     with `height: 100svh`, the copy took its share, and the figure was given
+     whatever was left and drawn to fit inside it with object-fit: contain. That
+     guaranteed the whole photograph landed above the fold, and width is what it
+     paid to do it. This render is 1.6:1 and needs 700px of height to fill a
+     1120px column; one screen minus the copy left about 615, which drew the
+     picture 982px wide inside a 1120px box and left 138px of empty column down
+     its right-hand side. That was the smallest gap of the three pages, because
+     this is the one whose source was cropped wider — and it was still a gap.
+
+     The owner chose the width. The picture is now drawn at the column's full
+     1120 and the hero is however tall that comes to, so its bottom edge falls
+     below the fold on a 1080 window and the first scroll finishes it. The
+     machinery that existed to ration height — the fixed height, the figure's
+     flex share, object-fit — has gone with it. */
   .cs-hero {
     position: relative;
     z-index: 1;
-    /* height, not min-height. With a minimum the box still grows to whatever
-       its contents come to, so there is no leftover space for the figure to be
-       given a share of. Fixing the height is what turns the screen into a
-       budget. */
-    height: 100svh;
     display: flex;
     flex-direction: column;
-    /* Enough to clear the nav pill, which ends 106px down, and no more: every
-       pixel above the eyebrow is a pixel off the picture. The 118px floor is
-       that clearance and does not move. What is a step under the other pages' is
-       the vh term and the ceiling: the pill is 106px tall on every window, so
-       scaling its clearance with the viewport was buying air on tall screens and
-       paying for it in picture. 12vh only overtakes the floor above ~985px of
-       window, and the cap is 134 rather than 152. */
-    padding-top: clamp(118px, 12vh, 134px);
-    /* Also a step under. The picture is height-bound in this hero, so the bottom
-       margin is in direct competition with it, and at 3vh it was reserving more
-       than a full-bleed photograph needs in order to read as finished. */
+    /* Clearance under the nav pill, which ends 106px down. This used to be the
+       tightest number that cleared it — 118px, twelve pixels of daylight — on
+       the reasoning that every pixel above the eyebrow was a pixel off the
+       picture. At the owner's request the pill now gets a margin rather than the
+       minimum it can survive on: 148px leaves 42px under it, which reads as
+       space the nav was given rather than as space it happened to have left.
+
+       Same number on all three case studies, along with the gap above the figure
+       at .cs-hero .cs-figure--full. Nothing competes for either of them any more:
+       with the hero sized to its contents, what they add they add to the page
+       rather than taking it off the photograph. */
+    padding-top: clamp(148px, 15vh, 168px);
+    /* A step under the other two, from when the picture was height-bound here
+       and this margin was in direct competition with it. It stays low because a
+       full-bleed photograph needs very little under it in order to read as
+       finished, which was true for its own reasons and still is. */
     padding-bottom: clamp(16px, 2vh, 32px);
   }
   .cs-hero > .cs-col {
-    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    /* Without this the column refuses to shrink below its contents and the
-       figure's share is computed against a height the screen does not have. */
-    min-height: 0;
   }
 
-  /* The page's heading, and what the project was rather than what it was called
-     — the eyebrow above it already reads "Case study · PwC Junction".
+  /* The page's heading, under the rule that names the case study.
+
+     Width and size are set together, because the owner asked for two things at
+     once — three quarters of the column, and three lines, never four. Those
+     fight each other on this sentence. It is 135 characters against the Boots
+     page's 80, so at 46px it needed nearly the full 1120 to hold three lines,
+     and taking a quarter of that away is what buys the fourth. The 38px ceiling
+     is the size at which 135 characters still land in three lines across 840px,
+     found by measuring rather than by arithmetic — ch is the width of a zero and
+     tells you very little about a real sentence in Manrope.
+
+     max-width is a fraction of --measure rather than a percentage, so the three
+     quarters is of the page's column and not of whatever box this ends up in.
+     100% is the floor: below about 1120px of window the column is already
+     narrower than 840 and the sentence should have all of it.
 
      The size clamp carries a vh term as well as a vw one, which the rest of the
-     page's type does not. Ordinary headings can afford to be sized off the
-     width alone because whatever they push down the page is only pushed. Here
-     it is taken: every line this gains is a line the picture loses, so on a
-     short window the type has to give way.
-
-     This sentence is 135 characters against the Boots page's 80, so it takes a
-     third line at every width the two share, and a line of this heading is about
-     50px of height. That used to be the reason this hero drew narrower than that
-     one, and for a while this clamp was held a step under the other pages' to
-     claw some of it back.
-
-     It is not held under any more, and the size and margin here are the same as
-     theirs. The picture's shape is what was actually wrong: it was her 4:3
-     render, and at a fixed leftover height a 4:3 crop is the narrowest useful
-     thing to put in that space. Cropping it to 1.6 in build-pwc-figures.py is
-     worth about three times what shrinking this heading was, so the heading went
-     back to full size. Type is not the lever here. */
+     page's type does not. That was load-bearing when the hero was one fixed
+     screen: every line this gained was a line the picture lost, so on a short
+     window the type had to give way. The picture sets its own size now and
+     nothing is taken from it, so the vh term is only holding the heading in
+     proportion to short windows — a reason it had before the hero was ever a
+     budget. It binds above 704px of window height, where 5.4vh overtakes the
+     38px ceiling, so on any ordinary laptop this is 38px and three lines. */
   .cs-hero__statement {
     margin: clamp(18px, 2.6vh, 30px) 0 0;
-    max-width: min(38ch, 100%);
+    max-width: min(calc(0.75 * var(--measure)), 100%);
     font-family: var(--ff-display);
     font-weight: 500;
-    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh), 46px);
+    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh), 38px);
     line-height: 1.14;
     letter-spacing: -0.028em;
     color: var(--ink);
@@ -369,26 +384,13 @@
   .cs-hero__word { display: inline-block; white-space: nowrap; }
   .cs-hero__char { display: inline-block; transform: translateZ(0); }
 
-  /* Two windows where holding the screen open stops being worth it, and the
-     hero goes back to running as tall as its contents.
-
-     A phone held sideways is 390px tall: one screen there gives the copy
-     everything and leaves the picture almost none of it.
-
-     A phone held upright is the opposite. The picture runs out of width long
-     before it runs out of height, so it cannot grow into the space a full
-     screen would reserve, and what that reserves is a stretch of empty page
-     underneath it. Sized to its contents it still lands whole inside the first
-     screen, and the room that was empty is the top of the first chapter
-     instead. */
-  @media (max-height: 560px) and (min-width: 601px), (max-width: 600px) {
-    .cs-hero {
-      height: auto;
-      padding-top: 116px;
-    }
-    .cs-hero .cs-figure--full { flex: 0 0 auto; }
-    .cs-hero .cs-figure--full img { height: auto; }
-  }
+  /* There used to be a media query here for the two windows where holding the
+     hero open at one screen stopped being worth it — a phone on its side, where
+     one screen gave the copy everything and the picture almost none of it, and a
+     phone upright, where a full screen reserved a stretch of empty page the
+     picture could not grow into. Both were opting out of the fixed height. The
+     hero is sized to its contents everywhere now, which is what those two
+     windows were asking for, so the exception went with the rule. */
 
   /* The homepage's ambient glow. A separate element rather than a pseudo on the
      hero, and stretched with left/right rather than the usual
@@ -402,13 +404,17 @@
      rather than the one value — and the scrollbar stops mattering once the
      number is only deciding how far the light reaches.
 
-     Right of centre, which is where the hero's empty half is. Everything in it
-     is left-aligned inside the measure, and the figure is contained top-left in
-     a box the full width of that, so the picture never reaches the right side at
-     any of these aspect ratios. Left of centre the brightest part of the light
-     sat behind the eyebrow and the tag chips, which are the two smallest things
-     on the page; here it falls on background, and the only type it reaches is
-     the tail of the longest heading lines, which are white and large. */
+     Right of centre, because left of centre the brightest part of the light sat
+     behind the eyebrow and the tag chips, which are the two smallest things on
+     the page. Over there the only type it reaches is the tail of the longest
+     heading lines, which are white and large.
+
+     It used to fall on empty background as well, since the picture was contained
+     top-left and never reached the right side of the column. Now that the
+     picture fills the column the light lands behind it for the height they
+     share, and what stays visible is the part above the photograph and the part
+     outside the column. That is a quieter glow than it was, which is the right
+     direction for something ambient. */
   .cs-glow {
     --glow-measure: min(100vw, var(--shell));
     position: absolute;
@@ -424,16 +430,33 @@
       var(--glow-tint) 0%, transparent 68%);
   }
 
-  /* Same chip as the homepage card's, in the page's ink instead of the card's.
-     Padding and gap are em of the label, so the row is resized by moving
-     font-size alone — which is the only thing that changed to take these down
-     from 11.5px. The border is the one exception: it is a hairline at any size,
+  /* The homepage card's chip in the page's ink: the same 38% hairline around the
+     same full-strength label, and the same em padding and gap. These were a 52%
+     outline around a 74% label for a while, which read the wrong way round — on
+     the card the outline is the quiet part and the label carries the chip, and
+     at those strengths this was an outline with text inside it instead.
+
+     Size is the deliberate difference. The card's chip is sized against a 40.7px
+     sentence and runs 10px to 15px on a curve; this one sits in body copy, where
+     15px would be close enough to the text around it to stop reading as a label
+     at all. Padding and gap are em of the label, so the row is resized by moving
+     font-size alone. The border is the exception: it is a hairline at any size,
      and scaling it with the text would only make it heavier here than it is on
-     the card these came from. */
+     the card these came from.
+
+     The 0.38 is written out rather than reaching for --ink-3 at 0.40. Two
+     hundredths is invisible, but this number's job is to be the card's number,
+     and a token that moves for its own reasons would quietly break that.
+
+     The size is deliberately the same on all three case studies. These pills are
+     one component wearing one size, and a page whose pills were a point larger
+     than the next page's would read as a mistake rather than as a decision. The
+     row sits in the same place on all three as well, under the heading and above
+     the picture, which is the arrangement the owner settled on for the set. */
   .cs-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.8em;
+    gap: 0.6em;
     margin: clamp(20px, 2.8vh, 30px) 0 0;
     padding: 0;
     list-style: none;
@@ -442,10 +465,10 @@
   .cs-tags li {
     display: inline-flex;
     align-items: center;
-    padding: 0.6em 1.2em;
-    border: 1px solid var(--ink-2);
+    padding: 0.34em 0.85em;
+    border: 1px solid rgba(255,255,255,0.38);
     border-radius: 99999px;
-    color: var(--ink-1);
+    color: var(--ink);
     font-size: 1em;
     font-weight: 500;
     line-height: 1.2;
@@ -527,34 +550,59 @@
     font-weight: 500;
     color: var(--ink-3);
   }
+  /* The button the script wraps each figure's picture in, so that opening the
+     viewer is a real control with a real label rather than a click handler on
+     an image. It hugs the picture rather than the column: these are capped by
+     height, so most of them are narrower than the measure, and a button the
+     width of the column would open the viewer from the empty space beside
+     one. No label drawn over the artwork, for the reason given on the Boots
+     page — a pill floating over a screenshot reads as part of it. */
+  .cs-figure__open {
+    position: relative;
+    display: block;
+    width: -moz-fit-content;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: zoom-in;
+  }
   /* The hero figure takes what the copy above it did not, and the picture is
      drawn to fit that rather than the picture setting the height. contain is
      what makes it a fit rather than a crop: on a wide short window the width
      runs out first and on a tall narrow one the height does, and either way the
      whole card is inside the box. */
   /* The gap between the tag row and the picture, and the one measurement in this
-     hero that was asked to get bigger rather than smaller. It costs the picture
-     about 7px of height on a 900px window, which the crop pays for many times
-     over. */
+     hero that has been asked to get bigger twice. It is the same number on all
+     three case studies, because it is the gap that separates a title from a
+     photograph and there is no reason for that to differ by page. */
   .cs-hero .cs-figure--full {
-    flex: 1 1 auto;
-    min-height: 0;
-    margin-top: clamp(30px, 4.2vh, 56px);
+    flex: 0 0 auto;
+    margin-top: clamp(36px, 5.2vh, 76px);
   }
-  /* The box is the whole of the leftover space; object-position decides where
-     the picture sits inside it once contain has made it smaller. Top left, so
-     that it starts directly under the tags and its left edge is the same left
-     edge as the eyebrow and the sentence. Centred, it would float free of the
-     column on every window where the height runs out before the width — which
-     is most of them — and the slack on a phone would open as a gap between the
-     copy and the picture rather than closing up the page after it. */
+  /* The picture at the column's full width, and as tall as that makes it. No
+     object-fit and no object-position: both existed to place a picture inside a
+     box bigger than itself, and there is no such box now — the height is a
+     result of the width rather than a budget the width has to fit into.
+
+     The intrinsic width and height on the <img> matter more than they used to.
+     They are what reserves the right amount of page before the file arrives, and
+     with the hero no longer a fixed height there is nothing else holding that
+     space open. */
   .cs-hero .cs-figure--full img {
+    display: block;
     width: 100%;
-    height: 100%;
-    max-width: 100%;
+    height: auto;
+    /* .cs-figure img caps every picture on the page at --fig-max-h, which is
+       right for a chapter figure and wrong for this one. The hero picture is the
+       only one whose height is allowed to be whatever its width makes it, and
+       without this the cap quietly takes it back to 64vh. */
     max-height: none;
-    object-fit: contain;
-    object-position: left top;
   }
 
   /* ---------- Overview ----------
@@ -649,7 +697,13 @@
     margin: 0;
     font-family: var(--ff-display);
     font-weight: 700;
-    font-size: clamp(25px, 2.35vw, 42px);
+    /* Under the hero statement's 38px ceiling, deliberately. At the old 42px a
+       chapter heading was both larger and heavier than the page's own h1, which
+       inverted the hierarchy at every chapter: the thing introducing a section
+       outranked the thing introducing the article. 34px puts the order back —
+       statement, then chapter, then body. The 2.35vw term is untouched, so this
+       changes only the wide end where the ceiling is what binds. */
+    font-size: clamp(25px, 2.35vw, 34px);
     line-height: 1.08;
     letter-spacing: -0.032em;
     color: var(--ink);
@@ -961,6 +1015,101 @@
      came out — a screenshot of an interface has no tolerance for anything that
      moves it, because the thing being looked at is the fine detail. */
 
+  /* ---------- Viewer ----------
+     Lifted from boots-checkout.html unaltered. One state: the picture at the
+     width of the screen, scrolled down like the page it is a picture of. It had
+     two there, fit and actual size, and fit turned out to be the problem the
+     viewer exists to solve wearing the viewer's clothes. Most of the artboards
+     here are taller than they are wide, so filling the width and scrolling is
+     the only sensible reading of them. */
+  .cs-lb[hidden] { display: none; }
+  .cs-lb {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(6,6,8,0.94);
+    -webkit-backdrop-filter: blur(22px);
+            backdrop-filter: blur(22px);
+    opacity: 0;
+    transition: opacity 0.45s ease;
+  }
+  .cs-lb.is-open { opacity: 1; }
+  .cs-lb__stage {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* The page underneath is already locked, but a trackpad that reaches the
+       end of this still hands the rest of its momentum to the document behind
+       on iOS unless told not to. */
+    overscroll-behavior: contain;
+    /* Enough headroom for the close button to sit over the backdrop rather than
+       over the artboard's first row of pixels. */
+    padding: clamp(64px, 9vh, 104px) clamp(14px, 3vw, 44px) clamp(28px, 6vh, 72px);
+    text-align: center;
+    cursor: zoom-out;
+  }
+  /* Touch only, and only while the viewer is up. Handing every gesture to the
+     script is what makes a pinch interpretable, but it also means giving up the
+     browser's own scrolling, which is a bad trade anywhere a wheel exists. */
+  .cs-lb.is-touch .cs-lb__stage { touch-action: none; }
+  .cs-lb__img {
+    display: inline-block;
+    width: 100%;
+    /* Past this the artboard is being drawn larger than it was authored and
+       starts to soften; the 3360px copy is the ceiling the build produces. */
+    max-width: 1680px;
+    height: auto;
+    border-radius: 10px;
+    cursor: default;
+    opacity: 0;
+    transform: translateY(14px) scale(0.988);
+  }
+  .cs-lb.is-open .cs-lb__img {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.5s ease 0.06s,
+                transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.06s;
+  }
+  .cs-lb__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 1px solid rgba(255,255,255,0.16);
+    border-radius: 99999px;
+    background: rgba(20,20,24,0.82);
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+    color: var(--ink-1);
+    font: inherit;
+    font-size: 13px;
+    letter-spacing: -0.004em;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .cs-lb__btn:hover { color: var(--ink); border-color: rgba(255,255,255,0.32); }
+  .cs-lb__btn svg { width: 14px; height: 14px; display: block; }
+  .cs-lb__close {
+    position: absolute;
+    top: clamp(14px, 2.4vh, 26px);
+    right: clamp(14px, 2.4vw, 26px);
+    z-index: 2;
+    padding: 11px;
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  /* Last in, so the picture is what arrives and the control is what turns up
+     once you are looking at it. */
+  .cs-lb.is-open .cs-lb__close {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.4s ease 0.24s,
+                transform 0.5s cubic-bezier(0.16,1,0.3,1) 0.24s,
+                color 0.25s ease, border-color 0.25s ease;
+  }
+
   /* ---------- Responsive ----------
      The same bands as the homepage, for the same reasons — see its stylesheet.
      Everything that can be a continuous curve already is one in the base
@@ -1072,6 +1221,14 @@
     .hp-footer__back .hp-footer__cta-arrow { transition-duration: 0.01ms; }
     .hp-footer__back:hover .hp-footer__cta-arrow,
     .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
+    /* The viewer still opens — reading a screenshot is not an animation, and
+       someone who has asked for reduced motion has not asked for smaller
+       pictures. What goes is the fade and the rise it opens with. */
+    .cs-lb,
+    .cs-lb.is-open .cs-lb__img,
+    .cs-lb.is-open .cs-lb__close { transition: none; }
+    .cs-lb__img { opacity: 1; transform: none; }
+    .cs-lb__close { opacity: 1; transform: none; }
   }
 </style>
 </head>
@@ -1107,7 +1264,7 @@
 
   <header class="cs-hero cs-wrap">
     <div class="cs-col">
-      <span class="hp-eyebrow hp-eyebrow--rule">Case study &middot; PwC Junction</span>
+      <span class="hp-eyebrow hp-eyebrow--rule">Case study &middot; PwC client portal</span>
       <!-- The homepage card's sentence, word for word, the same as on the Boots
            page: the card is what the visitor clicked to get here, and a heading
            that rephrases it makes them check whether they arrived somewhere
@@ -1153,7 +1310,7 @@
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">01<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__no">01<span class="cs-chapter__of"> / 10</span></span>
           <span class="cs-chapter__beat">State</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
@@ -1165,7 +1322,7 @@
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">02<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__no">02<span class="cs-chapter__of"> / 10</span></span>
           <span class="cs-chapter__beat">Insight</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
@@ -1177,31 +1334,31 @@
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">03<span class="cs-chapter__of"> / 11</span></span>
-          <span class="cs-chapter__beat">Alignment</span>
+          <span class="cs-chapter__no">03<span class="cs-chapter__of"> / 10</span></span>
+          <span class="cs-chapter__beat">Decision</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Options with their costs attached.</h2>
+          <h2 class="cs-chapter__title">Three options, priced. Then the deadline picked one.</h2>
           <p>Alignment was the hard part. The decision landed on multiple territories and multiple groups of users, which meant agreement from several senior stakeholders who each held a different vision of where this should end up.</p>
           <p>I mapped the feasible options and set out how roles and permissions would flow between the tools under each one, then made <strong>balanced recommendations</strong> rather than arguing for a favourite: what each option bought the user, what it cost to build, and what it was genuinely worth to the business.</p>
+          <p>The client was under pressure to move fast and rebuild confidence across territories, so the quick win won &mdash; users could configure roles as they needed on a platform that was stable and reliable, and the business logic underneath stayed more complicated than it should have been. It was the right call for that moment. <strong>It was also a debt</strong>, and quick wins of this kind get repaid later at a higher rate.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 1.7690" data-reveal>
+          <img src="/assets/junction-options-1120.3288359f.webp"
+               srcset="/assets/junction-options-1120.3288359f.webp 1120w,
+                       /assets/junction-options-1680.3288359f.webp 1680w,
+                       /assets/junction-options-2240.3288359f.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="6411" height="3624"
+               alt="Three option boards side by side, each mapping roles and permissions between the provisioning tool, Junction and Digital Start, with screen flows beneath and pros, cons and open questions on sticky notes. The third is headed option three, recommended."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Three ways the roles and permissions could flow between the tools, each carrying the mapping it implied and the case for and against it.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">04<span class="cs-chapter__of"> / 11</span></span>
-          <span class="cs-chapter__beat">Trade-off</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">A quick win, chosen with the cost known.</h2>
-          <p>The client was under pressure to move fast and rebuild confidence across territories, so the quick win won. That meant accepting an experience that wasn&rsquo;t the one I&rsquo;d have designed with more room: users could configure roles as they needed, on a platform that was stable and reliable, and the business logic underneath stayed more complicated than it should have been.</p>
-          <p>It was the right call for that moment. <strong>It was also a debt</strong> &mdash; quick wins of this kind get repaid later at a higher rate, sometimes by undoing the work.</p>
-        </div>
-      </section>
-
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">05<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__no">04<span class="cs-chapter__of"> / 10</span></span>
           <span class="cs-chapter__beat">Craft</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
@@ -1209,35 +1366,45 @@
           <p>With the deadline set, the job was to build an experience that either kept the agreed logic out of the user&rsquo;s way or signposted it so plainly it stopped being a trap. Working from the design system, I designed each affected journey and set the responsiveness guidance for the agreed breakpoints &mdash; scrollable tabs on narrow screens, a more compact user card &mdash; iterating with design leadership and the client through to sign-off.</p>
           <p>Users were sectioned by the role they held, which made the page scannable and let someone be added straight into a role rather than added and then assigned. Alongside it I explored a master table of every user, with filtering, conditional logic, global search and a single point of action for adding someone. And where the logic was genuinely confusing, <strong>large, unmissable banners said so</strong> and named the platform or process that actually handled it.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 0.9947" data-reveal>
+          <img src="/assets/junction-roles-1120.23332faa.webp"
+               srcset="/assets/junction-roles-1120.23332faa.webp 1120w,
+                       /assets/junction-roles-1680.23332faa.webp 1680w,
+                       /assets/junction-roles-2240.23332faa.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="5622" height="5652"
+               alt="The Junction settings page at desktop and phone width: a banner reading that the project was created in Digital Start, explaining which roles are managed where and offering a button to open it, then members listed under Engagement Lead, Engagement Manager and Project Admin, with a bar showing three members selected and a change permission control."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The banner naming the platform that actually owns the change, users grouped under the role they hold, and the same page once the tabs have to scroll.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">06<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__no">05<span class="cs-chapter__of"> / 10</span></span>
           <span class="cs-chapter__beat">Detail</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The mechanics that decide whether a page is quick.</h2>
-          <p>Accepting a new user took one click, but an admin was rarely accepting one. A multi-select with a <strong>global checkbox</strong> at the top meant selecting everybody and deselecting the few exceptions, so a large intake was approved in one pass rather than forty.</p>
-          <p>Switching someone&rsquo;s role moved into the more menu on their row. Before that, changing a role meant deleting the user and adding them back: a destructive operation standing in for a routine one, and a reliable way to lose somebody&rsquo;s access by accident.</p>
+          <p>Accepting a new user took one click, but an admin was rarely accepting one. A multi-select with a <strong>global checkbox</strong> at the top meant selecting everybody and deselecting the few exceptions, so a large intake was approved in one pass rather than forty. Switching someone&rsquo;s role moved into the more menu on their row; before that, changing a role meant deleting the user and adding them back, a destructive operation standing in for a routine one.</p>
+          <p>What lands afterwards matters as much. An approval arrives with a success toast for whoever made it and a <strong>&lsquo;new&rsquo; tag</strong> beside the name for everybody else &mdash; the practitioners who didn&rsquo;t make the change and would otherwise have no way of noticing it. The tag lasts up to a week and clears once someone has opened the page and left again, because acknowledged is a better trigger than expired.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 0.5854" data-reveal>
+          <img src="/assets/junction-approvals-1120.2f7f56be.webp"
+               srcset="/assets/junction-approvals-1120.2f7f56be.webp 1120w,
+                       /assets/junction-approvals-1680.2f7f56be.webp 1680w,
+                       /assets/junction-approvals-2240.2f7f56be.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="3969" height="6780"
+               alt="The client members pending approval table with five of ten rows checked and a bar reading five members selected, deselect all, approve all, decline all. Below it the same page afterwards: the approved names gone from the queue, a success toast reading five client members approved with an undo, and a new tag beside a name in the client admin list."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Five approvals as one action, and what the rest of the team sees afterwards: the toast for the person who did it, the tag for everyone who didn&rsquo;t.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">07<span class="cs-chapter__of"> / 11</span></span>
-          <span class="cs-chapter__beat">Signal</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">A tag that knows when to leave.</h2>
-          <p>A new user arrives with a success toast and a <strong>&lsquo;new&rsquo; tag</strong> beside their name. The toast is for whoever added them; the tag is for everybody else &mdash; the practitioners who didn&rsquo;t make the change and would otherwise have no way of noticing it.</p>
-          <p>It lasts up to a week, and it clears once someone has opened the page and left again. Acknowledged is a better trigger than expired, and it keeps the table from slowly filling with badges that no longer mean anything.</p>
-        </div>
-      </section>
-
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">08<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__no">06<span class="cs-chapter__of"> / 10</span></span>
           <span class="cs-chapter__beat">Leadership</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
@@ -1245,11 +1412,22 @@
           <p>Quick wins need investment later, and sometimes that means undoing what shipped. Armed with user feedback and the case for the better experience, we reopened the strategy during a week of planning with core leadership in Tampa: the pain points, the opportunities to improve, and several routes out of it.</p>
           <p>Being physically in the room was the whole difference. I documented each approach as it was discussed so there was always something to point at, and <strong>business directors started sketching their own ideas</strong> on top of it. By the end of the week, addressing this properly was agreed as a priority.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 0.7412" data-reveal>
+          <img src="/assets/junction-tampa-1120.e32a9f31.webp"
+               srcset="/assets/junction-tampa-1120.e32a9f31.webp 1120w,
+                       /assets/junction-tampa-1680.e32a9f31.webp 1680w,
+                       /assets/junction-tampa-2240.e32a9f31.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="3669" height="4950"
+               alt="Photographs from the Tampa week: a whiteboard headed potential new UM approach, sketching an engagement hub and the workspaces and roles around it; a flip chart mapping client permissions for each tool and activity against four levels; and two further boards working through a team members list and an engagement hub with permissions and tags."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The approach as it was being argued, and the permissions matrix the room built on top of it. Not my handwriting on all of it, which was the point.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">09<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__no">07<span class="cs-chapter__of"> / 10</span></span>
           <span class="cs-chapter__beat">Impact</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
@@ -1261,7 +1439,7 @@
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">10<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__no">08<span class="cs-chapter__of"> / 10</span></span>
           <span class="cs-chapter__beat">Research</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
@@ -1273,14 +1451,48 @@
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">11<span class="cs-chapter__of"> / 11</span></span>
+          <span class="cs-chapter__no">09<span class="cs-chapter__of"> / 10</span></span>
+          <span class="cs-chapter__beat">Analysis</span>
+        </div>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Turning verbatim into something you can show.</h2>
+          <p>I verified every note against the recordings, then mapped all the responses against each question across the topics before categorising the verbatim answers into themes.</p>
+          <p>This is the unglamorous half of research and it is the half that earns the recommendations. Done properly, <strong>a trend becomes something you can point at</strong> rather than something you remember hearing &mdash; which matters when the person you are showing it to was not in any of the sessions.</p>
+        </div>
+        <figure class="cs-figure" style="--ar: 0.8164" data-reveal>
+          <img src="/assets/junction-analysis-1120.c4f59231.webp"
+               srcset="/assets/junction-analysis-1120.c4f59231.webp 1120w,
+                       /assets/junction-analysis-1680.c4f59231.webp 1680w,
+                       /assets/junction-analysis-2240.c4f59231.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="6122" height="7499"
+               alt="A research board: hundreds of sticky notes in columns headed participant, current process, checking slides and organising content, one row per participant. Below it the same responses regrouped into themes such as what works well, pain points, moving a section, and preference between the table of contents and the slides."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Every response against its question first, then the same answers clustered into the themes the recommendations came out of.</span></figcaption>
+        </figure>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__rail" data-reveal data-stagger>
+          <span class="cs-chapter__no">10<span class="cs-chapter__of"> / 10</span></span>
           <span class="cs-chapter__beat">Outcome</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Findings, and what they changed.</h2>
-          <p>I verified every note against the recordings, mapped all the responses against each question across the topics, and categorised the verbatim answers into themes. That is the unglamorous half of research and it is the half that makes a trend something you can show rather than something you remember.</p>
-          <p>The report set out the as-is process for creating a report, the pain points inside it, and the usability improvements to make. In the playback with the designers and product owners we went through the findings in detail, refined the recommendations together, and <strong>agreed the specific actions</strong> we would take.</p>
+          <p>The report set out the as-is process for creating a report, the pain points inside it, and the usability improvements to make &mdash; including the ones that were uncomfortable, like most participants failing to find the call to action the whole feature turns on.</p>
+          <p>In the playback with the designers and product owners we went through the findings in detail, refined the recommendations together, and <strong>agreed the specific actions</strong> we would take.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 1.7447" data-reveal>
+          <img src="/assets/junction-findings-1120.66403689.webp"
+               srcset="/assets/junction-findings-1120.66403689.webp 1120w,
+                       /assets/junction-findings-1680.66403689.webp 1680w,
+                       /assets/junction-findings-2240.66403689.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="5904" height="3384"
+               alt="Four slides from the research report: the current report creation process drawn as a four-step flow from gathering financial data to reviewing the draft; a finding that the add a new section call to action was difficult for most participants; a slide on where the current process takes more effort than it should; and feedback that the right-hand edit bar could be made more intuitive. Each carries participant quotes."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The report as it was played back: how a report gets made today, where it costs more effort than it should, and what the prototype turned up.</span></figcaption>
+        </figure>
       </section>
 
     </div>
@@ -1289,7 +1501,7 @@
   <!-- The three lessons from her draft, rewritten to the voice the other two
        pages use rather than reproduced as the numbered list she wrote them as.
        The substance is hers in all three; the Tampa sentence in the second is
-       the only cross-reference added, and it points at chapter 08 rather than
+       the only cross-reference added, and it points at chapter 06 rather than
        claiming anything the chapter does not. -->
   <section class="cs-reflection cs-wrap" aria-labelledby="cs-reflection-h">
     <div class="cs-col">
@@ -1336,6 +1548,24 @@
   </div>
 </footer>
 
+<!-- The viewer. Empty markup rather than markup built from JS so the dialog's
+     role, its label and its control are in the document being reviewed rather
+     than in a string. It carries hidden until it is opened. -->
+<!-- data-lenis-prevent is load-bearing, not decoration. The smoothing library
+     binds a wheel listener to the document and calls preventDefault on every
+     event it sees, so with the viewer open the wheel would reach neither the
+     page (correctly, it is locked) nor the picture (not correctly at all): the
+     viewer would open on the top of a 4100px artboard with no way down it. This
+     attribute is how that listener is told to keep its hands off a scroller. -->
+<div class="cs-lb" id="cs-lb" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
+  <div class="cs-lb__stage" data-lb-stage data-lenis-prevent>
+    <img class="cs-lb__img" alt="">
+  </div>
+  <button class="cs-lb__btn cs-lb__close" type="button" data-lb-close aria-label="Close viewer">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
 <script>
@@ -1352,6 +1582,246 @@
   document.querySelector('[data-top]').addEventListener('click', function() {
     if (lenis) { lenis.scrollTo(0); return; }
     window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+  });
+
+  var figures = [].slice.call(document.querySelectorAll('.cs-figure'));
+
+  // ---------- Viewer ----------
+  // Lifted from boots-checkout.html. Deliberately outside the motion gate
+  // below: being able to read a screenshot is not an animation, and someone who
+  // has asked for reduced motion has not asked for smaller pictures.
+  var lb = document.getElementById('cs-lb');
+  var lbStage = lb.querySelector('[data-lb-stage]');
+  var lbImg = lb.querySelector('.cs-lb__img');
+  var lbClose = lb.querySelector('[data-lb-close]');
+  var opener = null;
+
+  // The 3360px copy sits beside the page's rungs under the same content hash,
+  // so it is the src with its width swapped — no second attribute per figure to
+  // keep in step with the build, and a rebuild moves both together or neither.
+  function zoomSrc(src) {
+    return /-\d+\.[a-f0-9]{8}\.webp$/.test(src)
+      ? src.replace(/-\d+\.([a-f0-9]{8})\.webp$/, '-zoom.$1.webp')
+      : null;
+  }
+
+  function openLb(img, src) {
+    opener = document.activeElement;
+    lbImg.src = src;
+    lbImg.alt = img.alt;
+    lb.hidden = false;
+    lbStage.scrollTop = 0;
+    resetZoom();
+
+    // The scrollbar's width is given back as padding so that locking the page
+    // does not shift everything under the overlay sideways by 15px.
+    var bar = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.overflow = 'hidden';
+    if (bar > 0) document.body.style.paddingRight = bar + 'px';
+    // overflow:hidden stops the browser scrolling the page. It does not stop
+    // the smoothing library, which is writing scroll positions itself and would
+    // carry on running the page underneath the overlay.
+    if (lenis) lenis.stop();
+    requestAnimationFrame(function() { lb.classList.add('is-open'); });
+    lbClose.focus();
+    document.addEventListener('keydown', onKey);
+  }
+
+  function closeLb() {
+    lb.classList.remove('is-open');
+    document.removeEventListener('keydown', onKey);
+    document.body.style.overflow = '';
+    document.body.style.paddingRight = '';
+    if (lenis) lenis.start();
+    // Held until the fade is over, so the image is not pulled out from under
+    // its own exit. src is dropped with it: a 700KB decode has no business
+    // staying resident for a viewer nobody is looking at.
+    var finish = function() { lb.hidden = true; lbImg.removeAttribute('src'); };
+    if (REDUCED) finish(); else setTimeout(finish, 340);
+    if (opener && opener.focus) opener.focus();
+    opener = null;
+  }
+
+  function onKey(e) {
+    if (e.key === 'Escape') { closeLb(); return; }
+    // One control, so the trap is to keep it. Tab from anywhere lands back on
+    // the close button rather than walking into the page behind the overlay.
+    if (e.key === 'Tab') { e.preventDefault(); lbClose.focus(); }
+  }
+
+  lbClose.addEventListener('click', closeLb);
+
+  // ---------- Pinch ----------
+  // A phone draws every figure edge to edge on the page already, so opening one
+  // gains about five per cent and the artboards stay unreadable. There is no
+  // width at which a 3360px artboard is legible inside 390px, so the only real
+  // answer is to let it be drawn bigger than the screen and moved around.
+  //
+  // Nothing moves sideways until that has been asked for. The stage keeps
+  // overflow-x hidden throughout, and panning is done by writing scrollLeft,
+  // which a hidden overflow still allows a script to do. At rest the picture is
+  // exactly the width of the stage and there is nothing there to move.
+  var TOUCH = window.matchMedia('(hover: none)').matches;
+  var MAXZ = 4;
+  var zoom = 1;
+  var pts = new Map();
+  var pinch = null, last = null, moved = false, downOn = null;
+  var vx = 0, vy = 0, glide = 0, lastTap = 0;
+
+  function fitWidth() {
+    var cs = getComputedStyle(lbStage);
+    return lbStage.clientWidth
+      - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  }
+
+  function resetZoom() {
+    zoom = 1;
+    lbImg.style.width = '';
+    lbImg.style.maxWidth = '';
+    lbStage.scrollLeft = 0;
+  }
+
+  // mx/my is the point the gesture is centred on, and it is held still while
+  // the picture grows under it: zooming towards a corner should move that
+  // corner nowhere, or the thing being looked at slides out from under the
+  // fingers looking at it. Measured off the rendered box before and after
+  // rather than computed, so the stage's padding and the centring of a picture
+  // narrower than the stage are accounted for without being modelled.
+  function setZoom(next, mx, my) {
+    next = Math.max(1, Math.min(MAXZ, next));
+    if (Math.abs(next - zoom) < 0.001) return;
+
+    var r0 = lbImg.getBoundingClientRect();
+    var fx = r0.width ? (mx - r0.left) / r0.width : 0.5;
+    var fy = r0.height ? (my - r0.top) / r0.height : 0.5;
+
+    zoom = next;
+    if (zoom === 1) {
+      lbImg.style.width = '';
+      lbImg.style.maxWidth = '';
+    } else {
+      lbImg.style.maxWidth = 'none';
+      lbImg.style.width = (fitWidth() * zoom) + 'px';
+    }
+
+    var r1 = lbImg.getBoundingClientRect();
+    lbStage.scrollLeft += (r1.left + fx * r1.width) - mx;
+    lbStage.scrollTop += (r1.top + fy * r1.height) - my;
+  }
+
+  function gap(p) {
+    return Math.sqrt(Math.pow(p[1].x - p[0].x, 2) + Math.pow(p[1].y - p[0].y, 2));
+  }
+
+  function onDown(e) {
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (lbStage.setPointerCapture) lbStage.setPointerCapture(e.pointerId);
+    cancelAnimationFrame(glide);
+    downOn = e.target;
+    moved = false;
+    vx = vy = 0;
+    last = { x: e.clientX, y: e.clientY, t: e.timeStamp };
+    if (pts.size === 2) {
+      var p = Array.from(pts.values());
+      pinch = { d: gap(p) || 1, z: zoom };
+    }
+  }
+
+  function onMove(e) {
+    if (!pts.has(e.pointerId)) return;
+    pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    var p = Array.from(pts.values());
+
+    if (p.length >= 2 && pinch) {
+      moved = true;
+      setZoom(pinch.z * (gap(p) / pinch.d),
+              (p[0].x + p[1].x) / 2, (p[0].y + p[1].y) / 2);
+      return;
+    }
+    // A finger lifting out of a pinch leaves the other one mid-gesture, so the
+    // first move after that re-seats the origin instead of panning by the whole
+    // distance between two fingers.
+    if (!last) { last = { x: e.clientX, y: e.clientY, t: e.timeStamp }; return; }
+
+    var dx = e.clientX - last.x, dy = e.clientY - last.y;
+    var dt = Math.max(1, e.timeStamp - last.t);
+    if (Math.abs(dx) > 2 || Math.abs(dy) > 2) moved = true;
+    vx = dx / dt; vy = dy / dt;
+    lbStage.scrollLeft -= dx;
+    lbStage.scrollTop -= dy;
+    last = { x: e.clientX, y: e.clientY, t: e.timeStamp };
+  }
+
+  function onUp(e) {
+    pts.delete(e.pointerId);
+    if (pts.size < 2) pinch = null;
+    last = null;
+    if (pts.size) return;
+
+    // Even fitted to the width, the research wall runs about four screenfuls,
+    // and dragging it a hand's width at a time is not reading it.
+    if (Math.abs(vx) > 0.25 || Math.abs(vy) > 0.25) {
+      var sx = vx * 15, sy = vy * 15;
+      var step = function() {
+        sx *= 0.94; sy *= 0.94;
+        lbStage.scrollLeft -= sx;
+        lbStage.scrollTop -= sy;
+        if (Math.abs(sx) > 0.4 || Math.abs(sy) > 0.4) glide = requestAnimationFrame(step);
+      };
+      glide = requestAnimationFrame(step);
+    }
+
+    if (e.pointerType !== 'mouse' && !moved) {
+      if (e.timeStamp - lastTap < 320) {
+        // Straight to something readable and straight back, for anyone who does
+        // not want to negotiate with two fingers.
+        setZoom(zoom > 1 ? 1 : 2.5, e.clientX, e.clientY);
+        moved = true;
+        lastTap = 0;
+      } else {
+        lastTap = e.timeStamp;
+      }
+    }
+  }
+
+  if (TOUCH) {
+    lb.classList.add('is-touch');
+    lbStage.addEventListener('pointerdown', onDown);
+    lbStage.addEventListener('pointermove', onMove);
+    lbStage.addEventListener('pointerup', onUp);
+    lbStage.addEventListener('pointercancel', onUp);
+  }
+
+  // Anywhere off the picture closes. Not the picture itself: it is scrolled
+  // through, and a click that lands at the end of a flick to move down it
+  // should not be read as asking to leave. downOn rather than the click's own
+  // target because capturing the pointer above re-aims the click at the stage,
+  // which would otherwise read a tap on the picture as a tap beside it.
+  lbStage.addEventListener('click', function(e) {
+    var on = downOn || e.target;
+    downOn = null;
+    if (moved) { moved = false; return; }
+    if (on !== lbImg) closeLb();
+  });
+
+  figures.forEach(function(fig) {
+    var img = fig.querySelector('img');
+    // The hero is a photograph: nothing in it is meant to be read closely, and
+    // build-pwc-figures.py does not give it a zoom copy to open.
+    if (!img || fig.closest('.cs-hero')) return;
+    var src = zoomSrc(img.getAttribute('src'));
+    if (!src) return;
+
+    var figcap = fig.querySelector('.cs-figure__text')
+                 || fig.querySelector('figcaption');
+    var caption = figcap ? figcap.textContent.trim() : '';
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'cs-figure__open';
+    btn.setAttribute('aria-label', 'Enlarge: ' + (caption || img.alt));
+    img.parentNode.insertBefore(btn, img);
+    btn.appendChild(img);
+    btn.addEventListener('click', function() { openLb(img, src); });
   });
 
   // ---------- Motion ----------
