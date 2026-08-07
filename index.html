@@ -949,7 +949,11 @@
      the same time. */
   .hp-case__link {
     --sp-pad: max(22px, 7.386cqw);       /* 130px */
-    --sp-gap: max(18px, 6.818cqw);       /* 120px, chip row -> arrow */
+    /* The spec's 120/1760. It set the interval between the old text column and
+       the old arrow column, and now that those are one row it has one job left:
+       the gap the artwork is pulled up by, so the sentence and the mockup keep
+       the spec's distance. The head sets its own column gap — see there. */
+    --sp-gap: max(18px, 6.818cqw);       /* 120px, sentence -> mockup */
     /* Written from the properties the wrapper declares rather than as literals,
        so the floor is stated in one place. 0.03636 * 100cqw is 3.636cqw, the
        spec's 64/1760. */
@@ -968,20 +972,34 @@
        proportion rather than a label's; this is 28px around the same word. The
        cut is larger vertically than horizontally — 24% against 19% — because
        the height is what made the chip read as a control, and taking the sides
-       in as far would start crowding "Content Strategy" on card 04, the longest
-       label in the set and the only one that has ever been near wrapping. */
+       in as far would start crowding "AI Development" on card 02, the longest
+       label in the set and the only one that has ever been near wrapping. It is
+       the longest by some way now that card 04's Content Strategy has come down
+       to Content, so the sides have more room than this pair is using. */
     --sp-tag-py: 0.34em;
     --sp-tag-px: 0.85em;
     --sp-headgap: max(15px, 2.7cqw);     /* chips -> sentence */
-    /* Sized from the pill's own label, not from the card, because the arrow now
-       shares a line with the pills and has to stay in proportion to them. A px
-       floor cannot do that: at a 334px card 4.091cqw is 13.7px, so the floor it
-       used to carry was overriding the proportion by three quarters and the
-       arrow was the only thing on the card that did not get smaller with
-       everything else. 1.55 puts it just inside the pill's height at both ends —
-       15.7px against an 18.3px pill on a 320px phone, 21.4px against 27.9px on
-       the capped card. */
-    --sp-arrow: calc(var(--sp-tag) * 1.55);
+    /* The pill's own height, written from the same numbers the pill is built
+       from: its line-height plus both paddings, as a share of the label, and then
+       the 1px border on each edge. Stated once here so the two cannot drift — if
+       the pill's padding is ever retuned the arrow follows it without anyone
+       having to notice.
+       The vertical ratio is a band's business, not a constant, because --sp-tag-py
+       tightens on a phone: 1.2 + 2(0.34) here, 1.2 + 2(0.28) there. A single
+       factor across both would sit inside the pill at one end and stand taller
+       than it at the other. */
+    --sp-tag-vr: 1.88;
+    /* Sized from the pill's label rather than from the card, because the arrow
+       now shares a line with the pills and has to stay in proportion to them. A
+       px floor could not do that: at a 334px card 4.091cqw is 13.7px, so the
+       floor it used to carry was overriding the proportion by three quarters,
+       and the arrow was the only thing on the card that did not get smaller with
+       everything else.
+       Level with the pill rather than inside it, at the owner's request. The
+       glyph is inset in its own box — the path runs 3.5 to 20.5 of a 24 viewBox,
+       so it draws at 71% of whatever this resolves to — which is why matching the
+       pill's box still reads as the quieter of the two things on the line. */
+    --sp-arrow: calc(var(--sp-tag) * var(--sp-tag-vr) + 2px);
     --sp-textcol: 74.318cqw;             /* 1308px */
 
     display: block;
@@ -1016,7 +1034,14 @@
        level with anything. */
     display: grid;
     grid-template-columns: 1fr auto;
-    column-gap: var(--sp-gap);
+    /* The same interval both ways. Two things side by side on one line want the
+       gap between them, not the 6.818cqw that used to separate a text column
+       from an arrow column — at a 304px card that ratio was taking 20.7px out of
+       the pill row's width and putting the longest of the five chip rows one
+       pixel over, onto a second line. It is only ever a minimum here anyway:
+       the first column takes the remaining space, so the arrow is held at the
+       right edge by the grid rather than by this. */
+    column-gap: var(--sp-headgap);
     row-gap: var(--sp-headgap);
     align-items: center;
   }
@@ -1552,19 +1577,51 @@
        costing it. None of that is needed now: the arrow is a grid cell in the
        first row, so the row holds its own space and the sentence keeps the same
        three-quarter measure it has at every other width. */
-    /* The padding ratios tighten here, which is the one thing an em cannot do
-       for itself. An em ratio holds the pill's proportion to its own label at
-       any size, but not its proportion to the sentence beside it: that goes from
-       17.5px to 40.7px while the label only goes 10.5 to 15. Left at the desktop
-       ratios the pill stands as tall as the line it labels, which is exactly the
-       complaint that removed these.
+    /* Both the label and the padding come down here, which is the one thing an
+       em ratio cannot do for itself. An em holds the pill's proportion to its own
+       label at any size, but not its proportion to the sentence beside it, and
+       the sentence is what the pill has to stay subordinate to.
 
-       Cut by the same factors as the desktop pair above, so the two bands stay
-       in proportion instead of drifting apart at the seam. The pill is 19px
-       against a 20.8px line box; the 0.28/0.8 before it was 20.5px and level
-       with the line. An earlier note here put that pair at 18.5px and 89% — the
-       arithmetic had left out the 1px border on each edge. */
-    .hp-case__link { --sp-tag-py: 0.21em; --sp-tag-px: 0.65em; }
+       What this band is actually solving is a contrast, not a height. On a
+       desktop card the sentence is 2.4x the label — 33.1px against 13.8px — and
+       that difference is the whole reason the pills read as labels there. At 390
+       it had closed to 1.28x, so the two were the same size and the pills read as
+       a second sentence.
+
+       Neither side has much room to open it back up, and both limits are
+       measured. Swept, the sentence cannot pass a 0.0375 ratio without a fourth
+       line appearing on three of the five cards, and it is the ratio that is the
+       ceiling rather than any px value, because the measure scales with the card:
+       the fourth line arrives at the same ratio at 360, 375, 390 and 430. At the
+       other end the label cannot go far below 8px and still be read. So the
+       desktop 2.4x is not available on a phone at all — about 1.5x is the ceiling
+       — and the useful move is not to shrink the pill again.
+
+       Instead the pill's box is held where it was and the label shrinks inside
+       it, with the padding growing into what that frees: an 8.81px label in a
+       17.5px pill at 390, against 16.3px before. The box is within a pixel of
+       where it was while the vertical padding goes from 1.3px to 2.5px and the
+       contrast from 1.28x to 1.42x. The previous round had bought its height by
+       cutting the padding to 0.13em, which is what made the pills look tight —
+       these ratios go back up toward the desktop pair rather than further down.
+
+       The label's curve is rewritten again rather than floored, so that it still
+       arrives at the band's own top edge on the value the desktop curve is
+       already at: 11.70px on a 544px card, both ways. The label is what is
+       continuous there, not the pill, whose height steps because the padding
+       ratio bands. That is the same boundary at which the head leaves the flow,
+       the artwork changes crop and the whole composition switches, so the pill is
+       not the thing anyone notices. */
+    .hp-case__link {
+      /* The last 3% the three-line ceiling allows, and the only part of the
+         contrast that comes from the sentence rather than the label. Steps 0.6px
+         against the band above at the 600px edge. */
+      --sp-desc-ratio: 0.0375;
+      --sp-tag: clamp(8.2px, calc(4.21px + 1.376cqw), 15px);
+      --sp-tag-py: 0.28em;
+      --sp-tag-px: 0.76em;
+      --sp-tag-vr: 1.76;
+    }
 
     /* The one width where the three-quarter measure and the three-line ceiling
        cannot both be had. On a 320px phone the sentence has 186px to run in and
@@ -1920,7 +1977,7 @@
   //        value, so these are the colours and not approximations of them.
   //
   // Which ink each card gets is decided by measuring, not by whether the card
-  // looks light. White is the intent across the set and four of the five take
+  // looks light. White is the intent across the set and three of the five take
   // it, the artwork having mostly been drawn dark enough to carry it.
   //
   // The bar is 4.5:1, because the chip labels are small text and the 3:1 that
@@ -1928,32 +1985,34 @@
   // five do not clear it against white, and the reasoning is at each entry:
   //
   //   Saddle  inverts to the near-black and clears at 7.634:1. Settled.
-  //   API     stays white at 3.951:1 on the owner's chosen export. Over the 3:1
-  //           the sentence may use, under the 4.5:1 the chips need. Set as
-  //           asked, and the one open shortfall here the ink alone could close.
+  //   API     inverts to the near-black and clears at 9.659:1. Settled too, and
+  //           not by anything decided here: it was the open shortfall in this
+  //           file for as long as the card was pink, and the owner taking it to
+  //           cyan is what closed it.
   //   PwC     stays white at 4.4905:1, a hundredth under, because inverting it
   //           measures worse. A knowing shortfall.
   //
-  // So one of those is closed and two are not. Both open ones are the same
-  // shape — the sentence clears at its size and only the ~10px chip labels
-  // miss — and neither will look like a decision to anyone who checks the
-  // ratios without reading why it is what it is, which is why each carries its
-  // own numbers below.
+  // So two of those are closed and one is not. The open one will not look like
+  // a decision to anyone who checks the ratios without reading why it is what
+  // it is — the sentence clears at its size and only the ~10px chip labels miss
+  // — which is why it carries its own numbers below.
   //
   // Every ratio below is measured against the export currently in assets/, so a
   // re-export is a reason to run the numbers again rather than to assume the
-  // pairing survived. All five were replaced at once on the last pass and every
-  // number here was re-taken, including on the two cards whose flat colour came
-  // back unchanged.
+  // pairing survived. All five were replaced at once two passes ago and every
+  // number here was re-taken then, including on the two cards whose flat colour
+  // came back unchanged. This pass moved one card and one number: the fibre
+  // card's field, and the ratios that stand on it.
   var CARDS = {
     // Was #0060bf, a mid blue carrying white at 6.13:1. This export is the same
     // family three tones down and the ink got much cheaper for it: white now
     // measures 16.551:1, the widest margin on any card in the set.
     boots:   { bg: '#0f0f64', ink: '#ffffff' },
-    // The one inverted card, and it inverts on the measurement rather than on
-    // appearance. Green is the most luminous hue at a given saturation, and at
-    // 71% value this one is bright enough that white comes back at 2.626:1 —
-    // the lowest number in this file — while the near-black clears at 7.634:1.
+    // The first of the two inverted cards, and it inverts on the measurement
+    // rather than on appearance. Green is the most luminous hue at a given
+    // saturation, and at 71% value this one is bright enough that white comes
+    // back at 2.626:1 — the lowest number in this file — while the near-black
+    // clears at 7.634:1.
     //
     // That near-black is sampled from the darkest glyph cores in her composite,
     // where the text is drawn, and it survived the recolour: the artwork's own
@@ -1973,24 +2032,31 @@
     // deep crimson ever passed, and the accepted cost was three ~10px chip
     // labels failing on all the rest.
     //
-    // The owner has since taken the card off pink entirely, to this pale cyan,
-    // because the pink read as jarring against the case study page it opens.
-    // That ends the argument rather than settling it: white on #d1eced is
-    // 1.240:1, which is not a shortfall but an unreadable card, and the
-    // near-black is 16.166:1 — the widest margin on any card in the set,
-    // clearing AAA on every element including the chips.
+    // The owner took the card off pink entirely because it read as jarring
+    // against the case study page it opens — first to the near-white #d1eced,
+    // and now to this. That ended the argument rather than settling it: white
+    // here is 2.076:1, which is not a shortfall but an unreadable card, and the
+    // near-black is 9.659:1, clearing AAA on every element including the chips.
+    //
+    // The two cyans are the same colour at two levels and differ in almost
+    // nothing else — 182.1 degrees of hue to 183.0, and 92.9% of value down to
+    // 79.2% — so the pale one's 16.166:1 and this one's 9.659:1 are one decision
+    // measured twice. The pale card held the widest margin in the set and this
+    // one is third, behind Boots and the cycling website. That changes nothing
+    // worth acting on: AAA is 7:1 and the ~10px chips are the only element
+    // anywhere near it.
     //
     // The near-black is the same #020814 the cycling app card uses rather than
     // one sampled from this artwork, which keeps the set to two inks. Sampling
     // would have changed nothing worth having: the darkest cluster in this
     // composite is the browser chrome at essentially black, and it measures
-    // 16.895:1 against the 16.166:1 below.
+    // 9.956:1 against the 9.659:1 below.
     //
-    // The colour is also why api-portal.html's --glow-tint moved. That tint
-    // takes its hue from this card and its level from the set, and the hue has
-    // gone from 338deg to 182.1 — the one kind of re-export the note there says
-    // needs it recomputed.
-    api:     { bg: '#d1eced', ink: '#020814' },
+    // This one did not move api-portal.html's --glow-tint, and the note there
+    // says why: that tint takes its hue from this card and its level from the
+    // set, and 0.9 degrees of turn is well inside the two-degree spread the six
+    // pink exports already sat across. The move off pink did move it.
+    api:     { bg: '#53c4ca', ink: '#020814' },
     // The other accepted shortfall, and the narrower of the two. White on
     // #ca501d is 4.4905:1, under the 4.5:1 the chip labels need by a hundredth.
     // The near-black is 4.46 on the same colour, so nothing clears AA here and
@@ -2049,9 +2115,10 @@
   // owner's request with the sizing rebuilt — see .hp-case__tags for what
   // changed and why the old version could not be kept as it was.
   //
-  // The labels are hers, given directly, and in her order. Content Strategy on
-  // card 04 is title case because AI Development on card 02 is, and those two
-  // are the only labels here that run to more than one word.
+  // The labels are hers, given directly, and in her order. AI Development on
+  // card 02 is title case, and is now the only label here running to more than
+  // one word: card 04 was Content Strategy and is Content at her request, which
+  // also puts it in step with card 03, which has been Content all along.
   var PROJECTS = [
     {
       title: 'Boots website',
@@ -2071,9 +2138,11 @@
       title: 'British Cycling app',
       slug: 'saddle',
       card: 'saddle',
-      // "0 to 1" is scope — the shape of the work, not a result. Nothing in
-      // this sentence is an outcome number.
-      desc: '0 to 1 creation of Britain&rsquo;s newest <strong>habit-forming cycling app</strong>, launched at record pace by embracing AI throughout.',
+      // The lifted phrase is the two clients, as it is on every other card, and
+      // the pairing is the thing that makes this app the one it is. "Record
+      // time" is pace — the shape of the work, not a result. Nothing in this
+      // sentence is an outcome number.
+      desc: 'Creating <strong>British Cycling x Lloyds&rsquo;</strong> habit-forming cycling app, launched in record time by embracing AI throughout.',
       tags: ['UX & UI', 'AI Development', 'Strategy'],
       href: '/sofa-to-saddle',
       art: {
@@ -2119,12 +2188,12 @@
       slug: 'api',
       card: 'api',
       desc: 'Leading discovery for a <strong>wholesale full-fibre provider</strong>, shaping new digital experiences built to outpace the industry.',
-      tags: ['UX & UI', 'Strategy', 'Content Strategy'],
+      tags: ['UX & UI', 'Strategy', 'Content'],
       href: '/api-portal',
       art: {
-        base: 'assets/case-api-portal', tag: 'a37d64d9',
+        base: 'assets/case-api-portal', tag: 'a53fea0b',
         w: 3024, h: 2708,
-        clear: 0.356,
+        clear: 0.357,
         alt: 'A developer portal in a browser window: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request'
       }
     },
@@ -2280,7 +2349,7 @@
   // WebP because these are screenshots on flat fields and it is worth 5-9x here.
   // Each card's whole four-rung ladder, against those same four rungs written as
   // optimised PNG: Boots 233KB/1.2MB, Saddle 351KB/2.6MB, British Cycling
-  // 529KB/4.5MB, fibre 322KB/1.9MB, PwC 318KB/1.8MB. This listed the first three
+  // 529KB/4.5MB, fibre 325KB/1.9MB, PwC 318KB/1.8MB. This listed the first three
   // only, from when there were three cards.
   //
   // No PNG fallback and no <picture> to hold one. Every shipping

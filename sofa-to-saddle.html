@@ -373,6 +373,14 @@
     text-wrap: balance;
   }
   .cs-hero__statement strong { color: var(--ink); font-weight: 500; }
+  /* The two clients are one lockup, and the "x" holding them together is a
+     single character. Left free to break at both of its spaces it ends a line at
+     every width from a phone up to about 560px. A non-breaking space cannot do
+     this job here, because the splitter below normalises every whitespace run to
+     a plain space, so the tie has to be an element the break cannot cross. It
+     holds "x Lloyds" rather than the whole lockup, so the line can still break
+     after "Cycling" on the narrowest screens. */
+  .cs-hero__lockup { white-space: nowrap; }
   .cs-hero__statement-inner { display: block; }
   /* The pieces the splitter leaves behind. Words stay whole so the sentence
      still breaks at spaces; letters are the things that move. */
@@ -1150,8 +1158,8 @@
       <!-- aria-label carries the sentence intact, because the inner span is
            about to be taken apart into one element per letter and a screen
            reader given that reads it out a letter at a time. -->
-      <h1 class="cs-hero__statement" aria-label="Launching a national cycling app for Lloyds Bank and British Cycling, and proving a designer using AI could ship the front-end code behind it.">
-        <span class="cs-hero__statement-inner" aria-hidden="true">Launching a national cycling app for <strong>Lloyds Bank and British Cycling</strong>, and proving a designer using AI could ship the front-end code behind it.</span>
+      <h1 class="cs-hero__statement" aria-label="Creating British Cycling x Lloyds&rsquo; habit-forming cycling app, launched in record time by embracing AI throughout.">
+        <span class="cs-hero__statement-inner" aria-hidden="true">Creating <strong>British Cycling <span class="cs-hero__lockup">x Lloyds&rsquo;</span></strong> habit-forming cycling app, launched in record time by embracing AI throughout.</span>
       </h1>
       <ul class="cs-tags">
         <li>UX &amp; UI</li>
