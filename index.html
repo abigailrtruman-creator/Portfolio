@@ -659,48 +659,52 @@
   .hp-wordmark__row:nth-child(2) { z-index: 2; }
 
   /* ---------- WHERE YOU ARE IN THE SET ----------
-     An index of the work, held still in the left quarter while the cards move
-     past it. It exists because the carousel says "there is a set here" and then
-     leaves you to guess how big the set is: three cards look the same as thirty
-     until you have scrolled to the end of them.
+     An index of the work, parked at the bottom left of the screen while the
+     cards move past it. It exists because the carousel says "there is a set
+     here" and then leaves you to guess how big the set is: three cards look the
+     same as thirty until you have scrolled to the end of them.
 
-     Numerals only, down the right. It carried the project names too, and they
-     were the reason it could have a quarter of the page — but they were also
-     the third place the same five words appeared, after the card's own heading
-     and the page each one opens. Read down the column and it was an index of a
-     set you were already looking at. What is left is the part the cards
-     genuinely cannot say: how many there are, and which one this is.
+     Numerals only, laid on one line — 01 02 03 04 05, the current one lit. It
+     carried the project names too, and they were the reason it could once have
+     a quarter of the page; but they were also the third place the same five
+     words appeared, after the card's own heading and the page each one opens.
+     What is left is the part the cards genuinely cannot say: how many there
+     are, and which one this is.
 
-     On the right rather than the left, and set flush to the page's own right
-     margin, so it reads as a note in the margin of the work rather than as a
-     column the work is indented from. That is also what let the column give up
-     everything it was holding: on the left it was the thing you met first and
-     had to look like it deserved the space, and in the margin it can be 24px
-     of type and nothing else.
+     A floating pill at every width, where this was the phone's answer and a
+     sticky column down the right was the desktop's. The column had to be given
+     a grid track, and once it was numerals rather than names that track was
+     250px of card held back to set 24px of type — so the widest screens, the
+     ones with the most room to show the artwork off, were the ones where the
+     cards came furthest short of their cap and sat off the centre of the page
+     besides. Out of the flow entirely, the cards take the whole content width
+     and centre in it, and the readout costs nothing at any size.
 
-     No separators, no ends: five numerals at two sizes, and the lit one is
-     where you are. Everything else was furniture, and every rule that came out
-     made the remaining ones look more deliberate until there were none left.
+     It keeps the nav's treatment exactly — same fill, same hairline, same blur
+     — which is both what makes the two read as one family and what makes this
+     legible everywhere it has to be. The cards are full-bleed colour and the
+     lightest of them carries white at 2.6:1, so a bare numeral in the page's
+     ink would all but disappear over Sofa to Saddle for the whole time that
+     card is on screen. Bottom left, diagonally opposite the nav, so the two
+     pieces of floating furniture are never in the same corner of the eye.
 
      aria-hidden, and it has to be. It changes as you scroll, and a live index
      that announces itself every time a card passes the middle of the screen is
      noise over the top of the headings that carry the same names properly. */
   .hp-count {
-    grid-column: 2;
-    position: sticky;
-    /* The list is centred on the card it is labelling rather than parked near
-       the top, because with five rows it is tall enough that a top-aligned
-       block would sit against the card's heading and read as part of it.
-
-       vh and not 50%. A percentage inset on a sticky box resolves against its
-       containing block, which here is the whole card stack — three cards deep,
-       so 50% is roughly 1300px and the rail would stick somewhere below the
-       fold and never be seen. The translate is what does the centring: the
-       inset puts its top edge on the middle of the screen, and the transform
-       pulls it back up by half its own height, whatever that turns out to be
-       once there are five rows in it. */
-    top: 50vh;
-    transform: translateY(-50%);
+    position: fixed;
+    left: var(--pad-x);
+    bottom: clamp(18px, 3.5vh, 34px);
+    /* Under the nav's 100. They never meet, but if a short window brought them
+       close the nav is the one that owns the space. */
+    z-index: 90;
+    padding: 9px 14px 10px;
+    border-radius: 999px;
+    background: rgba(18,18,22,0.55);
+    border: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(28px) saturate(1.6);
+    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
     /* Nothing here navigates. It reports where you are, and a pointer cursor
        over it would promise a jump it does not make. */
     pointer-events: none;
@@ -711,54 +715,38 @@
 
   .hp-count__list {
     display: flex;
-    flex-direction: column;
+    gap: 9px;
     margin: 0;
     padding: 0;
     list-style: none;
   }
-  /* The line box is a fixed 22px rather than a multiple of the type, so the
-     numeral inside it can change size without the rows below it moving. A
-     unitless line-height would be recomputed against the lit row's larger
-     font-size and push the rest of the column down every time the current card
-     changed, which is a list rearranging itself to report that nothing about it
-     has changed. */
   .hp-count__row {
-    line-height: 22px;
-    padding: 11px 0;
-    /* Flush right, so the column has a clean edge against the page margin and
-       the lit numeral grows leftwards into the empty space rather than pushing
-       that edge around as it changes size. */
-    text-align: right;
+    line-height: 1;
     color: var(--ink-3);
     transition: color 0.5s cubic-bezier(0.16,1,0.3,1);
   }
   .hp-count__row.is-now { color: var(--ink); }
 
-  /* The lit numeral grows, which is what the name used to do. Brightness alone
-     was enough when it was lighting a word; on two digits it is a difference
-     you have to be looking for, and this rail is meant to be read out of the
-     corner of the eye.
-
-     font-size is not composited, so this is a paint on five two-character
-     strings and nothing else. A transform would be cheaper and would scale the
-     stroke weight along with the glyph, which at this size reads as the numeral
-     getting bolder rather than larger. */
+  /* Brightness does all of it. The column this replaced grew its lit numeral as
+     well, because a bare number in the page margin had nothing behind it and
+     the light step alone was a difference you had to be looking for. In a pill
+     this tight there is no room for it: a numeral changing size would push its
+     neighbours along the row and change the width of the pill itself, which is
+     a readout rearranging itself to report that nothing about it has changed.
+     The dark fill is what buys the light step back — against it, lit and unlit
+     are far enough apart at one size. */
   .hp-count__n {
     display: block;
     font-family: var(--ff-display);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
-    letter-spacing: 0.04em;
-    /* Tabular, so 01 and 11 are the same width and the column keeps one edge. */
+    letter-spacing: 0.05em;
+    /* Tabular, so 01 and 11 are the same width and the row never reflows. */
     font-variant-numeric: tabular-nums;
     opacity: 0.6;
-    transition: font-size 0.5s cubic-bezier(0.16,1,0.3,1),
-                opacity 0.5s cubic-bezier(0.16,1,0.3,1);
+    transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1);
   }
-  .hp-count__row.is-now .hp-count__n {
-    font-size: 18px;
-    opacity: 1;
-  }
+  .hp-count__row.is-now .hp-count__n { opacity: 1; }
 
   /* ---------- CASE STUDY CARDS ----------
      Each card is one image the owner supplied, with a sentence and an arrow laid
@@ -786,31 +774,19 @@
        inside one viewport; there is no stack, so that reason went. What replaced
        it is one card having to fit one viewport, which is not the same
        requirement and produces a different number. See --card-cap-h. */
-    /* The section is two columns from 901px up: the cards, then the index that
-       counts them, down the right-hand side. Named here because three separate
-       things need the same arithmetic — the grid, the card's own width cap and
-       the corner radius — and a card that disagreed with the column it sits in
-       would be a scrollbar.
+    /* One column, the cards, and nothing beside them. The index that counts
+       them floats over the page instead of taking a grid track, so the whole
+       content width is the card's to use and the card is centred in the page
+       rather than in what was left after the rail.
 
-       The index column is as narrow as five two-digit numerals need, where it
-       used to be a quarter of the page. A quarter was the right size for a rail
-       carrying five project names; carrying numerals, it was holding back 250px
-       of the card to set 24px of type. Everything it gives up goes to the
-       artwork, which reaches its 1120px cap where the screen is tall enough to
-       allow it rather than staying 200px short of it on width grounds. On a
-       laptop it is --card-cap-h that decides, not this. */
+       Named here because two separate things need the same arithmetic — the
+       card's own width cap and the corner radius — and a card that disagreed
+       with the space it sits in would be a scrollbar. */
     --content-w: calc(min(100vw, var(--shell)) - 2 * var(--pad-x));
-    /* Written against --content-w rather than as a 4.5% column, so this and the
-       card width below are the same expression rather than two that have to be
-       kept saying the same thing. A percentage would be the shorter way to say
-       it in the grid and could not be reused here, because a percentage inside
-       --card-w-px would resolve against whatever property it eventually lands
-       in — and it lands in a corner radius. */
-    --rail-w: clamp(44px, calc(0.045 * var(--content-w)), 72px);
-    --rail-gap: clamp(28px, 3.4vw, 64px);
-    /* What the grid leaves for the cards: everything but the index and the gap.
-       --card-w below reaches the same number through 100%, but the radius needs
-       it as a length rather than as a share of a box it is not inside. */
+    /* The same figure --card-w below reaches through 100%, written as a length
+       because the radius needs it as one rather than as a share of a box it is
+       not inside: a percentage there would resolve against whatever property it
+       eventually lands in, and it lands in a corner radius. */
     /* The tallest card's aspect ratio, and it is the tallest rather than each
        card's own because all five have to be one width — a column whose cards
        changed width card to card would read as a mistake. So the one needing the
@@ -833,11 +809,7 @@
        card is the room that already sits between two of them. That is the
        section's own rhythm rather than a number invented for this. */
     --card-cap-h: calc((100svh - var(--card-gap)) / var(--art-ar-max));
-    --card-w-px: min(
-      calc(var(--content-w) - var(--rail-w) - var(--rail-gap)),
-      var(--card-cap-h),
-      1120px
-    );
+    --card-w-px: min(var(--content-w), var(--card-cap-h), 1120px);
     --card-w: min(100%, var(--card-cap-h), 1120px);
     /* Taken from --card-w-px rather than in cqw because this applies to the
        query container itself, where container units resolve against an ancestor
@@ -886,71 +858,8 @@
        at tablet and 72 on a phone, so the first card does not arrive already
        underneath it. */
     padding: clamp(80px, 12vh, 132px) var(--pad-x) clamp(24px, 6vh, 80px);
-
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) var(--rail-w);
-    column-gap: var(--rail-gap);
-    /* start, not stretch: the rail has to be shorter than its column for
-       position:sticky to have anywhere to travel. Stretched to the full height
-       of the card stack it would be stuck to itself and never move. */
-    align-items: start;
   }
-  .hp-cases__list { grid-column: 1; min-width: 0; }
-
-  /* Below 901px the rail's quarter is about 170px, which is not a column, it is
-     a margin with type in it. The count survives as the small floating pill it
-     started as: same information, in the only space a phone has going spare.
-
-     Kept here, after .hp-cases rather than up with the rest of the count, so it
-     is later in the sheet than the grid it is switching off. Two rules of equal
-     weight are settled by order, and from above this one only appeared to work:
-     the pill moved, the columns did not, and the cards spent a while laid out
-     in a quarter of a phone.
-
-     It keeps the nav's treatment exactly — same fill, same hairline, same blur
-     — because that is what makes it readable everywhere it has to be. The cards
-     are full-bleed colour and the lightest of them carries white at 2.6:1, so a
-     bare numeral in the page's ink would all but disappear over Sofa to Saddle
-     for the whole time that card is on screen. That card has been near-white
-     and is now a mid green, and the number barely moved, which is the point:
-     the pill is not sized to one export. Bottom left, diagonally opposite the
-     nav, so the two pieces of floating furniture are never in the same corner
-     of the eye. */
-  @media (max-width: 900px) {
-    .hp-cases {
-      display: block;
-      --card-w-px: min(var(--content-w), 1120px);
-    }
-    .hp-count {
-      position: fixed;
-      left: var(--pad-x);
-      bottom: clamp(18px, 3.5vh, 34px);
-      /* Under the nav's 100. They never meet, but if a short window brought
-         them close the nav is the one that owns the space. */
-      z-index: 90;
-      top: auto;
-      transform: none;
-      padding: 9px 14px 10px;
-      border-radius: 999px;
-      background: rgba(18,18,22,0.55);
-      border: 1px solid rgba(255,255,255,0.09);
-      backdrop-filter: blur(28px) saturate(1.6);
-      -webkit-backdrop-filter: blur(28px) saturate(1.6);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
-    }
-    /* Laid on one line here: 01 02 03 04 05, the current one lit.
-       Brightness does all of it, and the size step the rail uses is dropped —
-       a numeral growing inside a pill this tight would push its neighbours
-       along the row and change the width of the pill itself. In a column there
-       is room for the lit row to be larger; on one line there is not. */
-    .hp-count__list { flex-direction: row; gap: 9px; }
-    .hp-count__row { padding: 0; line-height: 1; }
-    .hp-count__n,
-    .hp-count__row.is-now .hp-count__n {
-      font-size: 12px;
-      letter-spacing: 0.05em;
-    }
-  }
+  .hp-cases__list { min-width: 0; }
 
   .hp-case {
     /* The card is the containment context for its own contents, so every value
@@ -1868,17 +1777,15 @@
       transform: none;
     }
     /* The index is information, not decoration, so it stays — it just stops
-       arriving. Held on rather than left to the scroll trigger, because a rail
+       arriving. Held on rather than left to the scroll trigger, because a pill
        that fades itself in is doing the one thing this mode is asked not to,
-       and there is nothing gained by hiding an index until you reach it.
-       transform survives, because at desktop it is not motion: it is the
-       translateY(-50%) that centres the sticky block on its own height. */
+       and there is nothing gained by hiding an index until you reach it. */
     .hp-count {
       opacity: 1;
       transition: none;
     }
-    /* The lit numeral still lights and is still the larger one. Both are how
-       the rail reads at all; it is only the sliding between the two that goes. */
+    /* The lit numeral still lights. That is how the readout reads at all; it is
+       only the crossfade between one numeral and the next that goes. */
     .hp-count__row,
     .hp-count__n { transition: none; }
   }
@@ -2943,20 +2850,10 @@
       }
     }
 
-    // Below 901px the readout is not the rail any more, it is the pill parked
-    // at the bottom left of the screen, and the window it lives in has to be
-    // measured against where it actually sits. 72% and 28% are an equal
-    // distance either side of the middle, which is exactly where the rail is
-    // centred; the pill is nowhere near there, so the same pair leaves it lit
-    // for the better part of a screen after the last card has gone by — five
-    // numerals floating over the footer with nothing left to count.
-    function countIsPill() {
-      return window.matchMedia('(max-width: 900px)').matches;
-    }
     // How far the top of the pill sits above the bottom of the screen. Measured
     // rather than restated, because there is no constant here that stays true:
     // the inset is a clamp on vh, the height comes from the type inside it, and
-    // both move between one phone and the next. Only opacity ever hides the
+    // both move between one window and the next. Only opacity ever hides the
     // pill, so it has a box to measure whether it is showing or not.
     function countPillInset() {
       return Math.round(root.clientHeight - counter.getBoundingClientRect().top);
@@ -2967,16 +2864,16 @@
         trigger: casesEl,
         start: 'top 72%',
         // A function, so it is re-read on the refresh that follows a resize or
-        // a rotation — a phone turned landscape crosses the breakpoint, and a
-        // rail's figure in a pill's layout is the bug this is fixing.
+        // a rotation, both of which move the clamped inset the pill sits on.
         //
         // The pill's own top edge is the far end: the count goes as the last
         // thing it could be counting passes out from behind it, instead of
-        // riding down into the footer first.
+        // riding down into the footer first. A symmetrical 'bottom 28%' would
+        // be right for a readout centred on the screen, which this is not — it
+        // would leave five numerals lit over the footer with nothing left to
+        // count for the better part of a screen.
         end: function() {
-          return countIsPill()
-            ? 'bottom bottom-=' + countPillInset()
-            : 'bottom 28%';
+          return 'bottom bottom-=' + countPillInset();
         },
         onToggle: function(self) {
           counter.classList.toggle('is-on', self.isActive);
