@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Lead product designer on the Boots.com checkout rebuild: one page, three steps, no progress bar, and the same-day collection flow that never shipped.">
+<meta name="description" content="Lead product designer on the Boots.com checkout rebuild, going live Q4: one page, three steps, no progress bar, and the same-day collection flow that got cut.">
 <link rel="canonical" href="https://abbietruman.vercel.app/boots-checkout">
 
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Abbie Truman">
 <meta property="og:url" content="https://abbietruman.vercel.app/boots-checkout">
 <meta property="og:title" content="Boots website — Abbie Truman">
-<meta property="og:description" content="Lead product designer on the Boots.com checkout rebuild: one page, three steps, no progress bar, and the same-day collection flow that never shipped.">
+<meta property="og:description" content="Lead product designer on the Boots.com checkout rebuild, going live Q4: one page, three steps, no progress bar, and the same-day collection flow that got cut.">
 <meta property="og:image" content="https://abbietruman.vercel.app/assets/boots-og-1200x630.a62517b9.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="The rebuilt Boots.com checkout on a laptop screen.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Boots website — Abbie Truman">
-<meta name="twitter:description" content="Lead product designer on the Boots.com checkout rebuild: one page, three steps, no progress bar, and the same-day collection flow that never shipped.">
+<meta name="twitter:description" content="Lead product designer on the Boots.com checkout rebuild, going live Q4: one page, three steps, no progress bar, and the same-day collection flow that got cut.">
 <meta name="twitter:image" content="https://abbietruman.vercel.app/assets/boots-og-1200x630.a62517b9.jpg">
 <meta name="twitter:image:alt" content="The rebuilt Boots.com checkout on a laptop screen.">
 
@@ -826,10 +826,11 @@
      thing twice on a visit that takes in both pages. So this footer is the
      contact card only: the heading, an email address, a phone number.
 
-     Back to selected work used to be a line of its own above this block. It is
-     now in the base row beside Back to top, because the two are the same kind
-     of control — where to go now that the reading is done — and separating them
-     put one of the pair 190px above the other with a hairline between. */
+     Back to selected work used to be a line of its own above this block, 190px
+     up with a hairline between, and it sits in the base row now. It is the only
+     control there: Back to top was answering a question the scrollbar, the
+     keyboard and the trackpad have all already answered, so the row closes the
+     page with one thing at each end instead of a pair crowded onto the right. */
   .hp-footer {
     --foot-x: var(--pad-x);
     margin-top: var(--section);
@@ -925,41 +926,23 @@
     height: 1px;
     background: var(--rule);
   }
-  /* The pair. Both controls answer "where now", so they are one group at the end
-     of the base row rather than two things at opposite ends of it. The gap is
-     wide enough that they do not read as one control with two labels. */
-  .hp-footer__nav {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: clamp(18px, 2.2vw, 32px);
-  }
   /* .hp-footer__back is the case studies', not the homepage's — the homepage has
-     no set to go back to. It is grouped with __top rather than given its own copy
-     of the same eight declarations, so the pair cannot drift apart. */
-  .hp-footer__back,
-  .hp-footer__top {
+     no set to go back to. It is on its own now: the grouping with
+     __top, and the reset the pair needed because one of them was a <button>,
+     both went when Back to top did. */
+  .hp-footer__back {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     min-height: 44px;
-    padding: 0;
-    background: none;
-    border: 0;
-    font-family: var(--ff-body);
     font-size: 13px;
     color: var(--ink-2);
-    cursor: pointer;
+    text-decoration: none;
     transition: color 0.25s ease;
   }
-  .hp-footer__back { text-decoration: none; }
-  .hp-footer__back:hover,
-  .hp-footer__top:hover { color: var(--ink); }
-  .hp-footer__back svg,
-  .hp-footer__top svg { width: 14px; height: 14px; display: block; }
-  /* Travels left, where Back to top's arrow does not move at all: one of these
-     is a direction and the other is already pointing at the only place it
-     goes. */
+  .hp-footer__back:hover { color: var(--ink); }
+  .hp-footer__back svg { width: 14px; height: 14px; display: block; }
+  /* It travels, where the contact arrows only lift: this one is a direction. */
   .hp-footer__back .hp-footer__cta-arrow {
     transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
   }
@@ -1436,7 +1419,7 @@
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
       <div class="cs-overview__body" data-reveal data-stagger>
-        <p>As <strong>lead product designer</strong>, I owned the redesign of Boots.com checkout end-to-end. The flow serves 21 million UK customers a year. The scope covered everything from the first tap to the confirmation page, alongside a parallel workstream to bring Same-Day Click &amp; Collect into the same experience.</p>
+        <p>As <strong>lead product designer</strong>, I owned the redesign of Boots.com checkout end-to-end. The flow serves 21 million UK customers a year. The scope covered everything from the first tap to the confirmation page, alongside a parallel workstream to bring Same-Day Click &amp; Collect into the same experience. The rebuild is due to go live in phases from Q4.</p>
         <p>On the surface, this was a UI refresh. Underneath, it was a <strong>coordination problem</strong>. Product, engineering, research, and the business each held a stake in the outcome, and reconciling those views was as much the task as the design itself. The rebuild had to hold at every level, down to the edge cases nobody had yet mapped.</p>
       </div>
     </div>
@@ -1521,7 +1504,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Making the invisible visible.</h2>
-          <p>The payment summary on mobile and tablet used to live in an accordion at the top of the page. Customers had to expand it to see their basket total or the Advantage Card points they&rsquo;d earn, at the exact moment they were being asked to hand over money. We brought it forward. <strong>Trust is built or lost in exactly these moments.</strong></p>
+          <p>On mobile and tablet, the payment summary sits in an accordion at the top of the page. Customers have to expand it to see their basket total or the Advantage Card points they&rsquo;d earn, at the exact moment they&rsquo;re being asked to hand over money. The rebuild brings it forward. <strong>Trust is built or lost in exactly these moments.</strong></p>
         </div>
         <figure class="cs-figure" style="--ar: 0.5876" data-reveal>
           <img src="/assets/boots-04-1120.026d08a5.webp"
@@ -1543,7 +1526,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">A component that outgrew its brief.</h2>
-          <p>The address finder, built on a GBG Loqate integration, ended up becoming the address entry pattern used <strong>across Boots.com</strong>. That wasn&rsquo;t the goal, but it&rsquo;s a reminder that a component built well for one flow can save downstream work for years.</p>
+          <p>The address finder, built on a GBG Loqate integration, was taken on as the address entry pattern for <strong>the whole of Boots.com</strong>. That wasn&rsquo;t the goal, but it&rsquo;s a reminder that a component built well for one flow can save downstream work for years.</p>
         </div>
         <figure class="cs-figure" style="--ar: 1.1465" data-reveal>
           <img src="/assets/boots-05-1120.dd3b9ab7.webp"
@@ -1554,7 +1537,7 @@
                width="4908" height="4281"
                alt="The address finder in two states: a search field with matching addresses listed beneath it, and the chosen address confirmed in a panel with options to edit or search again."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Searching, and resolved. The same pattern now handles address entry site-wide.</span></figcaption>
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Searching, and resolved. The same pattern was adopted for address entry site-wide.</span></figcaption>
         </figure>
       </section>
 
@@ -1565,7 +1548,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Bringing loyalty to the surface.</h2>
-          <p>The integrated loyalty component sits inside the payment section and always shows the customer their current Advantage Card balance and whether it covers the order. Previously this was buried, which almost certainly suppressed redemption. Making it visible wasn&rsquo;t just cleaner UX. It was a deliberate <strong>commercial move</strong> to promote a lever the business was already investing in.</p>
+          <p>The integrated loyalty component sits inside the payment section and always shows the customer their current Advantage Card balance and whether it covers the order. Today it&rsquo;s buried, which almost certainly suppresses redemption. Making it visible wasn&rsquo;t just cleaner UX. It was a deliberate <strong>commercial move</strong> to promote a lever the business was already investing in.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.9481" data-reveal>
           <img src="/assets/boots-06-1120.6270eb9b.webp"
@@ -1587,7 +1570,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The confirmation, mirrored.</h2>
-          <p>For the order confirmation page, we leveraged patterns I&rsquo;d designed for Boots&rsquo; transactional emails. Same layout, same visual language. When you complete an order and get the email 30 seconds later, it&rsquo;s clearly the same document. That mirroring is easy to miss, but it&rsquo;s what makes a system feel <strong>considered</strong>.</p>
+          <p>For the order confirmation page, we leveraged patterns I&rsquo;d designed for Boots&rsquo; transactional emails. Same layout, same visual language. Complete an order, and the email that arrives 30 seconds later reads as the same document. That mirroring is easy to miss, but it&rsquo;s what makes a system feel <strong>considered</strong>.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.6223" data-reveal>
           <img src="/assets/boots-07-1120.aed56228.webp"
@@ -1609,7 +1592,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">When the tech can&rsquo;t do what customers expect.</h2>
-          <p>Same-Day Click &amp; Collect is the honest example of not every part of this shipping in the shape I would have chosen. We explored three integration paths for Availability-to-Promise: OCI out-of-the-box, extending Salesforce, or a Blue Yonder integration. Cost ruled out Blue Yonder. Salesforce didn&rsquo;t deliver. OCI OOB was where we landed, a decision made before design had scoped what it could do.</p>
+          <p>Same-Day Click &amp; Collect is the honest example of not every part of this going into build in the shape I would have chosen. We explored three integration paths for Availability-to-Promise: OCI out-of-the-box, extending Salesforce, or a Blue Yonder integration. Cost ruled out Blue Yonder. Salesforce didn&rsquo;t deliver. OCI OOB was where we landed, a decision made before design had scoped what it could do.</p>
           <p>Generative research then showed customers expected same-day collection to behave the way it does on Amazon: visible on the PLP, confirmed at basket, honoured at checkout. OCI OOB couldn&rsquo;t deliver against those expectations.</p>
         </div>
         <figure class="cs-figure" style="--ar: 1.0868" data-reveal>
@@ -1631,9 +1614,9 @@
           <span class="cs-chapter__beat">Trade-off</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">The design that didn&rsquo;t ship.</h2>
+          <h2 class="cs-chapter__title">The design that didn&rsquo;t make the build.</h2>
           <p>We designed around the constraint anyway. The mixed-availability flow &mdash; some items same-day, others not &mdash; went through multiple explorations. We landed on the option that caused least disruption: telling customers some items were available today, and offering the soonest day the whole basket would be ready as an alternative.</p>
-          <p>Later, we discovered even that wasn&rsquo;t technically feasible. So we shipped less. When mixed-availability applies, we say nothing. The alternative is a notification we can&rsquo;t actually build. I don&rsquo;t love that. <strong>But shipping a lie is worse than shipping less.</strong></p>
+          <p>Later, we discovered even that wasn&rsquo;t technically feasible. So the build does less. When mixed-availability applies, we say nothing. The alternative is a notification we can&rsquo;t actually build. I don&rsquo;t love that. <strong>But shipping a lie is worse than shipping less.</strong></p>
         </div>
         <figure class="cs-figure" style="--ar: 0.9686" data-reveal>
           <img src="/assets/boots-09-1120.c1305c04.webp"
@@ -1644,18 +1627,18 @@
                width="5640" height="5823"
                alt="The mixed-availability design at desktop and mobile: a notice naming the item that is not available for same-day collection and offering tomorrow for the full order, above a collection date picker."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The option we landed on, and did not ship: the item holding the basket up, and the soonest date the whole order is ready.</span></figcaption>
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The option we landed on, and the one that won&rsquo;t be built: the item holding the basket up, and the soonest date the whole order is ready.</span></figcaption>
         </figure>
       </section>
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
           <span class="cs-chapter__no">10<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">Outcome</span>
+          <span class="cs-chapter__beat">Status</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Shipped. Live. And still evolving.</h2>
-          <p>The rebuild shipped in phases and is live to <strong>21 million UK customers</strong>. Beyond the checkout itself, the work seeded patterns that now run across Boots.com: the Loqate address finder, the loyalty component, the transactional email visual language.</p>
+          <h2 class="cs-chapter__title">Not live yet. Going live in Q4.</h2>
+          <p>It rolls out in phases from Q4, to <strong>21 million UK customers</strong>. Beyond the checkout itself, the work seeded patterns being taken up across Boots.com: the Loqate address finder, the loyalty component, the transactional email visual language.</p>
         </div>
       </section>
 
@@ -1669,7 +1652,7 @@
       <div class="cs-reflection__body" data-reveal data-stagger>
         <p>Two things I&rsquo;ll take into the next one.</p>
         <p>The screens were the straightforward part. Most of the job was keeping the reasoning intact while product, engineering, research and the business each pulled it somewhere different, and re-making the same argument every time someone new arrived.</p>
-        <p>The other one is sharper, and it&rsquo;s the part I&rsquo;d change. <strong>The integration path for Availability-to-Promise was settled before design had scoped what it could do.</strong> Everything after that ran inside a constraint that was already fixed: the research showing customers expected same-day collection to work the way it does elsewhere, the mixed-availability flow we designed around it, and the version we couldn&rsquo;t ship. Better screens were never going to move that. Being in the room for the first decision would have.</p>
+        <p>The other one is sharper, and it&rsquo;s the part I&rsquo;d change. <strong>The integration path for Availability-to-Promise was settled before design had scoped what it could do.</strong> Everything after that ran inside a constraint that was already fixed: the research showing customers expected same-day collection to work the way it does elsewhere, the mixed-availability flow we designed around it, and the version we couldn&rsquo;t build. Better screens were never going to move that. Being in the room for the first decision would have.</p>
       </div>
     </div>
   </section>
@@ -1690,19 +1673,14 @@
     <a class="hp-footer__cta is-ghost" href="tel:+447387382836">07387 382836<span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
   </div>
   <div class="hp-footer__base" data-reveal>
-    <span>&copy; <span data-year>2026</span> Abbie Truman</span>
     <!-- /#work rather than /, so it lands on the cards rather than the hero. The
          homepage builds itself in JS and scrolls inside a fixed element, so the
          browser cannot act on that fragment on its own; index.html reads it —
          see initWorkAnchor there. -->
-    <div class="hp-footer__nav">
-      <a class="hp-footer__back" href="/#work">
-        <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to selected work
-      </a>
-      <button class="hp-footer__top" type="button" data-top>
-        <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to top
-      </button>
-    </div>
+    <a class="hp-footer__back" href="/#work">
+      <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to selected work
+    </a>
+    <span>&copy; <span data-year>2026</span> Abbie Truman</span>
   </div>
 </footer>
 
@@ -1735,14 +1713,9 @@
   document.querySelector('[data-year]').textContent = new Date().getFullYear();
 
   // Assigned at the bottom of this file if the smoothing library arrives.
-  // Declared here because the two things that have to be able to interrupt the
-  // scroll — the viewer opening over it, and back-to-top — are both above it.
+  // Declared here because the viewer, which stops the scroll under itself
+  // while it is open, is above it.
   var lenis = null;
-
-  document.querySelector('[data-top]').addEventListener('click', function() {
-    if (lenis) { lenis.scrollTo(0); return; }
-    window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
-  });
 
   var figures = [].slice.call(document.querySelectorAll('.cs-figure'));
 

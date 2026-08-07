@@ -1363,7 +1363,7 @@
      horizontal lines here and they sit 480-740px apart, so they have to be
      coextensive or one of them reads as a mistake.
      Spanning the column is what makes this one a bracket rather than a lid:
-     the copyright starts exactly under its left end and Back to top finishes
+     Back to top starts exactly under its left end and the copyright finishes
      exactly under its right, so the line closes over the row instead of
      stopping somewhere inside it.
      Vertically it has no `top` of its own — that would be measured from the
@@ -2546,10 +2546,10 @@
           '<a class="hp-footer__cta is-ghost" href="tel:' + PHONE_TEL + '">' + PHONE + '<span class="hp-footer__cta-arrow">' + ARROW_NE + '</span></a>' +
         '</div>' +
         '<div class="hp-footer__base">' +
-          '<span>&copy; ' + new Date().getFullYear() + ' Abbie Truman</span>' +
           '<button class="hp-footer__top" type="button" data-top>' +
             '<span class="hp-footer__cta-arrow" aria-hidden="true">' + ARROW_UP + '</span>Back to top' +
           '</button>' +
+          '<span>&copy; ' + new Date().getFullYear() + ' Abbie Truman</span>' +
         '</div>' +
       '</footer>';
 
@@ -2943,11 +2943,41 @@
       }
     }
 
+    // Below 901px the readout is not the rail any more, it is the pill parked
+    // at the bottom left of the screen, and the window it lives in has to be
+    // measured against where it actually sits. 72% and 28% are an equal
+    // distance either side of the middle, which is exactly where the rail is
+    // centred; the pill is nowhere near there, so the same pair leaves it lit
+    // for the better part of a screen after the last card has gone by — five
+    // numerals floating over the footer with nothing left to count.
+    function countIsPill() {
+      return window.matchMedia('(max-width: 900px)').matches;
+    }
+    // How far the top of the pill sits above the bottom of the screen. Measured
+    // rather than restated, because there is no constant here that stays true:
+    // the inset is a clamp on vh, the height comes from the type inside it, and
+    // both move between one phone and the next. Only opacity ever hides the
+    // pill, so it has a box to measure whether it is showing or not.
+    function countPillInset() {
+      return Math.round(root.clientHeight - counter.getBoundingClientRect().top);
+    }
+
     if (counter && casesEl) {
       ScrollTrigger.create({
         trigger: casesEl,
         start: 'top 72%',
-        end: 'bottom 28%',
+        // A function, so it is re-read on the refresh that follows a resize or
+        // a rotation — a phone turned landscape crosses the breakpoint, and a
+        // rail's figure in a pill's layout is the bug this is fixing.
+        //
+        // The pill's own top edge is the far end: the count goes as the last
+        // thing it could be counting passes out from behind it, instead of
+        // riding down into the footer first.
+        end: function() {
+          return countIsPill()
+            ? 'bottom bottom-=' + countPillInset()
+            : 'bottom 28%';
+        },
         onToggle: function(self) {
           counter.classList.toggle('is-on', self.isActive);
         }

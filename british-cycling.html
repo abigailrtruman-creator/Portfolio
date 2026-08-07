@@ -337,9 +337,9 @@
   }
 
   /* ---------- FOOTER ----------
-     The case study footer exactly: the contact card, then the base row with the
-     pair of controls. It is below the fold on a page one screen tall, which is
-     the right place for it — someone who scrolls past a "still being written"
+     The case study footer exactly: the contact card, then the base row with
+     Back to selected work at the end of it. It is below the fold on a page one
+     screen tall, which is the right place for it — someone who scrolls past a "still being written"
      is someone looking for a way to ask about it. */
   .hp-footer {
     --foot-x: var(--pad-x);
@@ -427,32 +427,18 @@
     height: 1px;
     background: var(--rule);
   }
-  .hp-footer__nav {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: clamp(18px, 2.2vw, 32px);
-  }
-  .hp-footer__back,
-  .hp-footer__top {
+  .hp-footer__back {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     min-height: 44px;
-    padding: 0;
-    background: none;
-    border: 0;
-    font-family: var(--ff-body);
     font-size: 13px;
     color: var(--ink-2);
-    cursor: pointer;
+    text-decoration: none;
     transition: color 0.25s ease;
   }
-  .hp-footer__back { text-decoration: none; }
-  .hp-footer__back:hover,
-  .hp-footer__top:hover { color: var(--ink); }
-  .hp-footer__back svg,
-  .hp-footer__top svg { width: 14px; height: 14px; display: block; }
+  .hp-footer__back:hover { color: var(--ink); }
+  .hp-footer__back svg { width: 14px; height: 14px; display: block; }
   .hp-footer__back .hp-footer__cta-arrow {
     transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
   }
@@ -614,15 +600,10 @@
     <a class="hp-footer__cta is-ghost" href="tel:+447387382836">07387 382836<span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
   </div>
   <div class="hp-footer__base">
+    <a class="hp-footer__back" href="/#work">
+      <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to selected work
+    </a>
     <span>&copy; <span data-year>2026</span> Abbie Truman</span>
-    <div class="hp-footer__nav">
-      <a class="hp-footer__back" href="/#work">
-        <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to selected work
-      </a>
-      <button class="hp-footer__top" type="button" data-top>
-        <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to top
-      </button>
-    </div>
   </div>
 </footer>
 
@@ -633,11 +614,6 @@
   // Armed here rather than in the stylesheet so the hidden state cannot outlive
   // the thing that clears it: with scripting off nothing is ever hidden.
   document.documentElement.classList.add('cs-anim');
-
-  document.querySelector('[data-top]').addEventListener('click', function() {
-    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
-  });
 })();
 </script>
 

@@ -775,10 +775,11 @@
      thing twice on a visit that takes in both pages. So this footer is the
      contact card only: the heading, an email address, a phone number.
 
-     Back to selected work used to be a line of its own above this block. It is
-     now in the base row beside Back to top, because the two are the same kind
-     of control — where to go now that the reading is done — and separating them
-     put one of the pair 190px above the other with a hairline between. */
+     Back to selected work used to be a line of its own above this block, 190px
+     up with a hairline between, and it sits in the base row now. It is the only
+     control there: Back to top was answering a question the scrollbar, the
+     keyboard and the trackpad have all already answered, so the row closes the
+     page with one thing at each end instead of a pair crowded onto the right. */
   .hp-footer {
     --foot-x: var(--pad-x);
     margin-top: var(--section);
@@ -870,41 +871,23 @@
     height: 1px;
     background: var(--rule);
   }
-  /* The pair. Both controls answer "where now", so they are one group at the end
-     of the base row rather than two things at opposite ends of it. The gap is
-     wide enough that they do not read as one control with two labels. */
-  .hp-footer__nav {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: clamp(18px, 2.2vw, 32px);
-  }
   /* .hp-footer__back is this page's, not the homepage's — the homepage has no
-     set to go back to. It is grouped with __top rather than given its own copy
-     of the same eight declarations, so the pair cannot drift apart. */
-  .hp-footer__back,
-  .hp-footer__top {
+     set to go back to. It is on its own now: the grouping with
+     __top, and the reset the pair needed because one of them was a <button>,
+     both went when Back to top did. */
+  .hp-footer__back {
     display: inline-flex;
     align-items: center;
     gap: 10px;
     min-height: 44px;
-    padding: 0;
-    background: none;
-    border: 0;
-    font-family: var(--ff-body);
     font-size: 13px;
     color: var(--ink-2);
-    cursor: pointer;
+    text-decoration: none;
     transition: color 0.25s ease;
   }
-  .hp-footer__back { text-decoration: none; }
-  .hp-footer__back:hover,
-  .hp-footer__top:hover { color: var(--ink); }
-  .hp-footer__back svg,
-  .hp-footer__top svg { width: 14px; height: 14px; display: block; }
-  /* Travels left, where Back to top's arrow does not move at all: one of these
-     is a direction and the other is already pointing at the only place it
-     goes. */
+  .hp-footer__back:hover { color: var(--ink); }
+  .hp-footer__back svg { width: 14px; height: 14px; display: block; }
+  /* It travels, where the contact arrows only lift: this one is a direction. */
   .hp-footer__back .hp-footer__cta-arrow {
     transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
   }
@@ -1532,19 +1515,14 @@
     <a class="hp-footer__cta is-ghost" href="tel:+447387382836">07387 382836<span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
   </div>
   <div class="hp-footer__base" data-reveal>
-    <span>&copy; <span data-year>2026</span> Abbie Truman</span>
     <!-- /#work rather than /, so it lands on the cards rather than the hero. The
          homepage builds itself in JS and scrolls inside a fixed element, so the
          browser cannot act on that fragment on its own; index.html reads it —
          see initWorkAnchor there. -->
-    <div class="hp-footer__nav">
-      <a class="hp-footer__back" href="/#work">
-        <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to selected work
-      </a>
-      <button class="hp-footer__top" type="button" data-top>
-        <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to top
-      </button>
-    </div>
+    <a class="hp-footer__back" href="/#work">
+      <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to selected work
+    </a>
+    <span>&copy; <span data-year>2026</span> Abbie Truman</span>
   </div>
 </footer>
 
@@ -1575,14 +1553,9 @@
   document.querySelector('[data-year]').textContent = new Date().getFullYear();
 
   // Assigned at the bottom of this file if the smoothing library arrives.
-  // Declared here because back-to-top, which has to be able to interrupt the
-  // scroll, is above it.
+  // Declared here because the viewer, which stops the scroll under itself
+  // while it is open, is above it.
   var lenis = null;
-
-  document.querySelector('[data-top]').addEventListener('click', function() {
-    if (lenis) { lenis.scrollTo(0); return; }
-    window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
-  });
 
   var figures = [].slice.call(document.querySelectorAll('.cs-figure'));
 
