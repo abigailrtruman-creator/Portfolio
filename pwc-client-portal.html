@@ -123,11 +123,28 @@
        lands under it. */
     --nav-clear: 132px;
 
-    /* How tall a figure is allowed to get, and the same 64vh as the Boots page
-       so the two read at one scale. Two things are derived from it: the
-       picture's own height, and the width of the caption under it, which has to
-       match the picture rather than the column. */
-    --fig-max-h: 64vh;
+    /* How wide a figure is drawn: four tenths of the reading column, the same
+       fraction as the other case studies so they all read at one scale. The
+       caption under each figure takes the same value, so the two share their
+       edges. Written off --measure rather than as the 448px it comes to, because
+       it is meant to be a proportion of the column and not a number that happens
+       to sit near one. Below roughly a 510px window the column is narrower than
+       this and takes over.
+
+       This was a height, 64vh, with every figure capped to it and the width
+       falling out of the aspect ratio. One rule, applied evenly, and an uneven
+       result: these boards run from 0.59 to 1.77, so equal height drew them
+       anywhere from 372px to the full column, each centred on a different edge.
+       What decided the width was how many screens had been composed onto a board
+       in Figma, which is an authoring decision the reader cannot see.
+
+       Fixing the width instead makes the invariant the visible one: horizontal
+       differences are measured against the column on every figure, where vertical
+       ones cannot be seen, because two figures are never on screen together.
+       Height is now whatever the picture is. The viewer is what makes a figure
+       this size affordable — any of them opens at 1680, so on the page they are
+       there to be recognised rather than studied. */
+    --fig-w: calc(0.4 * var(--measure));
   }
 
   html {
@@ -326,8 +343,8 @@
        minimum it can survive on: 148px leaves 42px under it, which reads as
        space the nav was given rather than as space it happened to have left.
 
-       Same number on all three case studies, along with the gap above the figure
-       at .cs-hero .cs-figure--full. Nothing competes for either of them any more:
+       Same number on every case study, along with the gap above the figure
+       at .cs-hero .cs-figure. Nothing competes for either of them any more:
        with the hero sized to its contents, what they add they add to the page
        rather than taking it off the photograph. */
     padding-top: clamp(148px, 15vh, 168px);
@@ -510,23 +527,27 @@
   .cs-figure {
     margin: clamp(64px, 9vh, 108px) 0 0;
   }
+  /* Every figure the same width, and as tall as that width makes it. width:100%
+     with a max is what lets a column narrower than --fig-w take over on a smaller
+     screen, which is the only case where two figures here differ.
+
+     aspect-ratio off each figure's own --ar reserves the right height before the
+     file arrives, from the number the build authored rather than from whatever the
+     rung rounded to. */
   .cs-figure img {
     display: block;
-    width: auto;
-    max-width: 100%;
+    width: 100%;
+    max-width: var(--fig-w);
     height: auto;
-    max-height: var(--fig-max-h);
+    aspect-ratio: var(--ar, auto);
     margin-inline: auto;
   }
-  /* The caption is exactly as wide as the picture above it, whatever that
-     picture happens to be. It cannot be a fixed measure: the figures are capped
-     by height, so a phone comes out about 340px wide and the hero about 700, and
-     one number is either too wide for the phone or a stubby line under the hero.
-
-     --ar is the picture's own width/height, set per figure. The picture is drawn
-     at min(100% of the column, --fig-max-h × --ar), so the caption is given the
-     same expression and lands on the same edges. Pure CSS, so it is right
-     before the image has loaded and right without script.
+  /* The caption is exactly as wide as the picture above it, which is now a single
+     number for both. It used to be an expression: the figures were capped by
+     height, so a phone came out about 340px wide and a wide board the full column,
+     and the caption had to recompute each one from --ar to land on the same edges.
+     One width for every figure retires that arithmetic, and the caption boxes come
+     into line with each other as a consequence rather than as a second decision.
 
      Given an outline rather than left loose under the picture. Centred grey text
      with nothing around it was the quietest thing on the page and read as a
@@ -535,7 +556,7 @@
      existing vocabulary instead of introducing a second one. */
   .cs-figure figcaption {
     margin: 26px auto 0;
-    max-width: min(100%, calc(var(--fig-max-h) * var(--ar, 1)));
+    max-width: min(100%, var(--fig-w));
     /* Bottom a shade over the top: the eyebrow's cap-height leaves the box
        looking heavier above than below when the four sides are equal. */
     padding: 19px 22px 20px;
@@ -567,17 +588,20 @@
   }
   /* The button the script wraps each figure's picture in, so that opening the
      viewer is a real control with a real label rather than a click handler on
-     an image. It hugs the picture rather than the column: these are capped by
-     height, so most of them are narrower than the measure, and a button the
-     width of the column would open the viewer from the empty space beside
-     one. No label drawn over the artwork, for the reason given on the Boots
-     page — a pill floating over a screenshot reads as part of it. */
+     an image. --fig-w, the same as the picture, so it hugs the artwork and does
+     not open the viewer from the empty column beside it. This was fit-content,
+     which hugged it too but cost the page its reserved space: a percentage width
+     inside a fit-content parent is indefinite, so every lazy figure measured zero
+     until its file arrived and the page shifted under the reader. Stating the
+     width makes it definite, and the aspect-ratio on the image can then hold the
+     box open from the first paint. No label drawn over the artwork, for the reason
+     given on the Boots page — a pill floating over a screenshot reads as part of
+     it. */
   .cs-figure__open {
     position: relative;
     display: block;
-    width: -moz-fit-content;
-    width: fit-content;
-    max-width: 100%;
+    width: 100%;
+    max-width: var(--fig-w);
     margin: 0 auto;
     padding: 0;
     border: 0;
@@ -596,28 +620,34 @@
      hero that has been asked to get bigger twice. It is the same number on all
      three case studies, because it is the gap that separates a title from a
      photograph and there is no reason for that to differ by page. */
-  .cs-hero .cs-figure--full {
+  .cs-hero .cs-figure {
     flex: 0 0 auto;
     margin-top: clamp(52px, 7.4vh, 108px);
   }
-  /* The picture at the shell's full width, and as tall as that makes it. No
+  /* The picture at the column's width, and as tall as that makes it. No
      object-fit and no object-position: both existed to place a picture inside a
      box bigger than itself, and there is no such box now — the height is a
      result of the width rather than a budget the width has to fit into.
+
+     The column, not the shell. This figure sat outside .cs-col until now, which
+     gave it the shell's width against the 1120 of the heading above it and every
+     chapter figure below, and made it the only thing on the page off the page's
+     left edge. It also made the sizes attribute a lie: it has always said 1120px,
+     which is what the picture is now and was not before.
 
      The intrinsic width and height on the <img> matter more than they used to.
      They are what reserves the right amount of page before the file arrives, and
      with the hero no longer a fixed height there is nothing else holding that
      space open. */
-  .cs-hero .cs-figure--full img {
+  .cs-hero .cs-figure img {
     display: block;
     width: 100%;
     height: auto;
-    /* .cs-figure img caps every picture on the page at --fig-max-h, which is
-       right for a chapter figure and wrong for this one. The hero picture is the
-       only one whose height is allowed to be whatever its width makes it, and
-       without this the cap quietly takes it back to 64vh. */
-    max-height: none;
+    /* .cs-figure img draws every picture on the page at --fig-w, which is right
+       for a chapter figure and wrong for this one. The hero is the page's opening
+       image and the only one allowed the full width; without this it would come in
+       at four tenths of the column and sit narrower than the heading above it. */
+    max-width: none;
   }
 
   /* ---------- Overview ----------
@@ -1280,18 +1310,21 @@
         <li>Strategy</li>
       </ul>
 
+      <!-- Inside the column, so the picture starts on the same left edge as the
+           heading above it, the chapter figures below and the homepage card this
+           page was reached from. It sat outside the column until now and took the
+           shell's width instead. -->
+      <figure class="cs-figure">
+        <img src="/assets/pwc-hero-1120.b945b4fa.webp"
+             srcset="/assets/pwc-hero-1120.b945b4fa.webp 1120w,
+                     /assets/pwc-hero-1680.b945b4fa.webp 1680w,
+                     /assets/pwc-hero-2240.b945b4fa.webp 2240w"
+             sizes="(min-width: 1280px) 1120px, 92vw"
+             width="4500" height="2813"
+             alt="Two phones on a concrete surface in hard sunlight, running PwC Junction: a key focus areas feed with an EBITDA chart, and a quality of earnings summary with its adjustments table."
+             fetchpriority="high" decoding="async">
+      </figure>
     </div>
-
-    <figure class="cs-figure cs-figure--full">
-      <img src="/assets/pwc-hero-1120.b945b4fa.webp"
-           srcset="/assets/pwc-hero-1120.b945b4fa.webp 1120w,
-                   /assets/pwc-hero-1680.b945b4fa.webp 1680w,
-                   /assets/pwc-hero-2240.b945b4fa.webp 2240w"
-           sizes="(min-width: 1280px) 1120px, 92vw"
-           width="4500" height="2813"
-           alt="Two phones on a concrete surface in hard sunlight, running PwC Junction: a key focus areas feed with an EBITDA chart, and a quality of earnings summary with its adjustments table."
-           fetchpriority="high" decoding="async">
-    </figure>
   </header>
 
   <section class="cs-overview cs-wrap" aria-label="Overview">
@@ -1347,7 +1380,7 @@
                srcset="/assets/junction-options-1120.3288359f.webp 1120w,
                        /assets/junction-options-1680.3288359f.webp 1680w,
                        /assets/junction-options-2240.3288359f.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="6411" height="3624"
                alt="Three option boards side by side, each mapping roles and permissions between the provisioning tool, Junction and Digital Start, with screen flows beneath and pros, cons and open questions on sticky notes. The third is headed option three, recommended."
                loading="lazy" decoding="async">
@@ -1370,7 +1403,7 @@
                srcset="/assets/junction-roles-1120.23332faa.webp 1120w,
                        /assets/junction-roles-1680.23332faa.webp 1680w,
                        /assets/junction-roles-2240.23332faa.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="5622" height="5652"
                alt="The Junction settings page at desktop and phone width: a banner reading that the project was created in Digital Start, explaining which roles are managed where and offering a button to open it, then members listed under Engagement Lead, Engagement Manager and Project Admin, with a bar showing three members selected and a change permission control."
                loading="lazy" decoding="async">
@@ -1393,7 +1426,7 @@
                srcset="/assets/junction-approvals-1120.2f7f56be.webp 1120w,
                        /assets/junction-approvals-1680.2f7f56be.webp 1680w,
                        /assets/junction-approvals-2240.2f7f56be.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="3969" height="6780"
                alt="The client members pending approval table with five of ten rows checked and a bar reading five members selected, deselect all, approve all, decline all. Below it the same page afterwards: the approved names gone from the queue, a success toast reading five client members approved with an undo, and a new tag beside a name in the client admin list."
                loading="lazy" decoding="async">
@@ -1416,7 +1449,7 @@
                srcset="/assets/junction-tampa-1120.e32a9f31.webp 1120w,
                        /assets/junction-tampa-1680.e32a9f31.webp 1680w,
                        /assets/junction-tampa-2240.e32a9f31.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="3669" height="4950"
                alt="Photographs from the Tampa week: a whiteboard headed potential new UM approach, sketching an engagement hub and the workspaces and roles around it; a flip chart mapping client permissions for each tool and activity against four levels; and two further boards working through a team members list and an engagement hub with permissions and tags."
                loading="lazy" decoding="async">
@@ -1463,7 +1496,7 @@
                srcset="/assets/junction-analysis-1120.c4f59231.webp 1120w,
                        /assets/junction-analysis-1680.c4f59231.webp 1680w,
                        /assets/junction-analysis-2240.c4f59231.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="6122" height="7499"
                alt="A research board: hundreds of sticky notes in columns headed participant, current process, checking slides and organising content, one row per participant. Below it the same responses regrouped into themes such as what works well, pain points, moving a section, and preference between the table of contents and the slides."
                loading="lazy" decoding="async">
@@ -1486,7 +1519,7 @@
                srcset="/assets/junction-findings-1120.66403689.webp 1120w,
                        /assets/junction-findings-1680.66403689.webp 1680w,
                        /assets/junction-findings-2240.66403689.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="5904" height="3384"
                alt="Four slides from the research report: the current report creation process drawn as a four-step flow from gathering financial data to reviewing the draft; a finding that the add a new section call to action was difficult for most participants; a slide on where the current process takes more effort than it should; and feedback that the right-hand edit bar could be made more intuitive. Each carries participant quotes."
                loading="lazy" decoding="async">

@@ -117,15 +117,42 @@
        lands under it. */
     --nav-clear: 132px;
 
-    /* How tall a figure is allowed to get. Stated once because two things are
-       derived from it: the picture's own height, and the width of the caption
-       under it, which has to match the picture rather than the column.
+    /* How wide a figure is drawn. One number for every figure on the page, and
+       the caption under it takes the same value so the two share their edges.
 
-       64vh rather than 78. At 78 every figure was most of a screen, and with
-       ten of them the page was mostly picture and the scroll ran long. This is
-       also what makes the extra spacing below affordable: the room came out of
-       the artwork rather than being added to the length. */
-    --fig-max-h: 64vh;
+       This was a height — 64vh, with every figure capped to it and the width
+       falling out of the aspect ratio. One rule, applied evenly, and the result
+       was not even: these boards are between 0.59 and 1.15, so equal height
+       produced figures from 374px to 729px wide, each centred, none sharing an
+       edge with the body copy or with each other. And what set the width was how
+       many screens had been composed onto a board in Figma, which is an
+       authoring decision the reader cannot see. A board holding more of the
+       interface was drawn smaller for holding it.
+
+       Fixing the width instead makes the invariant the visible one. Vertical
+       differences between figures cannot be seen — they are minutes apart in a
+       scroll — where horizontal ones are measured against the column on every
+       figure. Height is now whatever the picture is.
+
+       Four tenths of the column, written as a fraction of --measure rather than
+       as the 448px it comes to, because the figure is meant to be a proportion
+       of the reading column and not a number that happens to sit near one. The
+       column is min(1120px, about 88vw), so below roughly a 510px window the
+       column is narrower than this and takes over — which is the only case where
+       two figures on the page differ in width.
+
+       Arrived at by coming down twice, from 820 and then 672, and the reason both
+       were too big is worth recording. A width sets the height, and these boards
+       are portrait: at 672 the tallest came to 1126px, so a figure occupied more
+       than a screen and the page became a sequence of pictures with writing
+       between them. Four tenths puts the tall ones near 750px, which is about
+       where they sat when the cap was 64vh — the size the page has read at all
+       along — and it keeps the writing as the widest thing on the page.
+
+       What makes this affordable is the viewer. The figures do not need to be as
+       large as the artwork will bear, because any of them opens at 1680; on the
+       page they are there to be recognised, not studied. */
+    --fig-w: calc(0.4 * var(--measure));
   }
 
   html {
@@ -374,18 +401,22 @@
      800: this says what the project was, where the old title said its name
      twice — the eyebrow above it already reads "Case study · Boots website".
 
-     Two constraints that pull against each other: three quarters of the column,
-     and three lines, never four. This is the shortest statement in the set at 97
-     characters, so unlike the other three pages the width is what does the work
-     here rather than the size — 840px is what keeps it at three lines, where the
-     full 1120 gave it two very long ones. 38px is the set's shared ceiling, and
-     it is the size at which the longer statements elsewhere still hold three
-     lines across 840px, so this page carries it for consistency rather than
-     because 97 characters demanded it.
+     One constraint: three lines, at the widest cap that still holds them. This
+     is the shortest statement in the set at 97 characters, so unlike the other
+     pages the width is what does the work here rather than the size — the full
+     1120 gave it two very long ones. 38px is the set's shared ceiling.
 
-     max-width is a fraction of --measure rather than a percentage, so the three
-     quarters is of the page's column and not of whatever box this ends up in.
-     100% is the floor: below about 1120px of window the column is already
+     840 stays, and it stays because it was measured rather than because it was
+     already here. Every page's cap was re-checked against its own sentence: this
+     one breaks to two lines at 864px, so the widest cap that holds three is 860,
+     and 20px is not worth spending the whole margin on. A renderer that measures
+     Manrope a shade wider than Chrome does would drop this to two lines. The
+     other two pages had real room and were widened; this one had none.
+
+     A pixel value rather than a fraction of --measure, which is what this was.
+     The number is a typographic measurement — the width at which this sentence
+     stops making three lines at this size — and it has no relationship to the
+     column's width. 100% is the floor: below about 970px of window the column is
      narrower than 840 and the sentence should have all of it.
 
      The size clamp carries a vh term as well as a vw one, which the rest of the
@@ -397,7 +428,7 @@
      which is where 5.4vh drops under the 38px ceiling. */
   .cs-hero__statement {
     margin: clamp(18px, 2.6vh, 30px) 0 0;
-    max-width: min(calc(0.75 * var(--measure)), 100%);
+    max-width: min(840px, 100%);
     font-family: var(--ff-display);
     font-weight: 500;
     font-size: clamp(24px, min(18px + 1.9vw, 5.4vh), 38px);
@@ -548,31 +579,43 @@
   .cs-figure {
     margin: clamp(64px, 9vh, 108px) 0 0;
   }
+  /* Every figure the same width, and as tall as that width makes it. width:100%
+     with a max is what lets a column narrower than --fig-w take over on a
+     smaller screen, which is the only case where two figures here differ.
+
+     aspect-ratio off each figure's own --ar reserves the right height before the
+     file arrives. The intrinsic width and height attributes would do it too; this
+     is stated because the ratio is authored per figure and the box should come
+     from the same number the build wrote, not from whatever the rung rounded to. */
   .cs-figure img {
     display: block;
-    width: auto;
-    max-width: 100%;
+    width: 100%;
+    max-width: var(--fig-w);
     height: auto;
-    max-height: var(--fig-max-h);
+    aspect-ratio: var(--ar, auto);
     margin-inline: auto;
   }
 
   /* ---------- Enlarge ----------
-     At the size the page now draws them these composites render the interface's
-     own 14px type at four or five pixels. That is not a defect to be fixed by
-     drawing them bigger — there is no size that fits three stacked screens into
-     one screen legibly — it is the reason the viewer exists. The figure is a
-     button onto a 3360px copy. See build-boots-figures.py for why that width is
-     not simply a fourth entry in the srcset. */
+     At --fig-w these composites render the interface's own 14px type at four or
+     five pixels. That is not a defect to be fixed by drawing them bigger
+     — there is no size that fits three stacked screens into one screen legibly —
+     it is the reason the viewer exists, and it is what lets --fig-w be chosen
+     for the page's rhythm rather than as the largest size the artwork needs. The
+     figure is a button onto a 3360px copy. See build-boots-figures.py for why
+     that width is not simply a fourth entry in the srcset. */
   .cs-figure__open {
     position: relative;
     display: block;
-    /* Hugs the picture rather than the column. The pictures are narrower than
-       the measure now, and a button the width of the column would open the
-       viewer from the empty space beside one. */
-    width: -moz-fit-content;
-    width: fit-content;
-    max-width: 100%;
+    /* --fig-w, the same as the picture, so the button hugs the artwork and does
+       not open the viewer from the empty column beside it. This was fit-content,
+       which hugged it too but cost the page its reserved space: a percentage
+       width inside a fit-content parent is indefinite, so every lazy figure
+       measured zero until its file arrived and the page shifted under the reader
+       nine times. Stating the width makes it definite, and the aspect-ratio on
+       the image can then hold the box open from the first paint. */
+    width: 100%;
+    max-width: var(--fig-w);
     margin: 0 auto;
     padding: 0;
     border: 0;
@@ -590,16 +633,12 @@
 
      What is left is the cursor, which says the same thing without drawing
      anything: the figure is still a button and still opens the viewer. */
-  /* The caption is exactly as wide as the picture above it, whatever that
-     picture happens to be. It cannot be a fixed measure: the figures are capped
-     by height, so their widths run from about 410px to 800px, and one number
-     is either too wide for the narrow ones or, at 40ch, a stubby line under the
-     wide ones.
-
-     --ar is the picture's own width/height, set per figure. The picture is
-     drawn at min(100% of the column, --fig-max-h × --ar), so the caption is
-     given the same expression and lands on the same edges. Pure CSS, so it is
-     right before the image has loaded and right without script.
+  /* The caption is exactly as wide as the picture above it, which is now a
+     single number for both. It used to be an expression — the figures were
+     capped by height, their widths ran from 374px to 729px, and the caption had
+     to recompute each one from --ar to land on the same edges. One width for
+     every figure retires that arithmetic, and the caption boxes come into line
+     with each other as a consequence rather than as a second decision.
 
      Given an outline rather than left loose under the picture. Centred grey
      text with nothing around it was the quietest thing on the page and read as
@@ -608,7 +647,7 @@
      page's existing vocabulary instead of introducing a second one. */
   .cs-figure figcaption {
     margin: 26px auto 0;
-    max-width: min(100%, calc(var(--fig-max-h) * var(--ar, 1)));
+    max-width: min(100%, var(--fig-w));
     /* Bottom a shade over the top: the eyebrow's cap-height leaves the box
        looking heavier above than below when the four sides are equal. */
     padding: 19px 22px 20px;
@@ -646,30 +685,38 @@
      nav clearance and the margins between the eyebrow, sentence and tags are
      type spacing, but nothing forces this number except how the two want to sit
      together. */
-  .cs-hero .cs-figure--full {
+  .cs-hero .cs-figure {
     flex: 0 0 auto;
     margin-top: clamp(52px, 7.4vh, 108px);
   }
-  /* The picture at the shell's full width, and as tall as that makes it. No
+  /* The picture at the column's width, and as tall as that makes it. No
      object-fit and no object-position: both existed to place a picture inside a
      box bigger than itself, and there is no such box now — the height is a
      result of the width rather than a budget the width has to fit into.
      width:100% with height:auto is the whole of it.
 
+     The column, not the shell. This figure sat outside .cs-col until now, which
+     gave it 1348px against the 1120 of the heading above it and every chapter
+     figure below — 114px proud on each side at a 1767px window, and the only
+     thing on the page not on the page's left edge. It also made the sizes
+     attribute a lie: it has always said 1120px, which is what the picture is
+     now and was not before.
+
      The intrinsic width and height on the <img> matter more than they used to.
      They are what reserves the right amount of page before the file arrives, and
      with the hero no longer a fixed height there is nothing else holding that
      space open. */
-  .cs-hero .cs-figure--full img {
+  .cs-hero .cs-figure img {
     display: block;
     width: 100%;
     height: auto;
-    /* .cs-figure img caps every picture on the page at --fig-max-h, which is
-       right for a chapter figure and wrong for this one. The hero picture is the
-       only one whose height is allowed to be whatever its width makes it, and
-       without this the cap quietly takes it back to 64vh — 691px on a 1080
-       window against the 840 a 4:3 render at full column width comes to. */
-    max-height: none;
+    /* .cs-figure img draws every picture on the page at --fig-w, which is right
+       for a chapter figure and wrong for this one. The hero is the page's
+       opening image and the only one allowed the column's full width; without
+       this it would come in at 820 and sit narrower than the heading above it,
+       which is the misalignment this hero was just moved into the column to
+       fix. */
+    max-width: none;
   }
 
 
@@ -1422,18 +1469,20 @@
         <li>Strategy</li>
       </ul>
 
+      <!-- Inside .cs-col, with the copy, so the picture's edges are the page's
+           edges. It sat outside the column until now and took the shell's width
+           instead. -->
+      <figure class="cs-figure">
+        <img src="/assets/boots-hero-1120.a62517b9.webp"
+             srcset="/assets/boots-hero-1120.a62517b9.webp 1120w,
+                     /assets/boots-hero-1680.a62517b9.webp 1680w,
+                     /assets/boots-hero-2240.a62517b9.webp 2240w"
+             sizes="(min-width: 1280px) 1120px, 92vw"
+             width="4500" height="3375"
+             alt="The rebuilt Boots.com checkout open on a laptop: contact, delivery and payment on one page with the order summary beside them."
+             fetchpriority="high" decoding="async">
+      </figure>
     </div>
-
-    <figure class="cs-figure cs-figure--full">
-      <img src="/assets/boots-hero-1120.a62517b9.webp"
-           srcset="/assets/boots-hero-1120.a62517b9.webp 1120w,
-                   /assets/boots-hero-1680.a62517b9.webp 1680w,
-                   /assets/boots-hero-2240.a62517b9.webp 2240w"
-           sizes="(min-width: 1280px) 1120px, 92vw"
-           width="4500" height="3375"
-           alt="The rebuilt Boots.com checkout open on a laptop: contact, delivery and payment on one page with the order summary beside them."
-           fetchpriority="high" decoding="async">
-    </figure>
   </header>
 
   <section class="cs-overview cs-wrap" aria-label="Overview">
@@ -1464,7 +1513,7 @@
                srcset="/assets/boots-01-1120.162736ef.webp 1120w,
                        /assets/boots-01-1680.162736ef.webp 1680w,
                        /assets/boots-01-2240.162736ef.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="4284" height="7177"
                alt="The legacy Boots.com checkout: a five-stage progress bar across the top, details entered one collapsed section at a time, with the order summary to the right."
                loading="lazy" decoding="async">
@@ -1487,7 +1536,7 @@
                srcset="/assets/boots-02-1120.e22190db.webp 1120w,
                        /assets/boots-02-1680.e22190db.webp 1680w,
                        /assets/boots-02-2240.e22190db.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="4412" height="7395"
                alt="Research artefacts: test tickets and result write-ups in rows, a set of insight notes, and a journey map of the checkout stages."
                loading="lazy" decoding="async">
@@ -1510,7 +1559,7 @@
                srcset="/assets/boots-03-1120.fbacb6ec.webp 1120w,
                        /assets/boots-03-1680.fbacb6ec.webp 1680w,
                        /assets/boots-03-2240.fbacb6ec.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="4500" height="5868"
                alt="The rebuilt checkout: contact and delivery completed and collapsed to a summary, payment open with card details and the other payment methods listed below, and the order summary running alongside."
                loading="lazy" decoding="async">
@@ -1532,7 +1581,7 @@
                srcset="/assets/boots-04-1120.026d08a5.webp 1120w,
                        /assets/boots-04-1680.026d08a5.webp 1680w,
                        /assets/boots-04-2240.026d08a5.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="3684" height="6270"
                alt="The checkout at mobile and tablet width, with the order summary at the top of the page and the payment section expanded showing PayPal selected with its totals."
                loading="lazy" decoding="async">
@@ -1554,7 +1603,7 @@
                srcset="/assets/boots-05-1120.dd3b9ab7.webp 1120w,
                        /assets/boots-05-1680.dd3b9ab7.webp 1680w,
                        /assets/boots-05-2240.dd3b9ab7.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="4908" height="4281"
                alt="The address finder in two states: a search field with matching addresses listed beneath it, and the chosen address confirmed in a panel with options to edit or search again."
                loading="lazy" decoding="async">
@@ -1576,7 +1625,7 @@
                srcset="/assets/boots-06-1120.6270eb9b.webp 1120w,
                        /assets/boots-06-1680.6270eb9b.webp 1680w,
                        /assets/boots-06-2240.6270eb9b.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="4332" height="4569"
                alt="The Advantage Card payment option in three states: the legacy tooltip explaining there are not enough points, the new component selected with a balance that covers the order, and the same option greyed out when the balance does not."
                loading="lazy" decoding="async">
@@ -1598,7 +1647,7 @@
                srcset="/assets/boots-07-1120.aed56228.webp 1120w,
                        /assets/boots-07-1680.aed56228.webp 1680w,
                        /assets/boots-07-2240.aed56228.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="6855" height="11016"
                alt="The order confirmation page beside the confirmation email, showing the same delivery details, order summary, totals and Advantage Card points block in the same order and the same visual language."
                loading="lazy" decoding="async">
@@ -1621,7 +1670,7 @@
                srcset="/assets/boots-08-1120.7841e56f.webp 1120w,
                        /assets/boots-08-1680.7841e56f.webp 1680w,
                        /assets/boots-08-2240.7841e56f.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="6048" height="5565"
                alt="Click and Collect selected in the checkout with a collection store, a date picker and a notice that only two of three items can be collected today, beside the modal offering to remove the unavailable item or change to a nearby store."
                loading="lazy" decoding="async">
@@ -1644,7 +1693,7 @@
                srcset="/assets/boots-09-1120.c1305c04.webp 1120w,
                        /assets/boots-09-1680.c1305c04.webp 1680w,
                        /assets/boots-09-2240.c1305c04.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="5640" height="5823"
                alt="The mixed-availability design at desktop and mobile: a notice naming the item that is not available for same-day collection and offering tomorrow for the full order, above a collection date picker."
                loading="lazy" decoding="async">

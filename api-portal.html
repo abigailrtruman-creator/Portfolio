@@ -112,8 +112,19 @@
        The eighth deepened that cyan to #53c4ca and left this alone, which is
        the pink run's rule holding rather than an oversight: the hue moved 0.9
        of a degree, to 183.0, and value and saturation are the two things this
-       does not take from the card. */
-    --glow-tint: rgba(40,127,125,0.30);
+       does not take from the card.
+
+       The ninth is the second turn this has had to follow. The owner re-coloured
+       the card dark — #31324f, so its overlay text could go white — and that is
+       238.0 degrees, a 55-degree move off the cyan. Re-solved at the same lift
+       and the same chroma as every other page: 13.82 of L* above --bg at 58.7%
+       saturation, against the cyan's 13.82 and 58.6%, so only the hue has
+       changed here either. The tint itself is now a near-full-value blue at
+       97.6%, where the cyan was at 49.8% — blue is the darkest hue at a given
+       saturation, so reaching the set's lift at this hue takes very nearly all
+       the light sRGB has at 0.30 alpha. Which is the old note's point about
+       0.13 arriving at 0.30. */
+    --glow-tint: rgba(91,96,249,0.30);
 
     --pad-x: clamp(28px, 6vw, 110px);
     --shell: 1560px;
@@ -136,9 +147,29 @@
        lands under it. */
     --nav-clear: 132px;
 
-    /* How tall a figure is allowed to get, and the same 64vh as the other two
-       pages so all three read at one scale. */
-    --fig-max-h: 64vh;
+    /* How wide a figure is drawn: four tenths of the reading column, and the same
+       fraction as the other two pages so all three read at one scale. Written
+       off --measure rather than as the 448px it comes to, because it is meant to
+       be a proportion of the column and not a number that happens to sit near
+       one. Below roughly a 510px window the column is narrower than this and
+       takes over. The caption under each figure takes the same value, so the two
+       share their edges.
+
+       This was a height, 64vh, with the width falling out of each board's aspect
+       ratio. One rule applied evenly, and an uneven result: the widths ran nearly
+       two to one, every figure was centred at a different one, and what decided
+       the width was how many screens had been composed onto a board in Figma —
+       something the reader cannot see. Fixing the width makes the invariant the
+       one that is visible against the column. Height is now whatever the picture
+       is, which is a difference nobody can see, since two figures here are never
+       on screen together.
+
+       The fraction came down from 820px and then 672 because a width sets the
+       height, and a figure taller than a screen turns the page into a sequence of
+       pictures with writing between them. The viewer is what makes a smaller
+       figure affordable: any of them opens at 1680, so on the page they are there
+       to be recognised rather than studied. */
+    --fig-w: calc(0.4 * var(--measure));
   }
 
   html {
@@ -339,18 +370,20 @@
      — the eyebrow above it already reads "Case study · Full-fibre provider
      portals".
 
-     Two constraints that pull against each other: three quarters of the column,
-     and three lines, never four. The sentence is 140 characters, so at 46px it
-     needed nearly the whole 1120 to hold three lines, which is what made it read
-     as a wall of type rather than as a statement. 38px is the size at which 140
-     characters still land in three lines across 840px, found by measuring rather
-     than by arithmetic — 40px is four, and ch is the width of a zero and tells
-     you very little about a real sentence in Manrope.
+     One constraint: three lines, at the widest cap that still holds them. Which
+     here is no cap at all. This is the longest statement in the set at 140
+     characters, and at 38px it makes three lines at every width from 836 up to
+     the full 1120 — measured on the real element, with the per-character spans
+     the splitter leaves behind and text-wrap: balance doing what it does. There
+     is no width inside the column at which it becomes two, so there is nothing
+     for a cap to protect and the sentence gets the column.
 
-     max-width is a fraction of --measure rather than a percentage, so the three
-     quarters is of the page's column and not of whatever box this ends up in.
-     100% is the floor: below about 1120px of window the column is already
-     narrower than 840 and the sentence should have all of it.
+     It was held at three quarters of the column, which is where every page in the
+     set started. That number was tuned for a shorter sentence on another page and
+     carried here on the assumption it was doing the same job; on this page it was
+     costing 280px and buying nothing. The other pages keep a cap because theirs
+     genuinely flip — Boots at 864px, Sofa to Saddle at 960 — and both record the
+     measurement next to the number.
 
      The size clamp carries a vh term as well as a vw one, which the rest of the
      page's type does not. Ordinary headings can afford to be sized off the
@@ -360,7 +393,6 @@
      height, which is where 5.4vh drops under the 38px ceiling. */
   .cs-hero__statement {
     margin: clamp(18px, 2.6vh, 30px) 0 0;
-    max-width: min(calc(0.75 * var(--measure)), 100%);
     font-family: var(--ff-display);
     font-weight: 500;
     font-size: clamp(24px, min(18px + 1.9vw, 5.4vh), 38px);
@@ -489,27 +521,29 @@
   .cs-figure {
     margin: clamp(64px, 9vh, 108px) 0 0;
   }
+  /* Every figure the same width, and as tall as that width makes it. width:100%
+     with a max is what lets a column narrower than --fig-w take over on a
+     smaller screen, which is the only case where two figures here differ.
+
+     aspect-ratio off each figure's own --ar reserves the right height before the
+     file arrives, from the number the build authored rather than from whatever
+     the rung rounded to. */
   .cs-figure img {
     display: block;
-    width: auto;
-    max-width: 100%;
+    width: 100%;
+    max-width: var(--fig-w);
     height: auto;
-    max-height: var(--fig-max-h);
+    aspect-ratio: var(--ar, auto);
     margin-inline: auto;
   }
-  /* The caption is exactly as wide as the picture above it, whatever that
-     picture happens to be. It cannot be a fixed measure: the figures are capped
-     by height, so the benchmark sheet comes out about 590px wide and a row of
-     templates about 1120, and one number is either too wide for the first or a
-     stubby line under the second.
-
-     --ar is the picture's own width/height, set per figure. The picture is drawn
-     at min(100% of the column, --fig-max-h × --ar), so the caption is given the
-     same expression and lands on the same edges. Pure CSS, so it is right
-     before the image has loaded and right without script. */
+  /* The caption is exactly as wide as the picture above it, which is now a
+     single number for both. It used to be an expression: the figures were capped
+     by height, so the benchmark sheet came out about 590px wide and a row of
+     templates about 1120, and the caption had to recompute each one from --ar to
+     land on the same edges. One width for every figure retires that. */
   .cs-figure figcaption {
     margin: 26px auto 0;
-    max-width: min(100%, calc(var(--fig-max-h) * var(--ar, 1)));
+    max-width: min(100%, var(--fig-w));
     /* Bottom a shade over the top: the eyebrow's cap-height leaves the box
        looking heavier above than below when the four sides are equal. */
     padding: 19px 22px 20px;
@@ -541,17 +575,19 @@
   }
   /* The button the script wraps each figure's picture in, so that opening the
      viewer is a real control with a real label rather than a click handler on
-     an image. It hugs the picture rather than the column: these are capped by
-     height, so most of them are narrower than the measure, and a button the
-     width of the column would open the viewer from the empty space beside one.
-     No label drawn over the artwork — a pill floating over a screenshot reads
-     as part of it. */
+     an image. --fig-w, the same as the picture, so it hugs the artwork and does
+     not open the viewer from the empty column beside it. This was fit-content,
+     which hugged it too but cost the page its reserved space: a percentage width
+     inside a fit-content parent is indefinite, so every lazy figure measured
+     zero until its file arrived and the page shifted under the reader. Stating
+     the width makes it definite, and the aspect-ratio on the image can then hold
+     the box open from the first paint. No label drawn over the artwork — a pill
+     floating over a screenshot reads as part of it. */
   .cs-figure__open {
     position: relative;
     display: block;
-    width: -moz-fit-content;
-    width: fit-content;
-    max-width: 100%;
+    width: 100%;
+    max-width: var(--fig-w);
     margin: 0 auto;
     padding: 0;
     border: 0;
@@ -561,22 +597,29 @@
     text-align: left;
     cursor: zoom-in;
   }
-  .cs-hero .cs-figure--full {
+  .cs-hero .cs-figure {
     flex: 0 0 auto;
     margin-top: clamp(52px, 7.4vh, 108px);
   }
-  /* The picture at the shell's full width, and as tall as that makes it. No
+  /* The picture at the column's width, and as tall as that makes it. No
      object-fit and no object-position: both existed to place a picture inside a
      box bigger than itself, and there is no such box now — the height is a
-     result of the width rather than a budget the width has to fit into. */
-  .cs-hero .cs-figure--full img {
+     result of the width rather than a budget the width has to fit into.
+
+     The column, not the shell. This figure sat outside .cs-col until now, which
+     gave it the shell's width against the 1120 of the heading above it and every
+     chapter figure below, and made it the only thing on the page not on the
+     page's left edge. It also made the sizes attribute a lie: it has always said
+     1120px, which is what the picture is now and was not before. */
+  .cs-hero .cs-figure img {
     display: block;
     width: 100%;
     height: auto;
-    /* .cs-figure img caps every picture on the page at --fig-max-h, which is
-       right for a chapter figure and wrong for this one. The hero picture is the
-       only one whose height is allowed to be whatever its width makes it. */
-    max-height: none;
+    /* .cs-figure img draws every picture on the page at --fig-w, which is right
+       for a chapter figure and wrong for this one. The hero is the page's opening
+       image and the only one allowed the column's full width; without this it
+       would sit narrower than the heading above it. */
+    max-width: none;
   }
 
   /* ---------- Overview ----------
@@ -1281,24 +1324,27 @@
         <li>Content</li>
       </ul>
 
-    </div>
+      <!-- Inside .cs-col, with the copy, so the picture's edges are the page's
+           edges. It sat outside the column until now and took the shell's width
+           instead.
 
-    <figure class="cs-figure cs-figure--full">
-      <!-- Her render, not the homepage card. The two used to be one file —
+           Her render, not the homepage card. The two used to be one file —
            the card cropped off its flat overlay band — and are now two
            pictures of the same interface, so a visitor clicks a pale cyan
            card and lands on a laptop on black. That is deliberate; see
            build-api-figures.py, which also explains where the 1.6 below comes
            from. -->
-      <img src="/assets/api-hero-1120.d2e9ef74.webp"
-           srcset="/assets/api-hero-1120.d2e9ef74.webp 1120w,
-                   /assets/api-hero-1680.d2e9ef74.webp 1680w,
-                   /assets/api-hero-2240.d2e9ef74.webp 2240w"
-           sizes="(min-width: 1280px) 1120px, 92vw"
-           width="6765" height="4229"
-           alt="A laptop on a dark iridescent surface running the developer portal: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request."
-           fetchpriority="high" decoding="async">
-    </figure>
+      <figure class="cs-figure">
+        <img src="/assets/api-hero-1120.d2e9ef74.webp"
+             srcset="/assets/api-hero-1120.d2e9ef74.webp 1120w,
+                     /assets/api-hero-1680.d2e9ef74.webp 1680w,
+                     /assets/api-hero-2240.d2e9ef74.webp 2240w"
+             sizes="(min-width: 1280px) 1120px, 92vw"
+             width="6765" height="4229"
+             alt="A laptop on a dark iridescent surface running the developer portal: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request."
+             fetchpriority="high" decoding="async">
+      </figure>
+    </div>
   </header>
 
   <section class="cs-overview cs-wrap" aria-label="Overview">
@@ -1362,7 +1408,7 @@
                srcset="/assets/fibre-workshop-1120.93d3a498.webp 1120w,
                        /assets/fibre-workshop-1680.93d3a498.webp 1680w,
                        /assets/fibre-workshop-2240.93d3a498.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="5466" height="3219"
                alt="Workshop attendees standing at a wall of printed feature cards, one of them reaching up to a card. The cards are headed API Documentation, Tutorials and Use Case Examples, and Configuration Audit."
                loading="lazy" decoding="async">
@@ -1373,7 +1419,7 @@
                srcset="/assets/fibre-priorities-1120.74412c25.webp 1120w,
                        /assets/fibre-priorities-1680.74412c25.webp 1680w,
                        /assets/fibre-priorities-2240.74412c25.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="5430" height="2868"
                alt="A board headed Feature Prioritisation. Its features are grouped into an MVP band dated June 2024, a Next Phase band dated October 2024 and a Backlog band dated March 2025, each band with a paragraph explaining what qualifies for it, and each feature card shaded to show whether it came from the core requirements, from developer input, or from the workshop."
                loading="lazy" decoding="async">
@@ -1396,7 +1442,7 @@
                srcset="/assets/fibre-benchmark-1120.24f67b52.webp 1120w,
                        /assets/fibre-benchmark-1680.24f67b52.webp 1680w,
                        /assets/fibre-benchmark-2240.24f67b52.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="3622" height="3930"
                alt="Two feature sheets side by side, FNC-03 API Explorer and FNC-01 API Documentation. Each has a numbered greyscale wireframe at the top, panels of user stories and considerations beneath it, and below those a wall of screenshots of other companies' developer portals, among them Google, Azure, BT, Mapbox, Stripe, Spotify and Shell."
                loading="lazy" decoding="async">
@@ -1420,7 +1466,7 @@
                srcset="/assets/fibre-journey-1120.3275a771.webp 1120w,
                        /assets/fibre-journey-1680.3275a771.webp 1680w,
                        /assets/fibre-journey-2240.3275a771.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="8556" height="6951"
                alt="A journey map headed End-to-End Partner and Developer Journey, running from Awareness through Consideration, Conversion, Fulfilment, Usage and Support, Retention and Advocacy. Each stage has a row for the partner journey, a row for the developer journey, a row of tags naming which of the marketing website, developer portal and partner portal it touches, and a row setting out the content it needs with examples."
                loading="lazy" decoding="async">
@@ -1443,7 +1489,7 @@
                srcset="/assets/fibre-sitemap-1120.e007e7c3.webp 1120w,
                        /assets/fibre-sitemap-1680.e007e7c3.webp 1680w,
                        /assets/fibre-sitemap-2240.e007e7c3.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="7725" height="5457"
                alt="A draft site map. Home and Search sit above a row of primary navigation items — Products, APIs, Resources, Community, Support and My Dashboard — each with its secondary pages hanging beneath it and the features it relates to listed inside, with a footer block at the bottom."
                loading="lazy" decoding="async">
@@ -1467,7 +1513,7 @@
                srcset="/assets/fibre-content-1120.57e83232.webp 1120w,
                        /assets/fibre-content-1680.57e83232.webp 1680w,
                        /assets/fibre-content-2240.57e83232.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="4731" height="3129"
                alt="A spreadsheet with a row per piece of content, grouped by feature — homepage, products, SDKs, API status and health, changelog. Its columns run from a description and the detail behind it through the content types and assets required, whether the content already exists or is new, the key copy messaging, the metrics it answers to, whether it is evergreen or timely, and its sign-off status."
                loading="lazy" decoding="async">
@@ -1503,7 +1549,7 @@
                srcset="/assets/fibre-templates-1-1120.1715154b.webp 1120w,
                        /assets/fibre-templates-1-1680.1715154b.webp 1680w,
                        /assets/fibre-templates-1-2240.1715154b.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="12303" height="5515"
                alt="Three design templates side by side — Homepage, Product Landing Page and API Documentation. Each is a greyscale wireframe of the full page with a definition, user stories, key content inputs and key considerations set out in a column beside it."
                loading="lazy" decoding="async">
@@ -1514,7 +1560,7 @@
                srcset="/assets/fibre-templates-2-1120.60cc1812.webp 1120w,
                        /assets/fibre-templates-2-1680.60cc1812.webp 1680w,
                        /assets/fibre-templates-2-2240.60cc1812.webp 2240w"
-               sizes="(min-width: 1280px) 1120px, 92vw"
+               sizes="(min-width: 512px) 448px, 92vw"
                width="12292" height="5509"
                alt="Three more design templates side by side — API Catalogue, Changelog, and Feedback and Support — each a greyscale wireframe of the full page with a definition, user stories, key content inputs and key considerations set out in a column beside it."
                loading="lazy" decoding="async">
