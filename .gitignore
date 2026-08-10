@@ -11,6 +11,13 @@ footer-home.html
 boots-reel-card1.png
 sofa-reel-motion.png
 
+# Job applications and drafts. Kept locally; the repo is public and Vercel would
+# serve these at /<name>.md.
+*.md
+
+# Zoom exports the sequence never used; the -1120/-1680/-2240 variants ship instead
+assets/saddle-*-zoom.*.webp
+
 # Build/authoring scripts — not part of the site
 *.py
 
