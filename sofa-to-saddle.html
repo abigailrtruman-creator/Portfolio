@@ -12,7 +12,7 @@
 <meta property="og:url" content="https://abbietruman.vercel.app/sofa-to-saddle">
 <meta property="og:title" content="British Cycling app — Abbie Truman">
 <meta property="og:description" content="Design lead on Sofa to Saddle, the cycling app for Lloyds Bank and British Cycling: blank page to launch in 12 weeks, with a front end built using AI.">
-<meta property="og:image" content="https://abbietruman.vercel.app/assets/saddle-og-1200x630.180a73f5.jpg">
+<meta property="og:image" content="https://abbietruman.vercel.app/assets/saddle-og-1200x630.37be2b43.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -20,7 +20,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="British Cycling app — Abbie Truman">
 <meta name="twitter:description" content="Design lead on Sofa to Saddle, the cycling app for Lloyds Bank and British Cycling: blank page to launch in 12 weeks, with a front end built using AI.">
-<meta name="twitter:image" content="https://abbietruman.vercel.app/assets/saddle-og-1200x630.180a73f5.jpg">
+<meta name="twitter:image" content="https://abbietruman.vercel.app/assets/saddle-og-1200x630.37be2b43.jpg">
 <meta name="twitter:image:alt" content="Three Sofa to Saddle app screens side by side: the home feed, a training plan and a ride timer.">
 
 <!-- The same circular AT monogram both other pages carry, and deliberately the
@@ -451,7 +451,7 @@
      hundredths is invisible, but this number's job is to be the card's number,
      and a token that moves for its own reasons would quietly break that.
 
-     The size is deliberately the same on all three case studies. These pills are
+     The size is deliberately the same on all four case studies. These pills are
      one component wearing one size, and a page whose pills were a point larger
      than the next page's would read as a mistake rather than as a decision. */
   .cs-tags {
@@ -461,7 +461,22 @@
     margin: clamp(20px, 2.8vh, 30px) 0 0;
     padding: 0;
     list-style: none;
-    font-size: 10.5px;
+    /* Sized to what the homepage chip is seen at, which is not what it computes
+       at: the cards carry a scale(0.85), so a chip whose font-size resolves to
+       13.78px is drawn at 11.72 and its pill stands 23.7px tall. Comparing the
+       two stylesheets' numbers compares the wrong thing, and doing that is how
+       this arrived at 15px — a chip half again the size of the one on the card
+       it was supposed to match.
+
+       Seen, the card's chip is flat from 1024 up: its container caps, so the
+       curve stops climbing. This holds 11.7px over the same range and comes
+       down below it, which is where the card's own chip gets smaller too.
+
+       The floor is 10px rather than the 7.2 the card is drawn at on a phone.
+       That is the one place these part company, and deliberately: 7.2px is a
+       size a chip can only be when it is inside a card that has been scaled
+       down as a whole, and on the open page it would be unreadable. */
+    font-size: clamp(10px, calc(4.5px + 0.7vw), 11.7px);
   }
   .cs-tags li {
     display: inline-flex;
@@ -504,6 +519,26 @@
     max-height: var(--fig-max-h);
     margin-inline: auto;
   }
+  /* A working board, drawn taller than the page's other figures. The cap is
+     right for a phone render and wrong for the flow board: that board is very
+     nearly square, so 64vh spends the height and then throws most of the width
+     away, and a product's whole shape arrives about 450px across. Raising the
+     variable rather than the max-height is what keeps the figcaption in step —
+     it sizes itself off --fig-max-h too, so both move together. */
+  .cs-figure--tall {
+    --fig-max-h: 88vh;
+  }
+  /* There is no viewer on this page, and the two working boards are the case
+     that decided it. Their text renders at about a pixel at any width this page
+     can give a figure, and no rung worth shipping fixes that — a legible copy of
+     the requirements board would be some 12000px wide. Close-ups of the readable
+     parts were built and then cut: what they turned out to show was a question
+     about a password reset and the spec for a login screen, which is a caption's
+     work rather than a figure's. What a board is here to show is the shape of
+     the work, and the shape is legible. The written content lives in the alt
+     text, which is where someone who cannot see the shape needs it anyway.
+     boots-checkout.html keeps a viewer for the opposite reason: its artboards
+     are 4284px, a size at which enlarging genuinely returns the interface. */
   /* The caption is exactly as wide as the picture above it, whatever that
      picture happens to be. It cannot be a fixed measure: the figures are capped
      by height, so a phone comes out about 340px wide and the hero about 700, and
@@ -563,9 +598,9 @@
      block rather than as a title and then a photograph. */
   .cs-hero .cs-figure--full {
     flex: 0 0 auto;
-    margin-top: clamp(36px, 5.2vh, 76px);
+    margin-top: clamp(52px, 7.4vh, 108px);
   }
-  /* The picture at the column's full width, and as tall as that makes it. No
+  /* The picture at the shell's full width, and as tall as that makes it. No
      object-fit and no object-position: both existed to place a picture inside a
      box bigger than itself, and there is no such box now — the height is a
      result of the width rather than a budget the width has to fit into.
@@ -1135,7 +1170,7 @@
        way back to the set is the link at the end of the article, where someone
        who has finished reading actually is. -->
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="/abbie-truman-cv.pdf" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="/assets/abbie-truman-cv.8da5ab19.pdf" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>
@@ -1169,17 +1204,18 @@
 
       <!-- The launch film rather than the three-screen render this used to
            carry. The render and its three widths are still in /assets under
-           saddle-hero-*.180a73f5.webp if it ever comes back. -->
-      <figure class="cs-figure cs-figure--full">
-        <div class="cs-hero__video">
-          <iframe src="https://www.youtube-nocookie.com/embed/5CdmV0FABS8?rel=0"
-                  title="Sofa to Saddle — the launch film for the Lloyds Bank and British Cycling app"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerpolicy="strict-origin-when-cross-origin"
-                  allowfullscreen></iframe>
-        </div>
-      </figure>
+           saddle-hero-*.37be2b43.webp if it ever comes back. -->
     </div>
+
+    <figure class="cs-figure cs-figure--full">
+      <div class="cs-hero__video">
+        <iframe src="https://www.youtube-nocookie.com/embed/5CdmV0FABS8?rel=0"
+                title="Sofa to Saddle — the launch film for the Lloyds Bank and British Cycling app"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen></iframe>
+      </div>
+    </figure>
   </header>
 
   <section class="cs-overview cs-wrap" aria-label="Overview">
@@ -1204,7 +1240,19 @@
           <h2 class="cs-chapter__title">A blank page, and a deadline that didn&rsquo;t care.</h2>
           <p>There was no existing app to modernise, no legacy patterns, no accumulated user data.</p>
           <p>What made it hard wasn&rsquo;t the idea, <strong>it was the timeframe</strong>. We had a fraction of the time a build like this usually gets, and a budget to match.</p>
+          <p>And it wasn&rsquo;t one app. <strong>The contract committed us to two</strong> &mdash; Sofa to Saddle, and a second app for children &mdash; with the same functionality underneath both. Every requirement came out of workshops with Lloyds and British Cycling in the room together, and nothing was settled until both had put their input in and both had signed it off. So before designing anything I mapped the two propositions stage by stage to find where they genuinely overlapped and where they had to diverge &mdash; which is what told us how to structure the app, and what twelve weeks and this budget could actually buy.</p>
         </div>
+        <figure class="cs-figure" style="--ar: 2.0647" data-reveal>
+          <img src="/assets/saddle-requirements-1120.b547ac21.webp"
+               srcset="/assets/saddle-requirements-1120.b547ac21.webp 1120w,
+                       /assets/saddle-requirements-1680.b547ac21.webp 1680w,
+                       /assets/saddle-requirements-2240.b547ac21.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="30438" height="14742"
+               alt="A working board in three lanes. Along the top, the youth development app: a row of stage cards running from discovery and awareness through first app experience and on by week, with acceptance criteria and open questions stacked underneath each one. Sofa to Saddle runs the same way in the lane below it. A third lane at the foot, headed Overlapping requirements, collects the parts both apps could share."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Both apps mapped stage by stage and week by week, with the requirements each stage raised sitting under it. The lane along the bottom is what the two could share.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">
@@ -1259,7 +1307,19 @@
           <h2 class="cs-chapter__title">Two sets of objectives, one call to make.</h2>
           <p>Good judgement meant knowing both brands&rsquo; objectives well enough to decide, case by case, whose priority mattered most and why. Every call still had to earn its keep commercially: <strong>good enough to ship, never gold-plated past scope or budget</strong>.</p>
           <p>I held the strategy across every layer of the product, down to the smallest interaction, reviewing the detail and correcting it where it hadn&rsquo;t been considered enough.</p>
+          <p>The product map is where a lot of that got done. I mapped the whole flow and we walked it screen by screen with both clients in the room, looking for the gaps &mdash; not gaps in the screens, gaps in the proposition. <strong>The sharpest one: the app exists to get a nervous beginner out on a first ride, and British Cycling&rsquo;s own offer, insurance and membership, is built for riders who already are one.</strong> Getting someone from finishing a plan to a real relationship with British Cycling was never an interaction we could design our way out of, and the map is what put it on the table early enough to be a strategy conversation instead of a launch problem.</p>
         </div>
+        <figure class="cs-figure cs-figure--tall" style="--ar: 0.8728" data-reveal>
+          <img src="/assets/saddle-flow-1120.5f7ffb54.webp"
+               srcset="/assets/saddle-flow-1120.5f7ffb54.webp 1120w,
+                       /assets/saddle-flow-1680.5f7ffb54.webp 1680w,
+                       /assets/saddle-flow-2240.5f7ffb54.webp 2240w"
+               sizes="(min-width: 1280px) 1120px, 92vw"
+               width="25920" height="29696"
+               alt="The whole product as a flow map: some forty screen cards joined by arrows, each headed with the screen&rsquo;s name and divided into two columns, Context and Interaction. It begins at seeing the campaign and downloading the app, runs down through the welcome screen, single sign-on and sign-up, then splits on whether the rider has taken the quiz — one branch leading to a populated plan, progress and profile, the other to the same screens as empty states. Pale blue notes are pinned to individual cards where a question was still open."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Every screen in the product, and what happens on it. The split in the middle is whether the rider has taken the quiz: one side arrives at a plan already filled in, the other at empty states.</span></figcaption>
+        </figure>
       </section>
 
       <section class="cs-chapter">

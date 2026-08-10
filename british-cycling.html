@@ -72,6 +72,12 @@
     --measure: 1120px;
     --section: clamp(88px, 13vh, 168px);
     --nav-clear: 132px;
+
+    /* The showcase's own margin, top and bottom the same, so it sits evenly
+       between the last line of type and the footer's rule. One value rather
+       than two because those two gaps are the same gap seen twice, and the
+       moment they are written separately they drift. */
+    --showcase-space: clamp(54px, 8.5vh, 116px);
   }
 
   html { background: var(--bg); }
@@ -213,18 +219,23 @@
   }
 
   /* ---------- THE SCREEN ----------
-     One viewport, contents centred in it. A placeholder has no reason to be
-     taller than the window, and giving it the whole window instead of a band
-     at the top is what stops it reading as a page that failed to load. */
+     The contents run from the top, and the section is as tall as they make it.
+     Both of those were the other way around while this page was three lines of
+     type: it was held to a full viewport and the type centred in it, because a
+     band of text at the top of an empty screen reads as a page that failed to
+     load. The picture is what fills the screen now, so the type starts where it
+     does on every other page here, and the floor comes off — on a tall window
+     it had stopped being a floor and become a reservation, holding open a strip
+     of nothing between the picture and the footer.
+
+     No padding at the foot. What follows is the showcase, and it carries the
+     same space above and below itself so that it sits evenly between the type
+     and the footer's rule; a padding here would be added to the top gap only
+     and tilt it. */
   .cs-soon {
     position: relative;
     z-index: 1;
-    min-height: 100svh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     padding-top: calc(var(--nav-clear) + 24px);
-    padding-bottom: clamp(56px, 9vh, 96px);
   }
 
   /* The accent, and the whole of it. Behind the type at low alpha, so the page
@@ -249,8 +260,16 @@
     .cs-soon::before { background: none; }
   }
 
+  /* The eyebrow names the work and the heading says the status, which is the
+     order the written case studies already use: theirs reads "Case study ·
+     Boots website" above a sentence. Keeping the same two pieces in the same
+     places means a held-open page and a finished one open identically, and the
+     name is not then said twice on a page that has one heading.
+
+     The gap between them is the heading's top margin rather than the eyebrow's
+     bottom one, which is where cs-hero__statement puts it on those pages. */
   .cs-soon__title {
-    margin: 0;
+    margin: clamp(18px, 2.4vh, 30px) 0 0;
     font-family: var(--ff-display);
     font-size: clamp(44px, 7.4vw, 118px);
     line-height: 0.94;
@@ -259,23 +278,10 @@
     color: var(--ink);
     max-width: 14ch;
   }
-  /* The eyebrow is inside the heading rather than a sibling above it. It read
-     the client's name until the homepage's labels became self-describing —
-     "British Cycling website" needs nothing above it to place the work — so it
-     now says where the visitor is instead, which is the thing a page with no
-     content on it can usefully say.
-
-     display: flex rather than the --rule modifier's inline-flex, so it takes a
-     line of its own instead of letting the name sit beside it. */
-  .cs-soon__title .hp-eyebrow {
-    display: flex;
-    margin-bottom: clamp(18px, 2.4vh, 30px);
-    font-family: var(--ff-body);
-    line-height: 1.2;
-  }
-  /* The status, and it is a sentence rather than a badge. "Coming soon" set in
-     a pill is the internet's way of saying nothing; this says which of the two
-     states the work is in, and the next line says where to go meanwhile. */
+  /* Under the two words above it, the line that separates work that is
+     unfinished from a write-up that is. "Coming soon" alone does not say which
+     of those a visitor is looking at, and on this site it is the first one
+     people assume. */
   .cs-soon__lede {
     margin: clamp(24px, 3.4vh, 42px) 0 0;
     font-size: clamp(19px, 1.5vw, 24px);
@@ -284,62 +290,158 @@
     color: var(--ink-1);
     max-width: 30ch;
   }
-  .cs-soon__more {
-    margin: 14px 0 0;
-    font-size: clamp(15px, 1.1vw, 17px);
-    line-height: 1.6;
-    color: var(--ink-2);
-    max-width: 44ch;
+
+  /* The disciplines, in the chip row the written case studies carry under
+     their statement. They are read from the same card this page was reached
+     by, so what the work involved survives the write-up not being there.
+
+     Copied value for value from those pages rather than approximated. This was
+     built from absolute pixels — 12.5px labels in 7px/14px padding, a --rule
+     hairline and --ink-2 text — which came out 31px tall against their 21.7,
+     lighter in weight and fainter in both border and ink. A held-open page
+     should differ from a written one in what it says, not in the size of a
+     component both of them carry. */
+  .cs-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    margin: clamp(20px, 2.8vh, 30px) 0 0;
+    padding: 0;
+    list-style: none;
+    /* Sized to what the homepage chip is seen at rather than what it computes
+       at: the cards carry a scale(0.85), so a chip resolving to 13.78px is
+       drawn at 11.72. Seen, it is flat from 1024 up, which is what this holds.
+       The 10px floor is deliberate — the card is drawn at 7.2px on a phone,
+       which only works inside a card that has been scaled down as a whole. */
+    font-size: clamp(10px, calc(4.5px + 0.7vw), 11.7px);
   }
-  .cs-soon__more a {
-    color: var(--ink-1);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: var(--ink-3);
-    transition: color 0.25s ease, text-decoration-color 0.25s ease;
-  }
-  .cs-soon__more a:hover {
+  .cs-tags li {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.34em 0.85em;
+    border: 1px solid rgba(255,255,255,0.38);
+    border-radius: 99999px;
     color: var(--ink);
-    text-decoration-color: var(--ink);
-  }
-
-  /* The way back, and on this page it is a button rather than the quiet text
-     link the case studies end with. There it sits under two thousand words and
-     is one of several things to do next; here it is the only thing to do, and
-     the page would be a dead end without it. */
-  .cs-soon__back {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    align-self: flex-start;
-    min-height: 44px;
-    margin-top: clamp(34px, 4.6vh, 56px);
-    padding: 17px 26px 17px 22px;
-    background: #fff;
-    color: #0a0a0c;
-    border-radius: 999px;
-    font-size: 15px;
+    font-size: 1em;
     font-weight: 500;
-    letter-spacing: -0.005em;
-    text-decoration: none;
-    transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
-  }
-  .cs-soon__back:hover { transform: translateY(-3px); }
-  .cs-soon__back svg { width: 16px; height: 16px; display: block; }
-  .cs-soon__back-arrow {
-    display: inline-flex;
-    align-items: center;
-    transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
-  }
-  .cs-soon__back:hover .cs-soon__back-arrow,
-  .cs-soon__back:focus-visible .cs-soon__back-arrow {
-    transform: translateX(-4px);
+    line-height: 1.2;
+    letter-spacing: -0.004em;
+    white-space: nowrap;
   }
 
+  /* ---------- THE SCREENS ----------
+     What this page can show that is finished. It fixes the thing that was
+     actually wrong with it: three lines of type on an otherwise empty screen
+     reads as a page with nothing on it rather than one whose writing is not
+     done.
+
+     A row rather than one picture, and drifting rather than still, because
+     what is being said is "there is a lot of this" — one screen says the
+     project exists, several moving say there is a case study's worth coming.
+     Each is her design cropped to its own top; see build-bcweb-figures.py for
+     why the crop is taken there and not here.
+
+     It runs to both edges of the window and is cut off by them, which is what
+     stops it reading as a gallery that has been laid out and started to say
+     instead that this is a few of many. The mask fades both ends rather than
+     letting a card meet the edge on a hard line.
+
+     No JavaScript. The row is the same screens over and over and the animation
+     moves it by exactly one pass, so the frame it ends on is the frame it
+     started from and the loop has no seam. --reel-screens is how many are in a
+     pass, written on the element by the build because it is the one number
+     here the markup decides. */
+  .cs-reel {
+    --screen-w: clamp(240px, 44vw, 820px);
+    --reel-gap: clamp(14px, 1.5vw, 26px);
+    margin: var(--showcase-space) 0;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
+  }
+  .cs-reel__track {
+    display: flex;
+    gap: var(--reel-gap);
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    /* A duration rather than a speed, because CSS cannot divide a length by
+       one, which means this has to be re-reckoned whenever the cards change
+       size: a pass is three cards wide, so wider cards travel further in the
+       same time. At this size it works out to 55px/s at 1440 and 71px/s at
+       1920 — the wider the window the faster it goes, which is the right way
+       round, since a wider window shows more of the row at once and the same
+       speed would read as slower across it.
+
+       48s was the first guess and it was too slow: 28px/s at 1440 is under a
+       centimetre a second, which is the speed at which a thing that is moving
+       stops reading as moving and starts reading as stuck. */
+    animation: cs-drift 36s linear infinite;
+  }
+  /* One pass, exactly: the cards in it plus the gap that follows each. Written
+     from the same two variables the cards are sized from, so there is no second
+     copy of the width to keep in step. */
+  @keyframes cs-drift {
+    to {
+      transform: translateX(calc(
+        -1 * var(--reel-screens) * (var(--screen-w) + var(--reel-gap))));
+    }
+  }
+  /* Held still while the pointer is on it, so a screen that catches someone's
+     eye can be looked at rather than chased. */
+  .cs-reel:hover .cs-reel__track,
+  .cs-reel:focus-within .cs-reel__track { animation-play-state: paused; }
+
+  /* A width and nothing else. The height is the picture's own, which is the
+     crop build-bcweb-figures.py took, so that crop is stated once and this
+     cannot fall out of step with it.
+
+     Nothing is drawn around it. This had a radius, a hairline border and a
+     drop shadow on the reasoning that a white page needs an edge against a
+     near-black one, and both halves of that were wrong: the written case
+     studies put their pictures on this same background with none of the
+     three, and rounding the corners of a website says it is an app. The gap
+     between cards is what separates them, and it is doing that already. */
+  .cs-reel__screen {
+    flex: none;
+    width: var(--screen-w);
+  }
+  .cs-reel__screen img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  /* The fallback, for a case study held open with no screens built: the card
+     the visitor clicked, cropped to the picture on it. Her card file is the
+     whole card and its top third is flat colour left clear for the overlay the
+     homepage draws there, which kept whole would arrive here as a slab of
+     colour with nothing on it — the same emptiness again. The box is given the
+     height the cropped image should have and object-fit trims the band off the
+     top, which is what index.html does for the same reason on a phone; a
+     negative margin would move the band rather than remove it and paint out
+     the type above. */
+  .cs-soon__art-inner {
+    max-width: var(--measure);
+    margin: 0 auto;
+    border-radius: clamp(12px, 1.1vw, 20px);
+    overflow: hidden;
+    aspect-ratio: 1 / 0.5713;
+    background: var(--accent);
+  }
+  .cs-soon__art { margin: var(--showcase-space) 0; }
+  .cs-soon__art img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center bottom;
+  }
   /* ---------- FOOTER ----------
-     The case study footer exactly: the contact card, then the base row with
-     Back to selected work at the end of it. It is below the fold on a page one
-     screen tall, which is the right place for it — someone who scrolls past a "still being written"
+     The case study footer exactly: the contact card, then the base row with the
+     pair of controls. It is below the fold on a page one screen tall, which is
+     the right place for it — someone who scrolls past a "still being written"
      is someone looking for a way to ask about it. */
   .hp-footer {
     --foot-x: var(--pad-x);
@@ -427,6 +529,10 @@
     height: 1px;
     background: var(--rule);
   }
+  /* .hp-footer__back is the case studies', not the homepage's — the homepage has
+     no set to go back to. It is on its own now: the grouping with
+     __top, and the reset the pair needed because one of them was a <button>,
+     both went when Back to top did. */
   .hp-footer__back {
     display: inline-flex;
     align-items: center;
@@ -439,6 +545,7 @@
   }
   .hp-footer__back:hover { color: var(--ink); }
   .hp-footer__back svg { width: 14px; height: 14px; display: block; }
+  /* It travels, where the contact arrows only lift: this one is a direction. */
   .hp-footer__back .hp-footer__cta-arrow {
     transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
   }
@@ -468,6 +575,7 @@
   .cs-anim [data-rise='2'] { animation-delay: 0.14s; }
   .cs-anim [data-rise='3'] { animation-delay: 0.26s; }
   .cs-anim [data-rise='4'] { animation-delay: 0.36s; }
+  .cs-anim [data-rise='5'] { animation-delay: 0.46s; }
   @keyframes csRise {
     to { opacity: 1; transform: none; }
   }
@@ -510,7 +618,6 @@
        44px face is wider than the screen. */
     .cs-soon__title { max-width: none; }
     .cs-soon__lede { max-width: none; }
-    .cs-soon__back { padding: 15px 22px 15px 18px; font-size: 14px; }
 
     .hp-footer { --foot-x: 22px; padding: 66px var(--foot-x) 28px; }
     .hp-footer__title { font-size: clamp(46px, 13vw, 76px); }
@@ -537,12 +644,33 @@
     /* The entrance is dropped rather than shortened. It has nothing to say and
        the state it animates to is the page. */
     .cs-anim [data-rise] { opacity: 1; transform: none; animation: none; }
-    .cs-soon__back,
+    /* The row stops, and stopping it is not enough on its own: held still it
+       would show the first two screens and clip the rest off the edge for
+       good. So the repeats go, the pass that is left wraps, and all of them
+       are on the page at once. */
+    .cs-reel__track {
+      animation: none;
+      width: auto;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding-left: var(--pad-x);
+      padding-right: var(--pad-x);
+    }
+    .cs-reel__screen[aria-hidden='true'] { display: none; }
+    /* Three across where three will fit, a column where they will not. At the
+       moving row's size the wrap puts the cards onto two rows at 1440, which
+       reads as a row that ran out rather than as a set of three. Floored at the
+       same 240px the moving row uses, so a phone goes to a column rather than
+       to three things too small to be screens. */
+    .cs-reel {
+      --screen-w: max(240px, min(clamp(240px, 44vw, 820px), calc(
+        (100vw - 2 * var(--pad-x) - 2 * var(--reel-gap) - 18px) / 3)));
+      -webkit-mask-image: none;
+              mask-image: none;
+    }
     .hp-footer__cta,
     .hp-nav__arrow,
     .hp-footer__back .hp-footer__cta-arrow { transition-duration: 0.01ms; }
-    .cs-soon__back:hover .cs-soon__back-arrow,
-    .cs-soon__back:focus-visible .cs-soon__back-arrow,
     .hp-footer__back:hover .hp-footer__cta-arrow,
     .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
   }
@@ -558,7 +686,7 @@
     <span class="hp-nav__name">Abbie Truman</span>
   </a>
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="/abbie-truman-cv.pdf" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="/assets/abbie-truman-cv.8da5ab19.pdf" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>
@@ -572,24 +700,144 @@
 <main id="cs-main">
   <section class="cs-soon cs-wrap" aria-labelledby="cs-soon-h">
     <div class="cs-col">
-      <!-- The whitespace around the eyebrow is load-bearing. Run together, the
-           heading's text is "Selected workBritish Cycling website", which is
-           what the accessible name is built from. -->
-      <h1 class="cs-soon__title" id="cs-soon-h" data-rise="1">
-        <span class="hp-eyebrow hp-eyebrow--rule">Selected work</span>
-        British Cycling website
-      </h1>
-      <p class="cs-soon__lede" data-rise="2">The work is done. The write-up isn&rsquo;t &mdash; this one is still being written.</p>
-      <p class="cs-soon__more" data-rise="3">Ready to read in the meantime: <a href="/boots-checkout">Boots website</a>, <a href="/sofa-to-saddle">British Cycling app</a>, <a href="/api-portal">Full-fibre provider portals</a> and <a href="/pwc-client-portal">PwC client portal</a>.</p>
-      <!-- /#work rather than /, so it lands on the cards rather than the hero.
-           The homepage builds itself in JS and scrolls inside a fixed element,
-           so the browser cannot act on that fragment on its own; index.html
-           reads it &mdash; see initWorkAnchor there. -->
-      <a class="cs-soon__back" href="/#work" data-rise="4">
-        <span class="cs-soon__back-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to selected work
-      </a>
+      <span class="hp-eyebrow hp-eyebrow--rule" data-rise="1">Case study &middot; British Cycling website</span>
+      <h1 class="cs-soon__title" id="cs-soon-h" data-rise="2">Coming soon.</h1>
+      <p class="cs-soon__lede" data-rise="3">The work is done. The write-up isn&rsquo;t &mdash; this one is still being written.</p>
+      <ul class="cs-tags" data-rise="4">
+        <li>UX &amp; UI</li>
+        <li>Content</li>
+        <li>Strategy</li>
+      </ul>
     </div>
   </section>
+  <!-- Outside the section, and outside .cs-wrap with it, because the row runs
+       to both edges of the window rather than to the measure. Deliberately not
+       a <figure>: there is no caption and nothing to number, and calling it one
+       would be the first of the case study furniture this page does without. -->
+  <div class="cs-reel" data-rise="5">
+    <ul class="cs-reel__track" style="--reel-screens: 3">
+        <li class="cs-reel__screen">
+          <img src="/assets/bcweb-find-an-event-820.3f5827df.webp"
+               srcset="/assets/bcweb-find-an-event-820.3f5827df.webp 820w,
+                       /assets/bcweb-find-an-event-1280.3f5827df.webp 1280w,
+                       /assets/bcweb-find-an-event-1640.3f5827df.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt="The British Cycling find-an-event page: a race photograph behind the page title, then search and filter controls, then a grid of event cards each with its own photograph, discipline tags and date."
+               loading="eager" decoding="async">
+        </li>
+        <li class="cs-reel__screen">
+          <img src="/assets/bcweb-event-detail-820.c1ab250c.webp"
+               srcset="/assets/bcweb-event-detail-820.c1ab250c.webp 820w,
+                       /assets/bcweb-event-detail-1280.c1ab250c.webp 1280w,
+                       /assets/bcweb-event-detail-1640.c1ab250c.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt="An event page for a round of a summer series: a summary and a countdown beside a photograph, the organiser and venue details below, then the races a rider is eligible for, each with its route drawn on a map."
+               loading="eager" decoding="async">
+        </li>
+        <li class="cs-reel__screen">
+          <img src="/assets/bcweb-my-stats-820.ca93ceb4.webp"
+               srcset="/assets/bcweb-my-stats-820.ca93ceb4.webp 820w,
+                       /assets/bcweb-my-stats-1280.ca93ceb4.webp 1280w,
+                       /assets/bcweb-my-stats-1640.ca93ceb4.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt="A rider’s stats page: an overall performance summary, then national ranking points by discipline with a twelve-month trend, and a leaderboard of nearby riders with the signed-in one highlighted."
+               loading="eager" decoding="async">
+        </li>
+        <li class="cs-reel__screen" aria-hidden="true">
+          <img src="/assets/bcweb-find-an-event-820.3f5827df.webp"
+               srcset="/assets/bcweb-find-an-event-820.3f5827df.webp 820w,
+                       /assets/bcweb-find-an-event-1280.3f5827df.webp 1280w,
+                       /assets/bcweb-find-an-event-1640.3f5827df.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt=""
+               loading="lazy" decoding="async">
+        </li>
+        <li class="cs-reel__screen" aria-hidden="true">
+          <img src="/assets/bcweb-event-detail-820.c1ab250c.webp"
+               srcset="/assets/bcweb-event-detail-820.c1ab250c.webp 820w,
+                       /assets/bcweb-event-detail-1280.c1ab250c.webp 1280w,
+                       /assets/bcweb-event-detail-1640.c1ab250c.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt=""
+               loading="lazy" decoding="async">
+        </li>
+        <li class="cs-reel__screen" aria-hidden="true">
+          <img src="/assets/bcweb-my-stats-820.ca93ceb4.webp"
+               srcset="/assets/bcweb-my-stats-820.ca93ceb4.webp 820w,
+                       /assets/bcweb-my-stats-1280.ca93ceb4.webp 1280w,
+                       /assets/bcweb-my-stats-1640.ca93ceb4.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt=""
+               loading="lazy" decoding="async">
+        </li>
+        <li class="cs-reel__screen" aria-hidden="true">
+          <img src="/assets/bcweb-find-an-event-820.3f5827df.webp"
+               srcset="/assets/bcweb-find-an-event-820.3f5827df.webp 820w,
+                       /assets/bcweb-find-an-event-1280.3f5827df.webp 1280w,
+                       /assets/bcweb-find-an-event-1640.3f5827df.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt=""
+               loading="lazy" decoding="async">
+        </li>
+        <li class="cs-reel__screen" aria-hidden="true">
+          <img src="/assets/bcweb-event-detail-820.c1ab250c.webp"
+               srcset="/assets/bcweb-event-detail-820.c1ab250c.webp 820w,
+                       /assets/bcweb-event-detail-1280.c1ab250c.webp 1280w,
+                       /assets/bcweb-event-detail-1640.c1ab250c.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt=""
+               loading="lazy" decoding="async">
+        </li>
+        <li class="cs-reel__screen" aria-hidden="true">
+          <img src="/assets/bcweb-my-stats-820.ca93ceb4.webp"
+               srcset="/assets/bcweb-my-stats-820.ca93ceb4.webp 820w,
+                       /assets/bcweb-my-stats-1280.ca93ceb4.webp 1280w,
+                       /assets/bcweb-my-stats-1640.ca93ceb4.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt=""
+               loading="lazy" decoding="async">
+        </li>
+        <li class="cs-reel__screen" aria-hidden="true">
+          <img src="/assets/bcweb-find-an-event-820.3f5827df.webp"
+               srcset="/assets/bcweb-find-an-event-820.3f5827df.webp 820w,
+                       /assets/bcweb-find-an-event-1280.3f5827df.webp 1280w,
+                       /assets/bcweb-find-an-event-1640.3f5827df.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt=""
+               loading="lazy" decoding="async">
+        </li>
+        <li class="cs-reel__screen" aria-hidden="true">
+          <img src="/assets/bcweb-event-detail-820.c1ab250c.webp"
+               srcset="/assets/bcweb-event-detail-820.c1ab250c.webp 820w,
+                       /assets/bcweb-event-detail-1280.c1ab250c.webp 1280w,
+                       /assets/bcweb-event-detail-1640.c1ab250c.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt=""
+               loading="lazy" decoding="async">
+        </li>
+        <li class="cs-reel__screen" aria-hidden="true">
+          <img src="/assets/bcweb-my-stats-820.ca93ceb4.webp"
+               srcset="/assets/bcweb-my-stats-820.ca93ceb4.webp 820w,
+                       /assets/bcweb-my-stats-1280.ca93ceb4.webp 1280w,
+                       /assets/bcweb-my-stats-1640.ca93ceb4.webp 1640w"
+               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               width="1640" height="3198"
+               alt=""
+               loading="lazy" decoding="async">
+        </li>
+    </ul>
+  </div>
 </main>
 
 <footer class="hp-footer">
@@ -600,6 +848,10 @@
     <a class="hp-footer__cta is-ghost" href="tel:+447387382836">07387 382836<span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
   </div>
   <div class="hp-footer__base">
+    <!-- /#work rather than /, so it lands on the cards rather than the hero. The
+         homepage builds itself in JS and scrolls inside a fixed element, so the
+         browser cannot act on that fragment on its own; index.html reads it —
+         see initWorkAnchor there. -->
     <a class="hp-footer__back" href="/#work">
       <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to selected work
     </a>

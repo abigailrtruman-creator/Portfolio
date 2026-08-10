@@ -448,7 +448,7 @@
      hundredths is invisible, but this number's job is to be the card's number,
      and a token that moves for its own reasons would quietly break that.
 
-     The size is deliberately the same on all three case studies. These pills are
+     The size is deliberately the same on all four case studies. These pills are
      one component wearing one size, and a page whose pills were a point larger
      than the next page's would read as a mistake rather than as a decision. The
      row sits in the same place on all three as well, under the heading and above
@@ -460,7 +460,22 @@
     margin: clamp(20px, 2.8vh, 30px) 0 0;
     padding: 0;
     list-style: none;
-    font-size: 10.5px;
+    /* Sized to what the homepage chip is seen at, which is not what it computes
+       at: the cards carry a scale(0.85), so a chip whose font-size resolves to
+       13.78px is drawn at 11.72 and its pill stands 23.7px tall. Comparing the
+       two stylesheets' numbers compares the wrong thing, and doing that is how
+       this arrived at 15px — a chip half again the size of the one on the card
+       it was supposed to match.
+
+       Seen, the card's chip is flat from 1024 up: its container caps, so the
+       curve stops climbing. This holds 11.7px over the same range and comes
+       down below it, which is where the card's own chip gets smaller too.
+
+       The floor is 10px rather than the 7.2 the card is drawn at on a phone.
+       That is the one place these part company, and deliberately: 7.2px is a
+       size a chip can only be when it is inside a card that has been scaled
+       down as a whole, and on the open page it would be unreadable. */
+    font-size: clamp(10px, calc(4.5px + 0.7vw), 11.7px);
   }
   .cs-tags li {
     display: inline-flex;
@@ -583,9 +598,9 @@
      photograph and there is no reason for that to differ by page. */
   .cs-hero .cs-figure--full {
     flex: 0 0 auto;
-    margin-top: clamp(36px, 5.2vh, 76px);
+    margin-top: clamp(52px, 7.4vh, 108px);
   }
-  /* The picture at the column's full width, and as tall as that makes it. No
+  /* The picture at the shell's full width, and as tall as that makes it. No
      object-fit and no object-position: both existed to place a picture inside a
      box bigger than itself, and there is no such box now — the height is a
      result of the width rather than a budget the width has to fit into.
@@ -1228,7 +1243,7 @@
        The way back to the set is the link at the end of the article, where
        someone who has finished reading actually is. -->
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="/abbie-truman-cv.pdf" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="/assets/abbie-truman-cv.8da5ab19.pdf" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>
@@ -1265,17 +1280,18 @@
         <li>Strategy</li>
       </ul>
 
-      <figure class="cs-figure cs-figure--full">
-        <img src="/assets/pwc-hero-1120.b945b4fa.webp"
-             srcset="/assets/pwc-hero-1120.b945b4fa.webp 1120w,
-                     /assets/pwc-hero-1680.b945b4fa.webp 1680w,
-                     /assets/pwc-hero-2240.b945b4fa.webp 2240w"
-             sizes="(min-width: 1280px) 1120px, 92vw"
-             width="4500" height="2813"
-             alt="Two phones on a concrete surface in hard sunlight, running PwC Junction: a key focus areas feed with an EBITDA chart, and a quality of earnings summary with its adjustments table."
-             fetchpriority="high" decoding="async">
-      </figure>
     </div>
+
+    <figure class="cs-figure cs-figure--full">
+      <img src="/assets/pwc-hero-1120.b945b4fa.webp"
+           srcset="/assets/pwc-hero-1120.b945b4fa.webp 1120w,
+                   /assets/pwc-hero-1680.b945b4fa.webp 1680w,
+                   /assets/pwc-hero-2240.b945b4fa.webp 2240w"
+           sizes="(min-width: 1280px) 1120px, 92vw"
+           width="4500" height="2813"
+           alt="Two phones on a concrete surface in hard sunlight, running PwC Junction: a key focus areas feed with an EBITDA chart, and a quality of earnings summary with its adjustments table."
+           fetchpriority="high" decoding="async">
+    </figure>
   </header>
 
   <section class="cs-overview cs-wrap" aria-label="Overview">

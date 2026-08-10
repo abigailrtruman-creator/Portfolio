@@ -308,35 +308,31 @@
   }
 
   /* ---------- HERO ----------
-     One screen, and the picture has to be whole inside it. The hero is a fixed
-     budget — the height of the window — that the copy takes its share of and the
-     picture is given the rest of.
+     The picture is drawn at the width it is given and the hero is however tall
+     that comes to, so the bottom of the render falls below the fold and the
+     first scroll finishes it.
 
-     svh rather than vh. On a phone, vh is the viewport with the address bar
-     retracted, so a hero sized in vh is taller than the screen at the moment
-     the page loads, which is the one moment this layout exists to get right. */
+     This used to be a budget: a hero fixed at 100svh, the copy taking its share
+     and the figure given the rest, with object-fit keeping the whole render
+     inside whatever was left. The other three case studies left that model and
+     this page was the last on it, which is why its picture came out 757px wide
+     at 1440 while theirs were at the full column. A budget cannot spend a width
+     it is not allowed to be tall for. The fixed height, the figure's flex share
+     and object-fit have all gone together — they were one mechanism. */
   .cs-hero {
     position: relative;
     z-index: 1;
-    /* height, not min-height. With a minimum the box still grows to whatever
-       its contents come to, so there is no leftover space for the figure to be
-       given a share of. Fixing the height is what turns the screen into a
-       budget. */
-    height: 100svh;
     display: flex;
     flex-direction: column;
-    /* Enough to clear the nav pill, which ends 106px down, and no more: every
-       pixel above the eyebrow is a pixel off the picture. */
-    padding-top: clamp(118px, 13vh, 152px);
+    /* Clearance under the nav pill, which ends 106px down. Nothing competes for
+       this any more: with the hero sized to its contents, what this adds it adds
+       to the page rather than taking it off the picture. */
+    padding-top: clamp(148px, 15vh, 168px);
     padding-bottom: clamp(24px, 3vh, 44px);
   }
   .cs-hero > .cs-col {
-    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
-    /* Without this the column refuses to shrink below its contents and the
-       figure's share is computed against a height the screen does not have. */
-    min-height: 0;
   }
 
   /* The page's heading, and what the project was rather than what it was called
@@ -380,27 +376,6 @@
   .cs-hero__word { display: inline-block; white-space: nowrap; }
   .cs-hero__char { display: inline-block; transform: translateZ(0); }
 
-  /* Two windows where holding the screen open stops being worth it, and the
-     hero goes back to running as tall as its contents.
-
-     A phone held sideways is 390px tall: one screen there gives the copy
-     everything and leaves the picture almost none of it.
-
-     A phone held upright is the opposite. The picture runs out of width long
-     before it runs out of height, so it cannot grow into the space a full
-     screen would reserve, and what that reserves is a stretch of empty page
-     underneath it. Sized to its contents it still lands whole inside the first
-     screen, and the room that was empty is the top of the first chapter
-     instead. */
-  @media (max-height: 560px) and (min-width: 601px), (max-width: 600px) {
-    .cs-hero {
-      height: auto;
-      padding-top: 116px;
-    }
-    .cs-hero .cs-figure--full { flex: 0 0 auto; }
-    .cs-hero .cs-figure--full img { height: auto; }
-  }
-
   /* The homepage's ambient glow. A separate element rather than a pseudo on the
      hero, and stretched with left/right rather than the usual
      100vw-and-pull-it-back: 100vw counts the scrollbar, so that idiom is a page
@@ -435,38 +410,60 @@
       var(--glow-tint) 0%, transparent 68%);
   }
 
-  /* The same pill as the homepage card's, in the page's ink instead of the
-     card's — but no longer at the same size, and that is a decision rather than
-     drift. The card's chip is sized against a 40.7px sentence and runs 10px to
-     15px on a curve; this one sits in body copy, where 15px would be close
-     enough to the text around it to stop reading as a label at all.
-     Padding and gap are em of the label, so the row is resized by moving
-     font-size alone. The border is the one exception: it is a hairline at any
-     size, and scaling it with the text would only make it heavier here than it
-     is on the card these came from.
+  /* The homepage card's chip in the page's ink: the same 38% hairline around the
+     same full-strength label, and the same em padding and gap. These were a 52%
+     outline around a 74% label for a while, which read the wrong way round — on
+     the card the outline is the quiet part and the label carries the chip, and
+     at those strengths this was an outline with text inside it instead. The
+     other three case studies were corrected and this page was missed, so it ran
+     an 11.5px label with a 0.8em gap against their 10.5 and 0.6 until now.
 
-     That claim was not true until now. This page carried 0.6em/1.2em while the
-     card and the other three case studies carried 0.45em/1.05em, so the pill
-     was a different shape here and not merely a different size. Both have since
-     been cut — the card to 0.34em/0.85em at the owner's request — and this now
-     runs the same pair as everything else, which leaves font-size as the only
-     thing that differs, as the paragraph above always said it was. */
+     Size is the deliberate difference. The card's chip is sized against a 40.7px
+     sentence and runs 10px to 15px on a curve; this one sits in body copy, where
+     15px would be close enough to the text around it to stop reading as a label
+     at all. Padding and gap are em of the label, so the row is resized by moving
+     font-size alone. The border is the exception: it is a hairline at any size,
+     and scaling it with the text would only make it heavier here than it is on
+     the card these came from.
+
+     The 0.38 is written out rather than reaching for --ink-3 at 0.40. Two
+     hundredths is invisible, but this number's job is to be the card's number,
+     and a token that moves for its own reasons would quietly break that.
+
+     The size is deliberately the same on all four case studies. These pills are
+     one component wearing one size, and a page whose pills were a point larger
+     than the next page's would read as a mistake rather than as a decision. */
   .cs-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.8em;
+    gap: 0.6em;
     margin: clamp(20px, 2.8vh, 30px) 0 0;
     padding: 0;
     list-style: none;
-    font-size: 11.5px;
+    /* Sized to what the homepage chip is seen at, which is not what it computes
+       at: the cards carry a scale(0.85), so a chip whose font-size resolves to
+       13.78px is drawn at 11.72 and its pill stands 23.7px tall. Comparing the
+       two stylesheets' numbers compares the wrong thing, and doing that is how
+       this arrived at 15px — a chip half again the size of the one on the card
+       it was supposed to match.
+
+       Seen, the card's chip is flat from 1024 up: its container caps, so the
+       curve stops climbing. This holds 11.7px over the same range and comes
+       down below it, which is where the card's own chip gets smaller too.
+
+       The floor is 10px rather than the 7.2 the card is drawn at on a phone.
+       That is the one place these part company, and deliberately: 7.2px is a
+       size a chip can only be when it is inside a card that has been scaled
+       down as a whole, and on the open page it would be unreadable. */
+    font-size: clamp(10px, calc(4.5px + 0.7vw), 11.7px);
   }
   .cs-tags li {
     display: inline-flex;
     align-items: center;
     padding: 0.34em 0.85em;
-    border: 1px solid var(--ink-2);
+    border: 1px solid rgba(255,255,255,0.38);
     border-radius: 99999px;
-    color: var(--ink-1);
+    color: var(--ink);
     font-size: 1em;
     font-weight: 500;
     line-height: 1.2;
@@ -564,30 +561,22 @@
     text-align: left;
     cursor: zoom-in;
   }
-  /* The hero figure takes what the copy above it did not, and the picture is
-     drawn to fit that rather than the picture setting the height. contain is
-     what makes it a fit rather than a crop: on a wide short window the width
-     runs out first and on a tall narrow one the height does, and either way the
-     whole render is inside the box. */
   .cs-hero .cs-figure--full {
-    flex: 1 1 auto;
-    min-height: 0;
-    margin-top: clamp(22px, 3.4vh, 48px);
+    flex: 0 0 auto;
+    margin-top: clamp(52px, 7.4vh, 108px);
   }
-  /* The box is the whole of the leftover space; object-position decides where
-     the picture sits inside it once contain has made it smaller. Top left, so
-     that it starts directly under the tags and its left edge is the same left
-     edge as the eyebrow and the sentence. Centred, it would float free of the
-     column on every window where the height runs out before the width — which
-     is most of them — and the slack on a phone would open as a gap between the
-     copy and the picture rather than closing up the page after it. */
+  /* The picture at the shell's full width, and as tall as that makes it. No
+     object-fit and no object-position: both existed to place a picture inside a
+     box bigger than itself, and there is no such box now — the height is a
+     result of the width rather than a budget the width has to fit into. */
   .cs-hero .cs-figure--full img {
+    display: block;
     width: 100%;
-    height: 100%;
-    max-width: 100%;
+    height: auto;
+    /* .cs-figure img caps every picture on the page at --fig-max-h, which is
+       right for a chapter figure and wrong for this one. The hero picture is the
+       only one whose height is allowed to be whatever its width makes it. */
     max-height: none;
-    object-fit: contain;
-    object-position: left top;
   }
 
   /* ---------- Overview ----------
@@ -1247,7 +1236,7 @@
        way back to the set is the link at the end of the article, where someone
        who has finished reading actually is. -->
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="/abbie-truman-cv.pdf" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="/assets/abbie-truman-cv.8da5ab19.pdf" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>
@@ -1292,23 +1281,24 @@
         <li>Content</li>
       </ul>
 
-      <figure class="cs-figure cs-figure--full">
-        <!-- Her render, not the homepage card. The two used to be one file —
-             the card cropped off its flat overlay band — and are now two
-             pictures of the same interface, so a visitor clicks a pale cyan
-             card and lands on a laptop on black. That is deliberate; see
-             build-api-figures.py, which also explains where the 1.6 below comes
-             from. -->
-        <img src="/assets/api-hero-1120.d2e9ef74.webp"
-             srcset="/assets/api-hero-1120.d2e9ef74.webp 1120w,
-                     /assets/api-hero-1680.d2e9ef74.webp 1680w,
-                     /assets/api-hero-2240.d2e9ef74.webp 2240w"
-             sizes="(min-width: 1280px) 1120px, 92vw"
-             width="6765" height="4229"
-             alt="A laptop on a dark iridescent surface running the developer portal: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request."
-             fetchpriority="high" decoding="async">
-      </figure>
     </div>
+
+    <figure class="cs-figure cs-figure--full">
+      <!-- Her render, not the homepage card. The two used to be one file —
+           the card cropped off its flat overlay band — and are now two
+           pictures of the same interface, so a visitor clicks a pale cyan
+           card and lands on a laptop on black. That is deliberate; see
+           build-api-figures.py, which also explains where the 1.6 below comes
+           from. -->
+      <img src="/assets/api-hero-1120.d2e9ef74.webp"
+           srcset="/assets/api-hero-1120.d2e9ef74.webp 1120w,
+                   /assets/api-hero-1680.d2e9ef74.webp 1680w,
+                   /assets/api-hero-2240.d2e9ef74.webp 2240w"
+           sizes="(min-width: 1280px) 1120px, 92vw"
+           width="6765" height="4229"
+           alt="A laptop on a dark iridescent surface running the developer portal: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request."
+           fetchpriority="high" decoding="async">
+    </figure>
   </header>
 
   <section class="cs-overview cs-wrap" aria-label="Overview">

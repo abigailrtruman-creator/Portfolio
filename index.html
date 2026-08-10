@@ -1891,34 +1891,56 @@
   // at, and the hash is in the name because /assets/* is served immutable.
   var AVATAR = 'assets/avatar-156.0b96ef89.webp';
 
-  // Copied from her Downloads folder rather than linked from anywhere. One
-  // page, and 6.7MB of it — heavy enough to be worth a re-export, which she
-  // knows about; nothing here can compress a PDF and installing something to
-  // try would be a worse trade than shipping her file as she exported it.
+  // Hosted here rather than linked to Google Drive, which is where this nearly
+  // went. A Drive link depends on a sharing setting staying public for as long
+  // as anyone might click it, and opens Google's viewer chrome around her
+  // document instead of her own page. One page, and it was 7.0MB of it, which
+  // this comment used to explain away: a re-export she would have to do
+  // herself, because nothing here could compress a PDF and installing
+  // something to try was the worse trade. That was wrong on both counts. It is
+  // 1.4MB, it was done with what was already on the machine, and it is done
+  // again on every run: build-cv.py takes the export as Figma writes it, so
+  // there is no version of this she has to remember to compress by hand.
   //
-  // At the site root, NOT under /assets/, and that is the whole point. She will
-  // replace this file by hand — that is what a re-export is — and /assets/* is
-  // served `immutable, max-age=31536000`, so a plain filename under there hands
-  // anyone who has opened the old CV a year-long copy of it and never asks the
-  // server for another. A hiring manager reading a superseded CV is not a
-  // theoretical failure.
+  // Almost none of the weight was ever her CV. Figma had rasterised the page
+  // background into two images and handed each one a full 8-bit alpha channel —
+  // 18.5 and 9.8 megapixels, 4.1MB of the 7.0MB — to describe artwork that is
+  // flat colour, one of those channels ranging only between 95% and 100%
+  // opaque across the entire page. They are 3.6KB between them now, and the
+  // flat colour underneath them 6.5KB rather than 165KB: the resolution of a
+  // plate was never drawing the shape it appears to have, which is cut out of
+  // it by the mask over it. The rest came from deflating the page at a level
+  // Figma had left on the table, and from its 1,286 stream objects having only
+  // 206 distinct payloads between them, the other 1,080 being byte-for-byte
+  // copies.
   //
-  // A content-hashed name is the fix everywhere else in this file, and it is the
-  // wrong one here. The hashed assets are all build outputs: a script renames
-  // them and rewrites these references in the same breath. Nothing can do that
-  // for a PDF she drags out of Figma, so the hash would be hers to maintain, and
-  // the failure when she forgets is silent — the old hashed file is still on
-  // disk, the link still resolves, and it keeps serving last month's CV while
-  // she believes she has replaced it. Stale either way, and harder to spot.
-  // So: a stable name at a path that revalidates. vercel.json gives root-level
-  // PDFs `max-age=0, must-revalidate`, and Vercel serves an ETag with it, so the
-  // check costs a 304 rather than 6.7MB. Same reasoning that keeps favicon.ico
-  // out of /assets/ — see build-favicons.py.
+  // Her words were never at risk, because they were never touched. Figma draws
+  // the visible lettering as vector outlines and lays an invisible Type 3 text
+  // layer over the top for selection, and that layer is what anyone copying
+  // from the file actually gets, so it is the one thing left at full
+  // precision — every glyph position is still the digits Figma wrote.
+  // Rounding those would have moved nothing visible and quietly changed where
+  // a reader decides one word ends and the next begins. The outlines, which
+  // nothing reads, went to two decimal places: under two microns here. The
+  // script asks PDFKit for the text before and after and will not publish a
+  // file whose answer changed, because that failure looks like nothing.
   //
-  // Root-absolute rather than relative like the assets above it: this one is
-  // pinned to the site root, so it must not resolve against whatever page the
-  // nav is rendered on.
-  var CV = '/abbie-truman-cv.pdf';
+  // This line is written by build-cv.py and should not be edited by hand: the
+  // hash is the digest of the PDF's bytes, so changing one without the other
+  // points the nav at a file that is not there.
+  //
+  // It sat at the site root under a stable name until there was a script. The
+  // argument for that is worth keeping because it is the argument for why this
+  // is safe now: /assets/* is served `immutable, max-age=31536000`, so a plain
+  // filename under there would hand anyone who had opened the old CV a
+  // year-long copy of it, and a hash only fixes that where something renames the
+  // file and rewrites the references to it in the same breath. Nothing did, for
+  // a PDF dragged out of Figma, so the hash would have been hers to maintain and
+  // the failure when she forgot would have been silent. build-cv.py is that
+  // something. The old root path still answers, as a redirect it keeps pointed
+  // here, because it was live long enough to be in a sent application. See its
+  // docstring for the rest of what the change costs.
+  var CV = '/assets/abbie-truman-cv.8da5ab19.pdf';
 
   var LINKEDIN = 'https://www.linkedin.com/in/abigail-truman/';
 
