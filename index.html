@@ -438,61 +438,6 @@
     backface-visibility: hidden;
   }
 
-  /* Grain, and it is not styling — it is dithering. Two gradients this shallow
-     over a near-black background are asking an 8-bit display for tonal steps it
-     does not have: the key light travels 0.13 alpha over ~540px, which is about
-     five levels of blue spread across a third of the screen, and the banding
-     that produces is the one flaw in this hero that reads as a rendering error
-     rather than as a choice. A noise field a couple of levels deep breaks the
-     bands into a texture, which is what film grain does and why it is worth the
-     ~1KB of data URI.
-     Under the copy, never over it: this sits before .hp-hero__main in the
-     document, so the type paints on top of it and no letter is ever laid over
-     texture. It is also masked to fade out at the top and bottom of the hero,
-     which is the part that matters most. Grain carried to a hard edge would put a
-     seam across the page wherever the hero ends and the wordmark's flat #0a0a0c
-     begins, and a seam is a worse artefact than the banding this is here to fix.
-     Faded, there is no boundary anywhere for an eye to find. */
-  .hp-hero__grain {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 100vw;
-    margin-left: -50vw;
-    pointer-events: none;
-    /* One octave, not two, and tiled at 120px rather than 160. Two octaves adds a
-       component at half the frequency, and on a 2x display — where the tile is
-       drawn into twice as many device pixels as the SVG has — that component
-       arrives as ~5px clouds rather than as grain. One octave at 120px puts the
-       features at about a pixel, which is the size at which this stops being a
-       texture you can see and becomes the dither it is for.
-       stitchTiles is what keeps the tile from showing its own grid where it
-       repeats. */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 120px 120px;
-    /* Overlay, and this is the whole reason the grain is usable at all. Laid on
-       normally, a noise field whose mean is mid-grey lifts whatever is under it:
-       measured, 0.055 of this noise took the hero's background from #0a0a0c to
-       about #0f0f11 — five levels — which is a real change to a black the rest of
-       the page is still using, arrived at by adding texture rather than by anyone
-       choosing it.        Overlay leaves the base exactly where it is wherever the noise
-       is 50% grey and moves it only by the deviation, so the field modulates the
-       background instead of raising it: same dither, no tint.
-       0.85 is measured, not chosen. Overlay on a base this dark compresses hard —
-       the operator is 2 × base × blend below mid-grey, and this base is 10/255 —
-       so the strength has to come back up to get an amplitude worth having.
-       At 0.85, sampled off a 2x screenshot: the field is ±1.3 levels about its
-       mean, the hero's background sits 1.9 levels above #0a0a0c rather than the
-       5.1 the normal-blend version put it at, and inside what used to be a
-       40px-wide flat band 158 of 279 adjacent pixels now differ across six
-       values. That last number is the one that matters: the band is broken up,
-       not averaged over. */
-    mix-blend-mode: overlay;
-    opacity: 0.85;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 64%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 64%, transparent 100%);
-  }
   /* The copy block. `gap` is the greeting-to-statement interval, deliberately
      the tightest one in the hero so the greeting reads as a lead-in rather than
      a separate line of text. */
@@ -2649,15 +2594,14 @@
 
     var heroHtml = '' +
       '<section class="hp-hero" id="hp-hero">' +
-        // Decoration, all of it, and the only reason any of it is in the document
-        // is that the exit and the pointer have to be able to transform it. Four
-        // boxes: the key light, the pointer's layer with the second light inside
-        // it, and the grain over both. Hidden from the tree.
+        // Lightsets, all of it, and the only reason any of it is in the document
+        // is that the exit and the pointer have to be able to transform it. Three
+        // boxes: the key light, and the pointer's layer with the second light
+        // inside it. Hidden from the tree.
         '<div class="hp-hero__glow" aria-hidden="true">' +
           '<div class="hp-hero__glow-a"></div>' +
           '<div class="hp-hero__lamp"><div class="hp-hero__glow-b"></div></div>' +
         '</div>' +
-        '<div class="hp-hero__grain" aria-hidden="true"></div>' +
         '<div class="hp-hero__main">' +
           '<p class="hp-hero__greeting">' + HERO.greeting + '</p>' +
           // Per-character spans would otherwise be read out letter by letter.
@@ -3021,8 +2965,8 @@
   //     the room having a direction.
   //
   // Both are skipped under reduced motion and the pointer is skipped where there
-  // isn't one, which leaves the two gradients and the grain exactly as the
-  // stylesheet draws them — a composition, not a broken animation.
+  // isn't one, which leaves the two gradients exactly as the stylesheet draws
+  // them — a composition, not a broken animation.
   function initHeroLight() {
     if (typeof gsap === 'undefined' || REDUCED) return;
 
@@ -3130,9 +3074,8 @@
     var inner = hero.querySelector('.hp-hero__statement-inner');
     var lower = hero.querySelector('.hp-hero__lower');
     var glow = hero.querySelector('.hp-hero__glow');
-    var grain = hero.querySelector('.hp-hero__grain');
     var blocks = Array.prototype.slice.call(hero.querySelectorAll('.hp-hero__sentence'));
-    if (!greeting || !inner || !lower || !glow || !grain || !blocks.length) return;
+    if (!greeting || !inner || !lower || !glow || !blocks.length) return;
 
     // Half travel below 900px, where the copy block is most of the screen and
     // the same displacement reads as the headline being yanked rather than
@@ -3206,13 +3149,8 @@
       // dims out over most of the range, so the page is already dark by the time
       // the wordmark's first row arrives on it — the mark is a title card, and it
       // lands better on black than on the back of the hero's own light.
-      // The grain dims with it but does not contract: it is a texture on the
-      // surface rather than part of the light, and scaling a noise field is the
-      // one way to make grain visible as grain. It goes at all because there is
-      // nothing left for it to dither once the gradients have gone, and 0.055 of
-      // noise on flat black is just noise.
       .to(glow, { scale: 0.8, duration: 1 }, 0)
-      .to([glow, grain], { opacity: 0, duration: 0.85, ease: 'power2.in' }, 0);
+      .to(glow, { opacity: 0, duration: 0.85, ease: 'power2.in' }, 0);
 
     // Per sentence rather than per hard-coded first and second, so the ranking is
     // a rule about position in the block and not a list that has to be rewritten
