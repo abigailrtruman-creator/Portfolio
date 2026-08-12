@@ -1962,6 +1962,33 @@
     .hp-count__n { transition: none; }
   }
 </style>
+
+<!-- Vercel Web Analytics: visitors and page views, and nothing else on any page.
+
+     Same-origin, which is the whole reason it is acceptable here. /_vercel/insights
+     is a route Vercel adds to the deployment itself once Web Analytics is enabled
+     on the project, so this is a first-party file from this domain rather than a
+     third-party tag, and the GSAP argument three hundred lines up does not apply to
+     it — there is no other party to be unreachable. It does 404 on the Python dev
+     server, and that is expected rather than broken: the route does not exist until
+     a deployment serves it.
+
+     Cookieless, and nothing is stored on the device, so there is no consent banner
+     to add. Worth writing down, because the reflex on seeing the word analytics is
+     to reach for one, and a banner would be the single most intrusive element on a
+     site whose whole argument is restraint. Vercel's privacy documentation is the
+     thing to check before that reflex wins.
+
+     Vercel's own HTML snippet puts a window.va queue shim ahead of this line. Its
+     job is to hold custom events fired before the script has loaded, so they are
+     not dropped; custom events are a Pro-plan feature and this site sends none, so
+     the shim would be a queue with nothing to put in it. If events are ever added,
+     it goes back — on every page, since there is no shared head here.
+
+     Which is the one cost of doing it this way: six pages, six copies of this line,
+     and a seventh page would need a seventh. The alternative is a build step or a
+     framework, and this site is deliberately neither. -->
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 

@@ -675,6 +675,14 @@
     .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
   }
 </style>
+
+<!-- Vercel Web Analytics, the same line that is on the other five pages: page views
+     only, cookieless, and no consent banner needed. Same-origin — /_vercel/insights
+     is a route Vercel adds to the deployment when Web Analytics is enabled, not a
+     third-party script — and it 404s on the local dev server, which is expected.
+     The longer note, including why the window.va shim from Vercel's snippet is not
+     here, is in index.html. -->
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 

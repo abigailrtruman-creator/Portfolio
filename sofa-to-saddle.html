@@ -57,9 +57,9 @@
      entrance fired once by an IntersectionObserver. GSAP itself stays, because
      the hero's letters need it.
 
-     The image viewer is now on both, and on this page it opens five figures of
-     the eight rather than all of them — see .cs-figure__open for which five and
-     why the device renders are not among them.
+     The image viewer is now on both, and on this page it opens seven figures of the
+     nine rather than all of them — see .cs-figure__open for which seven, and why the
+     hero and the campaign photograph are not among them.
 
      Two things this page has that the Boots page does not. Chapter 08 carries a
      build sequence the reader steps through, which is the only component on
@@ -67,10 +67,11 @@
      and no library — see the .cs-seq block in the stylesheet and the function of
      the same name at the foot of the page.
 
-     And chapter 02 puts three of British Cycling's numbers on cards instead of
-     working all of them into the prose. It is the one chapter here whose claim
-     rests on somebody else's research rather than on the project's own rooms,
-     which is why it is also the one carrying a source line. See .cs-stats.
+     And chapter 02 puts the research under the prose as a campaign diptych
+     rather than as three numbers set as type. It is the one chapter here whose
+     claim rests on somebody else's research rather than on the project's own
+     rooms, which is why the picture itself carries the sofa hours and the 70%
+     wish to exercise. See the insight figure under that chapter.
      ---------- */
   :root {
     --ff-display: 'Manrope', 'Inter', -apple-system, sans-serif;
@@ -133,33 +134,50 @@
        lands under it. */
     --nav-clear: 132px;
 
-    /* How wide a figure is drawn: four tenths of the reading column, the same
-       fraction as the other case studies so they all read at one scale. The
-       caption under each figure takes the same value, so the two share their
-       edges. Written off --measure rather than as the 448px it comes to, because
-       it is meant to be a proportion of the column and not a number that happens
-       to sit near one. Below roughly a 510px window the column is narrower than
-       this and takes over.
+    /* How wide a figure is drawn: the width of the writing, to the pixel. Not a
+       fraction of anything — the same 62ch that .cs-chapter__body is set to, so
+       the picture and the paragraph above it are one declaration apart and cannot
+       drift. 626px as it happens, and the figure is placed on the body's own left
+       edge (see .cs-chapter .cs-figure), so a chapter reads as one column of
+       writing with pictures in it rather than as writing with pictures beside it.
 
-       This was a height, 64vh, with the width falling out of each board's aspect
-       ratio — and this page is where that showed worst. The boards here run from
-       0.58 to 3.79, so equal height drew them anywhere from 371px to the full
-       column, and two of them needed a second cap of their own (.cs-figure--tall,
-       now gone) to stop the rule throwing their width away. What decided the width
-       was how many screens had been composed onto a board in Figma, which is an
-       authoring decision the reader cannot see.
+       ch and not px because the measure is a count of characters and this has to
+       follow it. Note where the unit resolves: a custom property is substituted as
+       tokens and the length is worked out on the element that uses it, which here
+       is an image inside .cs-chapter and therefore in Inter — 625.81px, the body's
+       measure exactly. The declaration sits on :root, where 62ch would be 496px if
+       it were resolved, because :root has no font-family and falls back to Times.
+       Moving this line into a rule whose font differs would silently resize every
+       figure on the page.
 
-       Fixing the width instead makes the invariant the visible one: horizontal
-       differences are measured against the column on every figure, where vertical
-       ones cannot be seen, because two figures are never on screen together.
+       Three sizes to get here. Each figure was capped by height, 64vh, which let
+       the widths fall out of the artwork; then to a share of the full 1120 column,
+       four tenths and then 0.45, which held the left edges together but on a line
+       of their own with the writing indented 112px inside it. The proportions were
+       the guesswork this replaces — 0.45 was as far as a share of the column could
+       go while the page still carried a 531px phone render at a 0.58 aspect, since
+       past 531 it was inventing pixels and at half the column it stood 961px tall.
+       That render has since come off the page (see chapter 07). What is left has
+       no such ceiling, so the width could stop being a number chosen to clear one:
+       it is the measure, which is the only width on the page a reader can see the
+       reason for.
 
-       The cost lands on the widest boards. The badge strip is 3.79, so at this
-       width it comes to 118px tall, which is a sliver on the page and legible
-       only in the viewer. That is the trade for one rule; if it ever needs an
-       exception, the honest form of it is a modifier that widens a figure to the
-       column when --fig-w would leave it shorter than about 200px, not a second
-       height cap. */
-    --fig-w: calc(0.4 * var(--measure));
+       Under the 64vh rule the widths fell out of the artwork, which is what made
+       the aspect ratios visible: they run from 0.58 to 3.79 here, so equal height
+       drew figures anywhere from 371px to the full column and two of them needed a
+       cap of their own (.cs-figure--tall, now gone) to stop the rule throwing their
+       width away. What decided a width was how many screens had been composed onto
+       a board in Figma, which is an authoring decision the reader cannot see.
+
+       One width leaves those ratios to decide height alone, and the cost of that
+       lands on the widest boards. The badge strip is 3.79, so it comes to 165px
+       tall, which is a sliver on the page and legible only in the viewer. That is
+       the trade; if it ever needs an exception, the honest form of it is a modifier
+       that widens a figure to the full column when the measure would leave it
+       shorter than about 200px, not a height cap brought back.
+
+       Below a 692px window the column is narrower than this and takes over. */
+    --fig-w: 62ch;
   }
 
   html {
@@ -539,9 +557,9 @@
      background so those corners are the page showing through rather than a
      notch of white or black.
 
-     Capped at one screenful of height, not width, so each figure's width follows
-     its own proportions. It is also what keeps these sharp: the device renders
-     are 390px of phone, and the cap draws them at about two thirds of that. */
+     Every figure is drawn to one width, --fig-w, so the reader gets the same left
+     and right edge each time and vertical differences are left to the artwork. See
+     that variable for how the width is arrived at and what it used to be. */
   /* The gap between the writing and the picture it belongs to. It has to stay
      clearly smaller than the gap between one chapter and the next, or the
      figure stops reading as the end of this chapter and starts looking like
@@ -559,40 +577,41 @@
      rung rounded to. */
   .cs-figure img {
     display: block;
+    /* The figure is already the measure wide, so the picture takes all of it. This
+       carried the cap itself until the caption showed why one box should own it —
+       see .cs-chapter .cs-figure. */
     width: 100%;
-    max-width: var(--fig-w);
     height: auto;
     aspect-ratio: var(--ar, auto);
-    margin-inline: auto;
   }
   /* ---------- Enlarge ----------
-     Five of the figures open, and which five is not a list kept here: a figure
+     Seven of the figures open, and which seven is not a list kept here: a figure
      opens if its markup carries a srcset, which is true exactly of the ones the
-     build gives a 3360px copy to. The device render and the campaign photograph
-     have a single rung at their own size, so they have no srcset, no zoom copy and
-     no button — a viewer over one of those would open the pixels it was launched
-     from.
+     build gives a viewer copy to. The campaign photograph has a single rung at
+     its own size, so it has no srcset, no zoom copy and no button — a viewer over
+     it would open the pixels it was launched from. The insight diptych used to
+     be in the same boat (a 1024px still); a 5760 re-supply put it on the ladder.
 
-     This is what makes --fig-w a matter of the page's rhythm rather than the
-     largest size the artwork needs. Every figure is drawn at four tenths of the
-     column, so the toolkits sheet is 6058px of source at 448, and the boards are
-     recognisable rather than readable. Opened, they are drawn at 1680 and
-     scrolled: the sheet arrives at nearly four times the size it sits at, and
-     individual cards on the boards resolve where on the page they are grey
-     marks. */
+     This is what lets --fig-w answer to the writing rather than to the largest size
+     the artwork needs. Every figure is drawn at the measure, so the toolkits sheet
+     is 6058px of source at 626, and the boards are recognisable rather than
+     readable. Opened, they are drawn at 1680 and scrolled: the sheet arrives at
+     nearly three times the size it sits at, and individual cards on the boards
+     resolve where on the page they are grey marks. The voice sheet is the case that
+     needs it most and has the least to give — 1920px of source, so opening it is
+     1680 against 626 rather than a multiple, which is still 9px type becoming 17. */
   .cs-figure__open {
     position: relative;
     display: block;
-    /* --fig-w, the same as the picture, so the button hugs the artwork and does
-       not open the viewer from the empty column beside it. This was fit-content,
-       which hugged it too but cost the page its reserved space: a percentage width
-       inside a fit-content parent is indefinite, so every lazy figure measured
-       zero until its file arrived and the page shifted under the reader. Stating
-       the width makes it definite, and the aspect-ratio on the image can then hold
-       the box open from the first paint. */
+    /* All of the figure, which is all of the picture, so the button hugs the
+       artwork and does not open the viewer from empty column beside it. This was
+       fit-content, which hugged it too but cost the page its reserved space: a
+       percentage width inside a fit-content parent is indefinite, so every lazy
+       figure measured zero until its file arrived and the page shifted under the
+       reader. A stated width is definite, and the aspect-ratio on the image can
+       then hold the box open from the first paint. */
     width: 100%;
-    max-width: var(--fig-w);
-    margin: 0 auto;
+    margin: 0;
     padding: 0;
     border: 0;
     background: none;
@@ -705,8 +724,7 @@
      value as the line between chapters, so the commentary is drawn in the page's
      existing vocabulary instead of introducing a second one. */
   .cs-figure figcaption {
-    margin: 26px auto 0;
-    max-width: min(100%, var(--fig-w));
+    margin: 26px 0 0;
     /* Bottom a shade over the top: the eyebrow's cap-height leaves the box
        looking heavier above than below when the four sides are equal. */
     padding: 19px 22px 20px;
@@ -759,16 +777,14 @@
      They are what reserves the right amount of page before the file arrives, and
      with the hero no longer a fixed height there is nothing else holding that
      space open. */
+  /* Nothing to undo here any more. The measure is capped on .cs-chapter .cs-figure
+     rather than on every picture on the page, and the hero is not a chapter figure,
+     so it takes its column's full width by simply not being told otherwise. This
+     rule used to carry a max-width:none to escape a cap that applied to all of them. */
   .cs-hero .cs-figure img {
     display: block;
     width: 100%;
     height: auto;
-    /* .cs-figure img draws every picture on the page at --fig-w, which is right
-       for a chapter figure and wrong for this one. The hero is the page's opening
-       image and the only one allowed the column's full width; without this it
-       would come in at four tenths of the column and sit narrower than the heading
-       above it. */
-    max-width: none;
   }
   /* The hero is a film. An iframe has no intrinsic size, so nothing here works
      the way it did for the render: width and height attributes on an <img> are
@@ -922,98 +938,28 @@
     color: var(--ink-1);
   }
   .cs-chapter__body strong { color: var(--ink); font-weight: 500; }
-  /* The figure belongs to the chapter but not to its measure: it spans the
-     rail as well, so every image on the page is placed against the same edges
-     regardless of which column its writing sits in. */
-  .cs-chapter .cs-figure { grid-column: 1 / -1; }
+  /* The figure sits in the writing's column, not across the whole chapter, so it
+     starts on the paragraph's left edge and — being set to the same 62ch measure —
+     ends on its right edge too. A chapter is then one column of content with the
+     rail beside it, and the only vertical line a reader has to find is the one
+     everything shares.
 
-  /* ---------- The research, three cards (chapter 02) ----------
-     British Cycling's own numbers on the UK public, and the one place on the
-     page where evidence is set out rather than argued. The chapter claims this
-     is a confidence problem and not a fitness one, which is a claim about other
-     people's heads: a reader either takes that on trust or is shown what it was
-     drawn from.
+     This used to span 1 / -1 with the image centred in it. The idea was that every
+     figure would then stand on the same edges regardless of its writing, and it
+     did: it stood on edges of its own, 112px inside the paragraph on both sides at
+     1440, lining up with nothing but the other figures. Consistent, and consistent
+     about the wrong thing — a reader sees a picture against the text it belongs to,
+     not against the picture four chapters down.
 
-     Three, and three is the design. This was five numbers in a ruled list and
-     then six in two headed panels, and both were more apparatus than the point
-     needed: the sofa, the wish to be off it, and what a week of riding is worth
-     are the whole argument, and a fourth card only makes the reader decide which
-     three of four to remember. Every number dropped is still in the research
-     and none of it is load-bearing here.
-
-     One card each, so the number is the object rather than the left-hand column
-     of a table. Three across the reading column is also what lets them be read
-     as a set at a glance: one row, one glance, no scanning.
-
-     Boxed with the hairline every chapter opens with, over a lift that fades
-     down the card — 0.04 to 0.012, which is a value at the top and almost
-     nothing at the bottom. Flat fills were what these had before, and three
-     equal grey rectangles in a row read as a table with its rules removed. The
-     gradient is what makes them cards. It stays under the figcaption's weight
-     either way: the brightest thing in this chapter is still the writing. */
-  .cs-stats {
-    grid-column: 1 / -1;
-    margin-top: clamp(34px, 5vh, 60px);
-  }
-  .cs-stats__grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(12px, 1.4vw, 20px);
-  }
-  .cs-stat {
-    padding: clamp(22px, 2.3vw, 30px) clamp(20px, 2.1vw, 28px) clamp(24px, 2.5vw, 32px);
-    border: 1px solid var(--rule);
-    border-radius: 16px;
-    background: linear-gradient(180deg,
-                                rgba(255,255,255,0.04),
-                                rgba(255,255,255,0.012));
-  }
-  .cs-stat__no {
-    display: block;
-    font-family: var(--ff-display);
-    font-weight: 800;
-    /* Bigger than the two versions before it, and this is the one place on the
-       page where something is allowed past the chapter title's 34px. A card with
-       one number in it is not competing with the heading for the same job — it
-       is the exhibit the heading sent you to — and at 32px in a 355px card the
-       number read like a subheading of the caption underneath it. Still under
-       the hero statement's 38px on the widest screens, so the largest type on
-       the page is still the sentence the page opens with.
-
-       The curve is the chapter title's own, about ten per cent up: 2.35vw and
-       25px become 2.6vw and 27px. A flat 32px floor put the number seven pixels
-       over the title on every screen below 1200, which is the inversion this is
-       written to avoid, and it is worse there than on a desktop — the narrower
-       the column, the more a number of that size dominates it. */
-    font-size: clamp(27px, 2.6vw, 37px);
-    line-height: 1;
-    letter-spacing: -0.04em;
-    color: var(--ink);
-  }
-  .cs-stat__label {
-    /* A <dd> arrives with 40px of inherited indent, which would leave every
-       sentence in the card out of line with the number above it. Set directly
-       under the number rather than pushed to the foot of the card: the numbers
-       are all one line tall, so in normal flow the three captions start on the
-       same line as each other and any slack falls at the bottom of the shorter
-       cards, where nobody is reading. */
-    margin: 10px 0 0;
-    font-size: clamp(15px, 1.1vw, 16.5px);
-    line-height: 1.5;
-    letter-spacing: -0.004em;
-    /* The reading colour, not the caption one. These sentences are the whole
-       meaning of the numbers above them — three figures at --ink-2 is three
-       numbers and a legend too quiet to check them against. */
-    color: var(--ink-1);
-  }
-  /* Whose numbers these are, at the quietest level the page has. It is a
-     citation: someone who wants it will look under the panels for it, and
-     putting it first would introduce the evidence with its footnote. */
-  .cs-stats__source {
-    margin: 16px 0 0;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--ink-3);
+     The measure is applied here, to the whole figure, and not to the picture and the
+     caption separately as it was at first. Those two are set in different sizes —
+     16px and 14px — and --fig-w is a count of characters, so the same declaration
+     gave the caption 548px against the picture's 626 and the figure ended up with
+     two right edges. Capping the box instead means the count is read once, in the
+     chapter's own 16px, and everything inside simply fills what it is given. */
+  .cs-chapter .cs-figure {
+    grid-column: 2;
+    max-width: var(--fig-w);
   }
 
   /* ---------- Build sequence (chapter 08) ----------
@@ -1605,40 +1551,12 @@
 
   /* ---------- Responsive ----------
      The same bands as the homepage, for the same reasons — see its stylesheet.
-     Everything that can be a continuous curve already is one in the base
-     rules, so these bands only carry things that genuinely change shape: the
-     nav pill's density, the chapter rail going from a column to a row, and the
-     research cards turning on their side. */
-
-  /* One band across both of the phone and tablet ones below, because the change
-     it carries happens at the same width for both: three cards stop fitting the
-     reading column at about 900. Written once here rather than twice down there.
-
-     They become one column, and each card turns from a stack into a row — the
-     number in a fixed left column, its sentence beside it. Stacking them as they
-     are on a desktop was the obvious move and the wrong one: a 676px card
-     holding a 27px number over a one-line caption is mostly empty box, three of
-     them is a lot of page spent on three facts, and at 601 the three-up version
-     they replace was 168px columns of four-line ragged text. Turned on their
-     side they are full at any width and cost a third of the height.
-
-     The left column is a fixed 104px, not auto. Auto sizes each card to its own
-     number, which starts the three sentences at three different verticals; the
-     value is set from the widest of them, "18 hrs", with a couple of pixels
-     spare at the size this band draws it. */
-  @media (max-width: 900px) {
-    .cs-stats__grid { grid-template-columns: minmax(0, 1fr); }
-    .cs-stat {
-      display: grid;
-      grid-template-columns: 104px minmax(0, 1fr);
-      column-gap: clamp(14px, 2.4vw, 22px);
-      /* The number is twice the height of the line beside it, and aligning the
-         boxes would leave it hanging above its own sentence. */
-      align-items: baseline;
-      padding: clamp(18px, 2.6vw, 24px) clamp(18px, 2.4vw, 24px);
-    }
-    .cs-stat__label { margin: 0; }
-  }
+     Everything that can be a continuous curve already is one in the base rules,
+     so these bands only carry things that genuinely change shape, which is now
+     down to two: the nav pill's density, and the chapter rail going from a column
+     beside the writing to a line above it. The research numbers used to need a
+     band of their own to turn three columns into three rows; they are rows at
+     every width now, so there is nothing left to switch. */
 
   @media (min-width: 601px) and (max-width: 900px) {
     /* 20px of offset and a 74px pill. */
@@ -1696,6 +1614,15 @@
     }
     .cs-chapter__no { font-size: 20px; }
     .cs-chapter__body { max-width: none; }
+    /* Everything that was placed in the writing's column has to be told where that
+       column went. The grid has one of them here, so a block still asking for
+       column 2 would build a second one out of nothing and sit in it. The measure
+       comes off with it: it was matching the body's 62ch, and the body is full
+       width from here down. */
+    .cs-chapter .cs-figure {
+      grid-column: 1;
+      max-width: none;
+    }
 
     .hp-footer { --foot-x: 22px; padding: 66px var(--foot-x) 28px; }
     .hp-footer__title { font-size: clamp(46px, 13vw, 76px); }
@@ -1766,6 +1693,14 @@
     .cs-lb__close { opacity: 1; transform: none; }
   }
 </style>
+
+<!-- Vercel Web Analytics, the same line that is on the other five pages: page views
+     only, cookieless, and no consent banner needed. Same-origin — /_vercel/insights
+     is a route Vercel adds to the deployment when Web Analytics is enabled, not a
+     third-party script — and it 404s on the local dev server, which is expected.
+     The longer note, including why the window.va shim from Vercel's snippet is not
+     here, is in index.html. -->
+<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 
@@ -1862,7 +1797,7 @@
                srcset="/assets/saddle-requirements-1120.b547ac21.webp 1120w,
                        /assets/saddle-requirements-1680.b547ac21.webp 1680w,
                        /assets/saddle-requirements-2240.b547ac21.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
                width="30438" height="14742"
                alt="A working board in three lanes. Along the top, the youth development app: a row of stage cards running from discovery and awareness through first app experience and on by week, with acceptance criteria and open questions stacked underneath each one. Sofa to Saddle runs the same way in the lane below it. A third lane at the foot, headed Overlapping requirements, collects the parts both apps could share."
                loading="lazy" decoding="async">
@@ -1882,28 +1817,26 @@
           <p>The same research says what riding gives back, and almost none of it is fitness. It is how a ride leaves people feeling &mdash; clearer-headed, calmer, better about themselves. <strong>So the outcome to design for was a confidence one</strong>, and the plan&rsquo;s job was to get somebody to a first ride they would want to repeat.</p>
           <p>It&rsquo;s the same insight Couch to 5k built on for running, and it became the spine of Sofa to Saddle: eight weeks, free, and pointed at the hurdles rather than at fitness.</p>
         </div>
-        <!-- Three numbers, in the order the argument runs: how much sofa, how
-             many people already want off it, and what a week of riding is worth.
-             The rest of the research stays in the prose above — see .cs-stats in
-             the stylesheet for why this is three cards and not the five or six
-             it carried while the block was being drawn. -->
-        <div class="cs-stats">
-          <dl class="cs-stats__grid" data-reveal data-stagger>
-            <div class="cs-stat">
-              <dt class="cs-stat__no">18 hrs</dt>
-              <dd class="cs-stat__label">of the average Briton&rsquo;s week now goes on the sofa.</dd>
-            </div>
-            <div class="cs-stat">
-              <dt class="cs-stat__no">70%</dt>
-              <dd class="cs-stat__label">openly admit they think they should exercise more.</dd>
-            </div>
-            <div class="cs-stat">
-              <dt class="cs-stat__no">37%</dt>
-              <dd class="cs-stat__label">more likely to feel good about themselves, among weekly riders.</dd>
-            </div>
-          </dl>
-          <p class="cs-stats__source" data-reveal>British Cycling research on the UK public &mdash; the numbers the brief was written from.</p>
-        </div>
+        <!-- The research as campaign language, in place of the three numbers this
+             chapter used to set as type. The prose above still names British
+             Cycling's research; the picture is what that research looked like once
+             it had to speak to the people it was about — scrolling to rolling,
+             with the sofa hours and the 70% wish to exercise written into the
+             blue panel. Same slide treatment as the velodrome photograph later
+             (black frame cropped off), but the source is 5760 so it takes the
+             full ladder and a viewer — the 1024px still that first landed here
+             was a downscale and went soft at the measure. See PHOTOS in
+             build-saddle-figures.py. -->
+        <figure class="cs-figure" style="--ar: 2.0690" data-reveal>
+          <img src="/assets/saddle-insight-1120.3b4bc6cd.webp"
+               srcset="/assets/saddle-insight-1120.3b4bc6cd.webp 1120w,
+                       /assets/saddle-insight-1680.3b4bc6cd.webp 1680w,
+                       /assets/saddle-insight-2240.3b4bc6cd.webp 2240w"
+               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
+               width="4320" height="2088"
+               alt="A campaign diptych on a blurred green woodland background. On the left, a woman in a black helmet and a rainbow-gradient cycling jersey rides with one arm raised, under the words SCROLLING and ROLLING in white capitals with a green toggle switched on between them. On the right, a blue panel reads: The average Briton spends 18 hours a week on the sofa. 70% say they should exercise more. Sofa to Saddle turns that gap into a bike ride."
+               loading="lazy" decoding="async">
+        </figure>
       </section>
 
       <section class="cs-chapter">
@@ -1927,7 +1860,7 @@
                srcset="/assets/saddle-quiz-1120.5b08d162.webp 1120w,
                        /assets/saddle-quiz-1680.5b08d162.webp 1680w,
                        /assets/saddle-quiz-2240.5b08d162.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
                width="5486" height="2522"
                alt="The four screens of the onboarding quiz, each numbered out of four above a progress bar. What is your main cycling goal, offering commuting, riding with people, mental health, a health condition, getting outdoors, fitness and losing weight. Do you currently have access to a bike, noting that any type is fine &mdash; static, indoor, outdoor, borrowed or hired. When did you last ride a bike, running from in the last week down to I&rsquo;ve never ridden a bike, under a line saying this helps us find a comfortable starting level for you. And how much do you exercise each week, starting at I don&rsquo;t exercise, under a line saying exercise is anything that gets you moving."
                loading="lazy" decoding="async">
@@ -1957,7 +1890,7 @@
                srcset="/assets/saddle-toolkits-1120.5e97b8bb.webp 1120w,
                        /assets/saddle-toolkits-1680.5e97b8bb.webp 1680w,
                        /assets/saddle-toolkits-2240.5e97b8bb.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
                width="6058" height="7078"
                alt="Two brand toolkit sheets, one above the other. British Cycling&rsquo;s: the winged-rider logo with the wordmark in mono and in red and blue, a headline specimen setting ENJOY THE RIDE in Anton on a strong blue with Inter beneath it for body copy, swatches labelled BC Blue, BC Red, BC Dark Navy, BC Off White and BC Light Blue, and three photographs of racing &mdash; a BMX rider mid-track, riders at a start line, a group laughing after a ride. Lloyds&rsquo;: the black horse in three lockups, a specimen setting Charming, Playful, Bold in GT Ultra on a mid green, a palette of five greens from near-black to almost white, with a row of greys and a row of pastel accents beneath, and softer imagery &mdash; a woman on a sofa with a mug, and line illustrations of a plant, a telescope and a terrarium."
                loading="lazy" decoding="async">
@@ -1981,7 +1914,7 @@
                srcset="/assets/saddle-flow-1120.5f7ffb54.webp 1120w,
                        /assets/saddle-flow-1680.5f7ffb54.webp 1680w,
                        /assets/saddle-flow-2240.5f7ffb54.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
                width="25920" height="29696"
                alt="The whole product as a flow map: some forty screen cards joined by arrows, each headed with the screen&rsquo;s name and divided into two columns, Context and Interaction. It begins at seeing the campaign and downloading the app, runs down through the welcome screen, single sign-on and sign-up, then splits on whether the rider has taken the quiz — one branch leading to a populated plan, progress and profile, the other to the same screens as empty states. Pale blue notes are pinned to individual cards where a question was still open."
                loading="lazy" decoding="async">
@@ -2015,7 +1948,7 @@
                srcset="/assets/saddle-badges-1120.5c0692a4.webp 1120w,
                        /assets/saddle-badges-1680.5c0692a4.webp 1680w,
                        /assets/saddle-badges-2240.5c0692a4.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
                width="9829" height="2590"
                alt="Seven badge award screens in a row, all built the same way: a headline, a badge symbol in a circle, the line You just earned the such-and-such badge, a sentence of explanation and a Continue button. Two are dark navy &mdash; You&rsquo;re off, for the Off the Sofa badge, and First ride done, for Wheels in Motion. Two are bright blue &mdash; Ride ready, and Knowledge is power for the Love to Learn badge. Three are green &mdash; Keep moving, two levels to go, and First reflection for the Pedal and Ponder badge."
                loading="lazy" decoding="async">
@@ -2033,12 +1966,44 @@
           <p>Habit-forming apps live or die on tone. I defined the principles and worked with a copywriter to develop it <strong>alongside the UI, not after it</strong>, so tone of voice and interaction design grew together instead of one dictating to the other.</p>
           <p>The voice we landed on was matter-of-fact rather than relentlessly upbeat, acknowledging effort without treating every ride like a triumph.</p>
         </div>
-        <figure class="cs-figure" style="--ar: 0.5829" data-reveal>
-          <img src="/assets/saddle-module-531.9695adf3.webp"
-               width="531" height="911"
-               alt="A Sofa to Saddle learning module over a photograph of a rider: Covering the essentials, ten minutes, described as giving you all you need to get started confidently and safely, with a Mark completed button."
+        <!-- The tone of voice page from the brand guidelines, supplied by the owner
+             for this chapter. It replaces the learning-module render, which came out
+             first, and the swap is the right way round: the render was one screen
+             the voice had been applied to, so a reader had to infer the rules from a
+             single sample, and this is the rules themselves — three principles, and
+             a list of what to use against what to avoid. A chapter that says the
+             voice was defined and then worked out alongside the UI can show either
+             the definition or one result of it, and the definition is the part that
+             was the design work.
+
+             It is also the only figure here that is not a Figma export. It is a
+             frame of a 1080p recording of the guidelines deck, so it is 1920px where
+             the other sheets are five or six thousand, and that shows in two places:
+             it stops at a 1680 rung where they reach 2240, and the viewer opens it
+             at 1920 rather than 3360. Both are handled in the build (see ZOOM_MIN)
+             and neither is visible on the page — 1920 across a 626px figure is more
+             than a 2x screen asks for. A still exported from Figma would upgrade
+             both by dropping the file in.
+
+             The one thing to know is that this is a page of small print. At 626 its
+             body lines land near 9px, which is a picture of a specification rather
+             than a specification; opened, they are about 17px and read normally. It
+             is the clearest case on the page for the viewer existing at all.
+
+             The render it replaced is still in assets/ as saddle-module-531 and the
+             build still produces it — see PHONES in build-saddle-figures.py. Its
+             leaving is also why --fig-w could become the measure: it was a 531px
+             file at a 0.58 aspect, so it could not be drawn past 531 and stood 865px
+             tall even at 504. Nothing on the page has either problem now. -->
+        <figure class="cs-figure" style="--ar: 1.7778" data-reveal>
+          <img src="/assets/saddle-voice-1120.86ad9091.webp"
+               srcset="/assets/saddle-voice-1120.86ad9091.webp 1120w,
+                       /assets/saddle-voice-1680.86ad9091.webp 1680w"
+               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
+               width="1920" height="1080"
+               alt="A tone of voice page from the Sofa to Saddle guidelines, headed TONE OF VOICE PRINCIPLES in condensed capitals, black over blue, with a note that the principles reflect the warm, encouraging and down-to-earth personality of Sofa to Saddle. Two panels sit below it. The blue one holds three principles, each a heading over a line of explanation: ENCOURAGING, inspires action and confidence; WARM AND FRIENDLY, approachable and human; DOWN-TO-EARTH, relatable, real, and everyday. The green one is split into Use and Avoid. Use: short, familiar, everyday words, especially headlines; language that builds belief, not pressure; action-led phrases that feel rhythmic and full of momentum. Avoid: sporty or performance-focused language; technical cycling terms; anything that signals &lsquo;cycling culture&rsquo;."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The voice doing its work in the interface: what the module covers, how long it takes, and no more enthusiasm than that.</span></figcaption>
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The principles the copy was written against. Three on the left, and on the right the part that did the work day to day &mdash; what to use, and what to avoid: no sporty language, no technical cycling terms, nothing that signals cycling culture.</span></figcaption>
         </figure>
       </section>
 
@@ -2250,9 +2215,16 @@
              the old rule the picture could stop being the thing that bound and
              the caption would then run wider than the picture it belongs to. One
              width for every figure removes the problem rather than patching it:
-             picture and caption both take --fig-w, so they are in step at every
-             viewport. This file is 924px against the 448 it is drawn at, which is
-             enough for a 2x screen. -->
+             the figure is capped and both fill it, so they are in step at every
+             viewport.
+
+             It is also the one figure the measure costs something. The source is a
+             1024px still and 924 of it survives the crop, so drawn at 626 it has
+             1.5 device pixels per CSS pixel where a 2x screen wants 2 — where the
+             boards have a 2240px rung and do not care. There is nothing larger of
+             this in existence, and it is the right place for the cost to land: it
+             is a photograph of a sofa on a velodrome, with no ruled edges and no
+             small type, which is where softness would show. -->
         <figure class="cs-figure" style="--ar: 1.5" data-reveal>
           <img src="/assets/saddle-campaign-924.4322c82b.webp"
                width="924" height="616"
@@ -2386,7 +2358,17 @@
     // file, so it is undefined until then and on a reduced-motion load never
     // exists at all — hence the guard rather than a bare call.
     if (lenis) lenis.stop();
-    requestAnimationFrame(function() { lb.classList.add('is-open'); });
+    // The class has to land in a different style resolution from lb.hidden = false,
+    // or there is no start state for the fade to run from and the overlay appears
+    // instantly. Reading offsetWidth forces that resolution synchronously, which is
+    // what requestAnimationFrame was doing here before by waiting a frame. Same
+    // result, one fewer thing that has to happen: the frame callback is skipped
+    // outright in a view whose frames are throttled, and there the overlay was
+    // left unhidden and locking the page at opacity 0. That is not the whole of
+    // that failure — the fade is a transition and a throttled view will not run it
+    // either — but this half of it is free to fix.
+    void lb.offsetWidth;
+    lb.classList.add('is-open');
     lbClose.focus();
     document.addEventListener('keydown', onKey);
   }
@@ -2570,9 +2552,9 @@
   // list kept here. A srcset means the build produced a ladder for this figure,
   // and a ladder is produced exactly where the source is large enough to be
   // worth more than one rung — which is the same test that gives it a zoom copy.
-  // The three device renders have a single rung at their own size, so they have
-  // no srcset and are skipped, which is correct: there is nothing larger of them
-  // to open.
+  // The campaign photograph has a single rung at its own size, so it has no
+  // srcset and is skipped, which is correct: there is nothing larger of it to
+  // open. The insight diptych carries a srcset now that its source is 5760.
   [].forEach.call(document.querySelectorAll('.cs-figure img[srcset]'), function(img) {
     var src = zoomSrc(img.getAttribute('src'));
     if (!src) return;
