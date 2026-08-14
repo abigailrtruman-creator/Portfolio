@@ -14,6 +14,8 @@ sofa-reel-motion.png
 # Job applications and drafts. Kept locally; the repo is public and Vercel would
 # serve these at /<name>.md.
 *.md
+# ...except contributor/agent docs, which should be tracked.
+!AGENTS.md
 # Build/authoring scripts — not part of the site
 *.py
 
