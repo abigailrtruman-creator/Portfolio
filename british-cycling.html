@@ -402,10 +402,11 @@
         -1 * var(--reel-screens) * (var(--screen-w) + var(--reel-gap))));
     }
   }
-  /* Held still while the pointer is on it, so a screen that catches someone's
-     eye can be looked at rather than chased. */
-  .cs-reel:hover .cs-reel__track,
-  .cs-reel:focus-within .cs-reel__track { animation-play-state: paused; }
+  /* It does not pause on hover or focus. Parking the pointer on a screen that
+     caught the eye used to freeze the row, which made it feel stuck rather
+     than like a thing still going. Grabbing it still takes over — that is
+     dragging, not a pause — and the crawl resumes the moment the finger
+     comes up. */
 
   /* A width and nothing else. The height is the picture's own, which is the
      crop build-bcweb-figures.py took, so that crop is stated once and this
@@ -1010,7 +1011,8 @@
       axis = null;
       vel = 0;
       samples = [{ t: e.timeStamp, x: e.clientX }];
-      stopMotion();
+      // Crawl keeps going until the gesture is actually a horizontal drag.
+      // A click, a hover, or a vertical scroll must not freeze the row.
     });
 
     reel.addEventListener('pointermove', function(e) {
@@ -1021,6 +1023,13 @@
         if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
         axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
         if (axis === 'x') {
+          stopMotion();
+          // Start 1:1 from here, not from pointerdown, so the crawl that ran
+          // through the hysteresis does not get added on as a jump.
+          origin = x;
+          startX = e.clientX;
+          dx = 0;
+          samples = [{ t: e.timeStamp, x: e.clientX }];
           reel.classList.add('is-dragging');
           if (reel.setPointerCapture) reel.setPointerCapture(pointerId);
         }
