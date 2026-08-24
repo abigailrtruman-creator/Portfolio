@@ -194,15 +194,22 @@
     text-decoration: none;
     white-space: nowrap;
     border-radius: 999px;
-    transition: background 0.25s ease, color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background 100ms ease-out, color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-nav__link:hover { background: rgba(255,255,255,0.06); }
+  .hp-nav__link:active,
+  .hp-nav__link.is-pressed {
+    background: rgba(255,255,255,0.10);
+    transform: scale(0.97);
+  }
   .hp-nav__arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: rgba(255,255,255,0.55);
-    transition: color 0.25s ease, transform 0.25s cubic-bezier(0.32,0.72,0,1);
+    transition: color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
@@ -493,14 +500,19 @@
     font-weight: 500;
     letter-spacing: -0.005em;
     text-decoration: none;
-    transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 100ms ease-out, background 100ms ease-out;
   }
   .hp-footer__cta.is-ghost {
     background: transparent;
     color: #fff;
     border: 1px solid rgba(255,255,255,0.2);
   }
-  .hp-footer__cta:hover { transform: translateY(-3px); }
+  .hp-footer__cta:active,
+  .hp-footer__cta.is-pressed {
+    transform: scale(0.97);
+  }
   .hp-footer__cta-arrow { display: inline-flex; align-items: center; }
   .hp-footer__cta-arrow svg { width: 16px; height: 16px; display: block; }
 
@@ -541,9 +553,16 @@
     font-size: 13px;
     color: var(--ink-2);
     text-decoration: none;
-    transition: color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-footer__back:hover { color: var(--ink); }
+  .hp-footer__back:active,
+  .hp-footer__back.is-pressed {
+    color: var(--ink);
+    transform: scale(0.97);
+  }
   .hp-footer__back svg { width: 14px; height: 14px; display: block; }
   /* It travels, where the contact arrows only lift: this one is a direction. */
   .hp-footer__back .hp-footer__cta-arrow {
@@ -669,8 +688,20 @@
               mask-image: none;
     }
     .hp-footer__cta,
+    .hp-nav__link,
     .hp-nav__arrow,
+    .hp-footer__back,
     .hp-footer__back .hp-footer__cta-arrow { transition-duration: 0.01ms; }
+    .hp-nav__link:active,
+    .hp-nav__link.is-pressed,
+    .hp-footer__cta:active,
+    .hp-footer__cta.is-pressed,
+    .hp-footer__back:active,
+    .hp-footer__back.is-pressed,
+    .cs-lb__btn:active,
+    .cs-lb__btn.is-pressed {
+      transform: none;
+    }
     .hp-footer__back:hover .hp-footer__cta-arrow,
     .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
   }
@@ -694,7 +725,7 @@
     <span class="hp-nav__name">Abbie Truman</span>
   </a>
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="/assets/abbie-truman-cv.8da5ab19.pdf" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="https://drive.google.com/file/d/1capCzcKOOscb3WxnS8kzHoWnSQtovXNP/view?usp=sharing" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>
@@ -710,7 +741,7 @@
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-rise="1">Case study &middot; British Cycling website</span>
       <h1 class="cs-soon__title" id="cs-soon-h" data-rise="2">Coming soon.</h1>
-      <p class="cs-soon__lede" data-rise="3">The work is done. The write-up isn&rsquo;t &mdash; this one is still being written.</p>
+      <p class="cs-soon__lede" data-rise="3">The work is done. The write-up isn&rsquo;t. This one is still being written.</p>
       <ul class="cs-tags" data-rise="4">
         <li>UX &amp; UI</li>
         <li>Content</li>
@@ -869,6 +900,20 @@
 
 <script>
 (function() {
+  var sel = '.hp-nav__link,.hp-footer__cta,.hp-footer__back';
+  function pressOn(e) {
+    if (e.button) return;
+    var el = e.target.closest && e.target.closest(sel);
+    if (el) el.classList.add('is-pressed');
+  }
+  function pressOff(e) {
+    var el = e.target.closest && e.target.closest(sel);
+    if (el) el.classList.remove('is-pressed');
+  }
+  document.addEventListener('pointerdown', pressOn);
+  document.addEventListener('pointerup', pressOff);
+  document.addEventListener('pointercancel', pressOff);
+
   document.querySelector('[data-year]').textContent = new Date().getFullYear();
 
   // Armed here rather than in the stylesheet so the hidden state cannot outlive

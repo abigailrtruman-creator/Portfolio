@@ -316,15 +316,22 @@
     text-decoration: none;
     white-space: nowrap;
     border-radius: 999px;
-    transition: background 0.25s ease, color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background 100ms ease-out, color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-nav__link:hover { background: rgba(255,255,255,0.06); }
+  .hp-nav__link:active,
+  .hp-nav__link.is-pressed {
+    background: rgba(255,255,255,0.10);
+    transform: scale(0.97);
+  }
   .hp-nav__arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: rgba(255,255,255,0.55);
-    transition: color 0.25s ease, transform 0.25s cubic-bezier(0.32,0.72,0,1);
+    transition: color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
@@ -957,14 +964,19 @@
     font-weight: 500;
     letter-spacing: -0.005em;
     text-decoration: none;
-    transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 100ms ease-out, background 100ms ease-out;
   }
   .hp-footer__cta.is-ghost {
     background: transparent;
     color: #fff;
     border: 1px solid rgba(255,255,255,0.2);
   }
-  .hp-footer__cta:hover { transform: translateY(-3px); }
+  .hp-footer__cta:active,
+  .hp-footer__cta.is-pressed {
+    transform: scale(0.97);
+  }
   .hp-footer__cta-arrow { display: inline-flex; align-items: center; }
   .hp-footer__cta-arrow svg { width: 16px; height: 16px; display: block; }
 
@@ -1005,9 +1017,16 @@
     font-size: 13px;
     color: var(--ink-2);
     text-decoration: none;
-    transition: color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-footer__back:hover { color: var(--ink); }
+  .hp-footer__back:active,
+  .hp-footer__back.is-pressed {
+    color: var(--ink);
+    transform: scale(0.97);
+  }
   .hp-footer__back svg { width: 14px; height: 14px; display: block; }
   /* It travels, where the contact arrows only lift: this one is a direction. */
   .hp-footer__back .hp-footer__cta-arrow {
@@ -1270,6 +1289,8 @@
     cursor: pointer;
   }
   .cs-lb__btn:hover { color: var(--ink); border-color: rgba(255,255,255,0.32); }
+  .cs-lb__btn:active,
+  .cs-lb__btn.is-pressed { transform: scale(0.97); }
   .cs-lb__btn svg { width: 14px; height: 14px; display: block; }
   .cs-lb__close {
     position: absolute;
@@ -1406,8 +1427,20 @@
     .cs-motion .cs-split.is-in .cs-line__in,
     .cs-motion .is-in .cs-split .cs-line__in { transition: none; }
     .hp-footer__cta,
+    .hp-nav__link,
     .hp-nav__arrow,
+    .hp-footer__back,
     .hp-footer__back .hp-footer__cta-arrow { transition-duration: 0.01ms; }
+    .hp-nav__link:active,
+    .hp-nav__link.is-pressed,
+    .hp-footer__cta:active,
+    .hp-footer__cta.is-pressed,
+    .hp-footer__back:active,
+    .hp-footer__back.is-pressed,
+    .cs-lb__btn:active,
+    .cs-lb__btn.is-pressed {
+      transform: none;
+    }
     .hp-footer__back:hover .hp-footer__cta-arrow,
     .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
     /* Not gated on .cs-motion: the viewer is not an enhancement, so it is
@@ -1444,7 +1477,7 @@
        link at the end of the article, where someone who has finished reading
        actually is. -->
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="/assets/abbie-truman-cv.8da5ab19.pdf" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="https://drive.google.com/file/d/1capCzcKOOscb3WxnS8kzHoWnSQtovXNP/view?usp=sharing" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>
@@ -1514,7 +1547,7 @@
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">A checkout doing its job, but showing its age.</h2>
           <p>Boots.com&rsquo;s legacy checkout worked, but it worked in the way flows built five years ago tend to work. Multi-step. A progress bar that got in its own way. Same-Day Click &amp; Collect, a service the business was investing in heavily, didn&rsquo;t yet exist inside the flow.</p>
-          <p>The brief was to reshape it. Not just modernise the UI, but re-question the flow itself.</p>
+          <p>The brief was to reshape it. The UI was the easy half. The flow needed questioning.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.5969" data-reveal>
           <img src="/assets/boots-01-1120.162736ef.webp"
@@ -1537,7 +1570,7 @@
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Friction isn&rsquo;t the enemy. Perceived friction is.</h2>
           <p>Through usability testing, session analysis, and a competitive audit across UK retail, one insight kept surfacing: customers didn&rsquo;t struggle with the <em>number</em> of steps. They struggled with steps feeling opaque, with not being able to check what they&rsquo;d entered, and with a progress bar that promised a rigidness the flow didn&rsquo;t have.</p>
-          <p>That reframing shaped every subsequent decision.</p>
+          <p>That is what we designed against.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.5966" data-reveal>
           <img src="/assets/boots-02-1120.e22190db.webp"
@@ -1626,7 +1659,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Bringing loyalty to the surface.</h2>
-          <p>The integrated loyalty component sits inside the payment section and always shows the customer their current Advantage Card balance and whether it covers the order. Today it&rsquo;s buried, which almost certainly suppresses redemption. Making it visible wasn&rsquo;t just cleaner UX. It was a deliberate <strong>commercial move</strong> to promote a lever the business was already investing in.</p>
+          <p>The integrated loyalty component sits inside the payment section and always shows the customer their current Advantage Card balance and whether it covers the order. Today it&rsquo;s buried, which almost certainly suppresses redemption. Making it visible was a <strong>commercial move</strong>: promote a lever the business was already investing in.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.9481" data-reveal>
           <img src="/assets/boots-06-1120.6270eb9b.webp"
@@ -1648,7 +1681,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The confirmation, mirrored.</h2>
-          <p>For the order confirmation page, we leveraged patterns I&rsquo;d designed for Boots&rsquo; transactional emails. Same layout, same visual language. Complete an order, and the email that arrives 30 seconds later reads as the same document. That mirroring is easy to miss, but it&rsquo;s what makes a system feel <strong>considered</strong>.</p>
+          <p>For the order confirmation page, we used patterns I&rsquo;d designed for Boots&rsquo; transactional emails. Same layout, same visual language. Complete an order, and the email that arrives 30 seconds later reads as the same document. That mirroring is easy to miss, but it&rsquo;s what makes a system feel <strong>considered</strong>.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.6223" data-reveal>
           <img src="/assets/boots-07-1120.aed56228.webp"
@@ -1693,7 +1726,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The design that didn&rsquo;t make the build.</h2>
-          <p>We designed around the constraint anyway. The mixed-availability flow &mdash; some items same-day, others not &mdash; went through multiple explorations. We landed on the option that caused least disruption: telling customers some items were available today, and offering the soonest day the whole basket would be ready as an alternative.</p>
+          <p>We designed around the constraint anyway. The mixed-availability flow, some items same-day, others not, went through multiple explorations. We landed on the option that caused least disruption: telling customers some items were available today, and offering the soonest day the whole basket would be ready as an alternative.</p>
           <p>Later, we discovered even that wasn&rsquo;t technically feasible. So the build does less. When mixed-availability applies, we say nothing. The alternative is a notification we can&rsquo;t actually build. I don&rsquo;t love that. <strong>But shipping a lie is worse than shipping less.</strong></p>
         </div>
         <figure class="cs-figure" style="--ar: 0.9686" data-reveal>
@@ -1780,12 +1813,40 @@
   </button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
+<!-- Same argument as the homepage: these used to be jsDelivr URLs, which made
+     the hero letters and the smooth scroll depend on a third party being
+     reachable on a hiring-manager network. Unmodified dist files, hashed like
+     every other asset, because /assets/* is immutable for a year. Not deferred
+     — they sit at the end of the body and the inline script below needs them
+     to have run. -->
+<script src="/assets/gsap-3.13.0.96c01b81.js"></script>
+<script src="/assets/scrolltrigger-3.13.0.30821939.js"></script>
+<script src="/assets/lenis-1.3.11.804047c1.js"></script>
 <script>
 (function() {
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  (function initPressables() {
+    var sel = '.hp-nav__link,.hp-footer__cta,.hp-footer__back,.cs-lb__btn,.cs-seq__step,.cs-figure__open';
+    function on(e) {
+      if (e.button) return;
+      var el = e.target.closest && e.target.closest(sel);
+      if (el) el.classList.add('is-pressed');
+    }
+    function off(e) {
+      var el = e.target.closest && e.target.closest(sel);
+      if (el) el.classList.remove('is-pressed');
+    }
+    document.addEventListener('pointerdown', on);
+    document.addEventListener('pointerup', off);
+    document.addEventListener('pointercancel', off);
+    document.addEventListener('pointerout', function(e) {
+      var el = e.target.closest && e.target.closest(sel);
+      if (!el) return;
+      if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+      el.classList.remove('is-pressed');
+    });
+  })();
+
   var EASE = 'cubic-bezier(0.16,1,0.3,1)';
 
   document.querySelector('[data-year]').textContent = new Date().getFullYear();

@@ -313,15 +313,22 @@
     text-decoration: none;
     white-space: nowrap;
     border-radius: 999px;
-    transition: background 0.25s ease, color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background 100ms ease-out, color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-nav__link:hover { background: rgba(255,255,255,0.06); }
+  .hp-nav__link:active,
+  .hp-nav__link.is-pressed {
+    background: rgba(255,255,255,0.10);
+    transform: scale(0.97);
+  }
   .hp-nav__arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: rgba(255,255,255,0.55);
-    transition: color 0.25s ease, transform 0.25s cubic-bezier(0.32,0.72,0,1);
+    transition: color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
@@ -692,6 +699,8 @@
     cursor: pointer;
   }
   .cs-lb__btn:hover { color: var(--ink); border-color: rgba(255,255,255,0.32); }
+  .cs-lb__btn:active,
+  .cs-lb__btn.is-pressed { transform: scale(0.97); }
   .cs-lb__btn svg { width: 14px; height: 14px; display: block; }
   .cs-lb__close {
     position: absolute;
@@ -1070,7 +1079,9 @@
     text-align: left;
     color: var(--ink-2);
     cursor: pointer;
-    transition: background 0.25s ease, color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background 100ms ease-out, color 100ms ease-out;
   }
   /* The lit segment of the spine, and only ever one of them. Every step up to
      and including the selected one used to light, so the rail filled as you
@@ -1096,6 +1107,8 @@
   }
   .cs-seq__step.is-active::before { background: rgba(255,255,255,0.5); }
   .cs-seq__step:hover { background: rgba(255,255,255,0.04); color: var(--ink); }
+  .cs-seq__step:active,
+  .cs-seq__step.is-pressed { background: rgba(255,255,255,0.08); color: var(--ink); }
   .cs-seq__step.is-active { background: rgba(255,255,255,0.06); color: var(--ink); }
   .cs-seq__step-no {
     font-family: var(--ff-display);
@@ -1386,14 +1399,19 @@
     font-weight: 500;
     letter-spacing: -0.005em;
     text-decoration: none;
-    transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 100ms ease-out, background 100ms ease-out;
   }
   .hp-footer__cta.is-ghost {
     background: transparent;
     color: #fff;
     border: 1px solid rgba(255,255,255,0.2);
   }
-  .hp-footer__cta:hover { transform: translateY(-3px); }
+  .hp-footer__cta:active,
+  .hp-footer__cta.is-pressed {
+    transform: scale(0.97);
+  }
   .hp-footer__cta-arrow { display: inline-flex; align-items: center; }
   .hp-footer__cta-arrow svg { width: 16px; height: 16px; display: block; }
 
@@ -1434,9 +1452,16 @@
     font-size: 13px;
     color: var(--ink-2);
     text-decoration: none;
-    transition: color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-footer__back:hover { color: var(--ink); }
+  .hp-footer__back:active,
+  .hp-footer__back.is-pressed {
+    color: var(--ink);
+    transform: scale(0.97);
+  }
   .hp-footer__back svg { width: 14px; height: 14px; display: block; }
   /* It travels, where the contact arrows only lift: this one is a direction. */
   .hp-footer__back .hp-footer__cta-arrow {
@@ -1669,8 +1694,20 @@
     .cs-motion .cs-split.is-in .cs-line__in,
     .cs-motion .is-in .cs-split .cs-line__in { transition: none; }
     .hp-footer__cta,
+    .hp-nav__link,
     .hp-nav__arrow,
+    .hp-footer__back,
     .hp-footer__back .hp-footer__cta-arrow { transition-duration: 0.01ms; }
+    .hp-nav__link:active,
+    .hp-nav__link.is-pressed,
+    .hp-footer__cta:active,
+    .hp-footer__cta.is-pressed,
+    .hp-footer__back:active,
+    .hp-footer__back.is-pressed,
+    .cs-lb__btn:active,
+    .cs-lb__btn.is-pressed {
+      transform: none;
+    }
     /* The build sequence still works, and works the same way: what goes is the
        crossfade and the card resizing itself on the way. The script checks this
        too — it leaves the height to the content rather than animating a value
@@ -1715,7 +1752,7 @@
        way back to the set is the link at the end of the article, where someone
        who has finished reading actually is. -->
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="/assets/abbie-truman-cv.8da5ab19.pdf" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="https://drive.google.com/file/d/1capCzcKOOscb3WxnS8kzHoWnSQtovXNP/view?usp=sharing" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>
@@ -1772,8 +1809,9 @@
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
       <div class="cs-overview__body" data-reveal data-stagger>
-        <p>As <strong>design lead</strong>, I led the team that took Sofa to Saddle from a blank page to launch in <strong>12 weeks</strong>, a habit-forming cycling app built as a joint proposition between Lloyds Bank and British Cycling, with <strong>huge ambitions to get 1 million more people cycling by 2028</strong>. The scope ran across brand identity, UX, UI and copy, and included briefing external agencies on video and imagery, working with British Cycling&rsquo;s leadership team, and running a parallel experiment using AI to build the app&rsquo;s front-end code.</p>
-        <p>On the surface, this was an app build. Underneath, it was about <strong>giving someone a way back onto a bike</strong> &mdash; a campaign that made that feel possible, and a set of stepping stones thought through carefully enough to turn a first ride into a habit. The research was clear that riding regularly leaves people clearer-headed and better about themselves; the product&rsquo;s job was to get them there.</p>
+        <p>As <strong>design lead</strong>, I led a team of designers, content writers, strategists and consultants from a blank page to launch in <strong>12 weeks</strong>. Sofa to Saddle is a cycling app for Lloyds Bank and British Cycling.</p>
+        <p>I also built a parallel front end in Cursor. First time Elixirr had seen a designer code an app properly. We wrote the practice down. <strong>It&rsquo;s how this work gets staffed and sold now.</strong></p>
+        <p>On the surface, this was an app build. Underneath, <strong>a way back onto a bike.</strong></p>
       </div>
     </div>
   </section>
@@ -1789,8 +1827,8 @@
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">A blank page, and a deadline that didn&rsquo;t care.</h2>
           <p>There was no existing app to modernise, no legacy patterns, no accumulated user data.</p>
-          <p>What made it hard wasn&rsquo;t the idea, <strong>it was the timeframe</strong>. We had a fraction of the time a build like this usually gets, and a budget to match.</p>
-          <p>And it wasn&rsquo;t one app. <strong>The contract committed us to two</strong> &mdash; Sofa to Saddle, and a second app for children &mdash; with the same functionality underneath both. Every requirement came out of workshops with Lloyds and British Cycling in the room together, and nothing was settled until both had put their input in and both had signed it off. So before designing anything I mapped the two propositions stage by stage to find where they genuinely overlapped and where they had to diverge &mdash; which is what told us how to structure the app, and what twelve weeks and this budget could actually buy.</p>
+          <p>What made it hard wasn&rsquo;t the idea, <strong>it was the timeframe</strong>. We had a fraction of the time a build like this usually gets, and a budget to match. I was leading designers, content writers, strategists and consultants into that. Twelve weeks only works if people can keep moving. I wasn&rsquo;t going to spend it holding court over a Figma file.</p>
+          <p>And it wasn&rsquo;t one app. <strong>The contract committed us to two</strong>: Sofa to Saddle, and a second app for children, with the same functionality underneath both. Every requirement came out of workshops with Lloyds and British Cycling in the room together, and nothing was settled until both had put their input in and both had signed it off. So before designing anything I mapped the two propositions stage by stage to find where they genuinely overlapped and where they had to diverge. That told us how to structure the app, and what twelve weeks and this budget could actually buy.</p>
         </div>
         <figure class="cs-figure" style="--ar: 2.0647" data-reveal>
           <img src="/assets/saddle-requirements-1120.b547ac21.webp"
@@ -1812,10 +1850,8 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Getting back on a bike isn&rsquo;t a fitness problem. It&rsquo;s a confidence one.</h2>
-          <p>Cycling has an intimidation problem: lycra, jargon, the sense that everyone else already knows what they&rsquo;re doing. The people we were designing for weren&rsquo;t always unmotivated, they were unsure where to start and <strong>scared of getting it wrong in public</strong>.</p>
-          <p>British Cycling&rsquo;s research on the UK public put numbers to that. The average Briton now clocks up over 18 hours of sofa time a week, and 70% openly admit they think they should exercise more &mdash; <strong>held back by practical hurdles rather than by willpower</strong>. The hurdles were specific ones: safety, intimidation, not having a bike, and not knowing how to start.</p>
-          <p>The same research says what riding gives back, and almost none of it is fitness. It is how a ride leaves people feeling &mdash; clearer-headed, calmer, better about themselves. <strong>So the outcome to design for was a confidence one</strong>, and the plan&rsquo;s job was to get somebody to a first ride they would want to repeat.</p>
-          <p>It&rsquo;s the same insight Couch to 5k built on for running, and it became the spine of Sofa to Saddle: eight weeks, free, and pointed at the hurdles rather than at fitness.</p>
+          <p>This was the insight that fuelled the ambition. Cycling has an intimidation problem: lycra, jargon, the sense that everyone else already knows what they&rsquo;re doing. Some people simply weren&rsquo;t motivated. A lot more already knew they should exercise, and wanted to. They just needed a helping hand. British Cycling&rsquo;s research put numbers to that: over 18 hours of sofa time a week, and 70% who think they should exercise more.</p>
+          <p>What riding gives back is almost none of it fitness. It is how a ride leaves people feeling: clearer-headed, calmer, better about themselves. <strong>So the aim of the app was a confidence one</strong>: a free plan pointed at the hurdles rather than at fitness, the same insight Couch to 5k built on for running.</p>
         </div>
         <!-- The research as campaign language, in place of the three numbers this
              chapter used to set as type. The prose above still names British
@@ -1904,8 +1940,8 @@
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Two sets of objectives, one call to make.</h2>
           <p>Good judgement meant knowing both brands&rsquo; objectives well enough to decide, case by case, whose priority mattered most and why. Every call still had to earn its keep commercially: <strong>good enough to ship, never gold-plated past scope or budget</strong>.</p>
-          <p>I held the strategy across every layer of the product, down to the smallest interaction, reviewing the detail and correcting it where it hadn&rsquo;t been considered enough.</p>
-          <p>The product map is where a lot of that got done. I mapped the whole flow and we walked it screen by screen with both clients in the room, looking for the gaps &mdash; not gaps in the screens, gaps in the proposition. <strong>The sharpest one: the app exists to get a nervous beginner out on a first ride, and British Cycling&rsquo;s own offer, insurance and membership, is built for riders who already are one.</strong> Getting someone from finishing a plan to a real relationship with British Cycling was never an interaction we could design our way out of, and the map is what put it on the table early enough to be a strategy conversation instead of a launch problem.</p>
+          <p>The designers got the same standard. I review work offline, leave comments in Figma, then we talk it through in a 1-1. I&rsquo;ll show how I would have gone at it. Not to take the work off them. So they leave seeing the problem differently.</p>
+          <p>The product map is where a lot of the strategy got done. I mapped the whole flow and we walked it screen by screen with both clients in the room, looking for the gaps. Not in the screens. In the proposition. <strong>The sharpest one: the app exists to get a nervous beginner out on a first ride, and British Cycling&rsquo;s own offer, insurance and membership, is built for riders who already are one.</strong> Getting someone from finishing a plan to a real relationship with British Cycling was never an interaction we could design our way out of, and the map is what put it on the table early enough to be a strategy conversation instead of a launch problem.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.8728" data-reveal>
           <img src="/assets/saddle-flow-1120.5f7ffb54.webp"
@@ -1961,7 +1997,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">A voice that encourages without patronising.</h2>
-          <p>Habit-forming apps live or die on tone. I defined the principles and worked with a copywriter to develop it <strong>alongside the UI, not after it</strong>, so tone of voice and interaction design grew together instead of one dictating to the other.</p>
+          <p>Habit-forming apps live or die on tone. I defined the principles and worked with a copywriter to develop it <strong>alongside the UI, not after it</strong>, so tone of voice and interaction design grew together instead of one dictating to the other. Same as with the designers. Comments in the file, then a conversation.</p>
           <p>The voice we landed on was matter-of-fact rather than relentlessly upbeat, acknowledging effort without treating every ride like a triumph.</p>
         </div>
         <!-- The tone of voice page from the brand guidelines, supplied by the owner
@@ -2015,8 +2051,8 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Could a designer build the front end? I used Cursor to find out.</h2>
-          <p>Alongside the development team building the app&rsquo;s front end, I ran a parallel build: could a designer produce a production-quality front end using AI, matching an experienced engineer on quality and security. Before writing a line of code, we codified our coding standards into rules for the AI to follow, holding the output to the same bar an engineer would hold themselves to.</p>
-          <p><strong>The two front ends came out equally solid.</strong> That result has changed how Elixirr thinks about the line between design and engineering, and how we sell and structure work with clients since.</p>
+          <p>Alongside the development team building the app&rsquo;s front end, I ran a parallel build: could a designer produce a production-quality front end using AI, matching an experienced engineer on quality and security. Before writing a line of code, we wrote our coding standards into rules for the AI, and held the output to the same bar an engineer would hold themselves to.</p>
+          <p>I was in the code, so engineers came in for the pieces that needed them. Interaction and motion problems showed up in the build, not as a QA ticket two weeks later. <strong>The two front ends came out equally solid.</strong> First time Elixirr had proved it. We wrote the practice down for the next client team. That&rsquo;s how this work gets sold and staffed now.</p>
         </div>
 
         <!-- Six steps, one on screen at a time. See the .cs-seq block in the
@@ -2238,9 +2274,9 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Live, and still just the beginning.</h2>
-          <p><strong>3,000 sign-ups on day one</strong>, and growing. Sofa to Saddle is live, built by a small team in a fraction of the usual timeframe, and counting towards <strong>1 million more people cycling by 2028</strong>.</p>
-          <p>That target is a share of something already moving. British Cycling counted 30 million people in the UK who cycled at least once in the past year, four million more than in 2022, and cycling here is reckoned to save the NHS £72.7 million. <strong>A million more riders is a public health number before it is a product one</strong> &mdash; worth remembering about an app made of an eight-week plan and a set of badges.</p>
-          <p>Beyond the app itself, the AI front-end experiment reshaped how Elixirr pitches and staffs projects, and the badge and progress system is built to carry whatever comes next.</p>
+          <p><strong>3,000 sign-ups on day one</strong>, and growing. Sofa to Saddle is live, in a fraction of the usual time, by the team I led. It counts towards <strong>1 million more people cycling by 2028</strong>.</p>
+          <p>That target is a share of something already moving. British Cycling counted 30 million people in the UK who cycled at least once in the past year, four million more than in 2022, and cycling here is reckoned to save the NHS £72.7 million. <strong>A million more riders is a public health number before it is a product one.</strong> Worth remembering, given the app is an eight-week plan and a set of badges.</p>
+          <p>The other thing that left with us: a designer can own the front end, and pull engineers in for the bits that need them. Elixirr pitches and staffs that way now. The badge and progress system is built to take whatever comes next.</p>
         </div>
         <!-- Four screens of the live product, under the outcome that says it
              shipped. No caption: the chapter already says what is live, and the
@@ -2261,21 +2297,19 @@
     </div>
   </section>
 
-  <!-- DRAFT, awaiting the owner's words. The rest of this page is her copy set
-       as written; this section is not — it was written from the ten chapters
-       above and is here to be edited or replaced. Two claims in it are inferred
-       rather than given and should be checked before this ships: that the
-       standards were written down before the code (chapter 08 says they were),
-       and the whole of the second paragraph, which is a position on what twelve
-       weeks did and did not buy rather than anything she has said. -->
+  <!-- Reflection is hers: under stacked constraints, rename success so the
+       team can actually hit it (analytics on levels are in the product, so the
+       old "launch is not proof" miss is out); and get a room comfortable with
+       AI by proving it is safe, via an engineer reading the code and writing a
+       report. Nothing claimed the chapters contradict. -->
   <section class="cs-reflection cs-wrap" aria-labelledby="cs-reflection-h">
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Reflection</span>
       <h2 class="cs-reflection__title" id="cs-reflection-h" data-reveal>What this one changed about how I work.</h2>
       <div class="cs-reflection__body" data-reveal data-stagger>
         <p>Two things I&rsquo;m taking forward.</p>
-        <p>The first isn&rsquo;t really about AI. The parallel front end worked because we wrote the standards down before we wrote any code and held the output to them, which is the same discipline that keeps a design system from drifting. <strong>The result settled an argument that has outlasted the project</strong> &mdash; how Elixirr sells this kind of work, and who it puts on it.</p>
-        <p>The second is the one I&rsquo;d change. Twelve weeks bought a launch, and a launch is not the same as proof. Version one shipped with the levels, the badges and the tracking, which is enough to start a habit and not enough to know whether one formed. I&rsquo;d want the next twelve pointed at that: not more features, but evidence that the confidence this app is built to give people lasts past the first plan.</p>
+        <p>When the constraints are this stacked, you have to say out loud what done actually is. Twelve weeks, two clients, two apps, a budget that would not take the original scope. Leave that picture standing and the team is already behind. So we named a smaller success: ship a coherent first version under the campaign, with analytics on the levels so we would know if people were progressing. Not more features. <strong>A definition the team could hit.</strong></p>
+        <p>The other one is the AI. People will not follow you into something they do not understand if the only argument is speed. They need to know it is safe. I brought an engineer in to check the code and write a report, so the claim had backing that was not mine. Rules in the repo before a line of app code. The same bar an engineer would hold. <strong>Comfort is evidence, not a demo.</strong></p>
       </div>
     </div>
   </section>
@@ -2324,11 +2358,39 @@
   </button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
+<!-- Same argument as the homepage: these used to be jsDelivr URLs, which made
+     the hero letters and the smooth scroll depend on a third party being
+     reachable on a hiring-manager network. Unmodified dist files, hashed like
+     every other asset, because /assets/* is immutable for a year. Not deferred
+     — they sit at the end of the body and the inline script below needs them
+     to have run. -->
+<script src="/assets/gsap-3.13.0.96c01b81.js"></script>
+<script src="/assets/lenis-1.3.11.804047c1.js"></script>
 <script>
 (function() {
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  (function initPressables() {
+    var sel = '.hp-nav__link,.hp-footer__cta,.hp-footer__back,.cs-lb__btn,.cs-seq__step,.cs-figure__open';
+    function on(e) {
+      if (e.button) return;
+      var el = e.target.closest && e.target.closest(sel);
+      if (el) el.classList.add('is-pressed');
+    }
+    function off(e) {
+      var el = e.target.closest && e.target.closest(sel);
+      if (el) el.classList.remove('is-pressed');
+    }
+    document.addEventListener('pointerdown', on);
+    document.addEventListener('pointerup', off);
+    document.addEventListener('pointercancel', off);
+    document.addEventListener('pointerout', function(e) {
+      var el = e.target.closest && e.target.closest(sel);
+      if (!el) return;
+      if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+      el.classList.remove('is-pressed');
+    });
+  })();
+
 
   document.querySelector('[data-year]').textContent = new Date().getFullYear();
 

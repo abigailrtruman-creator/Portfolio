@@ -280,15 +280,22 @@
     text-decoration: none;
     white-space: nowrap;
     border-radius: 999px;
-    transition: background 0.25s ease, color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background 100ms ease-out, color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-nav__link:hover { background: rgba(255,255,255,0.06); }
+  .hp-nav__link:active,
+  .hp-nav__link.is-pressed {
+    background: rgba(255,255,255,0.10);
+    transform: scale(0.97);
+  }
   .hp-nav__arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: rgba(255,255,255,0.55);
-    transition: color 0.25s ease, transform 0.25s cubic-bezier(0.32,0.72,0,1);
+    transition: color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
@@ -880,14 +887,19 @@
     font-weight: 500;
     letter-spacing: -0.005em;
     text-decoration: none;
-    transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 100ms ease-out, background 100ms ease-out;
   }
   .hp-footer__cta.is-ghost {
     background: transparent;
     color: #fff;
     border: 1px solid rgba(255,255,255,0.2);
   }
-  .hp-footer__cta:hover { transform: translateY(-3px); }
+  .hp-footer__cta:active,
+  .hp-footer__cta.is-pressed {
+    transform: scale(0.97);
+  }
   .hp-footer__cta-arrow { display: inline-flex; align-items: center; }
   .hp-footer__cta-arrow svg { width: 16px; height: 16px; display: block; }
 
@@ -928,9 +940,16 @@
     font-size: 13px;
     color: var(--ink-2);
     text-decoration: none;
-    transition: color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-footer__back:hover { color: var(--ink); }
+  .hp-footer__back:active,
+  .hp-footer__back.is-pressed {
+    color: var(--ink);
+    transform: scale(0.97);
+  }
   .hp-footer__back svg { width: 14px; height: 14px; display: block; }
   /* It travels, where the contact arrows only lift: this one is a direction. */
   .hp-footer__back .hp-footer__cta-arrow {
@@ -1118,6 +1137,8 @@
     cursor: pointer;
   }
   .cs-lb__btn:hover { color: var(--ink); border-color: rgba(255,255,255,0.32); }
+  .cs-lb__btn:active,
+  .cs-lb__btn.is-pressed { transform: scale(0.97); }
   .cs-lb__btn svg { width: 14px; height: 14px; display: block; }
   .cs-lb__close {
     position: absolute;
@@ -1245,8 +1266,20 @@
     .cs-motion .cs-split.is-in .cs-line__in,
     .cs-motion .is-in .cs-split .cs-line__in { transition: none; }
     .hp-footer__cta,
+    .hp-nav__link,
     .hp-nav__arrow,
+    .hp-footer__back,
     .hp-footer__back .hp-footer__cta-arrow { transition-duration: 0.01ms; }
+    .hp-nav__link:active,
+    .hp-nav__link.is-pressed,
+    .hp-footer__cta:active,
+    .hp-footer__cta.is-pressed,
+    .hp-footer__back:active,
+    .hp-footer__back.is-pressed,
+    .cs-lb__btn:active,
+    .cs-lb__btn.is-pressed {
+      transform: none;
+    }
     .hp-footer__back:hover .hp-footer__cta-arrow,
     .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
     /* The viewer still opens — reading a screenshot is not an animation, and
@@ -1281,7 +1314,7 @@
        The way back to the set is the link at the end of the article, where
        someone who has finished reading actually is. -->
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="/assets/abbie-truman-cv.8da5ab19.pdf" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="https://drive.google.com/file/d/1capCzcKOOscb3WxnS8kzHoWnSQtovXNP/view?usp=sharing" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>
@@ -1339,7 +1372,7 @@
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
       <div class="cs-overview__body" data-reveal data-stagger>
-        <p>I joined <strong>Junction</strong>, PwC&rsquo;s client delivery platform for Deals, after the core product had already been built. Historically practitioners handed clients their analysis as 200-page reports, burdensome at both ends; Junction replaced that with something continuous &mdash; less project management overhead, better collaboration, and expert insight reaching clients early enough to shorten their decision-making. My role was to assess the experience as it stood, find where it was costing people time, and deliver the improvements that came out of that.</p>
+        <p>I joined <strong>Junction</strong>, PwC&rsquo;s client delivery platform for Deals, after the core product had already been built. Historically practitioners handed clients their analysis as 200-page reports, burdensome at both ends. Junction replaced that with something continuous: less project management overhead, better collaboration, and expert insight reaching clients early enough to shorten their decision-making. My role was to assess the experience as it stood, find where it was costing people time, and deliver the improvements that came out of that.</p>
         <p>On the surface, this was feature work on a platform that already worked. Underneath, it was an <strong>alignment problem</strong>. Junction did not operate alone: territories had built their own tools around it, so a decision about something as ordinary as who can see what needed agreement from senior stakeholders across regions who each wanted a different end state. What follows is one feature and one research study, as the example.</p>
       </div>
     </div>
@@ -1356,7 +1389,7 @@
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">A platform already live, and a seam around it.</h2>
           <p>No blank page here and no rebuild. Junction was built, shipped and in use, which made the work a different shape: finding where a product people already depended on was quietly costing them time, and fixing it without disrupting the engagements running on it.</p>
-          <p>When a Deals engagement begins there are numerous workspaces to stand up before any work can be delivered, and each one wants much the same information &mdash; users, roles, client, project type. Several territories had solved that locally, building their own provisioning tools so that <strong>one project initiation journey</strong> could set all of them up at once.</p>
+          <p>When a Deals engagement begins there are numerous workspaces to stand up before any work can be delivered, and each one wants much the same information: users, roles, client, project type. Several territories had solved that locally, building their own provisioning tools so that <strong>one project initiation journey</strong> could set all of them up at once.</p>
         </div>
       </section>
 
@@ -1381,7 +1414,7 @@
           <h2 class="cs-chapter__title">Three options, priced. Then the deadline picked one.</h2>
           <p>Alignment was the hard part. The decision landed on multiple territories and multiple groups of users, which meant agreement from several senior stakeholders who each held a different vision of where this should end up.</p>
           <p>I mapped the feasible options and set out how roles and permissions would flow between the tools under each one, then made <strong>balanced recommendations</strong> rather than arguing for a favourite: what each option bought the user, what it cost to build, and what it was genuinely worth to the business.</p>
-          <p>The client was under pressure to move fast and rebuild confidence across territories, so the quick win won &mdash; users could configure roles as they needed on a platform that was stable and reliable, and the business logic underneath stayed more complicated than it should have been. It was the right call for that moment. <strong>It was also a debt</strong>, and quick wins of this kind get repaid later at a higher rate.</p>
+          <p>The client was under pressure to move fast and rebuild confidence across territories, so the quick win won. Users could configure roles as they needed on a platform that was stable and reliable, and the business logic underneath stayed more complicated than it should have been. It was the right call for that moment. <strong>It was also a debt</strong>, and quick wins of this kind get repaid later at a higher rate.</p>
         </div>
         <figure class="cs-figure" style="--ar: 1.7690" data-reveal>
           <img src="/assets/junction-options-1120.3288359f.webp"
@@ -1403,7 +1436,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Designing around logic I couldn&rsquo;t change.</h2>
-          <p>With the deadline set, the job was to build an experience that either kept the agreed logic out of the user&rsquo;s way or signposted it so plainly it stopped being a trap. Working from the design system, I designed each affected journey and set the responsiveness guidance for the agreed breakpoints &mdash; scrollable tabs on narrow screens, a more compact user card &mdash; iterating with design leadership and the client through to sign-off.</p>
+          <p>With the deadline set, the job was to build an experience that either kept the agreed logic out of the user&rsquo;s way or signposted it so plainly it stopped being a trap. Working from the design system, I designed each affected journey and set the responsiveness guidance for the agreed breakpoints: scrollable tabs on narrow screens, a more compact user card. Then iterated with design leadership and the client through to sign-off.</p>
           <p>Users were sectioned by the role they held, which made the page scannable and let someone be added straight into a role rather than added and then assigned. Alongside it I explored a master table of every user, with filtering, conditional logic, global search and a single point of action for adding someone. And where the logic was genuinely confusing, <strong>large, unmissable banners said so</strong> and named the platform or process that actually handled it.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.9947" data-reveal>
@@ -1427,7 +1460,7 @@
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The mechanics that decide whether a page is quick.</h2>
           <p>Accepting a new user took one click, but an admin was rarely accepting one. A multi-select with a <strong>global checkbox</strong> at the top meant selecting everybody and deselecting the few exceptions, so a large intake was approved in one pass rather than forty. Switching someone&rsquo;s role moved into the more menu on their row; before that, changing a role meant deleting the user and adding them back, a destructive operation standing in for a routine one.</p>
-          <p>What lands afterwards matters as much. An approval arrives with a success toast for whoever made it and a <strong>&lsquo;new&rsquo; tag</strong> beside the name for everybody else &mdash; the practitioners who didn&rsquo;t make the change and would otherwise have no way of noticing it. The tag lasts up to a week and clears once someone has opened the page and left again, because acknowledged is a better trigger than expired.</p>
+          <p>What lands afterwards matters as much. An approval arrives with a success toast for whoever made it and a <strong>&lsquo;new&rsquo; tag</strong> beside the name for everybody else: the practitioners who didn&rsquo;t make the change and would otherwise have no way of noticing it. The tag lasts up to a week and clears once someone has opened the page and left again, because acknowledged is a better trigger than expired.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.5854" data-reveal>
           <img src="/assets/junction-approvals-1120.2f7f56be.webp"
@@ -1473,7 +1506,7 @@
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The feature nobody will ever praise.</h2>
           <p>Deployed, this let <strong>thousands of users</strong> manage their project participants and clients with confidence: permissions assigned correctly, and terminology that meant the same thing whichever region you were working in.</p>
-          <p>There are no metrics to put against it, and there shouldn&rsquo;t be. User management is a hygiene factor &mdash; an indispensable part of the tool that is simply expected to work. The value of getting it right is that people went back to thinking about the engagement instead of about the software.</p>
+          <p>There are no metrics to put against it, and there shouldn&rsquo;t be. User management is supposed to disappear. Get it right and people go back to thinking about the engagement instead of the software.</p>
         </div>
       </section>
 
@@ -1484,8 +1517,8 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Does the report builder actually save anyone time?</h2>
-          <p>The report builder takes everything uploaded to Junction &mdash; content, data, analysis &mdash; and automates a fully formatted report ready to share with a client. A round of design iterations had added several things to it: more than one way to organise the content, the option to organise from the table of contents rather than only by sliders, one action to add and remove dividers, report templates, and editable table of contents titles. All of it needed usability testing before it went further.</p>
-          <p>I ran semi-structured interviews for the context &mdash; how a report actually gets made in PowerPoint today, how much of it is customised, whether templates are used at all &mdash; then had participants work through an interactive prototype covering adding and removing sections, customising titles, and organising content.</p>
+          <p>The report builder takes everything uploaded to Junction (content, data, analysis) and automates a fully formatted report ready to share with a client. A round of design iterations had added several things to it: more than one way to organise the content, the option to organise from the table of contents rather than only by sliders, one action to add and remove dividers, report templates, and editable table of contents titles. All of it needed usability testing before it went further.</p>
+          <p>I ran semi-structured interviews for the context: how a report actually gets made in PowerPoint today, how much of it is customised, whether templates are used at all. Then participants worked through an interactive prototype covering adding and removing sections, customising titles, and organising content.</p>
         </div>
       </section>
 
@@ -1497,7 +1530,7 @@
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Turning verbatim into something you can show.</h2>
           <p>I verified every note against the recordings, then mapped all the responses against each question across the topics before categorising the verbatim answers into themes.</p>
-          <p>This is the unglamorous half of research and it is the half that earns the recommendations. Done properly, <strong>a trend becomes something you can point at</strong> rather than something you remember hearing &mdash; which matters when the person you are showing it to was not in any of the sessions.</p>
+          <p>This is the analysis. It is the half that earns the recommendations. Done properly, <strong>a trend becomes something you can point at</strong> rather than something you remember hearing. That matters when the person you are showing it to was not in any of the sessions.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.8164" data-reveal>
           <img src="/assets/junction-analysis-1120.c4f59231.webp"
@@ -1519,7 +1552,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Findings, and what they changed.</h2>
-          <p>The report set out the as-is process for creating a report, the pain points inside it, and the usability improvements to make &mdash; including the ones that were uncomfortable, like most participants failing to find the call to action the whole feature turns on.</p>
+          <p>The report set out the as-is process for creating a report, the pain points inside it, and the usability improvements to make, including the ones that were uncomfortable. Most participants failed to find the call to action the whole feature turns on.</p>
           <p>In the playback with the designers and product owners we went through the findings in detail, refined the recommendations together, and <strong>agreed the specific actions</strong> we would take.</p>
         </div>
         <figure class="cs-figure" style="--ar: 1.7447" data-reveal>
@@ -1549,7 +1582,7 @@
       <h2 class="cs-reflection__title" id="cs-reflection-h" data-reveal>What I&rsquo;m taking from this one.</h2>
       <div class="cs-reflection__body" data-reveal data-stagger>
         <p>Three things, and the first is the one I argue about most.</p>
-        <p>Stakeholders reach for the quick win because it hits a target now, and sometimes that instinct is right &mdash; it puts something in front of users and buys real feedback. But on a feature people have no choice but to use, <strong>the quick win is a loan</strong>. The thorough version is harder to build and it is the one that keeps people on the platform, which is what keeps the business funding it. Making that case early, with the cost of the alternative attached, is part of the job rather than something to raise afterwards.</p>
+        <p>Stakeholders reach for the quick win because it hits a target now, and sometimes that instinct is right. It puts something in front of users and buys real feedback. But on a feature people have no choice but to use, <strong>the quick win is a loan</strong>. The thorough version is harder to build and it is the one that keeps people on the platform, which is what keeps the business funding it. Making that case early, with the cost of the alternative attached, is part of the job rather than something to raise afterwards.</p>
         <p>Managing several senior stakeholders is mostly a scheduling problem wearing a strategy problem&rsquo;s clothes. Relaying one director&rsquo;s vision to another in separate rooms isn&rsquo;t alignment, and defending an idea in siloes is slower than waiting a week to get everyone into one meeting. <strong>Tampa is the evidence</strong>: a week in the same room moved something that separate conversations hadn&rsquo;t.</p>
         <p>And it is fine to prioritise a research sample. Our users spanned territories and business units with genuinely different needs, and there was never resource to test with all of them. Choosing the groups most likely to adopt first, then phasing a wider sample in behind them, isn&rsquo;t a compromised study. It&rsquo;s the study that actually happens.</p>
       </div>
@@ -1601,11 +1634,39 @@
   </button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
+<!-- Same argument as the homepage: these used to be jsDelivr URLs, which made
+     the hero letters and the smooth scroll depend on a third party being
+     reachable on a hiring-manager network. Unmodified dist files, hashed like
+     every other asset, because /assets/* is immutable for a year. Not deferred
+     — they sit at the end of the body and the inline script below needs them
+     to have run. -->
+<script src="/assets/gsap-3.13.0.96c01b81.js"></script>
+<script src="/assets/lenis-1.3.11.804047c1.js"></script>
 <script>
 (function() {
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  (function initPressables() {
+    var sel = '.hp-nav__link,.hp-footer__cta,.hp-footer__back,.cs-lb__btn,.cs-seq__step,.cs-figure__open';
+    function on(e) {
+      if (e.button) return;
+      var el = e.target.closest && e.target.closest(sel);
+      if (el) el.classList.add('is-pressed');
+    }
+    function off(e) {
+      var el = e.target.closest && e.target.closest(sel);
+      if (el) el.classList.remove('is-pressed');
+    }
+    document.addEventListener('pointerdown', on);
+    document.addEventListener('pointerup', off);
+    document.addEventListener('pointercancel', off);
+    document.addEventListener('pointerout', function(e) {
+      var el = e.target.closest && e.target.closest(sel);
+      if (!el) return;
+      if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+      el.classList.remove('is-pressed');
+    });
+  })();
+
 
   document.querySelector('[data-year]').textContent = new Date().getFullYear();
 

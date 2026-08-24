@@ -305,15 +305,22 @@
     text-decoration: none;
     white-space: nowrap;
     border-radius: 999px;
-    transition: background 0.25s ease, color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: background 100ms ease-out, color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-nav__link:hover { background: rgba(255,255,255,0.06); }
+  .hp-nav__link:active,
+  .hp-nav__link.is-pressed {
+    background: rgba(255,255,255,0.10);
+    transform: scale(0.97);
+  }
   .hp-nav__arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     color: rgba(255,255,255,0.55);
-    transition: color 0.25s ease, transform 0.25s cubic-bezier(0.32,0.72,0,1);
+    transition: color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
@@ -890,14 +897,19 @@
     font-weight: 500;
     letter-spacing: -0.005em;
     text-decoration: none;
-    transition: transform 0.4s cubic-bezier(0.32,0.72,0,1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 100ms ease-out, background 100ms ease-out;
   }
   .hp-footer__cta.is-ghost {
     background: transparent;
     color: #fff;
     border: 1px solid rgba(255,255,255,0.2);
   }
-  .hp-footer__cta:hover { transform: translateY(-3px); }
+  .hp-footer__cta:active,
+  .hp-footer__cta.is-pressed {
+    transform: scale(0.97);
+  }
   .hp-footer__cta-arrow { display: inline-flex; align-items: center; }
   .hp-footer__cta-arrow svg { width: 16px; height: 16px; display: block; }
 
@@ -938,9 +950,16 @@
     font-size: 13px;
     color: var(--ink-2);
     text-decoration: none;
-    transition: color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: color 100ms ease-out, transform 100ms ease-out;
   }
   .hp-footer__back:hover { color: var(--ink); }
+  .hp-footer__back:active,
+  .hp-footer__back.is-pressed {
+    color: var(--ink);
+    transform: scale(0.97);
+  }
   .hp-footer__back svg { width: 14px; height: 14px; display: block; }
   /* It travels, where the contact arrows only lift: this one is a direction. */
   .hp-footer__back .hp-footer__cta-arrow {
@@ -1124,6 +1143,8 @@
     cursor: pointer;
   }
   .cs-lb__btn:hover { color: var(--ink); border-color: rgba(255,255,255,0.32); }
+  .cs-lb__btn:active,
+  .cs-lb__btn.is-pressed { transform: scale(0.97); }
   .cs-lb__btn svg { width: 14px; height: 14px; display: block; }
   .cs-lb__close {
     position: absolute;
@@ -1251,8 +1272,20 @@
     .cs-motion .cs-split.is-in .cs-line__in,
     .cs-motion .is-in .cs-split .cs-line__in { transition: none; }
     .hp-footer__cta,
+    .hp-nav__link,
     .hp-nav__arrow,
+    .hp-footer__back,
     .hp-footer__back .hp-footer__cta-arrow { transition-duration: 0.01ms; }
+    .hp-nav__link:active,
+    .hp-nav__link.is-pressed,
+    .hp-footer__cta:active,
+    .hp-footer__cta.is-pressed,
+    .hp-footer__back:active,
+    .hp-footer__back.is-pressed,
+    .cs-lb__btn:active,
+    .cs-lb__btn.is-pressed {
+      transform: none;
+    }
     .hp-footer__back:hover .hp-footer__cta-arrow,
     .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
     /* The viewer still opens — reading a screenshot is not an animation, and
@@ -1287,7 +1320,7 @@
        way back to the set is the link at the end of the article, where someone
        who has finished reading actually is. -->
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="/assets/abbie-truman-cv.8da5ab19.pdf" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="https://drive.google.com/file/d/1capCzcKOOscb3WxnS8kzHoWnSQtovXNP/view?usp=sharing" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>
@@ -1375,7 +1408,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">A hub for developers, and a hint that it wasn&rsquo;t the whole job.</h2>
-          <p>Our client sells wholesale full fibre, and what they wanted was a developer portal: one place a developer could go for everything needed to integrate with their APIs successfully. Alongside that, they asked us to consider how the portal would fit into something broader &mdash; a marketing website on one side, a partner portal on the other.</p>
+          <p>Our client sells wholesale full fibre, and what they wanted was a developer portal: one place a developer could go for everything needed to integrate with their APIs successfully. Alongside that, they asked us to consider how the portal would fit into something broader. A marketing website on one side, a partner portal on the other.</p>
           <p>We were contracted for the initial discovery. Define the experience and the requirements, align with the technical team, and produce initial design templates solid enough to be picked up and refined in a later detailed design phase.</p>
         </div>
       </section>
@@ -1399,7 +1432,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Timelines confirmed, feature list unclear.</h2>
-          <p>The requirements we were handed were broad and the feature list was vague &mdash; but the timelines and the resources had already been confirmed. That is the wrong way round, and it is common enough that the first job was simply to make the scope real.</p>
+          <p>The requirements we were handed were broad and the feature list was vague. The timelines and the resources had already been confirmed. That is the wrong way round, and it is common enough that the first job was simply to make the scope real.</p>
           <p>We ran a workshop with the key stakeholders to define the product vision and agree a feature list. With the vision clear, we identified the features and <strong>prioritised them into three groups</strong>.</p>
           <dl class="cs-terms">
             <dt>Minimum viable product</dt>
@@ -1465,7 +1498,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Three experiences, not one portal.</h2>
-          <p>Plenty of questions were still unanswered and a great deal was still happening for the client. Rather than press for answers that were not going to arrive on our timeline, we shifted to helping them define the overarching product strategy &mdash; and that is where the shape of the thing changed.</p>
+          <p>Plenty of questions were still unanswered and a great deal was still happening for the client. Rather than press for answers that were not going to arrive on our timeline, we shifted to helping them define the overarching product strategy. That is where the shape of the thing changed.</p>
           <p>A marketing site to advertise the offering and generate new leads. The developer portal we were already contracted to build. And a partner portal, where organisations could manage their users, permissions, payments and services, and see updates on order and service statistics.</p>
           <p>To bring that connected journey to life I built a <strong>journey map</strong> covering both the developer and the partner experience. It set out the key touchpoints, the places the two overlapped, and the content types each stage depended on. That last part mattered more than it sounds: the client had no content yet and no content strategist, so naming content as part of the journey was the only way it was going to become anyone&rsquo;s job.</p>
         </div>
@@ -1513,7 +1546,7 @@
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Every piece of content, and what it was there to do.</h2>
           <p>To formalise the content requirements and make sure the coverage was complete, I built a detailed spreadsheet mapping content against the features and pages it belonged to. Against each type it set out guidance on format and style, and the categorisations that would decide how it got handled.</p>
-          <p>It separated <strong>timely from evergreen</strong>, so the ongoing effort was visible up front rather than discovered a year later. It carried metrics, so effectiveness could be judged rather than assumed. And it recorded what each piece was for &mdash; supporting a sale, deepening engagement, or teaching someone something.</p>
+          <p>It separated <strong>timely from evergreen</strong>, so the ongoing effort was visible up front rather than discovered a year later. It carried metrics, so effectiveness could be judged rather than assumed. And it recorded what each piece was for: supporting a sale, deepening engagement, or teaching someone something.</p>
           <p>For a client with no content function, that did more than set expectations. It turned content creation into something that could be planned, resourced and handed to somebody.</p>
         </div>
         <figure class="cs-figure" style="--ar: 1.5120" data-reveal>
@@ -1536,7 +1569,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Templates that carry their own reasoning.</h2>
-          <p>With the end of the phase in sight, what we owed were wireframes and design templates good enough to be iterated on in detailed design. A wireframe on its own does not survive that handover &mdash; whoever picks it up inherits the picture and none of the thinking behind it.</p>
+          <p>With the end of the phase in sight, what we owed were wireframes and design templates good enough to be iterated on in detailed design. A wireframe on its own does not survive that handover. Whoever picks it up inherits the picture and none of the thinking behind it.</p>
           <p>So each template I set up carried five things.</p>
           <dl class="cs-terms">
             <dt>Core wireframe</dt>
@@ -1605,8 +1638,8 @@
       <h2 class="cs-reflection__title" id="cs-reflection-h" data-reveal>What a discovery that paused still taught me.</h2>
       <div class="cs-reflection__body" data-reveal data-stagger>
         <p>Two things I&rsquo;m taking forward.</p>
-        <p>The first is that on this project the process was the deliverable. With two designers, an organisation mid-restructure and a stakeholder we could rarely get into a room, what made progress possible was never asking an open question where a drafted answer would do. Best-practice user stories, a journey map, a site map, a content spreadsheet &mdash; each one turned a session that would have been elicitation into a session that was a decision. <strong>I&rsquo;d use that sequence again on any engagement where access is the scarce resource.</strong></p>
-        <p>The second is the one I&rsquo;d change. We were contracted to define a developer portal, and a good part of the phase went on arguing &mdash; correctly &mdash; that it could not be defined on its own. The reframe was right. It also arrived late enough that the strategy work had to be fitted around a scope written for something narrower, which is a harder conversation than it needed to be. I&rsquo;d rather test the edges of a brief at the start of an engagement than in the middle of one.</p>
+        <p>The first is that on this project the process was the deliverable. With two designers, an organisation mid-restructure and a stakeholder we could rarely get into a room, what made progress possible was never asking an open question where a drafted answer would do. Best-practice user stories, a journey map, a site map, a content spreadsheet. Each one turned a session that would have been elicitation into a session that was a decision. <strong>I&rsquo;d use that sequence again on any engagement where access is the scarce resource.</strong></p>
+        <p>The second is the one I&rsquo;d change. We were contracted to define a developer portal, and a good part of the phase went on arguing, correctly, that it could not be defined on its own. The reframe was right. It also arrived late enough that the strategy work had to be fitted around a scope written for something narrower, which is a harder conversation than it needed to be. I&rsquo;d rather test the edges of a brief at the start of an engagement than in the middle of one.</p>
       </div>
     </div>
   </section>
@@ -1656,11 +1689,39 @@
   </button>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.11/dist/lenis.min.js"></script>
+<!-- Same argument as the homepage: these used to be jsDelivr URLs, which made
+     the hero letters and the smooth scroll depend on a third party being
+     reachable on a hiring-manager network. Unmodified dist files, hashed like
+     every other asset, because /assets/* is immutable for a year. Not deferred
+     — they sit at the end of the body and the inline script below needs them
+     to have run. -->
+<script src="/assets/gsap-3.13.0.96c01b81.js"></script>
+<script src="/assets/lenis-1.3.11.804047c1.js"></script>
 <script>
 (function() {
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  (function initPressables() {
+    var sel = '.hp-nav__link,.hp-footer__cta,.hp-footer__back,.cs-lb__btn,.cs-seq__step,.cs-figure__open';
+    function on(e) {
+      if (e.button) return;
+      var el = e.target.closest && e.target.closest(sel);
+      if (el) el.classList.add('is-pressed');
+    }
+    function off(e) {
+      var el = e.target.closest && e.target.closest(sel);
+      if (el) el.classList.remove('is-pressed');
+    }
+    document.addEventListener('pointerdown', on);
+    document.addEventListener('pointerup', off);
+    document.addEventListener('pointercancel', off);
+    document.addEventListener('pointerout', function(e) {
+      var el = e.target.closest && e.target.closest(sel);
+      if (!el) return;
+      if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+      el.classList.remove('is-pressed');
+    });
+  })();
+
 
   document.querySelector('[data-year]').textContent = new Date().getFullYear();
 
