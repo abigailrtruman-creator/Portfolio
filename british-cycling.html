@@ -352,11 +352,13 @@
      stops it reading as a gallery that has been laid out and started to say
      instead that this is a few of many.
 
-     No JavaScript. The row is the same screens over and over and the animation
-     moves it by exactly one pass, so the frame it ends on is the frame it
-     started from and the loop has no seam. --reel-screens is how many are in a
-     pass, written on the element by the build because it is the one number
-     here the markup decides. */
+     No JavaScript until the page can run it. The row is the same screens over
+     and over and the CSS animation moves it by exactly one pass, so the frame
+     it ends on is the frame it started from and the loop has no seam. When
+     scripting is on, that animation is stood down and the same track is
+     dragged 1:1, flicked, and snapped — see initReel at the foot of the page.
+     --reel-screens is how many are in a pass, written on the element by the
+     build because it is the one number here the markup decides. */
   .cs-reel {
     /* The export is 1640×3198. A width of 44vw made that taller than the
        window, so the bottom of every page sat past the fold at every scroll
@@ -369,6 +371,18 @@
     --reel-gap: clamp(14px, 1.5vw, 26px);
     margin: var(--showcase-space) 0;
     overflow: hidden;
+  }
+  .cs-reel.is-live {
+    cursor: grab;
+    touch-action: pan-y;
+  }
+  .cs-reel.is-live.is-dragging {
+    cursor: grabbing;
+    user-select: none;
+  }
+  .cs-reel.is-live .cs-reel__track {
+    animation: none;
+    will-change: transform;
   }
   .cs-reel__track {
     display: flex;
@@ -398,10 +412,11 @@
         -1 * var(--reel-screens) * (var(--screen-w) + var(--reel-gap))));
     }
   }
-  /* Held still while the pointer is on it, so a screen that catches someone's
-     eye can be looked at rather than chased. */
-  .cs-reel:hover .cs-reel__track,
-  .cs-reel:focus-within .cs-reel__track { animation-play-state: paused; }
+  /* It does not pause on hover or focus. Parking the pointer on a screen that
+     caught the eye used to freeze the row, which made it feel stuck rather
+     than like a thing still going. Grabbing it still takes over — that is
+     dragging, not a pause — and the crawl resumes the moment the finger
+     comes up. */
 
   /* A width and nothing else. The height is the picture's own, which is the
      crop build-bcweb-figures.py took, so that crop is stated once and this
@@ -686,6 +701,8 @@
       --screen-w: min(calc(var(--screen-h) * 1640 / 3198), calc(
         (100vw - 2 * var(--pad-x) - 2 * var(--reel-gap) - 18px) / 3));
     }
+    .cs-reel.is-live,
+    .cs-reel.is-live .cs-reel__track { cursor: auto; }
     .hp-footer__cta,
     .hp-nav__link,
     .hp-nav__arrow,
@@ -918,6 +935,180 @@
   // Armed here rather than in the stylesheet so the hidden state cannot outlive
   // the thing that clears it: with scripting off nothing is ever hidden.
   document.documentElement.classList.add('cs-anim');
+
+  initReel();
+
+  // Grab, flick, snap. The CSS animation is the no-JS fallback; once this
+  // runs it is stood down so a finger is not chasing a moving row.
+  //
+  // 1:1 while down (after ~10px of horizontal hysteresis, so a vertical scroll
+  // is not stolen). On release, project the resting point the way iOS scroll
+  // does, then snap to the nearest screen and spring there with the release
+  // velocity. The row is a loop of three, so there is no edge to rubber-band.
+  function initReel() {
+    var reel = document.querySelector('.cs-reel');
+    var track = reel && reel.querySelector('.cs-reel__track');
+    if (!reel || !track) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    reel.classList.add('is-live');
+
+    var x = 0;
+    var grabbing = false;
+    var startX = 0, startY = 0, origin = 0;
+    var axis = null;
+    var pointerId = null;
+    var samples = [];
+    var springRaf = 0, idleRaf = 0, idleLast = 0;
+    var vel = 0;
+    var CRAWL = -48;
+    var D = 0.998;
+
+    function stride() {
+      var a = track.children[0], b = track.children[1];
+      if (!a || !b) return 0;
+      return b.getBoundingClientRect().left - a.getBoundingClientRect().left;
+    }
+    function passWidth() {
+      var n = parseFloat(getComputedStyle(track).getPropertyValue('--reel-screens')) || 3;
+      return stride() * n;
+    }
+    function wrap(val) {
+      var w = passWidth();
+      if (!w) return val;
+      val = val % w;
+      if (val > 0) val -= w;
+      return val;
+    }
+    function apply() {
+      x = wrap(x);
+      track.style.transform = 'translate3d(' + x + 'px,0,0)';
+    }
+    function project(vPxPerSec) {
+      return (vPxPerSec / 1000) * D / (1 - D);
+    }
+    function nearestSnap(pos) {
+      var s = stride();
+      if (!s) return pos;
+      return -Math.round(-pos / s) * s;
+    }
+    function stopMotion() {
+      cancelAnimationFrame(springRaf);
+      cancelAnimationFrame(idleRaf);
+      springRaf = idleRaf = 0;
+    }
+
+    function springTo(target, v0) {
+      stopMotion();
+      x = wrap(x);
+      target = wrap(target);
+      // Shortest path on the loop, otherwise a wrap can send the row the long
+      // way around for a one-screen flick.
+      var w = passWidth();
+      var delta = target - x;
+      if (w && delta > w / 2) delta -= w;
+      if (w && delta < -w / 2) delta += w;
+      target = x + delta;
+
+      var response = 0.3, damping = 0.8;
+      var omega = (2 * Math.PI) / response;
+      var v = v0;
+      var last = 0;
+      function tick(now) {
+        var dt = last ? Math.min(0.032, (now - last) / 1000) : 1 / 60;
+        last = now;
+        var a = -omega * omega * (x - target) - 2 * damping * omega * v;
+        v += a * dt;
+        x += v * dt;
+        apply();
+        if (Math.abs(x - target) < 0.4 && Math.abs(v) < 8) {
+          x = target;
+          apply();
+          startIdle();
+          return;
+        }
+        springRaf = requestAnimationFrame(tick);
+      }
+      springRaf = requestAnimationFrame(tick);
+    }
+
+    function startIdle() {
+      stopMotion();
+      idleLast = 0;
+      function tick(now) {
+        var dt = idleLast ? Math.min(0.032, (now - idleLast) / 1000) : 0;
+        idleLast = now;
+        x += CRAWL * dt;
+        apply();
+        idleRaf = requestAnimationFrame(tick);
+      }
+      idleRaf = requestAnimationFrame(tick);
+    }
+
+    reel.addEventListener('pointerdown', function(e) {
+      if (e.button) return;
+      grabbing = true;
+      pointerId = e.pointerId;
+      startX = e.clientX;
+      startY = e.clientY;
+      origin = x;
+      axis = null;
+      vel = 0;
+      samples = [{ t: e.timeStamp, x: e.clientX }];
+      // Crawl keeps going until the gesture is actually a horizontal drag.
+      // A click, a hover, or a vertical scroll must not freeze the row.
+    });
+
+    reel.addEventListener('pointermove', function(e) {
+      if (!grabbing || e.pointerId !== pointerId) return;
+      var dx = e.clientX - startX;
+      var dy = e.clientY - startY;
+      if (!axis) {
+        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+        axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+        if (axis === 'x') {
+          stopMotion();
+          // Start 1:1 from here, not from pointerdown, so the crawl that ran
+          // through the hysteresis does not get added on as a jump.
+          origin = x;
+          startX = e.clientX;
+          dx = 0;
+          samples = [{ t: e.timeStamp, x: e.clientX }];
+          reel.classList.add('is-dragging');
+          if (reel.setPointerCapture) reel.setPointerCapture(pointerId);
+        }
+      }
+      if (axis !== 'x') return;
+      if (e.cancelable) e.preventDefault();
+      x = origin + dx;
+      apply();
+      samples.push({ t: e.timeStamp, x: e.clientX });
+      if (samples.length > 5) samples.shift();
+    }, { passive: false });
+
+    function end(e) {
+      if (!grabbing || (e && e.pointerId !== pointerId)) return;
+      grabbing = false;
+      reel.classList.remove('is-dragging');
+      if (axis !== 'x') { startIdle(); return; }
+      if (samples.length >= 2) {
+        var a = samples[0], b = samples[samples.length - 1];
+        var dt = Math.max(1, b.t - a.t);
+        vel = ((b.x - a.x) / dt) * 1000;
+      }
+      var projected = x + project(vel);
+      springTo(nearestSnap(projected), vel);
+      axis = null;
+    }
+
+    reel.addEventListener('pointerup', end);
+    reel.addEventListener('pointercancel', end);
+
+    window.addEventListener('resize', function() { apply(); });
+
+    apply();
+    startIdle();
+  }
 })();
 </script>
 

@@ -1116,13 +1116,12 @@
     border-radius: 10px;
     cursor: default;
     opacity: 0;
-    transform: translateY(14px) scale(0.988);
   }
+  /* Transform is owned by JS: the picture grows out of the thumbnail it was
+     opened from, and returns there on close. CSS only fades. */
   .cs-lb.is-open .cs-lb__img {
     opacity: 1;
-    transform: none;
-    transition: opacity 0.5s ease 0.06s,
-                transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.06s;
+    transition: opacity 0.35s ease;
   }
   .cs-lb__btn {
     display: inline-flex;
@@ -1741,6 +1740,8 @@
   var lbImg = lb.querySelector('.cs-lb__img');
   var lbClose = lb.querySelector('[data-lb-close]');
   var opener = null;
+  var openerImg = null;
+  var closeTimer = 0;
 
   // The 3360px copy sits beside the page's rungs under the same content hash,
   // so it is the src with its width swapped — no second attribute per figure to
@@ -1753,6 +1754,10 @@
 
   function openLb(img, src) {
     opener = document.activeElement;
+    openerImg = img;
+    clearTimeout(closeTimer);
+    lbImg.style.transform = '';
+    lbImg.style.transition = '';
     lbImg.src = src;
     lbImg.alt = img.alt;
     lb.hidden = false;
@@ -1768,22 +1773,33 @@
     // the smoothing library, which is writing scroll positions itself and would
     // carry on running the page underneath the overlay.
     if (lenis) lenis.stop();
-    requestAnimationFrame(function() { lb.classList.add('is-open'); });
+    requestAnimationFrame(function() {
+      lb.classList.add('is-open');
+      openFromThumb(img);
+    });
     lbClose.focus();
     document.addEventListener('keydown', onKey);
   }
 
   function closeLb() {
+    if (!REDUCED) closeToThumb(openerImg, function() {});
     lb.classList.remove('is-open');
     document.removeEventListener('keydown', onKey);
     document.body.style.overflow = '';
     document.body.style.paddingRight = '';
     if (lenis) lenis.start();
+    cancelAnimationFrame(glide);
     // Held until the fade is over, so the image is not pulled out from under
     // its own exit. src is dropped with it: a 700KB decode has no business
     // staying resident for a viewer nobody is looking at.
-    var finish = function() { lb.hidden = true; lbImg.removeAttribute('src'); };
-    if (REDUCED) finish(); else setTimeout(finish, 340);
+    var finish = function() {
+      lb.hidden = true;
+      lbImg.removeAttribute('src');
+      lbImg.style.transform = '';
+      lbImg.style.transition = '';
+      openerImg = null;
+    };
+    if (REDUCED) finish(); else closeTimer = setTimeout(finish, 400);
     if (opener && opener.focus) opener.focus();
     opener = null;
   }
@@ -1813,7 +1829,7 @@
   var zoom = 1;
   var pts = new Map();
   var pinch = null, last = null, moved = false, downOn = null;
-  var vx = 0, vy = 0, glide = 0, lastTap = 0;
+  var vx = 0, vy = 0, glide = 0;
 
   function fitWidth() {
     var cs = getComputedStyle(lbStage);
@@ -1827,6 +1843,76 @@
     lbImg.style.maxWidth = '';
     lbStage.scrollLeft = 0;
   }
+
+  function projectDelta(vPxPerSec, d) {
+    d = d == null ? 0.998 : d;
+    return (vPxPerSec / 1000) * d / (1 - d);
+  }
+
+  function springScrollTo(tx, ty, vx0, vy0) {
+    cancelAnimationFrame(glide);
+    var x = lbStage.scrollLeft, y = lbStage.scrollTop;
+    var vx = vx0, vy = vy0;
+    var response = 0.4, damping = 1;
+    var omega = (2 * Math.PI) / response;
+    var lastT = 0;
+    function tick(now) {
+      var dt = lastT ? Math.min(0.032, (now - lastT) / 1000) : 1 / 60;
+      lastT = now;
+      vx += (-omega * omega * (x - tx) - 2 * damping * omega * vx) * dt;
+      vy += (-omega * omega * (y - ty) - 2 * damping * omega * vy) * dt;
+      x += vx * dt;
+      y += vy * dt;
+      lbStage.scrollLeft = x;
+      lbStage.scrollTop = y;
+      if (Math.abs(x - tx) < 0.5 && Math.abs(y - ty) < 0.5 &&
+          Math.abs(vx) < 8 && Math.abs(vy) < 8) {
+        lbStage.scrollLeft = tx;
+        lbStage.scrollTop = ty;
+        return;
+      }
+      glide = requestAnimationFrame(tick);
+    }
+    glide = requestAnimationFrame(tick);
+  }
+
+  function thumbTransform(thumb) {
+    if (!thumb) return null;
+    var from = thumb.getBoundingClientRect();
+    var to = lbImg.getBoundingClientRect();
+    if (!from.width || !to.width) return null;
+    var sx = from.width / to.width;
+    var sy = from.height / to.height;
+    var tx = (from.left + from.width / 2) - (to.left + to.width / 2);
+    var ty = (from.top + from.height / 2) - (to.top + to.height / 2);
+    return 'translate(' + tx + 'px,' + ty + 'px) scale(' + sx + ',' + sy + ')';
+  }
+
+  function openFromThumb(thumb) {
+    function go() {
+      var t = REDUCED ? null : thumbTransform(thumb);
+      lbImg.style.transition = 'none';
+      lbImg.style.transformOrigin = 'center center';
+      lbImg.style.opacity = '1';
+      if (t) lbImg.style.transform = t;
+      void lbImg.offsetWidth;
+      lbImg.style.transition = REDUCED
+        ? 'none'
+        : 'transform 0.48s cubic-bezier(0.32, 0.72, 0, 1)';
+      lbImg.style.transform = 'none';
+    }
+    if (lbImg.complete && lbImg.naturalWidth) go();
+    else lbImg.addEventListener('load', go, { once: true });
+  }
+
+  function closeToThumb(thumb, done) {
+    var t = REDUCED ? null : thumbTransform(thumb);
+    if (!t) { done(); return; }
+    lbImg.style.transition = 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)';
+    lbImg.style.transform = t;
+    setTimeout(done, 400);
+  }
+
 
   // mx/my is the point the gesture is centred on, and it is held still while
   // the picture grows under it: zooming towards a corner should move that
@@ -1907,27 +1993,17 @@
 
     // Even fitted to the width, the journey map runs several screenfuls, and
     // dragging it a hand's width at a time is not reading it.
-    if (Math.abs(vx) > 0.25 || Math.abs(vy) > 0.25) {
-      var sx = vx * 15, sy = vy * 15;
-      var step = function() {
-        sx *= 0.94; sy *= 0.94;
-        lbStage.scrollLeft -= sx;
-        lbStage.scrollTop -= sy;
-        if (Math.abs(sx) > 0.4 || Math.abs(sy) > 0.4) glide = requestAnimationFrame(step);
-      };
-      glide = requestAnimationFrame(step);
-    }
-
-    if (e.pointerType !== 'mouse' && !moved) {
-      if (e.timeStamp - lastTap < 320) {
-        // Straight to something readable and straight back, for anyone who does
-        // not want to negotiate with two fingers.
-        setZoom(zoom > 1 ? 1 : 2.5, e.clientX, e.clientY);
-        moved = true;
-        lastTap = 0;
-      } else {
-        lastTap = e.timeStamp;
-      }
+    // Apple projection, then a spring that starts at the finger's velocity.
+    // The old sx *= 0.94 decay had no rest point and a brick-wall reverse.
+    // Double-tap zoom is gone: detecting it delayed every single tap by 320ms.
+    // Pinch still zooms; a tap on the picture does not.
+    var vxs = vx * 1000, vys = vy * 1000;
+    if (Math.abs(vxs) > 40 || Math.abs(vys) > 40) {
+      var maxX = Math.max(0, lbStage.scrollWidth - lbStage.clientWidth);
+      var maxY = Math.max(0, lbStage.scrollHeight - lbStage.clientHeight);
+      var tx = Math.max(0, Math.min(maxX, lbStage.scrollLeft - projectDelta(vxs)));
+      var ty = Math.max(0, Math.min(maxY, lbStage.scrollTop - projectDelta(vys)));
+      springScrollTo(tx, ty, -vxs, -vys);
     }
   }
 

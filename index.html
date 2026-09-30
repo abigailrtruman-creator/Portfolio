@@ -1994,7 +1994,7 @@
 
 <script>
 (function() {
-  var VERSION = 'v59';
+  var VERSION = 'v60';
   console.log('HP ' + VERSION + ' loading...');
   document.documentElement.classList.add('hp-active');
 
@@ -3322,40 +3322,6 @@
     var scaleMin = token('--card-scale-min', 0.85);
     var dimMin = token('--card-dim-min', 0.5);
 
-    // TEMPORARY — carousel comparison switch, ?fx=0..3. Delete once one is
-    // chosen and fold its values into the code below.
-    //
-    // Why it exists: measured on a 1440x900 desktop, the carousel moves 0.2% of
-    // its scale range and 0.2% of its opacity range during the whole time the
-    // card is more than 90% on screen. It reaches full size and full brightness
-    // while it is still a sliver at the bottom edge. A card is 808px tall in a
-    // 900px viewport, so no second card is ever in frame to compare it with
-    // either — the effect is real, correctly wired, and invisible.
-    //
-    // The cause is the easing, and it was chosen on purpose: power2.out
-    // front-loads the change so the card is at rest while you are looking at
-    // it. These variants walk that decision back by degrees.
-    var FX = (function() {
-      var m = /[?&]fx=(\d)/.exec(location.search);
-      return m ? +m[1] : 0;
-    })();
-    var FXS = [
-      // 0 — as shipped. All the change happens off-screen.
-      { inEase: 'power2.out', outEase: 'power2.in', s: scaleMin, o: dimMin },
-      // 1 — same range, easing reversed. The card stays small while it climbs
-      // the screen and comes up to size as it reaches the middle, so the change
-      // lands where you are looking instead of before you get there.
-      { inEase: 'power2.in', outEase: 'power2.out', s: scaleMin, o: dimMin },
-      // 2 — the same again, linear. The most obvious, and the one most at risk
-      // of the drift the original easing was there to avoid.
-      { inEase: 'none', outEase: 'none', s: scaleMin, o: dimMin },
-      // 3 — depth carried by light rather than size. The card barely changes
-      // shape, so there is almost no edge movement under the eye, but it comes
-      // up out of the dark much harder than it does now.
-      { inEase: 'power2.in', outEase: 'power2.out', s: 0.955, o: 0.22 }
-    ];
-    var fx = FXS[FX] || FXS[0];
-
     // ---------- WHERE YOU ARE IN THE SET ----------
     // Shown while the cards are what is on screen and taken away either side of
     // them, so it never floats over the hero or the footer, where there is
@@ -3410,10 +3376,12 @@
     }
 
     // ---------- THE CARDS ----------
-    // Eased at both ends rather than linear, so the card is close to full size
-    // for the whole time it is the one you are looking at and does its growing
-    // while it is still arriving. A linear ramp makes the size change
-    // constantly under the cursor, which reads as drift.
+    // Ease in on the way to centre (power2.in) so the card is still small as it
+    // climbs into view and reaches full size as it hits the middle — that is
+    // where you are looking, so the change is visible. power2.out on the way
+    // in was the opposite: the whole ramp finished while the card was still a
+    // sliver at the bottom edge, and a 1440×900 window never showed two cards
+    // at once to compare. The leave is the reverse, so the path is symmetric.
     //
     // opacity rides along with the scale. It is the second compositor-only
     // property there is — no width, no filter, nothing that returns the card to
@@ -3424,10 +3392,10 @@
     function carousel(card, st) {
       gsap.timeline({ defaults: { force3D: true }, scrollTrigger: st })
         .fromTo(card,
-          { scale: fx.s, opacity: fx.o },
-          { scale: 1, opacity: 1, duration: 1, ease: fx.inEase }, 0)
+          { scale: scaleMin, opacity: dimMin },
+          { scale: 1, opacity: 1, duration: 1, ease: 'power2.in' }, 0)
         .to(card, {
-          scale: fx.s, opacity: fx.o, duration: 1, ease: fx.outEase
+          scale: scaleMin, opacity: dimMin, duration: 1, ease: 'power2.out'
         }, 1);
     }
 
