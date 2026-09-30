@@ -350,8 +350,7 @@
 
      It runs to both edges of the window and is cut off by them, which is what
      stops it reading as a gallery that has been laid out and started to say
-     instead that this is a few of many. The mask fades both ends rather than
-     letting a card meet the edge on a hard line.
+     instead that this is a few of many.
 
      No JavaScript. The row is the same screens over and over and the animation
      moves it by exactly one pass, so the frame it ends on is the frame it
@@ -359,12 +358,17 @@
      pass, written on the element by the build because it is the one number
      here the markup decides. */
   .cs-reel {
-    --screen-w: clamp(240px, 44vw, 820px);
+    /* The export is 1640×3198. A width of 44vw made that taller than the
+       window, so the bottom of every page sat past the fold at every scroll
+       position. Height comes from the viewport instead, and the width follows
+       the picture, so the whole screen is in the window at once. The 330px is
+       the nav, the lede, the chips and the gap under them: the chrome still
+       on screen when the row is what you are looking at. */
+    --screen-h: min(720px, max(180px, calc(100svh - 330px)));
+    --screen-w: calc(var(--screen-h) * 1640 / 3198);
     --reel-gap: clamp(14px, 1.5vw, 26px);
     margin: var(--showcase-space) 0;
     overflow: hidden;
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
-            mask-image: linear-gradient(90deg, transparent 0, #000 7%, #000 93%, transparent 100%);
   }
   .cs-reel__track {
     display: flex;
@@ -376,15 +380,14 @@
     /* A duration rather than a speed, because CSS cannot divide a length by
        one, which means this has to be re-reckoned whenever the cards change
        size: a pass is three cards wide, so wider cards travel further in the
-       same time. At this size it works out to 55px/s at 1440 and 71px/s at
-       1920 — the wider the window the faster it goes, which is the right way
-       round, since a wider window shows more of the row at once and the same
-       speed would read as slower across it.
+       same time. At a 1440×900 window that is about 39px/s.
 
-       48s was the first guess and it was too slow: 28px/s at 1440 is under a
+       48s was the first guess and it was too slow: 28px/s is under a
        centimetre a second, which is the speed at which a thing that is moving
-       stops reading as moving and starts reading as stuck. */
-    animation: cs-drift 36s linear infinite;
+       stops reading as moving and starts reading as stuck. 24s keeps it
+       moving once the screens are sized from the viewport rather than from
+       44vw, which shortened the pass they travel. */
+    animation: cs-drift 24s linear infinite;
   }
   /* One pass, exactly: the cards in it plus the gap that follows each. Written
      from the same two variables the cards are sized from, so there is no second
@@ -676,16 +679,12 @@
       padding-right: var(--pad-x);
     }
     .cs-reel__screen[aria-hidden='true'] { display: none; }
-    /* Three across where three will fit, a column where they will not. At the
-       moving row's size the wrap puts the cards onto two rows at 1440, which
-       reads as a row that ran out rather than as a set of three. Floored at the
-       same 240px the moving row uses, so a phone goes to a column rather than
-       to three things too small to be screens. */
+    /* Three across where three will fit, a column where they will not. The
+       height cap is kept, and the third of the row is only allowed to make a
+       screen narrower than that, never taller than the window again. */
     .cs-reel {
-      --screen-w: max(240px, min(clamp(240px, 44vw, 820px), calc(
-        (100vw - 2 * var(--pad-x) - 2 * var(--reel-gap) - 18px) / 3)));
-      -webkit-mask-image: none;
-              mask-image: none;
+      --screen-w: min(calc(var(--screen-h) * 1640 / 3198), calc(
+        (100vw - 2 * var(--pad-x) - 2 * var(--reel-gap) - 18px) / 3));
     }
     .hp-footer__cta,
     .hp-nav__link,
@@ -760,7 +759,7 @@
                srcset="/assets/bcweb-find-an-event-820.3f5827df.webp 820w,
                        /assets/bcweb-find-an-event-1280.3f5827df.webp 1280w,
                        /assets/bcweb-find-an-event-1640.3f5827df.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt="The British Cycling find-an-event page: a race photograph behind the page title, then search and filter controls, then a grid of event cards each with its own photograph, discipline tags and date."
                loading="eager" decoding="async">
@@ -770,7 +769,7 @@
                srcset="/assets/bcweb-event-detail-820.c1ab250c.webp 820w,
                        /assets/bcweb-event-detail-1280.c1ab250c.webp 1280w,
                        /assets/bcweb-event-detail-1640.c1ab250c.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt="An event page for a round of a summer series: a summary and a countdown beside a photograph, the organiser and venue details below, then the races a rider is eligible for, each with its route drawn on a map."
                loading="eager" decoding="async">
@@ -780,7 +779,7 @@
                srcset="/assets/bcweb-my-stats-820.ca93ceb4.webp 820w,
                        /assets/bcweb-my-stats-1280.ca93ceb4.webp 1280w,
                        /assets/bcweb-my-stats-1640.ca93ceb4.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt="A rider’s stats page: an overall performance summary, then national ranking points by discipline with a twelve-month trend, and a leaderboard of nearby riders with the signed-in one highlighted."
                loading="eager" decoding="async">
@@ -790,7 +789,7 @@
                srcset="/assets/bcweb-find-an-event-820.3f5827df.webp 820w,
                        /assets/bcweb-find-an-event-1280.3f5827df.webp 1280w,
                        /assets/bcweb-find-an-event-1640.3f5827df.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt=""
                loading="lazy" decoding="async">
@@ -800,7 +799,7 @@
                srcset="/assets/bcweb-event-detail-820.c1ab250c.webp 820w,
                        /assets/bcweb-event-detail-1280.c1ab250c.webp 1280w,
                        /assets/bcweb-event-detail-1640.c1ab250c.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt=""
                loading="lazy" decoding="async">
@@ -810,7 +809,7 @@
                srcset="/assets/bcweb-my-stats-820.ca93ceb4.webp 820w,
                        /assets/bcweb-my-stats-1280.ca93ceb4.webp 1280w,
                        /assets/bcweb-my-stats-1640.ca93ceb4.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt=""
                loading="lazy" decoding="async">
@@ -820,7 +819,7 @@
                srcset="/assets/bcweb-find-an-event-820.3f5827df.webp 820w,
                        /assets/bcweb-find-an-event-1280.3f5827df.webp 1280w,
                        /assets/bcweb-find-an-event-1640.3f5827df.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt=""
                loading="lazy" decoding="async">
@@ -830,7 +829,7 @@
                srcset="/assets/bcweb-event-detail-820.c1ab250c.webp 820w,
                        /assets/bcweb-event-detail-1280.c1ab250c.webp 1280w,
                        /assets/bcweb-event-detail-1640.c1ab250c.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt=""
                loading="lazy" decoding="async">
@@ -840,7 +839,7 @@
                srcset="/assets/bcweb-my-stats-820.ca93ceb4.webp 820w,
                        /assets/bcweb-my-stats-1280.ca93ceb4.webp 1280w,
                        /assets/bcweb-my-stats-1640.ca93ceb4.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt=""
                loading="lazy" decoding="async">
@@ -850,7 +849,7 @@
                srcset="/assets/bcweb-find-an-event-820.3f5827df.webp 820w,
                        /assets/bcweb-find-an-event-1280.3f5827df.webp 1280w,
                        /assets/bcweb-find-an-event-1640.3f5827df.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt=""
                loading="lazy" decoding="async">
@@ -860,7 +859,7 @@
                srcset="/assets/bcweb-event-detail-820.c1ab250c.webp 820w,
                        /assets/bcweb-event-detail-1280.c1ab250c.webp 1280w,
                        /assets/bcweb-event-detail-1640.c1ab250c.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt=""
                loading="lazy" decoding="async">
@@ -870,7 +869,7 @@
                srcset="/assets/bcweb-my-stats-820.ca93ceb4.webp 820w,
                        /assets/bcweb-my-stats-1280.ca93ceb4.webp 1280w,
                        /assets/bcweb-my-stats-1640.ca93ceb4.webp 1640w"
-               sizes="(min-width: 1864px) 820px, (min-width: 546px) 44vw, 240px"
+               sizes="(min-width: 700px) 370px, 70vw"
                width="1640" height="3198"
                alt=""
                loading="lazy" decoding="async">
