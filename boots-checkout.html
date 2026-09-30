@@ -1530,8 +1530,8 @@
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
       <div class="cs-overview__body" data-reveal data-stagger>
-        <p>As <strong>lead product designer</strong>, I owned the redesign of Boots.com checkout end-to-end. The flow serves 21 million UK customers a year. The scope covered everything from the first tap to the confirmation page, alongside a parallel workstream to bring Same-Day Click &amp; Collect into the same experience. The rebuild is due to go live in phases from Q4.</p>
-        <p>On the surface, this was a UI refresh. Underneath, it was a <strong>coordination problem</strong>. Product, engineering, research, and the business each held a stake in the outcome, and reconciling those views was as much the task as the design itself. The rebuild had to hold at every level, down to the edge cases nobody had yet mapped.</p>
+        <p>As <strong>lead product designer</strong>, I owned the end-to-end redesign of Boots.com checkout. It serves 21 million UK customers a year. The experience needed modernising, and every step from the first tap to confirmation needed rethinking at the interaction level. Boots was also launching Same-Day Click &amp; Collect, a new proposition built on new technology. It had to sit inside checkout, not beside it. The rebuild goes live in phases from Q4.</p>
+        <p>Checkout touches almost every part of the business. Marketing, loyalty, personalisation, commerce, payments and fraud each had a stake, and each pulled the product strategy its own way. I held those goals in one view and kept research at the centre of the decisions. Where teams disagreed, how customers actually shop made the call. It had to work for Boots and for its customers, down to the edge cases nobody had mapped.</p>
       </div>
     </div>
   </section>
@@ -1546,8 +1546,9 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">A checkout doing its job, but showing its age.</h2>
-          <p>Boots.com&rsquo;s legacy checkout worked, but it worked in the way flows built five years ago tend to work. Multi-step. A progress bar that got in its own way. Same-Day Click &amp; Collect, a service the business was investing in heavily, didn&rsquo;t yet exist inside the flow.</p>
-          <p>The brief was to reshape it. The UI was the easy half. The flow needed questioning.</p>
+          <p>Boots.com&rsquo;s legacy checkout worked, but it worked the way flows built five years ago tend to. Customers moved through multiple steps, guided by a progress bar that added friction instead of reducing it. Same-Day Click &amp; Collect, a service the business was investing in heavily, had no place in the flow at all. At 21 million customers a year, every point of friction is multiplied.</p>
+          <p>The brief was to reshape it. The UI was the easier half. The harder question was whether the flow itself was right.</p>
+          <p>Before designing anything, I ran an evaluation of the existing experience to pin down what needed to change and why. When product shared the PRD, I tested it against those findings. It had gaps. Rather than design around them, I took them to the product owners and used them to agree where to focus first. The same exercise showed where key decisions sat outside product. That was the point I brought in specialist teams, from payments and fraud through to loyalty and marketing, so their constraints shaped the design from the start instead of surfacing at sign-off.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.5969" data-reveal>
           <img src="/assets/boots-01-1120.162736ef.webp"
@@ -1556,9 +1557,9 @@
                        /assets/boots-01-2240.162736ef.webp 2240w"
                sizes="(min-width: 512px) 448px, 92vw"
                width="4284" height="7177"
-               alt="The legacy Boots.com checkout: a five-stage progress bar across the top, details entered one collapsed section at a time, with the order summary to the right."
+               alt="The as-is Boots.com checkout: a five-stage progress bar across the top, details entered one collapsed section at a time, with the order summary to the right."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The flow as it stood: five stages, a progress bar, and collapsed sections opened one at a time.</span></figcaption>
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The as-is experience: five stages, a progress bar, and collapsed sections opened one at a time. Clunky interactions.</span></figcaption>
         </figure>
       </section>
 
@@ -1569,8 +1570,8 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Friction isn&rsquo;t the enemy. Perceived friction is.</h2>
-          <p>Through usability testing, session analysis, and a competitive audit across UK retail, one insight kept surfacing: customers didn&rsquo;t struggle with the <em>number</em> of steps. They struggled with steps feeling opaque, with not being able to check what they&rsquo;d entered, and with a progress bar that promised a rigidness the flow didn&rsquo;t have.</p>
-          <p>That is what we designed against.</p>
+          <p>Usability testing and previous optimisation tests, backed by a competitive audit across UK retail, kept pointing to the same insight. Customers didn&rsquo;t struggle with the number of steps. They struggled when they couldn&rsquo;t see what they&rsquo;d already entered or where they were going next. The progress bar made it worse. It implied a fixed, linear path that the flow didn&rsquo;t actually follow.</p>
+          <p>That set the focus. Surface what customers had already told us, and let them move through checkout more cleanly.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.5966" data-reveal>
           <img src="/assets/boots-02-1120.e22190db.webp"
@@ -1591,9 +1592,11 @@
           <span class="cs-chapter__beat">Principle</span>
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">One page, three steps, no progress bar.</h2>
-          <p>Contact details, delivery, payment: all on one canvas, unlocking as customers move through. Users can scroll back to review or edit without feeling sent backwards. We tested it against the multi-step alternative. It landed better, not because it was shorter, but because customers felt more <strong>oriented</strong>.</p>
-          <p>Removing the progress bar came out of the same reasoning. On a one-page flow, a bar is visual noise. The numbered steps already gave enough orientation.</p>
+          <h2 class="cs-chapter__title">Same page. No progress bar.</h2>
+          <p>Checkout stayed on a single canvas, with each section unlocking once the one before it was complete. Contact details come first, then delivery and payment. What changed was how the page showed people where they were.</p>
+          <p>We removed the progress bar but kept the sense of progression. Numbered sections now carry it. With every section collapsed, the whole checkout fits in one viewport, so customers can see from the start that there are only three steps. It sets an expectation of speed before they&rsquo;ve entered anything.</p>
+          <p>Progressive disclosure keeps attention on one section at a time. Once complete, each section collapses into a summary customers can check and edit without feeling sent backwards.</p>
+          <p>Tested against a multi-step alternative, this approach won. Not because it was shorter, but because customers always knew where they stood. Rounds of usability testing, from early concepts through to high-fidelity prototypes, then refined how each section behaved.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.7669" data-reveal>
           <img src="/assets/boots-03-1120.fbacb6ec.webp"
@@ -1659,7 +1662,9 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Bringing loyalty to the surface.</h2>
-          <p>The integrated loyalty component sits inside the payment section and always shows the customer their current Advantage Card balance and whether it covers the order. Today it&rsquo;s buried, which almost certainly suppresses redemption. Making it visible was a <strong>commercial move</strong>: promote a lever the business was already investing in.</p>
+          <p>In the old checkout, paying with points was a small grey link in the corner of the payment section. If you didn&rsquo;t have enough, you only found out by hovering over it.</p>
+          <p>Moving Advantage Card points into the main list of payment methods gave them the same standing as Apple Pay, card, PayPal and Klarna. Customers can see their balance straight away and whether it covers the full order. That matters more than it sounds. Points have to cover delivery as well, and delivery is only added at checkout, so this is the first moment customers can know for sure. If the balance falls short, the option stays on screen with the amount still showing.</p>
+          <p>For Advantage Card members, this is the one point in the journey where their points are worth something. Showing that clearly is good for them and good for Boots. With close to 16 million active members, it&rsquo;s one of the most visible places the business can show customers what their loyalty gets them.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.9481" data-reveal>
           <img src="/assets/boots-06-1120.6270eb9b.webp"
@@ -1670,7 +1675,7 @@
                width="4332" height="4569"
                alt="The Advantage Card payment option in three states: the legacy tooltip explaining there are not enough points, the new component selected with a balance that covers the order, and the same option greyed out when the balance does not."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Enough points, and not enough. The balance is stated either way, rather than found out on selection.</span></figcaption>
+          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Enough points, and not enough. The balance is stated either way, rather than found out by hovering.</span></figcaption>
         </figure>
       </section>
 
@@ -1681,7 +1686,7 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The confirmation, mirrored.</h2>
-          <p>For the order confirmation page, we used patterns I&rsquo;d designed for Boots&rsquo; transactional emails. Same layout, same visual language. Complete an order, and the email that arrives 30 seconds later reads as the same document. That mirroring is easy to miss, but it&rsquo;s what makes a system feel <strong>considered</strong>.</p>
+          <p>The order confirmation page uses the same patterns I designed for Boots&rsquo; transactional emails. Same layout, same visual language. When the email arrives 30 seconds later, it feels like a continuation of the page the customer has just seen, with everything where they&rsquo;d expect it to be.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.6223" data-reveal>
           <img src="/assets/boots-07-1120.aed56228.webp"
@@ -1703,8 +1708,10 @@
         </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">When the tech can&rsquo;t do what customers expect.</h2>
-          <p>Same-Day Click &amp; Collect is the honest example of not every part of this going into build in the shape I would have chosen. We explored three integration paths for Availability-to-Promise: OCI out-of-the-box, extending Salesforce, or a Blue Yonder integration. Cost ruled out Blue Yonder. Salesforce didn&rsquo;t deliver. OCI OOB was where we landed, a decision made before design had scoped what it could do.</p>
-          <p>Generative research then showed customers expected same-day collection to behave the way it does on Amazon: visible on the PLP, confirmed at basket, honoured at checkout. OCI OOB couldn&rsquo;t deliver against those expectations.</p>
+          <p>Same-Day Click &amp; Collect is the part of this project that didn&rsquo;t go into build in the shape I would have chosen.</p>
+          <p>Three integration paths were explored for Availability-to-Promise: OCI out of the box, extending Salesforce, or integrating Blue Yonder. Cost ruled out Blue Yonder, and extending Salesforce didn&rsquo;t deliver. That left OCI out of the box, a decision taken at leadership level rather than by design.</p>
+          <p>Generative research showed customers expected same-day collection to work the way it does with the big online retailers they already use. They wanted to see it on the product listing page and have it confirmed in the basket. Most of all, they expected it to hold at checkout. OCI out of the box couldn&rsquo;t meet those expectations.</p>
+          <p>The decision wasn&rsquo;t mine to make, but I made sure it was an informed one. I put together a presentation for the programme leadership team at exec level, setting out what each option would mean for customers and where each one fell short. The platform choice stood. But leadership went into it knowing exactly what customers would and wouldn&rsquo;t get.</p>
         </div>
         <figure class="cs-figure" style="--ar: 1.0868" data-reveal>
           <img src="/assets/boots-08-1120.7841e56f.webp"
