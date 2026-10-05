@@ -298,41 +298,26 @@
     max-width: 30ch;
   }
 
-  /* The disciplines, in the chip row the written case studies carry under
-     their statement. They are read from the same card this page was reached
-     by, so what the work involved survives the write-up not being there.
-
-     Copied value for value from those pages rather than approximated. This was
-     built from absolute pixels — 12.5px labels in 7px/14px padding, a --rule
-     hairline and --ink-2 text — which came out 31px tall against their 21.7,
-     lighter in weight and fainter in both border and ink. A held-open page
-     should differ from a written one in what it says, not in the size of a
-     component both of them carry. */
+  /* The same pill on every case study: 14px, the same padding, the same hairline. */
   .cs-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.6em;
-    margin: clamp(20px, 2.8vh, 30px) 0 0;
+    gap: 8px;
+    margin: clamp(40px, 5.2vh, 60px) 0 0;
     padding: 0;
     list-style: none;
-    /* Sized to what the homepage chip is seen at rather than what it computes
-       at: the cards carry a scale(0.85), so a chip resolving to 13.78px is
-       drawn at 11.72. Seen, it is flat from 1024 up, which is what this holds.
-       The 10px floor is deliberate — the card is drawn at 7.2px on a phone,
-       which only works inside a card that has been scaled down as a whole. */
-    font-size: clamp(10px, calc(4.5px + 0.7vw), 11.7px);
   }
   .cs-tags li {
     display: inline-flex;
     align-items: center;
-    padding: 0.34em 0.85em;
-    border: 1px solid rgba(255,255,255,0.38);
-    border-radius: 99999px;
-    color: var(--ink);
-    font-size: 1em;
+    padding: 10px 14px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--ink-1);
+    font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
-    letter-spacing: -0.004em;
+    letter-spacing: -0.01em;
     white-space: nowrap;
   }
 
@@ -724,7 +709,7 @@
     <span class="hp-nav__name">Abbie Truman</span>
   </a>
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="https://drive.google.com/file/d/1capCzcKOOscb3WxnS8kzHoWnSQtovXNP/view?usp=sharing" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="https://drive.google.com/file/d/1KcT6iBQz2vqAW1VKsEBWyHxMGAst7fnl/view?usp=drive_link" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>

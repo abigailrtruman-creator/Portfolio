@@ -1994,7 +1994,7 @@
 
 <script>
 (function() {
-  var VERSION = 'v59';
+  var VERSION = 'v62';
   console.log('HP ' + VERSION + ' loading...');
   document.documentElement.classList.add('hp-active');
 
@@ -2048,22 +2048,10 @@
   // script asks PDFKit for the text before and after and will not publish a
   // file whose answer changed, because that failure looks like nothing.
   //
-  // This line is written by build-cv.py and should not be edited by hand: the
-  // hash is the digest of the PDF's bytes, so changing one without the other
-  // points the nav at a file that is not there.
-  //
-  // It sat at the site root under a stable name until there was a script. The
-  // argument for that is worth keeping because it is the argument for why this
-  // is safe now: /assets/* is served `immutable, max-age=31536000`, so a plain
-  // filename under there would hand anyone who had opened the old CV a
-  // year-long copy of it, and a hash only fixes that where something renames the
-  // file and rewrites the references to it in the same breath. Nothing did, for
-  // a PDF dragged out of Figma, so the hash would have been hers to maintain and
-  // the failure when she forgot would have been silent. build-cv.py is that
-  // something. The old root path still answers, as a redirect it keeps pointed
-  // here, because it was live long enough to be in a sent application. See its
-  // docstring for the rest of what the change costs.
-  var CV = '/assets/abbie-truman-cv.8da5ab19.pdf';
+  // Live nav goes to Drive. The hashed PDF in /assets and the
+  // /abbie-truman-cv.pdf redirect still exist so old application links do not
+  // 404; vercel.json points that path at the same file.
+  var CV = 'https://drive.google.com/file/d/1KcT6iBQz2vqAW1VKsEBWyHxMGAst7fnl/view?usp=drive_link';
 
   var LINKEDIN = 'https://www.linkedin.com/in/abigail-truman/';
 

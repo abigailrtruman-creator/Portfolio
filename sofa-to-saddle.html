@@ -426,7 +426,7 @@
      which is where 5.4vh drops under the 38px ceiling, so on any ordinary laptop
      this is 38px and three lines. */
   .cs-hero__statement {
-    margin: clamp(18px, 2.6vh, 30px) 0 0;
+    margin: clamp(32px, 4.2vh, 48px) 0 0;
     max-width: min(930px, 100%);
     font-family: var(--ff-display);
     font-weight: 500;
@@ -497,62 +497,26 @@
       var(--glow-tint) 0%, transparent 68%);
   }
 
-  /* The homepage card's chip in the page's ink: the same 38% hairline around the
-     same full-strength label, and the same em padding and gap. These were a 52%
-     outline around a 74% label for a while, which read the wrong way round — on
-     the card the outline is the quiet part and the label carries the chip, and
-     at those strengths this was an outline with text inside it instead.
-
-     Size is the deliberate difference. The card's chip is sized against a 40.7px
-     sentence and runs 10px to 15px on a curve; this one sits in body copy, where
-     15px would be close enough to the text around it to stop reading as a label
-     at all. Padding and gap are em of the label, so the row is resized by moving
-     font-size alone. The border is the exception: it is a hairline at any size,
-     and scaling it with the text would only make it heavier here than it is on
-     the card these came from.
-
-     The 0.38 is written out rather than reaching for --ink-3 at 0.40. Two
-     hundredths is invisible, but this number's job is to be the card's number,
-     and a token that moves for its own reasons would quietly break that.
-
-     The size is deliberately the same on all four case studies. These pills are
-     one component wearing one size, and a page whose pills were a point larger
-     than the next page's would read as a mistake rather than as a decision. */
+  /* The same pill on every case study: 14px, the same padding, the same hairline. */
   .cs-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.6em;
-    margin: clamp(20px, 2.8vh, 30px) 0 0;
+    gap: 8px;
+    margin: clamp(40px, 5.2vh, 60px) 0 0;
     padding: 0;
     list-style: none;
-    /* Sized to what the homepage chip is seen at, which is not what it computes
-       at: the cards carry a scale(0.85), so a chip whose font-size resolves to
-       13.78px is drawn at 11.72 and its pill stands 23.7px tall. Comparing the
-       two stylesheets' numbers compares the wrong thing, and doing that is how
-       this arrived at 15px — a chip half again the size of the one on the card
-       it was supposed to match.
-
-       Seen, the card's chip is flat from 1024 up: its container caps, so the
-       curve stops climbing. This holds 11.7px over the same range and comes
-       down below it, which is where the card's own chip gets smaller too.
-
-       The floor is 10px rather than the 7.2 the card is drawn at on a phone.
-       That is the one place these part company, and deliberately: 7.2px is a
-       size a chip can only be when it is inside a card that has been scaled
-       down as a whole, and on the open page it would be unreadable. */
-    font-size: clamp(10px, calc(4.5px + 0.7vw), 11.7px);
   }
   .cs-tags li {
     display: inline-flex;
     align-items: center;
-    padding: 0.34em 0.85em;
-    border: 1px solid rgba(255,255,255,0.38);
-    border-radius: 99999px;
-    color: var(--ink);
-    font-size: 1em;
+    padding: 10px 14px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--ink-1);
+    font-size: 14px;
     font-weight: 500;
     line-height: 1.2;
-    letter-spacing: -0.004em;
+    letter-spacing: -0.01em;
     white-space: nowrap;
   }
 
@@ -868,7 +832,8 @@
      read as a numbered series rather than as a run of headings. The first one
      has none: it would be a line ruled directly under the overview's last
      paragraph, closing it rather than opening anything. */
-  .cs-chapter + .cs-chapter {
+  .cs-chapter + .cs-chapter,
+  .cs-scope + .cs-chapter {
     margin-top: clamp(92px, 13vh, 154px);
     border-top: 1px solid var(--rule);
   }
@@ -1295,6 +1260,45 @@
     .cs-seq__step.is-active:hover { background: #fff; color: #0a0a0c; }
   }
 
+  /* ---------- Scope ----------
+     The record in front of the chapters: what she owned, what the wider team
+     owned, why the problem was hard, the call, and what moved. Same grid as a
+     chapter, with no number, because it frames the series rather than joining
+     it. The list is the term treatment from the API page. */
+  .cs-scope {
+    display: grid;
+    grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
+    column-gap: clamp(28px, 4.5vw, 88px);
+    padding-top: clamp(56px, 8vh, 104px);
+  }
+  .cs-scope__rail {
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cs-scope__body { max-width: 62ch; }
+  .cs-terms {
+    margin: 1.35em 0 0;
+    padding-left: clamp(18px, 1.8vw, 26px);
+    border-left: 1px solid var(--rule);
+  }
+  .cs-terms dt,
+  .cs-terms dd {
+    font-size: clamp(17px, 1.32vw, 19.5px);
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+  }
+  .cs-terms dt {
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .cs-terms dd {
+    margin: 0;
+    color: var(--ink-1);
+  }
+  .cs-terms dd + dt { margin-top: 1.15em; }
+
   /* ---------- Reflection ---------- */
   .cs-reflection {
     padding-top: var(--section);
@@ -1628,17 +1632,20 @@
     /* The rail stops being a column beside the writing and becomes a line
        above it. A 13ch column on a 346px screen leaves the body 20ch, which is
        not a measure. */
-    .cs-chapter {
+    .cs-chapter,
+    .cs-scope {
       grid-template-columns: minmax(0, 1fr);
       row-gap: 18px;
     }
-    .cs-chapter__rail {
+    .cs-chapter__rail,
+    .cs-scope__rail {
       flex-direction: row;
       align-items: baseline;
       gap: 14px;
     }
     .cs-chapter__no { font-size: 20px; }
-    .cs-chapter__body { max-width: none; }
+    .cs-chapter__body,
+    .cs-scope__body { max-width: none; }
     /* Everything that was placed in the writing's column has to be told where that
        column went. The grid has one of them here, so a block still asking for
        column 2 would build a second one out of nothing and sit in it. The measure
@@ -1752,7 +1759,7 @@
        way back to the set is the link at the end of the article, where someone
        who has finished reading actually is. -->
   <div class="hp-nav__links">
-    <a class="hp-nav__link" href="https://drive.google.com/file/d/1capCzcKOOscb3WxnS8kzHoWnSQtovXNP/view?usp=sharing" target="_blank" rel="noopener">
+    <a class="hp-nav__link" href="https://drive.google.com/file/d/1KcT6iBQz2vqAW1VKsEBWyHxMGAst7fnl/view?usp=drive_link" target="_blank" rel="noopener">
       <span>CV</span>
       <span class="hp-nav__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </a>
@@ -1818,6 +1825,27 @@
 
   <section class="cs-chapters cs-wrap" aria-label="The work, chapter by chapter">
     <div class="cs-col">
+
+      <section class="cs-scope" aria-label="What I owned">
+        <div class="cs-scope__rail" data-reveal data-stagger>
+          <span class="cs-chapter__beat">Ownership</span>
+        </div>
+        <div class="cs-scope__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Twelve weeks, and the line I held.</h2>
+          <dl class="cs-terms">
+            <dt>I owned</dt>
+            <dd>Design leadership from a blank page to launch. The proposition, the map of both apps, the calls between Lloyds and British Cycling, and the review standard the other designers worked to. I also built a parallel front end in Cursor.</dd>
+            <dt>The wider team</dt>
+            <dd>Designers, writers, strategists, consultants and engineers. Both clients signed every requirement. An engineer reviewed the code I wrote and wrote the safety report the room needed before they would follow.</dd>
+            <dt>Why it was hard</dt>
+            <dd>No product to modernise, a contract for two apps, and a budget that would not take the original scope. Two brands that had never had to speak as one. British Cycling&rsquo;s own membership is built for riders this app was trying to create.</dd>
+            <dt>The call</dt>
+            <dd>The research named confidence. The plan starts from the level someone is actually at, and version one shipped narrow on purpose: levels, badges, progress. The campaign was the reach. The app had to be live for it.</dd>
+            <dt>What changed</dt>
+            <dd>Live. 3,000 sign-ups on day one, toward British Cycling&rsquo;s target of 1 million more people cycling by 2028. Elixirr now staffs and sells the model of a designer owning the front end.</dd>
+          </dl>
+        </div>
+      </section>
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
