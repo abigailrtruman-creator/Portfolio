@@ -1089,6 +1089,12 @@
     background-position: left top;
     background-size: min(100%, calc(13ch + clamp(28px, 4.5vw, 88px) + var(--text-end))) 1px;
   }
+  /* The impact section sits directly above the footer. The footer's rule is
+     the full inset of the page, and a second, shorter rule here reads as a
+     mismatch, so the impact section opens without one. */
+  .cs-stories + .cs-chapters {
+    background-image: none;
+  }
   .cs-chapter__body h3 {
     margin: clamp(40px, 5.5vh, 64px) 0 0;
     font-family: var(--ff-display);
@@ -1755,8 +1761,8 @@
            aria-label carries the sentence intact, because the inner span is about
            to be taken apart into one element per letter and a screen reader given
            that reads it out a letter at a time. -->
-      <h1 class="cs-hero__statement" aria-label="Modernising the Boots.com checkout and &lsquo;last mile&rsquo; experience that serves 21m customers annually.">
-        <span class="cs-hero__statement-inner" aria-hidden="true">Modernising the <strong>Boots.com</strong> checkout and &lsquo;last mile&rsquo; experience that serves 21m customers annually.</span>
+      <h1 class="cs-hero__statement" aria-label="Modernising the Boots.com checkout and &lsquo;last mile&rsquo; experience that will serve twenty-one million customers annually.">
+        <span class="cs-hero__statement-inner" aria-hidden="true">Modernising the <strong>Boots.com</strong> checkout and &lsquo;last mile&rsquo; experience that will serve twenty-one million customers annually.</span>
       </h1>
       <ul class="cs-tags">
         <li>UX &amp; UI</li>
@@ -1856,7 +1862,7 @@
                  width="4321" height="8016"
                  alt="The existing Boots checkout, with a five-stage progress bar, above a single-page design that uses numbered sections for contact, delivery and payment."
                  loading="lazy" decoding="async">
-            <figcaption><span class="cs-figure__text">Above, the existing checkout and its five-stage progress bar. Below, the single-page design, with numbered sections that collapse into an editable summary.</span></figcaption>
+            <figcaption><span class="cs-figure__text">Above, the existing checkout and its five-stage progress bar. Below, the newly proposed single-page design, with numbered sections that collapse into an editable summary.</span></figcaption>
           </figure>
         </section>
 
@@ -1878,7 +1884,7 @@
                  width="3553" height="7029"
                  alt="Two Boots checkout layouts, for mobile and tablet. Klarna is open, the order totals stay visible, including £8.00 in Advantage Card points, and the marketing consent checkbox sits with the terms beside the pay button."
                  loading="lazy" decoding="async">
-            <figcaption><span class="cs-figure__text">Across mobile and tablet, the totals stay visible at payment, including what the order earns, such as &pound;8.00 in Advantage Card points (800 points). The consent wording sits with the terms beside the pay button.</span></figcaption>
+            <figcaption><span class="cs-figure__text">The new payment designs across mobile and tablet, where there is no second panel like there is on desktop. The totals stay visible, and marketing consent is now in a contextually relevant area.</span></figcaption>
           </figure>
         </section>
         </div>
@@ -1922,7 +1928,6 @@
                    width="4320" height="2913"
                    alt="Checkout suggesting a change to Nottingham Beeston, 1.1 miles away, so the full order can be collected today."
                    loading="lazy" decoding="async">
-              <figcaption><span class="cs-figure__text">Checkout suggests a nearby store that can have the full order today.</span></figcaption>
             </figure>
             <h3>2. Explain, then guide the decision: two routes in a modal.</h3>
             <p>Checkout said &ldquo;2 of 3 items available today, full order available from tomorrow&rdquo;, then a modal offered two routes: switch store, or remove the unavailable item. It gave a complete picture and a clear choice. But the modal turned the decision into its own step, <strong>interrupting checkout</strong> for every customer with a part-ready basket.</p>
@@ -1936,7 +1941,6 @@
                    width="4320" height="3309"
                    alt="A modal in checkout with two routes: change to Nottingham Beeston for the full order today, or review the basket and remove what is not available."
                    loading="lazy" decoding="async">
-              <figcaption><span class="cs-figure__text">The modal offers two routes: change store, or remove what isn&rsquo;t available.</span></figcaption>
             </figure>
           </div>
           <div class="cs-chapter__body" data-reveal data-stagger>
@@ -1952,7 +1956,6 @@
                    width="4320" height="2949"
                    alt="Checkout listing three choices: collect tomorrow at Nottingham Victoria Centre, collect today at a nearby store, or remove the unavailable item."
                    loading="lazy" decoding="async">
-              <figcaption><span class="cs-figure__text">The same three choices, listed in the page.</span></figcaption>
             </figure>
             <h3>4. Lead with the need: ask whether they need it today.</h3>
             <p>Checkout asked &ldquo;Need to collect your order today?&rdquo;, with the options one click away. It was the lightest of the four, speaking to the customer&rsquo;s situation rather than stock details. But <strong>it hid the specifics</strong>. Customers couldn&rsquo;t see which item was holding their order up, the one detail they needed to decide whether waiting was fine.</p>
@@ -1966,7 +1969,6 @@
                    width="4320" height="2616"
                    alt="Checkout asking whether the order needs to be collected today, with the options behind a View options button."
                    loading="lazy" decoding="async">
-              <figcaption><span class="cs-figure__text">One question, with the options a click away.</span></figcaption>
             </figure>
           </div>
         </section>
@@ -1989,7 +1991,6 @@
                  width="6000" height="5736"
                  alt="The final checkout for a part-ready basket. A note names the lipstick that is not available for same-day collection, tomorrow is selected, and the store finder is open beside the page."
                  loading="lazy" decoding="async">
-            <figcaption><span class="cs-figure__text">The final design names the item holding the order up, defaults to the soonest date the full order can be collected, and still lets someone change store.</span></figcaption>
           </figure>
         </section>
         </div>
@@ -2023,7 +2024,7 @@
                  width="5760" height="4278"
                  alt="A map of the order scenarios, from account and order type to product and payment, above four emails: order confirmation, order dispatch, ready to collect, and order cancellation."
                  loading="lazy" decoding="async">
-            <figcaption><span class="cs-figure__text">The paths an order can take, and four of the emails that follow it.</span></figcaption>
+            <figcaption><span class="cs-figure__text">A snapshot of the factors that change what each email has to say, showing the scale of what had to be considered.</span></figcaption>
           </figure>
         </section>
 
@@ -2052,7 +2053,7 @@
                  width="6855" height="11016"
                  alt="The Boots order confirmation page beside the confirmation email. Both thank Abbie for her order and show the same order summary."
                  loading="lazy" decoding="async">
-            <figcaption><span class="cs-figure__text">The confirmation page and the first email, sharing the same patterns.</span></figcaption>
+            <figcaption><span class="cs-figure__text">The final confirmation page and email template, sharing patterns and components for a more considered feel.</span></figcaption>
           </figure>
         </section>
         </div>
