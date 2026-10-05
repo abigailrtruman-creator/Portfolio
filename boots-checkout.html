@@ -744,8 +744,52 @@
   /* A label at the start of a paragraph, actually bold. The rule above
      flattens every other strong so emphasis in the writing stays quiet. */
   .cs-chapter__body strong.cs-runin {
+    display: block;
+    margin-bottom: 0.55em;
     color: var(--ink);
     font-weight: 700;
+  }
+  .cs-chapter__body p:has(> strong.cs-runin) {
+    margin-top: clamp(40px, 5.5vh, 64px);
+  }
+  /* Three decisions, scanned by the name. The label holds the left edge and
+     the explanation sits beside it, still inside the writing column. */
+  .cs-owners {
+    margin: clamp(32px, 4.4vh, 48px) 0 0;
+  }
+  .cs-owner {
+    display: grid;
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+    column-gap: clamp(18px, 2.2vw, 28px);
+    align-items: start;
+    padding: clamp(20px, 2.8vh, 28px) 0;
+  }
+  .cs-owner + .cs-owner {
+    background-image: linear-gradient(var(--rule), var(--rule));
+    background-repeat: no-repeat;
+    background-position: left top;
+    background-size: 100% 1px;
+  }
+  .cs-owner dt {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-owner dd {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-owner strong {
+    color: inherit;
+    font-weight: inherit;
   }
 
   /* ---------- Chapters ----------
@@ -918,7 +962,13 @@
     align-items: baseline;
   }
   .cs-path__note { min-width: 0; }
-  .cs-path__note p { margin: 0; }
+  .cs-path__note p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
   .cs-path__name {
     display: flex;
     align-items: baseline;
@@ -1001,9 +1051,10 @@
      column, the same rail and indent as the other case studies, so the bulk
      of the copy reads a step in from that edge. */
   .cs-story {
+    --story-gap: clamp(28px, 4.5vw, 88px);
     display: grid;
     grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
-    column-gap: clamp(28px, 4.5vw, 88px);
+    column-gap: var(--story-gap);
     align-items: start;
   }
   .cs-story > .cs-path__no {
@@ -1011,7 +1062,7 @@
     font-family: var(--ff-display);
     font-weight: 700;
     font-size: clamp(48px, 5vw, 64px);
-    line-height: 0.85;
+    line-height: 1;
     letter-spacing: -0.045em;
     color: var(--ink-2);
   }
@@ -1068,6 +1119,65 @@
   }
   .cs-story .cs-chapter__body p { margin-top: 1.7em; }
   .cs-story .cs-chapter__body h3 + p { margin-top: 0.55em; }
+  /* The four directions stay in the writing column, in the same order you
+     read them: the idea, then its screen, then the next. Same type, same
+     picture width, same gap, so the set is quiet. */
+  .cs-dirs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: var(--text-end);
+  }
+  .cs-dir + .cs-dir { padding-top: clamp(56px, 8vh, 88px); }
+  .cs-dir h3 {
+    margin: 1.7em 0 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(20px, 1.7vw, 24px);
+    line-height: 1.15;
+    letter-spacing: -0.028em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-dir p {
+    margin: 0.7em 0 0;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-dir strong {
+    color: inherit;
+    font-weight: inherit;
+  }
+  /* The turn in the middle of a story. Narrower than the chapters around it,
+     with a rule, so it reads as a pause between the options and the answer. */
+  .cs-story .cs-chapter--turn {
+    padding-top: clamp(108px, 14vh, 156px);
+  }
+  .cs-story .cs-chapter--turn .cs-chapter__body {
+    max-width: 46ch;
+    padding-left: clamp(18px, 2vw, 26px);
+    border-left: 1px solid var(--rule);
+  }
+  /* A plate fills the writing column. Reserved for the pictures that are the
+     point of the chapter, and only where the artwork is wide enough that the
+     height stays on one screen. */
+  .cs-story .cs-figure--plate {
+    max-width: var(--text-end);
+  }
+  .cs-story .cs-figure--plate .cs-figure__open,
+  .cs-story .cs-figure--plate img {
+    width: 100%;
+    max-width: min(100%, calc(min(78vh, 820px) * var(--ar, 1.2)));
+    margin-left: 0;
+    margin-right: auto;
+  }
+  .cs-story .cs-figure--plate figcaption {
+    margin-left: 0;
+    margin-right: auto;
+    max-width: min(62ch, 100%);
+  }
   .cs-story .cs-chapter__title {
     font-weight: 600;
     font-size: clamp(21px, 1.8vw, 26px);
@@ -1102,6 +1212,34 @@
      mismatch, so the impact section opens without one. */
   .cs-stories + .cs-chapters {
     background-image: none;
+  }
+  /* A close, not another chapter. The ground is a step off the page black and
+     runs to the edges of the shell, while the writing stays in the column. */
+  .cs-impact {
+    margin-top: clamp(88px, 12vh, 140px);
+    padding: clamp(72px, 11vh, 128px) var(--pad-x);
+    background: #141418;
+  }
+  .cs-impact .cs-chapter { padding-top: 0; }
+  /* Same rail and measure as the stories, so the close starts where the
+     writing starts and ends where the writing ends. */
+  .cs-impact .cs-chapter__body { max-width: var(--text-end); }
+  .cs-impact .cs-chapter__title {
+    font-weight: 800;
+    font-size: clamp(40px, 4.6vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+  .cs-impact .cs-chapter__body p:first-of-type {
+    margin-top: clamp(28px, 4vh, 44px);
+  }
+  main:has(.cs-impact) + .hp-footer {
+    margin-top: clamp(56px, 8vh, 96px);
+  }
+  /* The impact band is already the break before the footer, so the hairline
+     that usually opens Let's talk would be a second one. */
+  main:has(.cs-impact) + .hp-footer::before {
+    content: none;
   }
   .cs-chapter__body h3 {
     margin: clamp(40px, 5.5vh, 64px) 0 0;
@@ -1581,6 +1719,10 @@
       grid-template-columns: minmax(0, 1fr);
       row-gap: 14px;
     }
+    .cs-owner {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 8px;
+    }
   }
 
   @media (min-width: 601px) and (max-width: 900px) {
@@ -1626,6 +1768,7 @@
 
     .cs-wrap,
     .cs-read { padding-left: 22px; padding-right: 22px; }
+    .cs-impact { padding-left: 22px; padding-right: 22px; }
 
     /* The rail stops being a column beside the writing and becomes a line
        above it. A 13ch column on a 346px screen leaves the body 20ch, which is
@@ -1888,9 +2031,20 @@
           <div class="cs-chapter__body" data-reveal data-stagger>
             <h2 class="cs-chapter__title">Beyond the structure, working through the detail with each owner.</h2>
             <p>The progress bar wasn&rsquo;t the only thing that needed to change. Other parts of the existing checkout weren&rsquo;t right either, and I could see it. But seeing it wasn&rsquo;t enough. Each of those areas was owned by a team with business reasons for how it worked, from commercial partnerships to loyalty strategy. Showing that customers preferred a change counts for little if the business can&rsquo;t accept it. So I worked through each one <strong>with its owner first</strong>, and only took a direction into testing once they&rsquo;d approved it.</p>
-            <p><strong class="cs-runin">Payment methods.</strong> Data showed which methods customers used most, and my first instinct was to order them that way. But the order was commercial. Some providers had expectations about where they appeared, and Boots had settled it by listing them in the order each one joined. So I <strong>left the order alone</strong> and changed how it was presented. Every method now sits in one view with equal weight, and none is open by default. A saved card is still selected the moment a customer chooses card. Customers see all their options at once, and Boots avoided a conflict with its payment partners.</p>
-            <p><strong class="cs-runin">Advantage Card points.</strong> This one was easier. Paying with points had been a small grey link in a corner, and customers only learned they were short by hovering over it. Moving points into the main list alongside every other method, with the <strong>balance shown up front</strong>, gave loyalty far more prominence, and the loyalty team loved it. On mobile, I also brought the order total and the points customers would earn out of a collapsed accordion and into the payment section, so they could see both at the moment they were asked to pay. What mattered to the loyalty team was being part of the process and keeping control over how points were presented, so I brought them in at each stage rather than handing them a finished design.</p>
-            <p><strong class="cs-runin">Marketing consent.</strong> The smallest part of the design took the most convincing. The checkbox sat in the first step, where customers are just getting started, and its wording was long and, in places, inaccurate. Marketing were understandably risk-averse, so I went through it with them line by line, showing what each phrase was meant to do and what customers would actually take from it. Once legal had signed off new language, marketing agreed to both changes: <strong>clearer wording</strong>, and a <strong>new position beside the terms and conditions</strong> at payment, where customers already expect to check what they&rsquo;re agreeing to.</p>
+            <dl class="cs-owners">
+              <div class="cs-owner">
+                <dt>Payment methods.</dt>
+                <dd>Data showed which methods customers used most, but they had to stay in the order each provider joined Boots, a commercial agreement. So I kept the order and changed the presentation. Every method now sits in one view with equal weight, and choosing card defaults to a saved card, keeping checkout quick while giving every provider equal footing.</dd>
+              </div>
+              <div class="cs-owner">
+                <dt>Advantage Card points.</dt>
+                <dd>Paying with points was a small grey link in a corner, and customers only found out they were short by hovering over it. I moved points into the main payment list with the balance up front. On mobile and tablet, I also brought the order total and points earned out of a collapsed accordion, so customers saw both at the moment they paid.</dd>
+              </div>
+              <div class="cs-owner">
+                <dt>Marketing consent.</dt>
+                <dd>The smallest change took the most convincing. The checkbox sat in the first step, with long and sometimes inaccurate wording. Marketing were understandably risk-averse, so I took them through it line by line: what each phrase was meant to do versus what customers took from it. Once legal signed off new language, marketing agreed to clearer wording and a move to sit beside the terms at payment, where customers expect to check what they&rsquo;re agreeing to.</dd>
+              </div>
+            </dl>
             <p>Getting each direction approved first meant the usability testing that followed was a much better use of time. It wasn&rsquo;t spent testing ideas the business might reject. With the owners already behind each change, I led the testing to refine the experience for customers. By the time these changes reached the build, they had the backing of the business and evidence that they made a better experience for customers.</p>
           </div>
           <figure class="cs-figure" style="--ar: 0.5055" data-reveal>
@@ -1934,78 +2088,100 @@
           <div class="cs-chapter__body" data-reveal data-stagger>
             <h2 class="cs-chapter__title">How much should checkout decide for the customer?</h2>
             <p>I explored a wide range of ways to handle a part-ready basket, and narrowed them to four directions to take into usability testing. Each gave checkout a different amount of responsibility, from making a suggestion for the customer to asking them to work it out themselves.</p>
-            <h3>1. Solve it for them: point to another store.</h3>
-            <p>Checkout showed when the full order would be ready at the customer&rsquo;s store, and suggested a nearby store that could have everything today. It gave urgent shoppers a ready-made answer. But many Boots stores across the UK are spread out, so the alternative was often too far away. People also choose their store because it&rsquo;s convenient, on their way to work or near home, so <strong>few would switch</strong>, and anything truly urgent could be bought from a local supermarket.</p>
-            <figure class="cs-figure" style="--ar: 1.4830">
-              <img src="/assets/boots-cc1-1680.108c92ed.webp"
-                   srcset="/assets/boots-cc1-1120.108c92ed.webp 1120w,
-                           /assets/boots-cc1-1680.108c92ed.webp 1680w,
-                           /assets/boots-cc1-2240.108c92ed.webp 2240w,
-                           /assets/boots-cc1-zoom.108c92ed.webp 3360w"
-                   sizes="(min-width: 512px) 448px, 92vw"
-                   width="4320" height="2913"
-                   alt="Checkout suggesting a change to Nottingham Beeston, 1.1 miles away, so the full order can be collected today."
-                   loading="lazy" decoding="async">
-            </figure>
-            <h3>2. Explain, then guide the decision: two routes in a modal.</h3>
-            <p>Checkout said &ldquo;2 of 3 items available today, full order available from tomorrow&rdquo;, then a modal offered two routes: switch store, or remove the unavailable item. It gave a complete picture and a clear choice. But the modal turned the decision into its own step, <strong>interrupting checkout</strong> for every customer with a part-ready basket.</p>
-            <figure class="cs-figure" style="--ar: 1.3055">
-              <img src="/assets/boots-cc2-1680.07b44aba.webp"
-                   srcset="/assets/boots-cc2-1120.07b44aba.webp 1120w,
-                           /assets/boots-cc2-1680.07b44aba.webp 1680w,
-                           /assets/boots-cc2-2240.07b44aba.webp 2240w,
-                           /assets/boots-cc2-zoom.07b44aba.webp 3360w"
-                   sizes="(min-width: 512px) 448px, 92vw"
-                   width="4320" height="3309"
-                   alt="A modal in checkout with two routes: change to Nottingham Beeston for the full order today, or review the basket and remove what is not available."
-                   loading="lazy" decoding="async">
-            </figure>
           </div>
+          <ol class="cs-dirs">
+            <li class="cs-dir" data-reveal>
+              <div class="cs-dir__copy">
+                <h3>Point to another store.</h3>
+                <p>If the full order wasn&rsquo;t ready at their chosen store, checkout pointed to the nearest one that had everything, within a reasonable radius. It was the quickest route to same-day collection. But research showed stores can be further apart than customers are willing to travel, and most pick theirs because it fits conveniently into their day, so few would switch.</p>
+              </div>
+              <figure class="cs-figure" style="--ar: 1.4830">
+                <img src="/assets/boots-cc1-1680.108c92ed.webp"
+                     srcset="/assets/boots-cc1-1120.108c92ed.webp 1120w,
+                             /assets/boots-cc1-1680.108c92ed.webp 1680w,
+                             /assets/boots-cc1-2240.108c92ed.webp 2240w,
+                             /assets/boots-cc1-zoom.108c92ed.webp 3360w"
+                     sizes="(min-width: 901px) 42vw, (min-width: 512px) 448px, 92vw"
+                     width="4320" height="2913"
+                     alt="Checkout suggesting a change to Nottingham Beeston, 1.1 miles away, so the full order can be collected today."
+                     loading="lazy" decoding="async">
+              </figure>
+            </li>
+            <li class="cs-dir" data-reveal>
+              <div class="cs-dir__copy">
+                <h3>Explain the gap, then offer routes in a modal.</h3>
+                <p>Rather than assume customers would move, checkout showed what was ready today and let them choose: remove the unavailable item and collect today, or switch store. The modal kept focus on one decision. But it interrupted checkout for everyone with a part-ready basket, even those happy to wait.</p>
+              </div>
+              <figure class="cs-figure" style="--ar: 1.3055">
+                <img src="/assets/boots-cc2-1680.07b44aba.webp"
+                     srcset="/assets/boots-cc2-1120.07b44aba.webp 1120w,
+                             /assets/boots-cc2-1680.07b44aba.webp 1680w,
+                             /assets/boots-cc2-2240.07b44aba.webp 2240w,
+                             /assets/boots-cc2-zoom.07b44aba.webp 3360w"
+                     sizes="(min-width: 901px) 42vw, (min-width: 512px) 448px, 92vw"
+                     width="4320" height="3309"
+                     alt="A modal in checkout with two routes: change to Nottingham Beeston for the full order today, or review the basket and remove what is not available."
+                     loading="lazy" decoding="async">
+              </figure>
+            </li>
+            <li class="cs-dir" data-reveal>
+              <div class="cs-dir__copy">
+                <h3>Show the options on the page.</h3>
+                <p>To remove the interruption, the same options sat inline in checkout, so customers could choose without leaving the flow. But it added weight for everyone, making checkout longer and harder to scan for people who didn&rsquo;t need the choice.</p>
+              </div>
+              <figure class="cs-figure" style="--ar: 1.4649">
+                <img src="/assets/boots-cc3-1680.b77458b4.webp"
+                     srcset="/assets/boots-cc3-1120.b77458b4.webp 1120w,
+                             /assets/boots-cc3-1680.b77458b4.webp 1680w,
+                             /assets/boots-cc3-2240.b77458b4.webp 2240w,
+                             /assets/boots-cc3-zoom.b77458b4.webp 3360w"
+                     sizes="(min-width: 901px) 42vw, (min-width: 512px) 448px, 92vw"
+                     width="4320" height="2949"
+                     alt="Checkout listing three choices: collect tomorrow at Nottingham Victoria Centre, collect today at a nearby store, or remove the unavailable item."
+                     loading="lazy" decoding="async">
+              </figure>
+            </li>
+            <li class="cs-dir" data-reveal>
+              <div class="cs-dir__copy">
+                <h3>Lead with the customer&rsquo;s need.</h3>
+                <p>Stock details only matter if you need the order today, so this led with that question: &ldquo;Need to collect your order today?&rdquo;, with the options one click away. It was the lightest approach, but it hid which item was holding up the order, the one detail people needed to decide whether to wait.</p>
+              </div>
+              <figure class="cs-figure" style="--ar: 1.6514">
+                <img src="/assets/boots-cc4-1680.f8a08128.webp"
+                     srcset="/assets/boots-cc4-1120.f8a08128.webp 1120w,
+                             /assets/boots-cc4-1680.f8a08128.webp 1680w,
+                             /assets/boots-cc4-2240.f8a08128.webp 2240w,
+                             /assets/boots-cc4-zoom.f8a08128.webp 3360w"
+                     sizes="(min-width: 901px) 42vw, (min-width: 512px) 448px, 92vw"
+                     width="4320" height="2616"
+                     alt="Checkout asking whether the order needs to be collected today, with the options behind a View options button."
+                     loading="lazy" decoding="async">
+              </figure>
+            </li>
+          </ol>
+        </section>
+
+        <section class="cs-chapter cs-chapter--turn">
           <div class="cs-chapter__body" data-reveal data-stagger>
-            <h3>3. Show everything: the same choices on the page.</h3>
-            <p>The same message and routes, listed in checkout itself. Every option was visible at once, with no extra step. But checkout got <strong>longer and harder to scan</strong>, and every customer had to read past choices they might not need.</p>
-            <figure class="cs-figure" style="--ar: 1.4649">
-              <img src="/assets/boots-cc3-1680.b77458b4.webp"
-                   srcset="/assets/boots-cc3-1120.b77458b4.webp 1120w,
-                           /assets/boots-cc3-1680.b77458b4.webp 1680w,
-                           /assets/boots-cc3-2240.b77458b4.webp 2240w,
-                           /assets/boots-cc3-zoom.b77458b4.webp 3360w"
-                   sizes="(min-width: 512px) 448px, 92vw"
-                   width="4320" height="2949"
-                   alt="Checkout listing three choices: collect tomorrow at Nottingham Victoria Centre, collect today at a nearby store, or remove the unavailable item."
-                   loading="lazy" decoding="async">
-            </figure>
-            <h3>4. Lead with the need: ask whether they need it today.</h3>
-            <p>Checkout asked &ldquo;Need to collect your order today?&rdquo;, with the options one click away. It was the lightest of the four, speaking to the customer&rsquo;s situation rather than stock details. But <strong>it hid the specifics</strong>. Customers couldn&rsquo;t see which item was holding their order up, the one detail they needed to decide whether waiting was fine.</p>
-            <figure class="cs-figure" style="--ar: 1.6514">
-              <img src="/assets/boots-cc4-1680.f8a08128.webp"
-                   srcset="/assets/boots-cc4-1120.f8a08128.webp 1120w,
-                           /assets/boots-cc4-1680.f8a08128.webp 1680w,
-                           /assets/boots-cc4-2240.f8a08128.webp 2240w,
-                           /assets/boots-cc4-zoom.f8a08128.webp 3360w"
-                   sizes="(min-width: 512px) 448px, 92vw"
-                   width="4320" height="2616"
-                   alt="Checkout asking whether the order needs to be collected today, with the options behind a View options button."
-                   loading="lazy" decoding="async">
-            </figure>
+            <h2 class="cs-chapter__title">What testing changed.</h2>
+            <p>I&rsquo;d been designing for Same-Day Click &amp; Collect, so my focus was on customers who wanted their order today. Testing showed that wasn&rsquo;t most people. For most Boots customers, collection is about convenience: a store on their way to work or near home, and they&rsquo;re happy to wait. Same-day was a bonus, not a reason to change plans. So the job wasn&rsquo;t getting a part-ready order to them today. It was telling them clearly when they&rsquo;d get it, and why.</p>
+            <p>That reframed all four directions. Three were built around the minority who needed their order today, asking everyone else to read past choices they&rsquo;d never make. The fourth kept things light but hid the one detail customers needed.</p>
           </div>
         </section>
 
         <section class="cs-chapter">
           <div class="cs-chapter__body" data-reveal data-stagger>
-            <h2 class="cs-chapter__title">What testing changed.</h2>
-            <p>Naturally, I&rsquo;d been designing for Same-Day Click &amp; Collect, so my emphasis was on customers who wanted their order today. Testing showed that wasn&rsquo;t most people. For most Boots customers, <strong>collection is driven by convenience</strong>. They pick the store on their way to work or near home, and they&rsquo;re happy to wait for it. Same-day collection was a bonus when it happened to be available, rather than a reason to change their plans. So for most people with a part-ready basket, the job wasn&rsquo;t helping them get it today. It was telling them clearly when they&rsquo;d get it, and why.</p>
-            <p>That&rsquo;s where all four directions fell short. Three of them built checkout around the customers who needed their order today, and asked everyone else to read past choices they&rsquo;d never make. The fourth kept things light, but hid the one detail customers needed.</p>
-            <p>The final design is built for the majority, without shutting out anyone else. It defaults to the <strong>soonest date the full order can be collected</strong>, because that&rsquo;s what most customers would choose anyway. It <strong>names the item holding the order up</strong>, so anyone can judge at a glance whether waiting is fine. And it <strong>asks for nothing</strong>. The notification can be dismissed, and a customer who does need something today, including someone shopping in a moment of need, can still change store or edit their basket.</p>
-            <p>It was also the right answer for Boots. Two of the four directions invited customers to remove items, which meant smaller orders, and every extra decision at checkout is another reason to stop before paying. The final design <strong>keeps the basket whole</strong> and checkout moving, while telling customers the truth about a service Boots wants them to trust and come back to.</p>
+            <h2 class="cs-chapter__title">The final design.</h2>
+            <p>I designed for the majority without shutting out anyone else. Checkout defaults to the soonest date the full order can be collected, since that&rsquo;s what most customers would choose anyway. It names the item holding the order up, so customers can judge at a glance whether waiting is fine. And it asks for nothing. The message can be dismissed, and anyone who does need something today can still change store or edit their basket.</p>
+            <p>It was the right answer for Boots too. Two directions invited customers to remove items, meaning smaller orders, and every extra decision at checkout is another reason to drop off. The final design keeps the basket whole and checkout moving, while being honest about a service Boots wants customers to trust.</p>
           </div>
-          <figure class="cs-figure" style="--ar: 1.0460" data-reveal>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.0460" data-reveal>
             <img src="/assets/boots-cc5-1680.55e28557.webp"
                  srcset="/assets/boots-cc5-1120.55e28557.webp 1120w,
                          /assets/boots-cc5-1680.55e28557.webp 1680w,
                          /assets/boots-cc5-2240.55e28557.webp 2240w,
                          /assets/boots-cc5-zoom.55e28557.webp 3360w"
-                 sizes="(min-width: 512px) 448px, 92vw"
+                 sizes="(min-width: 900px) 720px, 92vw"
                  width="6000" height="5736"
                  alt="The final checkout for a part-ready basket. A note names the lipstick that is not available for same-day collection, tomorrow is selected, and the store finder is open beside the page."
                  loading="lazy" decoding="async">
@@ -2078,8 +2254,9 @@
       </section>
     </div>
   </div>
+  </div>
 
-  <section class="cs-chapters" aria-label="The impact so far">
+  <section class="cs-impact" aria-label="The impact so far">
     <div class="cs-col">
       <section class="cs-chapter">
         <div class="cs-chapter__body" data-reveal data-stagger>
@@ -2090,7 +2267,6 @@
       </section>
     </div>
   </section>
-  </div>
 
 </article>
 
