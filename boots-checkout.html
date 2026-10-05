@@ -891,12 +891,19 @@
     letter-spacing: -0.006em;
     color: var(--ink-1);
   }
+  /* Each entry is a row across the story grid, title on the left and the
+     note on the right, so this index is a different shape from the chapters
+     without squeezing the writing into a third of the column. */
   .cs-paths {
-    margin-top: clamp(32px, 4.5vh, 48px);
-    max-width: var(--text-end);
+    margin-top: clamp(36px, 5vh, 56px);
+    max-width: min(100%, calc(13ch + clamp(28px, 4.5vw, 88px) + var(--text-end)));
   }
   .cs-path {
-    padding: clamp(22px, 3.2vh, 32px) 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    column-gap: clamp(28px, 4.5vw, 88px);
+    align-items: start;
+    padding: clamp(26px, 3.6vh, 36px) 0;
   }
   .cs-path + .cs-path {
     background-image: linear-gradient(var(--rule), var(--rule));
@@ -906,11 +913,12 @@
   }
   .cs-path__body {
     display: grid;
-    grid-template-columns: 2.6em minmax(0, 1fr);
-    column-gap: clamp(14px, 1.8vw, 24px);
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 14px;
     align-items: baseline;
   }
-  .cs-path__main { min-width: 0; }
+  .cs-path__note { min-width: 0; }
+  .cs-path__note p { margin: 0; }
   .cs-path__name {
     display: flex;
     align-items: baseline;
@@ -968,7 +976,7 @@
     gap: 8px;
     /* A pause after the paragraph, so the jump reads as its own action rather
        than the next line of the story. */
-    margin-top: clamp(20px, 2.8vh, 28px);
+    margin-top: clamp(32px, 4.2vh, 44px);
     color: var(--ink);
     font-size: 15px;
     font-weight: 500;
@@ -1567,6 +1575,14 @@
      Everything that can be a continuous curve already is one in the base
      rules, so these bands only carry things that genuinely change shape: the
      nav pill's density, and the chapter rail going from a column to a row. */
+  @media (max-width: 800px) {
+    .cs-paths { max-width: var(--text-end); }
+    .cs-path {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 14px;
+    }
+  }
+
   @media (min-width: 601px) and (max-width: 900px) {
     /* 20px of offset and a 74px pill. */
     :root { --nav-clear: 120px; }
@@ -1792,7 +1808,7 @@
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
       <div class="cs-overview__body" data-reveal data-stagger>
-        <p>As <strong>lead product designer</strong> on the Boots.com checkout rebuild, I led the design of everything from the moment a customer reaches checkout to the last email about their order, for a site that serves 21 million customers a year. That included bringing Same-Day Click &amp; Collect into checkout for the first time, and redesigning more than a hundred transactional emails.</p>
+        <p>As <strong>lead product designer</strong> on the Boots.com checkout rebuild, I led the design of everything from the moment a customer reaches checkout to the last email about their order, for a site that serves 21 million customers a year. That included bringing Same-Day Click &amp; Collect into checkout for the first time, and creating a modular email component system that now powers more than a hundred transactional emails.</p>
         <p>I worked closely with product, who <strong>owned the requirements</strong>, and engineering, who <strong>built it on a new platform</strong>. Many other teams had a stake in checkout too, from loyalty and marketing to legal. I brought each of them in at the right moments, so their expertise could help shape the design and they could stand behind the result.</p>
       </div>
     </div>
@@ -1807,33 +1823,33 @@
         <article class="cs-path" data-reveal>
           <div class="cs-path__body">
             <p class="cs-path__no">01</p>
-            <div class="cs-path__main">
             <h2 class="cs-path__title"><a href="#checkout" data-story-jump>Proving the case for change in a checkout that already converted</a></h2>
+          </div>
+          <div class="cs-path__note">
             <p>The legacy checkout had a number of things that needed to change. One of the biggest was its structure: one page made to look like five, with a progress bar suggesting steps that didn&rsquo;t exist. But when that progress bar was introduced, conversion went up. Pointing out problems wasn&rsquo;t enough. In a checkout that had been optimised for years, any redesign needed a case the data could support, starting with what the existing patterns were actually doing for customers.</p>
             <a class="cs-path__more" href="#checkout" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-            </div>
           </div>
         </article>
 
         <article class="cs-path" data-reveal>
           <div class="cs-path__body">
             <p class="cs-path__no">02</p>
-            <div class="cs-path__main">
             <h2 class="cs-path__title"><a href="#collect" data-story-jump>Introducing Same-Day Click &amp; Collect, a new proposition with big technical limitations</a></h2>
+          </div>
+          <div class="cs-path__note">
             <p>Same-day collection promises that everything in a basket will be waiting in a particular store today, even when that basket mixes retail, pharmacy, dropship and marketplace items, each with its own rules. The best retailers make that promise early and keep it updated as the basket builds. Whether Boots could do the same rested on Availability-to-Promise, a multi-million pound technology decision that sat well above design, and it would decide how much of the promise checkout had to carry.</p>
             <a class="cs-path__more" href="#collect" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-            </div>
           </div>
         </article>
 
         <article class="cs-path" data-reveal>
           <div class="cs-path__body">
             <p class="cs-path__no">03</p>
-            <div class="cs-path__main">
             <h2 class="cs-path__title"><a href="#after" data-story-jump>Rethinking the journey after payment, at the scale of more than 100 million transactional emails a year</a></h2>
+          </div>
+          <div class="cs-path__note">
             <p>Every order is followed by a confirmation page and a series of emails, and Boots sends more than 100 million of them a year. They felt like they belonged to a much older internet, with no shared strategy, so an order&rsquo;s story broke down the moment the customer paid. The plan was a refresh. I made the case for something bigger: one connected journey across every message, for every kind of order.</p>
             <a class="cs-path__more" href="#after" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-            </div>
           </div>
         </article>
       </div>
