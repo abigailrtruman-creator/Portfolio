@@ -741,13 +741,22 @@
     color: inherit;
     font-weight: inherit;
   }
+  /* The role in the opening line. Same size as the sentence, actually bold. */
+  .cs-overview__body p:first-child strong {
+    font-weight: 700;
+    color: var(--ink);
+  }
   /* A label at the start of a paragraph, actually bold. The rule above
      flattens every other strong so emphasis in the writing stays quiet. */
   .cs-chapter__body strong.cs-runin {
     display: block;
     margin-bottom: 0.55em;
-    color: var(--ink);
+    font-family: var(--ff-display);
     font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
   }
   .cs-chapter__body p:has(> strong.cs-runin) {
     margin-top: clamp(40px, 5.5vh, 64px);
@@ -1119,6 +1128,18 @@
   }
   .cs-story .cs-chapter__body p { margin-top: 1.7em; }
   .cs-story .cs-chapter__body h3 + p { margin-top: 0.55em; }
+  /* The story rule above is more specific than the run-in paragraph's own
+     margin, so the pause before a lifted line has to be restated here. */
+  .cs-story .cs-chapter__body p:has(> strong.cs-runin) {
+    margin-top: clamp(36px, 5vh, 52px);
+  }
+  /* This chapter uses one interval. The findings sit on it too, so they
+     don't each open a larger gap of their own. */
+  .cs-story .cs-chapter--even .cs-chapter__body p,
+  .cs-story .cs-chapter--even .cs-chapter__body p:has(> strong.cs-runin) {
+    margin-top: clamp(32px, 4.4vh, 44px);
+  }
+  .cs-story .cs-chapter--even strong.cs-runin { margin-bottom: 0.9em; }
   /* The four directions stay in the writing column, in the same order you
      read them: the idea, then its screen, then the next. Same type, same
      picture width, same gap, so the set is quiet. */
@@ -1150,15 +1171,280 @@
     color: inherit;
     font-weight: inherit;
   }
-  /* The turn in the middle of a story. Narrower than the chapters around it,
-     with a rule, so it reads as a pause between the options and the answer. */
+  /* The turn after the four directions. The insight stays in the quiet fill,
+     written in the same type as the page, then the two findings. The agreed
+     solution steps back out as a plain list, in the same type as the writing. */
   .cs-story .cs-chapter--turn {
     padding-top: clamp(108px, 14vh, 156px);
   }
-  .cs-story .cs-chapter--turn .cs-chapter__body {
-    max-width: 46ch;
-    padding-left: clamp(18px, 2vw, 26px);
+  .cs-story .cs-chapter--turn .cs-trial {
+    margin-top: 0;
+    padding: clamp(48px, 6vh, 64px) clamp(40px, 4.6vw, 56px);
+  }
+  .cs-story .cs-chapter--turn .cs-trial > p { margin-top: 0; }
+  /* The card is the grouping. A lead, then two findings: a title and the
+     explanation, on the same edge as the writing. */
+  .cs-story .cs-chapter--turn .cs-trial .cs-pair__k {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-2);
+  }
+  .cs-story .cs-chapter--turn .cs-trial__lines > p { margin: 0; }
+  .cs-story .cs-chapter--turn .cs-trial__find {
+    margin-top: clamp(40px, 5.2vh, 52px);
+  }
+  .cs-story .cs-chapter--turn .cs-trial__find p.cs-trial__title {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-story .cs-chapter--turn .cs-trial__find p + p {
+    margin: 0.7em 0 0;
+  }
+  .cs-story .cs-chapter--turn .cs-trial + .cs-chapter__title {
+    margin-top: clamp(56px, 7.5vh, 80px);
+  }
+  /* Four decisions, as a list. A dot, and the sentence in the same type as
+     the writing. Nothing in the line is lifted out of it. */
+  .cs-story .cs-chapter--turn .cs-points {
+    margin-top: clamp(28px, 3.6vh, 40px);
+  }
+  .cs-story .cs-chapter--turn .cs-points li {
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 22px;
+    background: none;
+  }
+  .cs-story .cs-chapter--turn .cs-points li + li { margin-top: 1.15em; }
+  .cs-story .cs-chapter--turn .cs-points li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 0.55em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ink-2);
+  }
+  .cs-story .cs-chapter--turn .cs-points li p { margin: 0; }
+  .cs-story .cs-chapter--turn .cs-points + p {
+    margin-top: clamp(28px, 3.6vh, 40px);
+  }
+
+  /* ---------- Facts lifted out of the paragraph ----------
+     A set, a pair, a short list, a stack of blocks. Same type and the same
+     hairline as the owner rows, so these read as the writing changing shape.
+     Nothing here is a card. */
+
+  .cs-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    margin: clamp(28px, 4vh, 40px) 0 0;
+    border-top: 1px solid var(--rule);
+  }
+  /* This pair is the two routes, opened by the sentence above it. No rule:
+     the labels do the separating. */
+  .cs-pair--plain {
+    border-top: 0;
+    column-gap: clamp(28px, 4vw, 48px);
+    margin-top: 1.15em;
+  }
+  .cs-chapter--even .cs-pair--plain {
+    margin-top: clamp(22px, 3vh, 32px);
+    column-gap: clamp(40px, 5vw, 64px);
+  }
+  .cs-chapter--even .cs-pair__k { margin-bottom: 14px; }
+  .cs-chapter--even .cs-pair dd { margin-top: 0.8em; }
+  .cs-chapter--even .cs-proof { margin-top: clamp(22px, 3vh, 32px); }
+  /* The two routes and what testing preferred, read as one thing. The only
+     rule is the one between the routes. */
+  .cs-trial {
+    margin-top: clamp(56px, 7.5vh, 80px);
+    padding: clamp(36px, 4.6vh, 48px) clamp(32px, 3.6vw, 40px);
+    background: rgba(255,255,255,0.04);
+  }
+  .cs-story .cs-chapter--even .cs-chapter__body .cs-trial + p {
+    margin-top: clamp(56px, 7.5vh, 80px);
+  }
+  .cs-story .cs-chapter--even .cs-trial {
+    padding: clamp(48px, 6vh, 64px) clamp(40px, 4.6vw, 56px);
+  }
+  .cs-trial .cs-pair--plain {
+    margin-top: 0;
+    column-gap: 0;
+  }
+  .cs-trial .cs-pair > div:first-child {
+    padding-right: clamp(40px, 4.8vw, 56px);
+  }
+  .cs-chapter--even .cs-trial .cs-pair__k { margin-bottom: 6px; }
+  .cs-chapter--even .cs-trial .cs-pair dd { margin-top: 1.35em; }
+  .cs-story .cs-chapter--even .cs-chapter__body > p:first-child { margin-top: 0; }
+  .cs-story .cs-chapter--even .cs-chapter__body .cs-trial p { margin-top: 0; }
+  .cs-story .cs-chapter--even .cs-chapter__body .cs-trial p.cs-trial__finding {
+    margin-top: clamp(52px, 6.4vh, 68px);
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+  }
+  .cs-story .cs-chapter--even .cs-chapter__body .cs-trial__finding + p {
+    margin-top: 1.35em;
+  }
+  .cs-pair__k {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-2);
+  }
+  .cs-pair > div { min-width: 0; padding-top: 16px; }
+  .cs-pair > div + div {
+    padding-left: clamp(18px, 2.4vw, 28px);
     border-left: 1px solid var(--rule);
+  }
+  .cs-pair.cs-pair--plain > div { padding-top: 0; }
+  .cs-pair.cs-pair--plain > div + div {
+    padding-left: clamp(40px, 4.8vw, 56px);
+    border-left: 1px solid var(--rule);
+  }
+  .cs-pair dt {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-pair dd {
+    margin: 0.45em 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+
+  .cs-points {
+    margin: clamp(32px, 4.4vh, 48px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-points li {
+    padding: clamp(16px, 2.2vh, 22px) 0;
+    background-image: linear-gradient(var(--rule), var(--rule));
+    background-repeat: no-repeat;
+    background-position: left top;
+    background-size: 100% 1px;
+  }
+  .cs-points li:first-child {
+    padding-top: 0;
+    background-image: none;
+  }
+  .cs-story .cs-chapter__body p.cs-points__title,
+  .cs-impact .cs-chapter__body p.cs-points__title {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-story .cs-chapter__body .cs-points li p + p,
+  .cs-impact .cs-chapter__body .cs-points li p + p {
+    margin: 0.4em 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+
+  .cs-blocks {
+    margin: clamp(32px, 4.4vh, 48px) 0 0;
+  }
+  .cs-story .cs-chapter__body p.cs-blocks__label {
+    margin: 0 0 2px;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--ink-2);
+  }
+  .cs-blocks ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--rule);
+  }
+  .cs-blocks li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 18px;
+    align-items: baseline;
+    padding: 13px 0;
+    background-image: linear-gradient(var(--rule), var(--rule));
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 100% 1px;
+    color: var(--ink);
+    font-size: 16px;
+    letter-spacing: -0.011em;
+    line-height: 1.35;
+  }
+  .cs-blocks__state {
+    font-size: 13px;
+    letter-spacing: -0.006em;
+    color: var(--ink-2);
+  }
+
+  /* The result, read with what it means. Same hairline-free row as the owner
+     names: the figure takes its own width, the explanation takes the rest.
+     The number stays in the chapter's type, not above it. */
+  .cs-proof {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: clamp(20px, 3vw, 36px);
+    align-items: start;
+    margin: clamp(36px, 5vh, 52px) 0 0;
+  }
+  .cs-story .cs-chapter__body p.cs-proof__num {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(26px, 2.6vw, 32px);
+    line-height: 1;
+    letter-spacing: -0.036em;
+    color: var(--ink);
+  }
+  .cs-story .cs-chapter__body p.cs-proof__what {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.011em;
+    color: var(--ink);
+  }
+  .cs-story .cs-chapter__body p.cs-proof__text {
+    margin: 0.45em 0 0;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
   }
   /* A plate fills the writing column. Reserved for the pictures that are the
      point of the chapter, and only where the artwork is wide enough that the
@@ -1176,7 +1462,7 @@
   .cs-story .cs-figure--plate figcaption {
     margin-left: 0;
     margin-right: auto;
-    max-width: min(62ch, 100%);
+    max-width: 100%;
   }
   .cs-story .cs-chapter__title {
     font-weight: 600;
@@ -1230,8 +1516,46 @@
     line-height: 1.02;
     letter-spacing: -0.045em;
   }
-  .cs-impact .cs-chapter__body p:first-of-type {
+  .cs-impact .cs-chapter__body > p:first-of-type {
     margin-top: clamp(28px, 4vh, 44px);
+  }
+  /* Three findings, each held by its own bar. The bar meets the title cap
+     and the last baseline, and stops short of the next point. */
+  .cs-impact .cs-points {
+    margin-top: clamp(36px, 4.8vh, 52px);
+    padding: 0;
+    background: none;
+  }
+  .cs-impact .cs-points li {
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 18px;
+    background: none;
+  }
+  .cs-impact .cs-points li + li {
+    margin-top: clamp(28px, 3.6vh, 40px);
+  }
+  .cs-impact .cs-points li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 3px;
+    bottom: 4px;
+    width: 3px;
+    border-radius: 2px;
+    background: #fff;
+  }
+  .cs-impact .cs-chapter__body > p,
+  .cs-impact .cs-points li p + p {
+    text-wrap: pretty;
+  }
+  .cs-impact .cs-chapter__body .cs-points li p + p {
+    margin-top: 0.45em;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .cs-impact .cs-points + p {
+    margin-top: clamp(32px, 4.2vh, 48px);
   }
   main:has(.cs-impact) + .hp-footer {
     margin-top: clamp(56px, 8vh, 96px);
@@ -1793,6 +2117,29 @@
       grid-template-columns: minmax(0, 1fr);
       row-gap: 14px;
     }
+    .cs-proof {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 12px;
+    }
+    .cs-pair { grid-template-columns: minmax(0, 1fr); }
+    .cs-pair > div + div {
+      margin-top: 16px;
+      padding-top: 16px;
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--rule);
+    }
+    .cs-pair.cs-pair--plain > div + div {
+      margin-top: 32px;
+      padding-top: 32px;
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--rule);
+    }
+    .cs-trial { padding: 28px 22px; }
+    .cs-story .cs-chapter--even .cs-trial { padding: 36px 26px; }
+    .cs-story .cs-chapter--turn .cs-trial { padding: 36px 26px; }
+    .cs-trial .cs-pair > div:first-child { padding-right: 0; }
 
     /* Three numbers side by side on a phone sets each label to about 9ch and
        breaks "UK customers reached" over three lines. Stacked, each stat gets
@@ -1920,8 +2267,8 @@
            aria-label carries the sentence intact, because the inner span is about
            to be taken apart into one element per letter and a screen reader given
            that reads it out a letter at a time. -->
-      <h1 class="cs-hero__statement" aria-label="Modernising the Boots.com checkout and &lsquo;last mile&rsquo; experience that will serve twenty-one million customers annually.">
-        <span class="cs-hero__statement-inner" aria-hidden="true">Modernising the <strong>Boots.com</strong> checkout and &lsquo;last mile&rsquo; experience that will serve twenty-one million customers annually.</span>
+      <h1 class="cs-hero__statement" aria-label="Modernising the Boots.com checkout and &lsquo;last mile&rsquo; experience that serves 21 million customers annually.">
+        <span class="cs-hero__statement-inner" aria-hidden="true">Modernising the <strong>Boots.com</strong> checkout and &lsquo;last mile&rsquo; experience that serves 21 million customers annually.</span>
       </h1>
       <ul class="cs-tags">
         <li>UX &amp; UI</li>
@@ -2005,13 +2352,33 @@
         <p class="cs-path__no" data-reveal>01</p>
         <div class="cs-story__main">
           <h2 class="cs-story__title" id="checkout-h" data-reveal>Proving the case for change in a checkout that already converted</h2>
-        <section class="cs-chapter">
+        <section class="cs-chapter cs-chapter--even">
           <div class="cs-chapter__body" data-reveal data-stagger>
-            <h2 class="cs-chapter__title">Finding out what the current checkout was really doing.</h2>
-            <p>First, I needed to understand the existing checkout. I ran usability testing on it, plus a study focused on the progress bar and its steps. Customers were split on whether they liked steps at all, but agreed on two things: checkout should feel quick, and it should be easy to go back and change what they&rsquo;d entered.</p>
-            <p>So I compared two directions. The first was a true multi-step checkout, with a separate page for each step, which is what a progress bar normally implies. The second kept everything on one page, with numbered sections that collapse into an editable summary once complete.</p>
-            <p>Testing showed a clear preference for the single page. With every section collapsed, the whole checkout fitted on one screen, so customers could see at a glance how much was left. The numbered sections did the job the progress bar had been doing, without suggesting pages that didn&rsquo;t exist.</p>
-            <p>That gave me strong qualitative support. But a checkout that was already converting needed proof in real sales. I took the design to Boots&rsquo; optimisation team, a mix of engineers and dedicated designers, who ran it as an A/B test against the live site, with around a million sessions on each version. Conversion rose by 0.78%. Small on paper, but at that scale it meant thousands of extra orders during the test alone, and it was large enough to rule out chance. It settled the argument for change, and gave me a proven foundation to bring Same-Day Click &amp; Collect into.</p>
+            <p>First, I ran usability testing to find out what the current checkout was really doing, alongside a study of the progress bar itself. It was one page made to look like five, and its progress bar suggested steps that didn&rsquo;t exist. But it was already converting well. Conversion rose when the progress bar launched, and the flow had been optimised for years. Pointing out problems wouldn&rsquo;t be enough.</p>
+            <p>Customers didn&rsquo;t agree on whether they wanted steps. The only consistent finding was that checkout should feel quick, and easy to go back and edit. So I tested two routes against those needs:</p>
+            <div class="cs-trial">
+              <dl class="cs-pair cs-pair--plain">
+                <div>
+                  <dt><span class="cs-pair__k">Test A</span>A multi-step checkout.</dt>
+                  <dd>A separate page for each step, which is what a progress bar normally implies.</dd>
+                </div>
+                <div>
+                  <dt><span class="cs-pair__k">Test B</span>A single-page checkout.</dt>
+                  <dd>Numbered sections that collapse into an editable summary once complete.</dd>
+                </div>
+              </dl>
+              <p class="cs-trial__finding"><span class="cs-pair__k">Insight</span>A clear preference for Test B: a single-page checkout.</p>
+              <p>With every section collapsed, the whole checkout fitted on one screen, so customers could see at a glance how much was left. The numbered sections did the job the progress bar had been doing, without suggesting pages that didn&rsquo;t exist.</p>
+            </div>
+            <p>That preference was qualitative. A checkout that was already converting still needed proof in real sales, so I took the tested prototype to Boots&rsquo; optimisation team, a mix of engineers and dedicated designers. They ran the single-page checkout, with its updated information architecture and interactions, as an A/B test on the live site.</p>
+            <div class="cs-proof">
+              <p class="cs-proof__num">+0.78%</p>
+              <div>
+                <p class="cs-proof__what">Higher conversion than the live checkout.</p>
+                <p class="cs-proof__text">About a million sessions on each version. Small on paper, and thousands of extra orders during the test alone. Large enough to rule out chance.</p>
+              </div>
+            </div>
+            <p>This optimisation test settled the argument for change, and gave me a proven foundation to bring Same-Day Click &amp; Collect into.</p>
           </div>
           <figure class="cs-figure" style="--ar: 0.5390" data-reveal>
             <img src="/assets/boots-versions-1120.94004491.webp"
@@ -2068,17 +2435,29 @@
           <h2 class="cs-story__title" id="collect-h" data-reveal>Introducing Same-Day Click &amp; Collect, a new proposition with big technical limitations</h2>
         <section class="cs-chapter">
           <div class="cs-chapter__body" data-reveal data-stagger>
-            <h2 class="cs-chapter__title">Mapping the scenarios, and the people behind them.</h2>
-            <p>With the technology undecided, I mapped what the design would have to handle. Retail, pharmacy, dropship and marketplace each affect same-day collection differently, one basket can mix them, and all of it depends on local stock. Behind each basket is a different mindset: someone who urgently needs medicine, and someone buying shampoo who&rsquo;d happily wait until tomorrow.</p>
-            <p>I then designed the ideal journey, with availability shown from the product listing page through to checkout. Most of those pages belonged to teams delivering at pace, so I gave each an early heads-up on what their area would need to support.</p>
+            <h2 class="cs-chapter__title">Starting with what we knew we could promise.</h2>
+            <p>The technology was still undecided, but each product page would be able to show two things. Whether an item was in stock in-store, and whether it could be collected. Customers needed to tell those apart, because collection depended on whether the store could meet its cut-off that day.</p>
+            <p>I designed the delivery and Click &amp; Collect module on the product page, and the store selection modal behind it. I tested several wording variations with customers, and the phrasing shown here came out on top. It made the difference between in-store stock and collection clear at a glance.</p>
           </div>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.2989" data-reveal>
+            <img src="/assets/boots-pdp-1120.26e55157.webp"
+                 srcset="/assets/boots-pdp-1120.26e55157.webp 1120w,
+                         /assets/boots-pdp-1680.26e55157.webp 1680w,
+                         /assets/boots-pdp-2240.26e55157.webp 2240w,
+                         /assets/boots-pdp-zoom.26e55157.webp 3360w"
+                 sizes="(min-width: 900px) 720px, 92vw"
+                 width="8448" height="6504"
+                 alt="Two Boots product pages for YSL Black Opium. The first asks the customer to check store availability. The second names Nottingham Riverside Park and says the product can be collected from 2pm today. Beside them, the store scenarios in the collection modal, and the wording for each."
+                 loading="lazy" decoding="async">
+            <figcaption><span class="cs-figure__text">The phrasing customers preferred. It separates in-store stock from whether the item can be collected.</span></figcaption>
+          </figure>
         </section>
 
         <section class="cs-chapter">
           <div class="cs-chapter__body" data-reveal data-stagger>
             <h2 class="cs-chapter__title">Making sure leadership chose with the full picture.</h2>
-            <p>The ideal journey depended on true Availability-to-Promise, a multi-million pound integration. Mid private equity buyout, that call sat with executive leadership and would be shaped by far more than design. My job wasn&rsquo;t to win it, but to make sure they understood what each option meant for customers.</p>
-            <p>They backed the full experience, then later confirmed it wasn&rsquo;t commercially possible. That moved the problem to checkout, where customers would first learn their basket wasn&rsquo;t fully available once they&rsquo;d committed to it and were focused on paying. The challenge became how much to tell customers, and how far to encourage them to explore collection options, without derailing them from paying.</p>
+            <p>A promise for the whole basket was harder. Retail, pharmacy, dropship and marketplace items each behave differently, and one basket can mix them. Someone collecting medicine might need it today, while someone buying shampoo would happily wait. Delivering that promise needed a multi-million pound integration, in the middle of a private equity buyout. That was always going to be a hard case to make. My job was to make sure executive leadership understood what each option would cost customers, and where that might show up commercially.</p>
+            <p>After weighing the investment, leadership chose technology that checks availability item by item. A promise for the whole basket would only be known at checkout, once customers had committed and were focused on paying. The challenge became how much to tell them, and how far to encourage them to explore collection, without derailing them from paying.</p>
           </div>
         </section>
 
@@ -2091,7 +2470,7 @@
             <li class="cs-dir" data-reveal>
               <div class="cs-dir__copy">
                 <h3>1. Point to another store.</h3>
-                <p>If the full order wasn&rsquo;t ready at their chosen store, checkout pointed to the nearest one that had everything, within a reasonable radius. It was the quickest route to same-day collection. But testing showed stores can be further apart than customers are willing to travel, and most pick theirs because it fits conveniently into their day. Few would switch.</p>
+                <p>If the full order wasn&rsquo;t ready at their chosen store, checkout pointed to the nearest one that had everything, within a reasonable radius. It was the quickest route to same-day collection. Testing showed stores can be further apart than customers are willing to travel, and most pick theirs because it fits conveniently into their day.</p>
               </div>
               <figure class="cs-figure" style="--ar: 1.4830">
                 <img src="/assets/boots-cc1-1680.108c92ed.webp"
@@ -2108,7 +2487,7 @@
             <li class="cs-dir" data-reveal>
               <div class="cs-dir__copy">
                 <h3>2. Explain what&rsquo;s ready, then offer routes in a modal.</h3>
-                <p>Checkout showed what was ready today and let customers choose: remove the unavailable item and collect today, or switch store. Participants found the choice clear, but the modal interrupted checkout for everyone with a part-ready basket, including those happy to wait.</p>
+                <p>Checkout showed what was ready today and let customers choose: remove the unavailable item and collect today, or switch store. Participants found the choice clear. The modal still stopped checkout for everyone with a part-ready basket.</p>
               </div>
               <figure class="cs-figure" style="--ar: 1.3055">
                 <img src="/assets/boots-cc2-1680.07b44aba.webp"
@@ -2125,7 +2504,7 @@
             <li class="cs-dir" data-reveal>
               <div class="cs-dir__copy">
                 <h3>3. Show the options on the page.</h3>
-                <p>The same options sat inline, so customers could choose without leaving the flow. In testing, it made checkout longer and harder to scan, with most participants reading past options they didn&rsquo;t need.</p>
+                <p>The same options sat inline, so customers could choose without leaving the flow. Most participants read past options they didn&rsquo;t need.</p>
               </div>
               <figure class="cs-figure" style="--ar: 1.4649">
                 <img src="/assets/boots-cc3-1680.b77458b4.webp"
@@ -2142,7 +2521,7 @@
             <li class="cs-dir" data-reveal>
               <div class="cs-dir__copy">
                 <h3>4. Lead with the customer&rsquo;s need.</h3>
-                <p>This asked &ldquo;Need to collect your order today?&rdquo; with the options one click away. Participants preferred the lighter touch, but it hid which item was holding up the order, the one detail they needed to decide whether to wait.</p>
+                <p>This asked &ldquo;Need to collect your order today?&rdquo; with the options one click away. Participants preferred the lighter touch. The item holding the order up, the one detail they needed to decide whether to wait, stayed out of sight.</p>
               </div>
               <figure class="cs-figure" style="--ar: 1.6514">
                 <img src="/assets/boots-cc4-1680.f8a08128.webp"
@@ -2161,27 +2540,39 @@
 
         <section class="cs-chapter cs-chapter--turn">
           <div class="cs-chapter__body" data-reveal data-stagger>
-            <h2 class="cs-chapter__title">What testing changed.</h2>
-            <p>I knew both mindsets existed, but I&rsquo;d assumed same-day was the priority. Testing showed it wasn&rsquo;t. Customers with a genuinely urgent need said they&rsquo;d walk into a store or a local supermarket rather than order online. For those buying online, collection was about convenience: a store on their way to work or near home, and they were happy to wait. Same-day was a bonus, not a reason to change plans. What mattered was a seamless checkout that told them clearly when their order would be ready, and why, without getting in the way.</p>
-            <p>That reframed all four directions. Three pushed options most customers would never use. The fourth stayed light but hid the one detail they needed.</p>
+            <div class="cs-trial">
+              <p class="cs-pair__k">Insight</p>
+              <div class="cs-trial__lines">
+                <p>Three of the four directions asked customers to change store. In testing, most participants wouldn&rsquo;t.</p>
+                <div class="cs-trial__find">
+                  <p class="cs-trial__title">The usual store beats a faster one</p>
+                  <p>Their regular Boots sat on the commute or near home, and the nearest alternative was too far to stay convenient. Many saw same-day as a bonus, not a reason to change plans. If something was urgent and unavailable, they&rsquo;d get it from a supermarket rather than rebuild the order.</p>
+                </div>
+                <div class="cs-trial__find">
+                  <p class="cs-trial__title">Knowing what&rsquo;s holding the order up is enough</p>
+                  <p>Some participants wanted to see which item was causing the delay, so they could decide what to do. They make that call on other retail sites all the time and didn&rsquo;t need checkout to guide them.</p>
+                </div>
+              </div>
+            </div>
+            <h2 class="cs-chapter__title">The agreed solution.</h2>
+            <p>The final design kept the lighter touch participants preferred and put the cause of the delay back on the page.</p>
+            <ul class="cs-points">
+              <li><p>The soonest date is selected by default. Most customers would pick it anyway, so the common path needs no extra step.</p></li>
+              <li><p>A message names the item holding the order up. Customers can judge whether waiting works for them without being asked to decide.</p></li>
+              <li><p>Changing course stays optional. The message can be dismissed, and anyone who needs it today can still change store or edit the basket.</p></li>
+              <li><p>The basket stays whole. Removing the item would have reduced the order value and added a decision at the point of payment.</p></li>
+            </ul>
+            <p>The design keeps most customers moving through checkout with their full basket. Those who need something today still have a way to get it.</p>
           </div>
-        </section>
-
-        <section class="cs-chapter">
-          <div class="cs-chapter__body" data-reveal data-stagger>
-            <h2 class="cs-chapter__title">The final design.</h2>
-            <p>I designed for the majority without shutting out anyone else. Checkout defaults to the soonest date the full order can be collected, since that&rsquo;s what most customers would choose anyway. It names the item holding the order up, so customers can judge at a glance whether waiting is fine. And it asks for nothing. The message can be dismissed, and anyone who needs something today can still change store or edit their basket.</p>
-            <p>It was the right answer for Boots too. Two directions invited customers to remove items, meaning smaller orders, and every extra decision at checkout is another reason to drop off. The final design keeps the basket whole and checkout moving, while being honest about a service Boots wants customers to trust.</p>
-          </div>
-          <figure class="cs-figure cs-figure--plate" style="--ar: 1.0460" data-reveal>
-            <img src="/assets/boots-cc5-1680.55e28557.webp"
-                 srcset="/assets/boots-cc5-1120.55e28557.webp 1120w,
-                         /assets/boots-cc5-1680.55e28557.webp 1680w,
-                         /assets/boots-cc5-2240.55e28557.webp 2240w,
-                         /assets/boots-cc5-zoom.55e28557.webp 3360w"
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.5586" data-reveal>
+            <img src="/assets/boots-cc5-1680.a4ecb603.webp"
+                 srcset="/assets/boots-cc5-1120.a4ecb603.webp 1120w,
+                         /assets/boots-cc5-1680.a4ecb603.webp 1680w,
+                         /assets/boots-cc5-2240.a4ecb603.webp 2240w,
+                         /assets/boots-cc5-zoom.a4ecb603.webp 3360w"
                  sizes="(min-width: 900px) 720px, 92vw"
-                 width="6000" height="5736"
-                 alt="The final checkout for a part-ready basket. A note names the lipstick that is not available for same-day collection, tomorrow is selected, and the store finder is open beside the page."
+                 width="8940" height="5736"
+                 alt="The final checkout for a part-ready basket. A note names the lipstick that is not available for same-day collection, and beside it the store finder for choosing where to collect."
                  loading="lazy" decoding="async">
           </figure>
         </section>
@@ -2222,18 +2613,18 @@
 
         <section class="cs-chapter">
           <div class="cs-chapter__body" data-reveal data-stagger>
-            <h2 class="cs-chapter__title">Bringing marketing with me.</h2>
-            <p>The emails had always belonged to marketing, so this meant rethinking their work. Rather than leading with what was wrong, I focused on what a connected journey would give them: clearer messages, fewer confused customers and a better relationship after every order.</p>
-            <p>The hardest conversation was about advertising. Marketing wanted ads in the confirmation email. I pushed back, because <strong>that email has one job</strong>: reassuring someone their order went through and telling them what happens next. Selling to them there works against it. Instead, I showed marketing better moments to reach customers, and smarter ones too, such as following up once the return window has passed and the customer has clearly kept their order. Marketing kept their reach, and the confirmation email kept its purpose.</p>
+            <h2 class="cs-chapter__title">Protecting transactional emails from becoming marketing material.</h2>
+            <p>To marketing, order emails were a channel. To customers, they were part of the service, the main way of getting key updates about their order. Marketing had always owned these emails, so changing them meant getting their buy-in. Rather than telling them what was wrong, I framed the change around what they&rsquo;d gain: customer trust and, with it, retention.</p>
+            <p>Marketing also had a clear agenda for upselling and cross-selling in these emails. I was confident that wasn&rsquo;t right for customers, so I ran usability testing to understand what they expected from each email and what mattered most. None of the participants expected marketing content in their transactional emails. With that evidence, we agreed to move it later in the journey, to after the dispatch email, at a point where it&rsquo;s more likely to convert.</p>
           </div>
         </section>
 
         <section class="cs-chapter">
           <div class="cs-chapter__body" data-reveal data-stagger>
-            <h2 class="cs-chapter__title">A system built to last.</h2>
-            <p>Designing more than a hundred emails one by one would have left them drifting apart again within a year. So I created a <strong>modular template system</strong> instead. The fundamentals, such as buttons, typography and colour, came from the Boots brand. The templates themselves were built from patterns that could be combined and adapted for any scenario, from a straightforward delivery to an order split across several suppliers.</p>
-            <p>I brought engineering in early, to understand how Salesforce Marketing Cloud would handle the templates and the conditional logic behind them. The default would have been a separate template for every email. Instead, I made the case for <strong>a small set of flexible templates</strong>, with content blocks that switch on or off depending on what&rsquo;s in the order. It meant fewer templates to build and test, and emails that couldn&rsquo;t drift apart, because they were all assembled from the same pieces.</p>
-            <p>The emails share their patterns with the confirmation page. The first email arrives moments after a customer lands on it, so the two feel like one continuous experience. The result is a journey after payment that feels as considered as the checkout before it, rather than an afterthought.</p>
+            <h2 class="cs-chapter__title">One system for more than a hundred emails.</h2>
+            <p>Designing more than a hundred emails one by one would have left them drifting apart again within a year. Instead, I created a modular template system. The fundamentals came from the Boots brand, and the templates were built from patterns that combine for any scenario, from a straightforward delivery to an order split across several suppliers.</p>
+            <p>I brought engineering in early to understand how Salesforce Marketing Cloud would handle the templates and their conditional logic. The default would have been a separate template for every email. I made the case for a small set of flexible templates, with content blocks that switch on or off depending on what&rsquo;s in the order. That meant fewer templates to build and test, and emails that stay consistent because they share the same pieces.</p>
+            <p>The emails also share patterns with the confirmation page. The first one arrives moments after a customer lands there, so the journey after payment feels as considered as the checkout before it.</p>
           </div>
           <figure class="cs-figure" style="--ar: 0.6223" data-reveal>
             <img src="/assets/boots-confirm-1120.a5ebc486.webp"
@@ -2259,8 +2650,22 @@
       <section class="cs-chapter">
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The impact so far.</h2>
-          <p>Checkout goes live in phases from Q4 2026, as part of a multi-year, multi-million pound Salesforce transformation across Boots, so there&rsquo;s no live conversion figure yet. But the work has already had an effect.</p>
-          <p>The new checkout structure has been proven, beating the existing one in a live pilot. The patterns I designed are already being used beyond checkout, across Boots.com. And every change has been agreed with the teams who own it, from payments and loyalty to marketing and legal, so what goes live has the business behind it as well as the evidence.</p>
+          <p>Checkout launches in phases from Q4 2026, as part of a multi-year, multi-million pound Salesforce transformation across Boots. It goes in with the evidence and the business behind it.</p>
+          <ul class="cs-points">
+            <li>
+              <p class="cs-points__title">Proven with live customers</p>
+              <p>The new structure increased conversion against the existing checkout in a live optimisation test.</p>
+            </li>
+            <li>
+              <p class="cs-points__title">Agreed across the business</p>
+              <p>Payments and fraud, loyalty and personalisation, marketing and legal all signed off the approach.</p>
+            </li>
+            <li>
+              <p class="cs-points__title">Adopted beyond checkout</p>
+              <p>Its components now sit in the Boots design system, in use across the wider Boots.com redesign.</p>
+            </li>
+          </ul>
+          <p>The full rollout will show the effect at scale. It goes live with confidence, on a tested foundation with the flexibility to grow with the proposition.</p>
         </div>
       </section>
     </div>
