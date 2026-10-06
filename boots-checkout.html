@@ -820,8 +820,7 @@
   /* Outside the three stories, a following chapter still opens with a line.
      Inside a story that line is turned off: the sections belong to the story,
      and the line is reserved for the break between stories. */
-  .cs-chapter + .cs-chapter,
-  .cs-scope + .cs-chapter {
+  .cs-chapter + .cs-chapter {
     margin-top: clamp(92px, 13vh, 154px);
     border-top: 1px solid var(--rule);
   }
@@ -890,45 +889,6 @@
      rail as well, so every image on the page is the same width regardless of
      which column its writing sits in. */
   .cs-chapter .cs-figure { grid-column: 1 / -1; }
-
-  /* ---------- Scope ----------
-     The record in front of the chapters: what she owned, what the wider team
-     owned, why the problem was hard, the call, and what moved. Same grid as a
-     chapter, with no number, because it frames the series rather than joining
-     it. The list is the term treatment from the API page. */
-  .cs-scope {
-    display: grid;
-    grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
-    column-gap: clamp(28px, 4.5vw, 88px);
-    padding-top: clamp(56px, 8vh, 104px);
-  }
-  .cs-scope__rail {
-    align-self: start;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .cs-scope__body { max-width: 62ch; }
-  .cs-terms {
-    margin: 1.35em 0 0;
-    padding-left: clamp(18px, 1.8vw, 26px);
-    border-left: 1px solid var(--rule);
-  }
-  .cs-terms dt,
-  .cs-terms dd {
-    font-size: clamp(17px, 1.32vw, 19.5px);
-    line-height: 1.62;
-    letter-spacing: -0.006em;
-  }
-  .cs-terms dt {
-    font-weight: 500;
-    color: var(--ink);
-  }
-  .cs-terms dd {
-    margin: 0;
-    color: var(--ink-1);
-  }
-  .cs-terms dd + dt { margin-top: 1.15em; }
 
   /* ---------- Three stories ----------
      The case is one scroll with three ways in. The challenge names them, and
@@ -2098,20 +2058,17 @@
        above it. A 13ch column on a 346px screen leaves the body 20ch, which is
        not a measure. */
     .cs-chapter,
-    .cs-scope,
     .cs-story {
       grid-template-columns: minmax(0, 1fr);
       row-gap: 18px;
     }
-    .cs-chapter__rail,
-    .cs-scope__rail {
+    .cs-chapter__rail {
       flex-direction: row;
       align-items: baseline;
       gap: 14px;
     }
     .cs-chapter__no { font-size: 20px; }
     .cs-chapter__body,
-    .cs-scope__body,
     .cs-path__body { max-width: none; grid-column: auto; }
     .cs-path {
       grid-template-columns: minmax(0, 1fr);

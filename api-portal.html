@@ -633,8 +633,7 @@
      read as a numbered series rather than as a run of headings. The first one
      has none: it would be a line ruled directly under the overview's last
      paragraph, closing it rather than opening anything. */
-  .cs-chapter + .cs-chapter,
-  .cs-scope + .cs-chapter {
+  .cs-chapter + .cs-chapter {
     margin-top: clamp(92px, 13vh, 154px);
     border-top: 1px solid var(--rule);
   }
@@ -755,24 +754,6 @@
      A term sits directly on its own description — they are one item — and the
      items are held apart by roughly a line. */
   .cs-terms dd + dt { margin-top: 1.05em; }
-
-  /* ---------- Scope ----------
-     The record in front of the chapters. Same grid as a chapter, with no
-     number, because it frames the series rather than joining it. The terms
-     themselves are already on this page. */
-  .cs-scope {
-    display: grid;
-    grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
-    column-gap: clamp(28px, 4.5vw, 88px);
-    padding-top: clamp(56px, 8vh, 104px);
-  }
-  .cs-scope__rail {
-    align-self: start;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .cs-scope__body { max-width: 62ch; }
 
   /* ---------- Reflection ---------- */
   .cs-reflection {
@@ -1196,20 +1177,17 @@
     /* The rail stops being a column beside the writing and becomes a line
        above it. A 13ch column on a 346px screen leaves the body 20ch, which is
        not a measure. */
-    .cs-chapter,
-    .cs-scope {
+    .cs-chapter {
       grid-template-columns: minmax(0, 1fr);
       row-gap: 18px;
     }
-    .cs-chapter__rail,
-    .cs-scope__rail {
+    .cs-chapter__rail {
       flex-direction: row;
       align-items: baseline;
       gap: 14px;
     }
     .cs-chapter__no { font-size: 20px; }
-    .cs-chapter__body,
-    .cs-scope__body { max-width: none; }
+    .cs-chapter__body { max-width: none; }
 
     .hp-footer { --foot-x: 22px; padding: 66px var(--foot-x) 28px; }
     .hp-footer__title { font-size: clamp(46px, 13vw, 76px); }
@@ -1384,27 +1362,6 @@
 
   <section class="cs-chapters cs-wrap" aria-label="The work, chapter by chapter">
     <div class="cs-col">
-
-      <section class="cs-scope" aria-label="What I owned">
-        <div class="cs-scope__rail" data-reveal data-stagger>
-          <span class="cs-chapter__beat">Ownership</span>
-        </div>
-        <div class="cs-scope__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">A portal that was three products.</h2>
-          <dl class="cs-terms">
-            <dt>I owned</dt>
-            <dd>Discovery, with the head of UX. The method was mine: arrive with a drafted answer, because the stakeholder we needed was a C-suite executive we could rarely book.</dd>
-            <dt>The wider team</dt>
-            <dd>Two designers. A client mid-restructure. Timelines and resources already confirmed, and a feature list that was still vague. The technical team had to be able to inherit whatever we left.</dd>
-            <dt>Why it was hard</dt>
-            <dd>We were contracted for one developer portal. It only made sense as three connected experiences: a marketing site, the portal, and a partner portal for users, permissions, payments and services. Defining the portal on its own would have designed the wrong thing.</dd>
-            <dt>The call</dt>
-            <dd>A workshop to make the scope real, then the features cut into an MVP, a next phase and a backlog. Templates that carry their own reasoning and their open questions, so a later phase would inherit the decisions.</dd>
-            <dt>What changed</dt>
-            <dd>Structural changes on the client side paused the work once discovery was complete. The detailed design phase did not follow. What remains is the discovery: a vision, a prioritised feature list, a journey across the three experiences, a site map, a content specification, and the templates.</dd>
-          </dl>
-        </div>
-      </section>
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>

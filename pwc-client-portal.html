@@ -661,8 +661,7 @@
      read as a numbered series rather than as a run of headings. The first one
      has none: it would be a line ruled directly under the overview's last
      paragraph, closing it rather than opening anything. */
-  .cs-chapter + .cs-chapter,
-  .cs-scope + .cs-chapter {
+  .cs-chapter + .cs-chapter {
     margin-top: clamp(92px, 13vh, 154px);
     border-top: 1px solid var(--rule);
   }
@@ -745,45 +744,6 @@
      rail as well, so every image on the page is placed against the same edges
      regardless of which column its writing sits in. */
   .cs-chapter .cs-figure { grid-column: 1 / -1; }
-
-  /* ---------- Scope ----------
-     The record in front of the chapters: what she owned, what the wider team
-     owned, why the problem was hard, the call, and what moved. Same grid as a
-     chapter, with no number, because it frames the series rather than joining
-     it. The list is the term treatment from the API page. */
-  .cs-scope {
-    display: grid;
-    grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
-    column-gap: clamp(28px, 4.5vw, 88px);
-    padding-top: clamp(56px, 8vh, 104px);
-  }
-  .cs-scope__rail {
-    align-self: start;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .cs-scope__body { max-width: 62ch; }
-  .cs-terms {
-    margin: 1.35em 0 0;
-    padding-left: clamp(18px, 1.8vw, 26px);
-    border-left: 1px solid var(--rule);
-  }
-  .cs-terms dt,
-  .cs-terms dd {
-    font-size: clamp(17px, 1.32vw, 19.5px);
-    line-height: 1.62;
-    letter-spacing: -0.006em;
-  }
-  .cs-terms dt {
-    font-weight: 500;
-    color: var(--ink);
-  }
-  .cs-terms dd {
-    margin: 0;
-    color: var(--ink-1);
-  }
-  .cs-terms dd + dt { margin-top: 1.15em; }
 
   /* ---------- Reflection ---------- */
   .cs-reflection {
@@ -1211,20 +1171,17 @@
     /* The rail stops being a column beside the writing and becomes a line
        above it. A 13ch column on a 346px screen leaves the body 20ch, which is
        not a measure. */
-    .cs-chapter,
-    .cs-scope {
+    .cs-chapter {
       grid-template-columns: minmax(0, 1fr);
       row-gap: 18px;
     }
-    .cs-chapter__rail,
-    .cs-scope__rail {
+    .cs-chapter__rail {
       flex-direction: row;
       align-items: baseline;
       gap: 14px;
     }
     .cs-chapter__no { font-size: 20px; }
-    .cs-chapter__body,
-    .cs-scope__body { max-width: none; }
+    .cs-chapter__body { max-width: none; }
 
     .hp-footer { --foot-x: 22px; padding: 66px var(--foot-x) 28px; }
     .hp-footer__title { font-size: clamp(46px, 13vw, 76px); }
@@ -1385,27 +1342,6 @@
 
   <section class="cs-chapters cs-wrap" aria-label="The work, chapter by chapter">
     <div class="cs-col">
-
-      <section class="cs-scope" aria-label="What I owned">
-        <div class="cs-scope__rail" data-reveal data-stagger>
-          <span class="cs-chapter__beat">Ownership</span>
-        </div>
-        <div class="cs-scope__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">One feature, and the room it took.</h2>
-          <dl class="cs-terms">
-            <dt>I owned</dt>
-            <dd>The diagnosis of Junction as it stood, three options for how roles and permissions should travel between tools, the experience around logic I could not change, and the study of whether the report builder saved anyone time.</dd>
-            <dt>The wider team</dt>
-            <dd>A platform already live, on engagements that could not be disrupted. Territories had built their own provisioning tools. Senior stakeholders across regions each wanted a different end state. Design leadership and the client signed the journeys with me.</dd>
-            <dt>Why it was hard</dt>
-            <dd>A role in one tool did not mean the same thing in the next, and a permission changed in one did not reliably reach the others. That cost people confidence in a journey built to create it. The directors who had to agree were rarely in the same room.</dd>
-            <dt>The call</dt>
-            <dd>I priced three options: what each bought the user, what it cost to build, what it was worth. I recommended. The deadline picked the quick win, and I treated that as debt. In Tampa I put the pain and the routes back on the table until addressing it properly was agreed as a priority.</dd>
-            <dt>What changed</dt>
-            <dd>Thousands of users can assign permissions that mean the same thing in every region. There is no dashboard number on user management. The job is to disappear. The report study changed the backlog, including the action most participants could not find.</dd>
-          </dl>
-        </div>
-      </section>
 
       <section class="cs-chapter">
         <div class="cs-chapter__rail" data-reveal data-stagger>
