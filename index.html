@@ -1179,9 +1179,10 @@
      reference and the channel is kept tight: a bigger gap, or a square the
      size of the reference, reads as a second card hovering in front.
 
-     The tile is white and the arrow is black, matching the reference that
-     asked for this. A card-coloured tile was tried on Boots and the navy
-     disappeared into the page, so the white tile stays.
+     The tile is frosted glass in the card's own colour. The fill is
+     translucent, so the black channel shows through it, and the only
+     light is a hairline along the top edge. A solid card-coloured tile
+     was tried on Boots and the navy disappeared into the page.
 
      --notch is the hole. --tile sits in its outer corner, and --gutter is the
      black channel on the inner sides. --bite-r is the tile's own corner plus
@@ -1285,15 +1286,28 @@
       height: 100%;
       align-items: center;
       justify-content: center;
-      background: #fff;
-      color: #0a0a0c;
       border-radius: inherit;
       /* The same distance up and to the right, so the two can be written once. */
       --lift: max(6px, 0.7cqw);
       transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
+      /* See-through, not a painted slab. The card shows more toward
+         the inner corner and the page shows through toward the outside.
+         A thin even milk keeps it frosted. No shine across the face. */
+      background-color: rgba(210, 216, 222, 0.08);
+      background-image: linear-gradient(
+        to top right,
+        color-mix(in srgb, var(--card-bg) 58%, transparent) 0%,
+        color-mix(in srgb, var(--card-bg) 34%, transparent) 46%,
+        color-mix(in srgb, var(--card-bg) 14%, transparent) 100%
+      );
+      -webkit-backdrop-filter: blur(28px) saturate(1.5);
+      backdrop-filter: blur(28px) saturate(1.5);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
     }
     .hp-case__corner svg {
-      /* Short of the tile, so the mark sits inside the white square instead
+      /* Short of the tile, so the mark sits inside the square instead
          of filling it. The square itself stays the same size. */
       width: 82%;
       height: 82%;
