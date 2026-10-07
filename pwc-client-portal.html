@@ -654,6 +654,11 @@
   .cs-hero .cs-figure {
     flex: 0 0 auto;
     margin-top: clamp(52px, 7.4vh, 108px);
+    /* The homepage card's corner, as a share of this picture. Top-left and
+       bottom-right only: the other two stay square. cqw so the curve follows
+       the picture when the column narrows. */
+    container-type: inline-size;
+    --hero-r: max(14px, 3.4cqw);
   }
   /* The picture at the column's width, and as tall as that makes it. No
      object-fit and no object-position: both existed to place a picture inside a
@@ -674,6 +679,7 @@
     display: block;
     width: 100%;
     height: auto;
+    border-radius: var(--hero-r) 0 var(--hero-r) 0;
     /* .cs-figure img draws every picture on the page at --fig-w, which is right
        for a chapter figure and wrong for this one. The hero is the page's opening
        image and the only one allowed the full width; without this it would come in
@@ -1366,8 +1372,8 @@
            aria-label carries the sentence intact, because the inner span is
            about to be taken apart into one element per letter and a screen
            reader given that reads it out a letter at a time. -->
-      <h1 class="cs-hero__statement" aria-label="Shaping the next set of Junction enhancements, transforming how PwC’s Deals practitioners and clients worldwide collaborate in real time.">
-        <span class="cs-hero__statement-inner" aria-hidden="true">Shaping the next set of <strong>Junction</strong> enhancements, transforming how PwC&rsquo;s Deals practitioners and clients worldwide collaborate in real time.</span>
+      <h1 class="cs-hero__statement" aria-label="Shaping the next evolution of PwC’s real-time Deals collaboration platform for practitioners and clients worldwide.">
+        <span class="cs-hero__statement-inner" aria-hidden="true">Shaping the next evolution of <strong>PwC&rsquo;s</strong> real-time Deals collaboration platform for practitioners and clients worldwide.</span>
       </h1>
       <ul class="cs-tags">
         <li>UX &amp; UI</li>

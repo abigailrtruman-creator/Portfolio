@@ -774,6 +774,10 @@
   .cs-hero .cs-figure {
     flex: 0 0 auto;
     margin-top: clamp(52px, 7.4vh, 108px);
+    /* The homepage card's corner, as a share of this picture. Top-left and
+       bottom-right only. cqw so it follows the film when the column narrows. */
+    container-type: inline-size;
+    --hero-r: max(14px, 3.4cqw);
   }
   /* Kept for the render, which is out of the hero but still in /assets. No
      object-fit and no object-position: both existed to place a picture inside a
@@ -804,14 +808,15 @@
      A radius, against the rule stated at .cs-figure that figures on this page
      carry none. That rule is about her artwork, whose rounded device edges and
      shadows are already composited into the file — a second frame round a frame.
-     This is a bare black rectangle with no edge of its own, and 12px is the
-     figcaption's 10px and the nav's 12px rather than a new number. */
+     This is a bare black rectangle with no edge of its own, so it takes the
+     same diagonal as the other heroes: top-left and bottom-right, at the
+     homepage card's share of the width. */
   .cs-hero__video {
     position: relative;
     width: 100%;
     aspect-ratio: 16 / 9;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: var(--hero-r) 0 var(--hero-r) 0;
     /* Shows for the moment before the player paints, and behind the letterboxing
        if the film is not exactly 16:9. Black rather than --bg: this is the
        film's own surround, and matching the page would make the video look like
