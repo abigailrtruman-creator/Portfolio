@@ -550,8 +550,8 @@
      inside a fit-content parent is indefinite, so every lazy figure measured
      zero until its file arrived and the page shifted under the reader. Stating
      the width makes it definite, and the aspect-ratio on the image can then hold
-     the box open from the first paint. No label drawn over the artwork — a pill
-     floating over a screenshot reads as part of it. */
+     the box open from the first paint. The peek pill is drawn over it only while
+     a pointer is there. */
   .cs-figure__open {
     position: relative;
     display: block;
@@ -564,7 +564,70 @@
     color: inherit;
     font: inherit;
     text-align: left;
-    cursor: zoom-in;
+    cursor: pointer;
+  }
+  /* One label for every picture that opens. It follows the pointer, 20px
+     down and to the right, and only while the pointer is on the artwork, so
+     the writing never gets it. The same dark glass as the homepage index,
+     with a slow sheen that rests, then crosses once, then rests again.
+     A phone never draws it. */
+  .cs-peek {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 90;
+    padding: 9px 14px 10px;
+    border-radius: 999px;
+    color: #fff;
+    font-family: var(--ff-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.011em;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    overflow: hidden;
+    background: rgba(18,18,22,0.55);
+    border: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(28px) saturate(1.6);
+    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+    transition: opacity 180ms ease-out;
+  }
+  .cs-peek::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 88%;
+    background: linear-gradient(100deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.04) 30%,
+      rgba(255,255,255,0.24) 50%,
+      rgba(255,255,255,0.04) 70%,
+      rgba(255,255,255,0) 100%);
+    transform: translateX(-140%);
+  }
+  .cs-peek.is-on { opacity: 1; }
+  .cs-peek.is-on::after { animation: cs-peek-glim 11s ease-in-out infinite; }
+  @keyframes cs-peek-glim {
+    0% { transform: translateX(-140%); }
+    48% { transform: translateX(200%); }
+    100% { transform: translateX(200%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cs-peek { transition: none; }
+    .cs-peek::after,
+    .cs-peek.is-on::after { animation: none; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .cs-peek {
+      background: #121216;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
   }
   .cs-hero .cs-figure {
     flex: 0 0 auto;
@@ -1912,6 +1975,116 @@
     if (moved) { moved = false; return; }
     if (on !== lbImg) closeLb();
   });
+
+  // One label for the page. It is only drawn while the pointer is on a
+  // picture that opens, and it sits 20px below and to the right of the cursor.
+  // The follow is a spring: stiffness 500, damping 60, mass 1, which is
+  // overdamped, so it eases onto the cursor and does not bounce.
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var peek = document.createElement('span');
+    peek.className = 'cs-peek';
+    peek.setAttribute('aria-hidden', 'true');
+    peek.textContent = 'Take a closer peek';
+    document.body.appendChild(peek);
+
+    var px = 0, py = 0, vx = 0, vy = 0, tx = 0, ty = 0;
+    var cursorX = 0, cursorY = 0, hasCursor = false;
+    var peekOn = false, peekRaf = 0, peekLast = 0, scrollQueued = false;
+    var w0 = Math.sqrt(500);
+    var zeta = 60 / (2 * w0);
+    var spread = w0 * Math.sqrt(zeta * zeta - 1);
+    var root1 = -w0 * zeta + spread;
+    var root2 = -w0 * zeta - spread;
+
+    function springAxis(pos, vel, target, dt) {
+      var offset = pos - target;
+      var a = (vel - root2 * offset) / (root1 - root2);
+      var b = offset - a;
+      var e1 = Math.exp(root1 * dt);
+      var e2 = Math.exp(root2 * dt);
+      return [target + a * e1 + b * e2, a * root1 * e1 + b * root2 * e2];
+    }
+
+    function placePeek() {
+      peek.style.transform = 'translate3d(' + px.toFixed(2) + 'px,' + py.toFixed(2) + 'px,0)';
+    }
+
+    function peekFrame(now) {
+      var dt = peekLast ? Math.min(0.064, (now - peekLast) / 1000) : 0.016;
+      peekLast = now;
+      if (REDUCED) {
+        px = tx; py = ty; vx = 0; vy = 0;
+      } else {
+        var nx = springAxis(px, vx, tx, dt);
+        var ny = springAxis(py, vy, ty, dt);
+        px = nx[0]; vx = nx[1];
+        py = ny[0]; vy = ny[1];
+      }
+      placePeek();
+      var resting = Math.abs(tx - px) < 0.2 && Math.abs(ty - py) < 0.2
+        && Math.abs(vx) < 0.2 && Math.abs(vy) < 0.2;
+      if (peekOn || !resting) peekRaf = requestAnimationFrame(peekFrame);
+      else { peekRaf = 0; peekLast = 0; }
+    }
+
+    function aimPeek(clientX, clientY, snap) {
+      var w = peek.offsetWidth;
+      var h = peek.offsetHeight;
+      var nx = clientX + 20;
+      var ny = clientY + 20;
+      var edge = 8;
+      if (w && nx + w > window.innerWidth - edge) nx = window.innerWidth - edge - w;
+      if (h && ny + h > window.innerHeight - edge) ny = window.innerHeight - edge - h;
+      if (nx < edge) nx = edge;
+      if (ny < edge) ny = edge;
+      tx = nx;
+      ty = ny;
+      if (snap || REDUCED) {
+        px = tx; py = ty; vx = 0; vy = 0;
+        placePeek();
+      }
+      if (!peekRaf) peekRaf = requestAnimationFrame(peekFrame);
+    }
+
+    function syncPeek() {
+      if (!hasCursor) return;
+      var el = document.elementFromPoint(cursorX, cursorY);
+      var hit = el && el.closest && el.closest('.cs-figure__open');
+      if (!hit) {
+        if (peekOn) { peekOn = false; peek.classList.remove('is-on'); }
+        return;
+      }
+      var arrive = !peekOn;
+      peekOn = true;
+      peek.classList.add('is-on');
+      aimPeek(cursorX, cursorY, arrive);
+    }
+
+    document.addEventListener('pointermove', function(e) {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      cursorX = e.clientX;
+      cursorY = e.clientY;
+      hasCursor = true;
+      syncPeek();
+    });
+
+    // Scrolling moves the picture out from under a still cursor, and no
+    // pointermove fires, so the label would stay painted on the writing.
+    window.addEventListener('scroll', function() {
+      if (!hasCursor || scrollQueued) return;
+      scrollQueued = true;
+      requestAnimationFrame(function() {
+        scrollQueued = false;
+        syncPeek();
+      });
+    }, { passive: true });
+
+    document.documentElement.addEventListener('mouseleave', function() {
+      hasCursor = false;
+      peekOn = false;
+      peek.classList.remove('is-on');
+    });
+  }
 
   figures.forEach(function(fig) {
     var img = fig.querySelector('img');

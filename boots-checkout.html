@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Lead product designer on the Boots.com checkout rebuild: the flow, Same-Day Click &amp; Collect, and the journey after payment.">
+<meta name="description" content="Lead product designer on the Boots.com checkout rebuild: the flow, Same-Day Click &amp; Collect, and the experience after payment.">
 <link rel="canonical" href="https://abbietruman.vercel.app/boots-checkout">
 
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Abbie Truman">
 <meta property="og:url" content="https://abbietruman.vercel.app/boots-checkout">
 <meta property="og:title" content="Boots website — Abbie Truman">
-<meta property="og:description" content="Lead product designer on the Boots.com checkout rebuild: the flow, Same-Day Click &amp; Collect, and the journey after payment.">
+<meta property="og:description" content="Lead product designer on the Boots.com checkout rebuild: the flow, Same-Day Click &amp; Collect, and the experience after payment.">
 <meta property="og:image" content="https://abbietruman.vercel.app/assets/boots-og-1200x630.a62517b9.jpg">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="The rebuilt Boots.com checkout on a laptop screen.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Boots website — Abbie Truman">
-<meta name="twitter:description" content="Lead product designer on the Boots.com checkout rebuild: the flow, Same-Day Click &amp; Collect, and the journey after payment.">
+<meta name="twitter:description" content="Lead product designer on the Boots.com checkout rebuild: the flow, Same-Day Click &amp; Collect, and the experience after payment.">
 <meta name="twitter:image" content="https://abbietruman.vercel.app/assets/boots-og-1200x630.a62517b9.jpg">
 <meta name="twitter:image:alt" content="The rebuilt Boots.com checkout on a laptop screen.">
 
@@ -625,16 +625,71 @@
     color: inherit;
     font: inherit;
     text-align: left;
-    cursor: zoom-in;
+    cursor: pointer;
   }
-  /* No label over the picture. It followed the cursor on a pointer device and
-     sat in the corner on a touch one, and it was removed on the owner's
-     instruction: on a desktop the figures are large enough to be read as
-     pictures rather than as thumbnails asking to be opened, and on a phone a
-     pill floating over the artwork read as part of the artwork.
-
-     What is left is the cursor, which says the same thing without drawing
-     anything: the figure is still a button and still opens the viewer. */
+  /* One label for every picture that opens. It follows the pointer, 20px
+     down and to the right, and only while the pointer is on the artwork, so
+     the writing never gets it. The same dark glass as the homepage index,
+     with a slow sheen that rests, then crosses once, then rests again.
+     A phone never draws it. */
+  .cs-peek {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 90;
+    padding: 9px 14px 10px;
+    border-radius: 999px;
+    color: #fff;
+    font-family: var(--ff-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.011em;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    overflow: hidden;
+    background: rgba(18,18,22,0.55);
+    border: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(28px) saturate(1.6);
+    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+    transition: opacity 180ms ease-out;
+  }
+  .cs-peek::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 88%;
+    background: linear-gradient(100deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.04) 30%,
+      rgba(255,255,255,0.24) 50%,
+      rgba(255,255,255,0.04) 70%,
+      rgba(255,255,255,0) 100%);
+    transform: translateX(-140%);
+  }
+  .cs-peek.is-on { opacity: 1; }
+  .cs-peek.is-on::after { animation: cs-peek-glim 11s ease-in-out infinite; }
+  @keyframes cs-peek-glim {
+    0% { transform: translateX(-140%); }
+    48% { transform: translateX(200%); }
+    100% { transform: translateX(200%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cs-peek { transition: none; }
+    .cs-peek::after,
+    .cs-peek.is-on::after { animation: none; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .cs-peek {
+      background: #121216;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
   /* The caption is exactly as wide as the picture above it, which is now a
      single number for both. It used to be an expression — the figures were
      capped by height, their widths ran from 374px to 729px, and the caption had
@@ -654,6 +709,19 @@
     max-width: var(--text-end);
     margin-left: 0;
     margin-right: auto;
+  }
+  /* A picture that sits in the middle of a chapter, then more writing. The
+     same gap that opens above the picture, so it reads as part of the
+     paragraph rather than as the close of the chapter. */
+  .cs-story .cs-figure + .cs-chapter__body {
+    margin-top: clamp(64px, 9vh, 108px);
+  }
+  /* Desktop beside the phone. The usual figure width would shrink both
+     screens, so this one takes the writing column. */
+  .cs-story .cs-figure--pair img,
+  .cs-story .cs-figure--pair .cs-figure__open,
+  .cs-story .cs-figure--pair figcaption {
+    max-width: 100%;
   }
   .cs-figure figcaption {
     margin: 26px auto 0;
@@ -715,10 +783,8 @@
 
 
   /* ---------- Overview ----------
-     The two paragraphs the draft calls the facts and the reframe. They are set
-     larger than chapter body copy and they are the only place on the page that
-     is: everything after this is reported at a normal reading size, and these
-     two are the standing-back before it starts. */
+     Two opening paragraphs, then the three summaries. The role in the first
+     paragraph is the only bold on the page's opening. */
   .cs-overview {
     padding-top: var(--section);
   }
@@ -735,7 +801,6 @@
   }
   .cs-overview__body p:last-child { margin-bottom: 0; }
   .cs-overview__body strong,
-  .cs-lead strong,
   .cs-path__body strong,
   .cs-chapter__body strong {
     color: inherit;
@@ -885,25 +950,26 @@
     letter-spacing: -0.006em;
     color: var(--ink-1);
   }
+  /* A last line of one word reads as a widow. pretty rebreaks the paragraph
+     so that line carries more than the final word. */
+  .cs-overview__body p,
+  .cs-path__note p,
+  .cs-chapter__body p,
+  .cs-chapter__body dd,
+  .cs-dir p,
+  .cs-figure figcaption {
+    text-wrap: pretty;
+  }
   /* The figure belongs to the chapter but not to its measure: it spans the
      rail as well, so every image on the page is the same width regardless of
      which column its writing sits in. */
   .cs-chapter .cs-figure { grid-column: 1 / -1; }
 
   /* ---------- Three stories ----------
-     The case is one scroll with three ways in. The challenge names them, and
-     this index stays put while those three are on screen so a reader can move
-     between them without climbing back to the top. It sticks under the nav
-     pill and lets go once the stories end, which is why it lives inside
-     .cs-stories rather than on the page. */
-  .cs-lead {
-    margin: clamp(28px, 4vh, 44px) 0 0;
-    max-width: var(--text-end);
-    font-size: 16px;
-    line-height: 1.62;
-    letter-spacing: -0.006em;
-    color: var(--ink-1);
-  }
+     The overview names them, then this index stays put while those three are
+     on screen so a reader can move between them without climbing back to the
+     top. It sticks under the nav pill and lets go once the stories end, which
+     is why it lives inside .cs-stories rather than on the page. */
   /* Each entry is a row across the story grid, title on the left and the
      note on the right, so this index is a different shape from the chapters
      without squeezing the writing into a third of the column. */
@@ -1006,9 +1072,9 @@
   .cs-path__more:hover .cs-path__arrow,
   .cs-path__more:focus-visible .cs-path__arrow { transform: translate(3px, -3px); }
   .cs-path__arrow { display: inline-flex; transition: transform 100ms ease-out; }
-  /* The challenge names the three pieces. The space under it is the landing:
+  /* The overview names the three pieces. The space under it is the landing:
      a line, then the same title set as a chapter, so the first story does not
-     read as another paragraph of the challenge. */
+     read as another paragraph of the overview. */
   .cs-stories {
     max-width: var(--measure);
     margin-top: clamp(96px, 13vh, 148px);
@@ -1066,7 +1132,6 @@
     outline-offset: 3px;
   }
   .cs-overview,
-  .cs-challenge,
   .cs-story { scroll-margin-top: var(--nav-clear); }
   /* The three stories are the breaks. A line and a real gap between them, and
      almost none of that between the sections inside one story, so a heading
@@ -1242,7 +1307,7 @@
     column-gap: 0;
   }
   .cs-trial .cs-pair > div:first-child {
-    padding-right: clamp(40px, 4.8vw, 56px);
+    padding-right: clamp(28px, 3.2vw, 40px);
   }
   .cs-chapter--even .cs-trial .cs-pair__k { margin-bottom: 6px; }
   .cs-chapter--even .cs-trial .cs-pair dd { margin-top: 1.35em; }
@@ -1276,7 +1341,7 @@
   }
   .cs-pair.cs-pair--plain > div { padding-top: 0; }
   .cs-pair.cs-pair--plain > div + div {
-    padding-left: clamp(40px, 4.8vw, 56px);
+    padding-left: clamp(28px, 3.2vw, 40px);
     border-left: 1px solid var(--rule);
   }
   .cs-pair dt {
@@ -2255,16 +2320,9 @@
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
       <div class="cs-overview__body" data-reveal data-stagger>
-        <p>As <strong>lead product designer</strong> on the Boots.com checkout rebuild, I led the design of everything from the moment a customer reaches checkout to the last email about their order, for a site that serves 21 million customers a year. That included bringing Same-Day Click &amp; Collect into checkout for the first time, and creating a modular email component system that now powers more than a hundred transactional emails.</p>
-        <p>I worked closely with product, who <strong>owned the requirements</strong>, and engineering, who <strong>built it on a new platform</strong>. Many other teams had a stake in checkout too, from loyalty and marketing to legal. I brought each of them in at the right moments, so their expertise could help shape the design and they could stand behind the result.</p>
+        <p>The brief started with introducing Same-Day Click &amp; Collect into Boots&rsquo; fulfilment offering. As <strong>lead product designer</strong>, I made the case to use that moment to rethink every point where fulfilment choices shape the customer experience, from the product page to checkout and post-purchase communications.</p>
+        <p>I led the design work and process end to end, working closely with product, engineering and teams across payments, loyalty, personalisation, marketing and legal, while navigating significant technology constraints along the way. The work was structured around three connected pieces:</p>
       </div>
-    </div>
-  </section>
-
-  <section class="cs-challenge cs-chapters" id="challenge" aria-label="The challenge">
-    <div class="cs-col">
-      <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>The challenge</span>
-      <p class="cs-lead" data-reveal>The brief was to bring Same-Day Click &amp; Collect, a new proposition, into checkout. I saw a bigger opportunity to raise the bar on the whole experience and drive conversion, and <strong>made the business case</strong> for exactly that. That turned one brief into <strong>three connected pieces of work</strong>:</p>
 
       <div class="cs-paths">
         <article class="cs-path" data-reveal>
@@ -2292,7 +2350,7 @@
         <article class="cs-path" data-reveal>
           <div class="cs-path__body">
             <p class="cs-path__no">03</p>
-            <h2 class="cs-path__title"><a href="#after" data-story-jump>Rethinking the journey after payment, at the scale of more than 100 million transactional emails a year</a></h2>
+            <h2 class="cs-path__title"><a href="#after" data-story-jump>Rethinking the experience after payment, at the scale of more than 100 million transactional emails a year</a></h2>
           </div>
           <div class="cs-path__note">
             <p>Every order is followed by a confirmation page and a series of emails, and Boots sends more than 100 million of them a year. They felt like they belonged to a much older internet, with no shared strategy, so an order&rsquo;s story broke down the moment the customer paid. The plan was a refresh. I made the case for something bigger: one connected journey across every message, for every kind of order.</p>
@@ -2311,43 +2369,57 @@
           <h2 class="cs-story__title" id="checkout-h" data-reveal>Proving the case for change in a checkout that already converted</h2>
         <section class="cs-chapter cs-chapter--even">
           <div class="cs-chapter__body" data-reveal data-stagger>
-            <p>First, I ran usability testing to find out what the current checkout was really doing, alongside a study of the progress bar itself. It was one page made to look like five, and its progress bar suggested steps that didn&rsquo;t exist. But it was already converting well. Conversion rose when the progress bar launched, and the flow had been optimised for years. Pointing out problems wouldn&rsquo;t be enough.</p>
-            <p>Customers didn&rsquo;t agree on whether they wanted steps. The only consistent finding was that checkout should feel quick, and easy to go back and edit. So I tested two routes against those needs:</p>
+            <p>I began with research to establish what customers actually needed before changing an already high-converting checkout. Years of optimisation had produced a single-page flow presented as five steps, with a progress bar that did not reflect the real experience. It had improved conversion when it launched, so identifying the inconsistency alone was not enough to justify a redesign.</p>
+          </div>
+          <figure class="cs-figure" style="--ar: 1.1259" data-reveal>
+            <img src="/assets/boots-existing-1120.3f3ff95c.webp"
+                 srcset="/assets/boots-existing-1120.3f3ff95c.webp 1120w,
+                         /assets/boots-existing-1680.3f3ff95c.webp 1680w,
+                         /assets/boots-existing-2240.3f3ff95c.webp 2240w,
+                         /assets/boots-existing-zoom.3f3ff95c.webp 3360w"
+                 sizes="(min-width: 512px) 448px, 92vw"
+                 width="4319" height="3836"
+                 alt="The existing Boots checkout. A five-stage progress bar runs across Basket, Your details, Delivery, Payment and Confirmation, while delivery choices and payment sit on the same page."
+                 loading="lazy" decoding="async">
+            <figcaption><span class="cs-figure__text">The existing checkout and its five-stage progress bar.</span></figcaption>
+          </figure>
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <p>Initial research found no clear preference for a progress bar, or for a particular number of steps. Customers were consistent about the underlying need: checkout should feel quick, ask only for essential information and communicate clearly. That meant moving beyond opinions about the component and testing two routes: one made the best use of a properly designed progress bar, while the other explored a clearer way to signal progress in a single-page checkout. I A/B tested both to establish the stronger experience:</p>
             <div class="cs-trial">
               <dl class="cs-pair cs-pair--plain">
                 <div>
-                  <dt><span class="cs-pair__k">Test A</span>A multi-step checkout.</dt>
-                  <dd>A separate page for each step, which is what a progress bar normally implies.</dd>
+                  <dt><span class="cs-pair__k">Test A</span>Multi&#8209;step checkout</dt>
+                  <dd>A progress bar and a separate page for each step, matching the stepped journey the bar implied.</dd>
                 </div>
                 <div>
-                  <dt><span class="cs-pair__k">Test B</span>A single-page checkout.</dt>
-                  <dd>Numbered sections that collapse into an editable summary once complete.</dd>
+                  <dt><span class="cs-pair__k">Test B</span>Single&#8209;page checkout</dt>
+                  <dd>Numbered sections, revealed progressively and collapsed into editable summaries once complete.</dd>
                 </div>
               </dl>
-              <p class="cs-trial__finding"><span class="cs-pair__k">Insight</span>A clear preference for Test B: a single-page checkout.</p>
-              <p>With every section collapsed, the whole checkout fitted on one screen, so customers could see at a glance how much was left. The numbered sections did the job the progress bar had been doing, without suggesting pages that didn&rsquo;t exist.</p>
+              <p class="cs-trial__finding"><span class="cs-pair__k">Insight</span>A single page made checkout feel faster and more controllable.</p>
+              <p>Most participants preferred Test B because they could see the full journey from the start. This made the amount of information feel manageable, showed what was still to come, and made it easy to review or change an answer. Numbered sections gave customers a clear sense of progress without implying separate pages.</p>
             </div>
-            <p>That preference was qualitative. A checkout that was already converting still needed proof in real sales, so I took the tested prototype to Boots&rsquo; optimisation team, a mix of engineers and dedicated designers. They ran the single-page checkout, with its updated information architecture and interactions, as an A/B test on the live site.</p>
+            <p>User preference alone was not enough. An already high-converting checkout needed evidence of commercial impact, so I partnered with Boots&rsquo; optimisation team to A/B test the single-page design against the live checkout.</p>
             <div class="cs-proof">
               <p class="cs-proof__num">+0.78%</p>
               <div>
                 <p class="cs-proof__what">Higher conversion than the live checkout.</p>
-                <p class="cs-proof__text">About a million sessions on each version. Small on paper, and thousands of extra orders during the test alone. Large enough to rule out chance.</p>
+                <p class="cs-proof__text">With more than one million sessions on each version, the uplift was statistically significant and translated into thousands of additional orders during the test.</p>
               </div>
             </div>
-            <p>This optimisation test settled the argument for change, and gave me a proven foundation to bring Same-Day Click &amp; Collect into.</p>
+            <p>The result was large enough to rule out chance and settled the case for change. It also gave me a proven foundation for bringing the new Same-Day Click &amp; Collect experience into checkout.</p>
           </div>
-          <figure class="cs-figure" style="--ar: 0.5390" data-reveal>
-            <img src="/assets/boots-versions-1120.94004491.webp"
-                 srcset="/assets/boots-versions-1120.94004491.webp 1120w,
-                         /assets/boots-versions-1680.94004491.webp 1680w,
-                         /assets/boots-versions-2240.94004491.webp 2240w,
-                         /assets/boots-versions-zoom.94004491.webp 3360w"
-                 sizes="(min-width: 512px) 448px, 92vw"
-                 width="4321" height="8016"
-                 alt="The existing Boots checkout, with a five-stage progress bar, above a single-page design that uses numbered sections for contact, delivery and payment."
+          <figure class="cs-figure cs-figure--pair" style="--ar: 1.2370" data-reveal>
+            <img src="/assets/boots-proposed-1120.b292d8b4.webp"
+                 srcset="/assets/boots-proposed-1120.b292d8b4.webp 1120w,
+                         /assets/boots-proposed-1680.b292d8b4.webp 1680w,
+                         /assets/boots-proposed-2240.b292d8b4.webp 2240w,
+                         /assets/boots-proposed-zoom.b292d8b4.webp 3360w"
+                 sizes="(min-width: 900px) 720px, 92vw"
+                 width="5700" height="4608"
+                 alt="The new Boots checkout on desktop and on a phone. Both use numbered sections for contact information, fulfilment and payment. Contact and fulfilment are collapsed into summaries, and payment is open."
                  loading="lazy" decoding="async">
-            <figcaption><span class="cs-figure__text">Above, the existing checkout and its five-stage progress bar. Below, the newly proposed single-page design, with numbered sections that collapse into an editable summary.</span></figcaption>
+            <figcaption><span class="cs-figure__text">The new checkout on desktop and mobile, with numbered sections for contact information, fulfilment and payment.</span></figcaption>
           </figure>
         </section>
 
@@ -2539,10 +2611,10 @@
       <section class="cs-story" id="after" aria-labelledby="after-h">
         <p class="cs-path__no" data-reveal>03</p>
         <div class="cs-story__main">
-          <h2 class="cs-story__title" id="after-h" data-reveal>Rethinking the journey after payment, at the scale of more than 100 million transactional emails a year</h2>
+          <h2 class="cs-story__title" id="after-h" data-reveal>Rethinking the experience after payment, at the scale of more than 100 million transactional emails a year</h2>
         <section class="cs-chapter">
           <div class="cs-chapter__body" data-reveal data-stagger>
-            <h2 class="cs-chapter__title">The journey after payment.</h2>
+            <h2 class="cs-chapter__title">The experience after payment.</h2>
             <p>Every Boots order is followed by a confirmation page and a series of emails that keep the customer updated until it arrives. Across all its customers, Boots sends <strong>more than 100 million</strong> of these emails a year. Yet each one read as if it had been written by a different person. There was no content strategy, the visual hierarchy buried what mattered, and the handoffs to things like returns were weak.</p>
             <p>The team had planned a refresh. I made the case for treating every message after payment as one connected journey, and then <strong>took ownership of it</strong>.</p>
           </div>
@@ -2581,7 +2653,7 @@
             <h2 class="cs-chapter__title">One system for more than a hundred emails.</h2>
             <p>Designing more than a hundred emails one by one would have left them drifting apart again within a year. Instead, I created a modular template system. The fundamentals came from the Boots brand, and the templates were built from patterns that combine for any scenario, from a straightforward delivery to an order split across several suppliers.</p>
             <p>I brought engineering in early to understand how Salesforce Marketing Cloud would handle the templates and their conditional logic. The default would have been a separate template for every email. I made the case for a small set of flexible templates, with content blocks that switch on or off depending on what&rsquo;s in the order. That meant fewer templates to build and test, and emails that stay consistent because they share the same pieces.</p>
-            <p>The emails also share patterns with the confirmation page. The first one arrives moments after a customer lands there, so the journey after payment feels as considered as the checkout before it.</p>
+            <p>The emails also share patterns with the confirmation page. The first one arrives moments after a customer lands there, so the experience after payment feels as considered as the checkout before it.</p>
           </div>
           <figure class="cs-figure" style="--ar: 0.6223" data-reveal>
             <img src="/assets/boots-confirm-1120.a5ebc486.webp"
@@ -2959,6 +3031,116 @@
     if (on !== lbImg) closeLb();
   });
 
+  // One label for the page. It is only drawn while the pointer is on a
+  // picture that opens, and it sits 20px below and to the right of the cursor.
+  // The follow is a spring: stiffness 500, damping 60, mass 1, which is
+  // overdamped, so it eases onto the cursor and does not bounce.
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var peek = document.createElement('span');
+    peek.className = 'cs-peek';
+    peek.setAttribute('aria-hidden', 'true');
+    peek.textContent = 'Take a closer peek';
+    document.body.appendChild(peek);
+
+    var px = 0, py = 0, vx = 0, vy = 0, tx = 0, ty = 0;
+    var cursorX = 0, cursorY = 0, hasCursor = false;
+    var peekOn = false, peekRaf = 0, peekLast = 0, scrollQueued = false;
+    var w0 = Math.sqrt(500);
+    var zeta = 60 / (2 * w0);
+    var spread = w0 * Math.sqrt(zeta * zeta - 1);
+    var root1 = -w0 * zeta + spread;
+    var root2 = -w0 * zeta - spread;
+
+    function springAxis(pos, vel, target, dt) {
+      var offset = pos - target;
+      var a = (vel - root2 * offset) / (root1 - root2);
+      var b = offset - a;
+      var e1 = Math.exp(root1 * dt);
+      var e2 = Math.exp(root2 * dt);
+      return [target + a * e1 + b * e2, a * root1 * e1 + b * root2 * e2];
+    }
+
+    function placePeek() {
+      peek.style.transform = 'translate3d(' + px.toFixed(2) + 'px,' + py.toFixed(2) + 'px,0)';
+    }
+
+    function peekFrame(now) {
+      var dt = peekLast ? Math.min(0.064, (now - peekLast) / 1000) : 0.016;
+      peekLast = now;
+      if (REDUCED) {
+        px = tx; py = ty; vx = 0; vy = 0;
+      } else {
+        var nx = springAxis(px, vx, tx, dt);
+        var ny = springAxis(py, vy, ty, dt);
+        px = nx[0]; vx = nx[1];
+        py = ny[0]; vy = ny[1];
+      }
+      placePeek();
+      var resting = Math.abs(tx - px) < 0.2 && Math.abs(ty - py) < 0.2
+        && Math.abs(vx) < 0.2 && Math.abs(vy) < 0.2;
+      if (peekOn || !resting) peekRaf = requestAnimationFrame(peekFrame);
+      else { peekRaf = 0; peekLast = 0; }
+    }
+
+    function aimPeek(clientX, clientY, snap) {
+      var w = peek.offsetWidth;
+      var h = peek.offsetHeight;
+      var nx = clientX + 20;
+      var ny = clientY + 20;
+      var edge = 8;
+      if (w && nx + w > window.innerWidth - edge) nx = window.innerWidth - edge - w;
+      if (h && ny + h > window.innerHeight - edge) ny = window.innerHeight - edge - h;
+      if (nx < edge) nx = edge;
+      if (ny < edge) ny = edge;
+      tx = nx;
+      ty = ny;
+      if (snap || REDUCED) {
+        px = tx; py = ty; vx = 0; vy = 0;
+        placePeek();
+      }
+      if (!peekRaf) peekRaf = requestAnimationFrame(peekFrame);
+    }
+
+    function syncPeek() {
+      if (!hasCursor) return;
+      var el = document.elementFromPoint(cursorX, cursorY);
+      var hit = el && el.closest && el.closest('.cs-figure__open');
+      if (!hit) {
+        if (peekOn) { peekOn = false; peek.classList.remove('is-on'); }
+        return;
+      }
+      var arrive = !peekOn;
+      peekOn = true;
+      peek.classList.add('is-on');
+      aimPeek(cursorX, cursorY, arrive);
+    }
+
+    document.addEventListener('pointermove', function(e) {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      cursorX = e.clientX;
+      cursorY = e.clientY;
+      hasCursor = true;
+      syncPeek();
+    });
+
+    // Scrolling moves the picture out from under a still cursor, and no
+    // pointermove fires, so the label would stay painted on the writing.
+    window.addEventListener('scroll', function() {
+      if (!hasCursor || scrollQueued) return;
+      scrollQueued = true;
+      requestAnimationFrame(function() {
+        scrollQueued = false;
+        syncPeek();
+      });
+    }, { passive: true });
+
+    document.documentElement.addEventListener('mouseleave', function() {
+      hasCursor = false;
+      peekOn = false;
+      peek.classList.remove('is-on');
+    });
+  }
+
   figures.forEach(function(fig) {
     var img = fig.querySelector('img');
     // The hero is a laptop render: nothing in it is meant to be read, and
@@ -3263,10 +3445,8 @@
   // positions instead of cutting between them, which is most of the difference
   // between a long page that feels built and one that feels long.
   //
-  // It drives nothing else: no scroll-linked transforms, no pinning. Every
-  // animation on this page is still an entrance triggered once. Third party and
-  // on a CDN, so its absence has to be survivable, and it is — the page scrolls
-  // the way the browser scrolls it.
+  // Third party and on a CDN, so its absence has to be survivable, and it
+  // is — the page scrolls the way the browser scrolls it. Nothing is pinned.
   if (typeof Lenis !== 'undefined') {
     lenis = new Lenis({
       duration: 1.05,
