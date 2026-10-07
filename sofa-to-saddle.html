@@ -832,10 +832,9 @@
   }
 
   /* ---------- Overview ----------
-     The two paragraphs the draft calls the facts and the reframe. They are set
-     larger than chapter body copy and they are the only place on the page that
-     is: everything after this is reported at a normal reading size, and these
-     two are the standing-back before it starts. */
+     The two paragraphs the draft calls the facts and the reframe. Same reading
+     size as the chapters: 16px, which is what the Boots study settled on after
+     this used to be set larger. */
   .cs-overview {
     padding-top: var(--section);
   }
@@ -845,9 +844,9 @@
   }
   .cs-overview__body p {
     margin: 0 0 1.1em;
-    font-size: clamp(17.5px, 1.35vw, 22px);
-    line-height: 1.55;
-    letter-spacing: -0.011em;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
     color: var(--ink-1);
   }
   .cs-overview__body p:last-child { margin-bottom: 0; }
@@ -939,14 +938,9 @@
        stops those setting as a ragged block. */
     text-wrap: balance;
   }
-  /* The page's reading size, and the one curve here worth stating a reason
-     for: 1.32vw is what puts it at 19px at 1440 rather than somewhere in the
-     16s, which is where a vw term picked to hit the cap at 1650 leaves it. The
-     ceiling is a hair above that so the growth stops just past the width it
-     was set for instead of exactly on it. */
   .cs-chapter__body p {
     margin: 1.25em 0 0;
-    font-size: clamp(17px, 1.32vw, 19.5px);
+    font-size: 16px;
     line-height: 1.62;
     letter-spacing: -0.006em;
     color: var(--ink-1);
@@ -1208,7 +1202,7 @@
     position: relative;
     margin-top: 13px;
     padding-left: 19px;
-    font-size: clamp(15.5px, 1.12vw, 17px);
+    font-size: 16px;
     line-height: 1.6;
     letter-spacing: -0.005em;
     color: var(--ink-1);
