@@ -977,12 +977,17 @@
     margin: 0 auto var(--card-gap);
     border-radius: var(--card-r);
     overflow: hidden;
-    /* The carousel scales and dims this element, so it gets its own compositing
-       layer and both are interpolated rather than re-rasterising the artwork
-       every frame. */
+    /* The carousel scales and dims the whole card, sentence included, so the
+       type grows and shrinks with the picture as a card comes into focus and
+       leaves it. Scaling only the artwork left the words full size on a
+       shrinking card. */
+    transform-origin: center center;
     will-change: transform, opacity;
     transform: translateZ(0);
     backface-visibility: hidden;
+  }
+  .hp-case__scaler {
+    position: relative;
   }
   .hp-case:last-child { margin-bottom: 0; }
 
@@ -1075,7 +1080,7 @@
     --sp-headgap: max(15px, 2.7cqw);     /* chips -> sentence */
     /* The pill's own height, written from the same numbers the pill is built
        from: its line-height plus both paddings, as a share of the label, and then
-       the 1px border on each edge. Stated once here so the two cannot drift — if
+       the 0.5px border on each edge. Stated once here so the two cannot drift — if
        the pill's padding is ever retuned the arrow follows it without anyone
        having to notice.
        The vertical ratio is a band's business, not a constant, because --sp-tag-py
@@ -1093,7 +1098,7 @@
        glyph is inset in its own box — the path runs 3.5 to 20.5 of a 24 viewBox,
        so it draws at 71% of whatever this resolves to — which is why matching the
        pill's box still reads as the quieter of the two things on the line. */
-    --sp-arrow: calc(var(--sp-tag) * var(--sp-tag-vr) + 2px);
+    --sp-arrow: calc(var(--sp-tag) * var(--sp-tag-vr) + 1px);
     --sp-textcol: 74.318cqw;             /* 1308px */
 
     display: block;
@@ -1139,11 +1144,10 @@
     row-gap: var(--sp-headgap);
     align-items: center;
   }
-  /* The wrapper stays in the markup — the entrance animates the head as one
-     block and this is what holds its two halves together — but it stops drawing
-     a box of its own. display:contents hands the chip row and the sentence
-     straight to the grid above, so each can be placed on its own row without a
-     second nested layout in between. */
+  /* The wrapper stays in the markup but stops drawing a box of its own.
+     display:contents hands the chip row and the sentence straight to the grid
+     above, so each can be placed on its own row without a second nested layout
+     in between. */
   .hp-case__head-text { display: contents; }
   .hp-case__tags { grid-column: 1; grid-row: 1; }
 
@@ -1170,153 +1174,6 @@
   .hp-case__link:hover .hp-case__arrow,
   .hp-case__link:focus-visible .hp-case__arrow {
     transform: translateY(calc(-1 * max(4px, 0.34cqw)));
-  }
-
-  /* The top-right corner of every card is cut out on a curve, and a small
-     rounded tile sits in the hole with the arrow on it.
-     A thin black channel shows between the tile and the card. On a dark card
-     the white square advances, so the tile is kept smaller than the
-     reference and the channel is kept tight: a bigger gap, or a square the
-     size of the reference, reads as a second card hovering in front.
-
-     The tile is frosted glass in the card's own colour. The fill is
-     translucent, so the black channel shows through it, and the only
-     light is a hairline along the top edge. A solid card-coloured tile
-     was tried on Boots and the navy disappeared into the page.
-
-     --notch is the hole. --tile sits in its outer corner, and --gutter is the
-     black channel on the inner sides. --bite-r is the tile's own corner plus
-     that channel, so the cutout's inner curve runs parallel to the tile.
-     syncNotch() writes the curve into the mask. These are shares of
-     --card-w-px rather than cqw: they are read on the card, which is the
-     container, and a container unit there resolves against an ancestor.
-
-     The mask is on an inner clip, and the tile sits in the link beside that
-     clip, so the cut does not take the tile with it and a click on the tile
-     still opens the study. The article's radius and overflow move onto the
-     clip for the same reason, so the lifted square is not clipped off.
-
-     Desktop only. Below 601px the card is painted in its own colour and the
-     text occupies the top corner, so a hole there would not be black and
-     would eat the sentence. The thin arrow stays in that band. */
-  .hp-case--notch {
-    --tile: clamp(80px, calc(var(--card-w-px) * 0.118), 132px);
-    --gutter: clamp(14px, calc(var(--card-w-px) * 0.024), 28px);
-    --notch: calc(var(--tile) + var(--gutter));
-    /* The white square's two rounded corners are the card's own radius, so
-       the outer corner and the card's other corners are the same curve.
-       The cutout is that radius plus the gutter: same centre as the square's
-       inner corner, so the black channel stays one width all the way round. */
-    --tile-r: var(--card-r);
-    --bite-r: calc(var(--tile-r) + var(--gutter));
-  }
-  .hp-case__corner { display: none; }
-  .hp-case__notch-def {
-    position: absolute;
-    width: 0;
-    height: 0;
-    overflow: hidden;
-  }
-
-  @media (min-width: 601px) {
-    .hp-case--notch {
-      overflow: visible;
-      border-radius: 0;
-    }
-    .hp-case--notch .hp-case__link {
-      position: relative;
-    }
-    .hp-case--notch .hp-case__clip {
-      border-radius: var(--card-r);
-      overflow: hidden;
-    }
-    /* One mask per card. The hole is a fraction of the card, and the cards
-       are not the same height, so a shared path would cut the shorter ones
-       too deep. */
-    .hp-case--boots .hp-case__clip {
-      -webkit-mask: url(#hp-case-notch-boots);
-      mask: url(#hp-case-notch-boots);
-    }
-    .hp-case--saddle .hp-case__clip {
-      -webkit-mask: url(#hp-case-notch-saddle);
-      mask: url(#hp-case-notch-saddle);
-    }
-    .hp-case--cycling .hp-case__clip {
-      -webkit-mask: url(#hp-case-notch-cycling);
-      mask: url(#hp-case-notch-cycling);
-    }
-    .hp-case--api .hp-case__clip {
-      -webkit-mask: url(#hp-case-notch-api);
-      mask: url(#hp-case-notch-api);
-    }
-    .hp-case--pwc .hp-case__clip {
-      -webkit-mask: url(#hp-case-notch-pwc);
-      mask: url(#hp-case-notch-pwc);
-    }
-    /* The hole is what the text has to clear, not the tile: the sentence
-       would otherwise run into the black channel. The type does not shrink
-       to make room. */
-    .hp-case--notch .hp-case__head {
-      right: calc(var(--notch) + max(16px, calc(var(--card-w-px) * 0.018)));
-    }
-    /* The first line was ending on "and", hard against the cutout. A shorter
-       measure wraps that word and leaves a clear gap before the arrow. The
-       type size stays as it is. */
-    .hp-case--boots .hp-case__desc {
-      max-width: 66cqw;
-    }
-    .hp-case--notch .hp-case__arrow { display: none; }
-    /* The outer box is the hit target and it does not move. Only the white
-       face moves, up and out by the same amount, and only while the pointer
-       is inside that box. Hovering the rest of the card leaves the box and
-       the face drops back. */
-    .hp-case--notch .hp-case__corner {
-      display: block;
-      position: absolute;
-      z-index: 3;
-      top: 0;
-      right: 0;
-      width: var(--tile);
-      height: var(--tile);
-      border-radius: 0 var(--tile-r) 0 var(--tile-r);
-    }
-    .hp-case--notch .hp-case__corner-face {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      align-items: center;
-      justify-content: center;
-      border-radius: inherit;
-      /* The same distance up and to the right, so the two can be written once. */
-      --lift: max(6px, 0.7cqw);
-      transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
-      /* See-through, not a painted slab. The card shows more toward
-         the inner corner and the page shows through toward the outside.
-         A thin even milk keeps it frosted. No shine across the face. */
-      background-color: rgba(210, 216, 222, 0.08);
-      background-image: linear-gradient(
-        to top right,
-        color-mix(in srgb, var(--card-bg) 58%, transparent) 0%,
-        color-mix(in srgb, var(--card-bg) 34%, transparent) 46%,
-        color-mix(in srgb, var(--card-bg) 14%, transparent) 100%
-      );
-      -webkit-backdrop-filter: blur(28px) saturate(1.5);
-      backdrop-filter: blur(28px) saturate(1.5);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.12);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
-    }
-    .hp-case__corner svg {
-      /* Short of the tile, so the mark sits inside the square instead
-         of filling it. The square itself stays the same size. */
-      width: 82%;
-      height: 82%;
-      display: block;
-    }
-    .hp-case__corner:hover .hp-case__corner-face,
-    .hp-case--notch .hp-case__link:focus-visible .hp-case__corner-face {
-      transform: translate(var(--lift), calc(-1 * var(--lift)));
-    }
   }
 
   /* Real heading, kept out of the picture. The reference carries the project
@@ -1370,18 +1227,8 @@
 
   /* Outlined chips. The font-size is set on the row so the chips' padding and
      gap can be em of the label and hold their ratio to it at any size.
-
-     The outline is a hairline at 38% of the card's ink, not the full-strength
-     ink the earlier version drew. That is most of what makes this quieter than
-     the chips that were removed: at full strength three outlines carry the same
-     weight as the sentence underneath them and the eye reads the row first,
-     which is the wrong order for the card.
-
-     The border stays 1px at every size rather than scaling with the label. It
-     is the one part of the pill that should not be a ratio — a hairline is a
-     hairline, and an em border only makes the outline heavier on the desktop
-     card where it is already the loudest thing about the chip. This matches
-     .cs-tags on the case study pages, which reached the same conclusion. */
+     Fully round, with a half-pixel hairline of the card's ink. It does not
+     scale with the label. */
   .hp-case__tags {
     display: flex;
     flex-wrap: wrap;
@@ -1399,7 +1246,7 @@
     /* The ink at full strength first, then the softened version. If a browser
        does not understand rgb()'s slash alpha or has no --card-ink-rgb to read,
        the chip keeps a visible outline rather than losing its shape entirely. */
-    border: 1px solid var(--card-ink);
+    border: 0.5px solid var(--card-ink);
     border-color: rgb(var(--card-ink-rgb) / 0.38);
     border-radius: 99999px;
     background: transparent;
@@ -1797,6 +1644,12 @@
        colour the card is already painted in. --art-crop is per card, measured
        from each file, because the three bands are not the same depth. */
     .hp-case { background: var(--card-bg); }
+    /* A phone has no hover. The lift is a pointer effect, and on a touch
+       screen it sticks after a tap, so it does not run at this width. */
+    .hp-case__link:hover .hp-case__arrow,
+    .hp-case__link:focus-visible .hp-case__arrow {
+      transform: none;
+    }
     .hp-case__head {
       position: static;
       padding: var(--sp-pad) var(--sp-pad) 0;
@@ -2082,12 +1935,9 @@
        rather than being sped up. What is left is exactly what a touch device
        with no hover shows, so the state that has to read correctly on its own
        is the one being tested here. */
-    .hp-case__arrow,
-    .hp-case__corner-face { transition: none; }
+    .hp-case__arrow { transition: none; }
     .hp-case__link:hover .hp-case__arrow,
-    .hp-case__link:focus-visible .hp-case__arrow,
-    .hp-case__corner:hover .hp-case__corner-face,
-    .hp-case--notch .hp-case__link:focus-visible .hp-case__corner-face { transform: none; }
+    .hp-case__link:focus-visible .hp-case__arrow { transform: none; }
     /* The bob is ambient motion with nothing to communicate that the arrow
        does not already say standing still, so it goes rather than being slowed.
        transform is cleared as well: without it the arrow would keep whichever
@@ -2155,10 +2005,6 @@
   // is a 6px slab, and the spec's arrow is a fine line. Butt caps and a longer
   // shaft, which is what the spec's screenshot shows.
   var ARROW_NE_LG = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.5 20.5L20.5 3.5M6.5 3.5h14V17.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg>';
-  // Measured off the reference tile: a square-ended arrow, not a round-cap
-  // stroke. The head is an L with a sharp outer corner and the shaft meets it
-  // on the inside. Round caps are what made the previous one a blob.
-  var ARROW_CHUNK = '<svg viewBox="0 0 125 125" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M42 36.5H88.5V81" stroke="currentColor" stroke-width="8" stroke-linecap="square" stroke-linejoin="miter"/><path d="M40 84L82 42" stroke="currentColor" stroke-width="8" stroke-linecap="square"/></svg>';
 
   // Her own file, in her own repo. It was hot-linked from Squarespace's CDN,
   // which made her face on her own site a dependency on the subscription she is
@@ -2606,71 +2452,6 @@
     '</span>';
   }
 
-  // Inside the link, beside the clipped artwork, so the mask does not take
-  // the square with it and a click on the square still opens the study. The
-  // outer span is the hit target. The face is what lifts, so the target stays
-  // where the pointer found it.
-  function cornerArrowHtml() {
-    return '<span class="hp-case__corner" aria-hidden="true">' +
-      '<span class="hp-case__corner-face">' + ARROW_CHUNK + '</span>' +
-    '</span>';
-  }
-
-  // The mask definition. The path is empty until syncNotch() measures the card:
-  // the curve has to be a fifth of this card, and that length is a clamp, so it
-  // cannot be baked into the markup.
-  function notchMaskHtml(id) {
-    return '<svg class="hp-case__notch-def" aria-hidden="true">' +
-      '<mask id="' + id + '" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">' +
-        '<rect width="1" height="1" fill="white"/>' +
-        '<path fill="black"/>' +
-      '</mask></svg>';
-  }
-
-  // Straight off the top edge, then one radius, then straight out to the right
-  // edge. The radius is the card's corner plus the gutter, so it shares a
-  // centre with the white square's inner corner and the channel stays even.
-  // rx and ry differ because the mask box is the whole card.
-  function usedLen(card, name) {
-    var probe = document.createElement('div');
-    probe.style.cssText = 'position:absolute;visibility:hidden;height:0;pointer-events:none;width:var(' + name + ')';
-    card.appendChild(probe);
-    var n = probe.offsetWidth;
-    probe.remove();
-    return n;
-  }
-
-  function syncNotch() {
-    var cards = document.querySelectorAll('.hp-case--notch');
-    for (var i = 0; i < cards.length; i++) syncCardNotch(cards[i]);
-  }
-
-  function syncCardNotch(card) {
-    var path = card.querySelector('.hp-case__notch-def path');
-    if (!path) return;
-    var w = card.offsetWidth;
-    var h = card.offsetHeight;
-    if (!w || !h) return;
-    // The custom properties are clamp() and calc(), and getComputedStyle
-    // returns the expression rather than the pixel it resolved to.
-    var s = usedLen(card, '--notch');
-    var rad = usedLen(card, '--bite-r');
-    if (!s) return;
-    if (rad > s * 0.85) rad = s * 0.85;
-    var nx = s / w;
-    var ny = s / h;
-    var rx = rad / w;
-    var ry = rad / h;
-    var left = 1 - nx;
-    var bottom = ny;
-    path.setAttribute('d',
-      'M ' + left + ' 0' +
-      ' L ' + left + ' ' + (bottom - ry) +
-      ' A ' + rx + ' ' + ry + ' 0 0 0 ' + (left + rx) + ' ' + bottom +
-      ' L 1 ' + bottom +
-      ' L 1 0 Z');
-  }
-
   // A card image is never laid out wider than 1008 CSS px — it caps there from
   // a 1280px viewport up, and is ~79vw below that — so the ladder is that width
   // against each device pixel ratio in use. Without it a 390px phone at 3x
@@ -2745,12 +2526,7 @@
       ';--art-ar:' + ar.toFixed(4) +
       ';--art-crop:' + (p.art.clear * ar).toFixed(4) + ';';
 
-    // Every card gets the corner cut. The mask id has to be unique: the cards
-    // are different heights, so each hole is its own path.
-    var maskId = 'hp-case-notch-' + p.slug;
-
-    return '<article class="hp-case hp-case--' + p.slug + ' hp-case--notch" style="' + style + '">' +
-      notchMaskHtml(maskId) +
+    return '<article class="hp-case hp-case--' + p.slug + '" style="' + style + '">' +
       // Her artwork carries no visible project name — it lives in the
       // emphasised phrase of the sentence. The heading still has to exist for
       // the document outline, for heading navigation and for search, so it is
@@ -2760,11 +2536,10 @@
       // name and then an instruction, which is what it has to be read aloud as.
       '<a class="hp-case__link" href="' + p.href + '" ' +
         'aria-label="' + p.title + ', read the case study">' +
-        '<div class="hp-case__clip">' +
-        // Head before art in the source. On a wide card it makes no visual
-        // difference — the head is absolutely positioned into the cleared band
-        // — but on a phone the two are in flow and this is the order they have
-        // to be in. It is also the order the card reads in.
+        // Head before the picture. On a wide card it is positioned into the
+        // cleared band, so the order is not what places it; on a phone the two
+        // are in flow and the sentence has to come first. The carousel scales
+        // the card, so the sentence grows with the picture.
         '<div class="hp-case__head">' +
           '<div class="hp-case__head-text">' +
             tagsHtml(p) +
@@ -2772,6 +2547,8 @@
           '</div>' +
           arrowHtml() +
         '</div>' +
+        '<div class="hp-case__scaler">' +
+        '<div class="hp-case__clip">' +
         // hp-case__shot is kept on the tag because the audit harness uses it to
         // force every card image to decode before it measures or screenshots.
         // src is the smallest rung, for anything that reads src but not srcset.
@@ -2781,7 +2558,8 @@
           '" srcset="' + artSrcset(p.art) +
           '" width="' + p.art.w + '" height="' + p.art.h +
           '" alt="' + p.art.alt + '" loading="lazy" decoding="async">' +
-        '</div>' + cornerArrowHtml() +
+        '</div>' +
+        '</div>' +
       '</a>' +
     '</article>';
   }
@@ -2899,7 +2677,6 @@
     '</div>';
 
     document.body.insertAdjacentHTML('afterbegin', html);
-    syncNotch();
     console.log('HP ' + VERSION + ' mounted');
   }
 
@@ -3349,16 +3126,15 @@
       .to(greeting, { y: travel(-120), duration: 1 }, 0)
       .to(greeting, { opacity: 0, duration: 0.44, ease: 'power1.in' }, 0)
       .to(inner, { scale: 0.965, duration: 1 }, 0)
-      // The closing band goes almost at once, and the cue is why: it says
-      // "Scroll" to someone who has just scrolled, so the first thing the
-      // gesture should do is retire the instruction. The hairline goes with it
-      // because they are one element and because a rule with nothing under it is
-      // a line ruled across the bottom of the copy for no reason — the same
-      // argument the phone breakpoint makes for hiding both.
+      // The closing band is the rule, the word and the arrow. It used to be
+      // gone after the first fifth of this scroll, which read as the cue
+      // vanishing the moment the wheel moved, while the sentences above were
+      // still on their way out. It now fades on the same kind of run as the
+      // statement, so this edge leaves with the copy rather than ahead of it.
       // Downward, against everything else: it is the bottom edge of the
       // composition and it stays behind rather than joining the exit.
       .to(lower, { y: travel(18), duration: 1 }, 0)
-      .to(lower, { opacity: 0, duration: 0.22, ease: 'power1.in' }, 0)
+      .to(lower, { opacity: 0, duration: 0.58, ease: 'power1.in' }, 0)
       // The lights going down. The glow contracts toward its own focal point and
       // dims out over most of the range, so the page is already dark by the time
       // the wordmark's first row arrives on it — the mark is a title card, and it
@@ -3609,6 +3385,8 @@
     // across a screen of travel is not much to carry it with; light is what the
     // eye actually reads as depth.
     function carousel(card, st) {
+      // The whole card scales, sentence included, so the type stays locked to
+      // the picture as the card grows into focus and shrinks back out of it.
       gsap.timeline({ defaults: { force3D: true }, scrollTrigger: st })
         .fromTo(card,
           { scale: fx.s, opacity: fx.o },
@@ -3616,23 +3394,6 @@
         .to(card, {
           scale: fx.s, opacity: fx.o, duration: 1, ease: fx.outEase
         }, 1);
-    }
-
-    // One-shot entrance for the text, once:true so it costs nothing per scroll
-    // frame. The artwork is not faded in separately — it is the card, and
-    // fading it in under a carousel that is already scaling it is two effects
-    // arguing.
-    function headIn(card, st) {
-      var head = card.querySelector('.hp-case__head');
-      if (!head) return;
-      gsap.set(head, { opacity: 0, y: 24 });
-      st.once = true;
-      st.onEnter = function() {
-        gsap.to(head, {
-          opacity: 1, y: 0, duration: 0.9, ease: 'expo.out', force3D: true
-        });
-      };
-      ScrollTrigger.create(st);
     }
 
     // A card owns the count from the moment its top passes the middle of the
@@ -3660,7 +3421,6 @@
 
     cards.forEach(function(card, i) {
       if (!REDUCED) {
-        headIn(card, { trigger: card, start: 'top 82%' });
         carousel(card, {
           trigger: card,
           start: 'top bottom',
@@ -3695,7 +3455,6 @@
     window.addEventListener('resize', function() {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function() {
-        syncNotch();
         ScrollTrigger.refresh();
       }, 180);
     });
