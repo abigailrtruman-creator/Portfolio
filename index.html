@@ -1068,26 +1068,27 @@
 
        Brought in from 0.45/1.05 at the owner's request. That pair drew a 31px
        pill around a 13.8px label on the desktop card, which is a button's
-       proportion rather than a label's; this is 28px around the same word. The
+       proportion rather than a label's; opened a little since, this is about 30px
+       around the same word. The
        cut is larger vertically than horizontally — 24% against 19% — because
        the height is what made the chip read as a control, and taking the sides
        in as far would start crowding "AI Development" on card 02, the longest
        label in the set and the only one that has ever been near wrapping. It is
        the longest by some way now that card 04's Content Strategy has come down
        to Content, so the sides have more room than this pair is using. */
-    --sp-tag-py: 0.34em;
-    --sp-tag-px: 0.85em;
+    --sp-tag-py: 0.42em;
+    --sp-tag-px: 1.15em;
     --sp-headgap: max(15px, 2.7cqw);     /* chips -> sentence */
     /* The pill's own height, written from the same numbers the pill is built
        from: its line-height plus both paddings, as a share of the label, and then
-       the 0.5px border on each edge. Stated once here so the two cannot drift — if
+       the 1px border on each edge. Stated once here so the two cannot drift — if
        the pill's padding is ever retuned the arrow follows it without anyone
        having to notice.
        The vertical ratio is a band's business, not a constant, because --sp-tag-py
-       tightens on a phone: 1.2 + 2(0.34) here, 1.2 + 2(0.28) there. A single
+       tightens on a phone: 1.2 + 2(0.42) here, 1.2 + 2(0.34) there. A single
        factor across both would sit inside the pill at one end and stand taller
        than it at the other. */
-    --sp-tag-vr: 1.88;
+    --sp-tag-vr: 2.04;
     /* Sized from the pill's label rather than from the card, because the arrow
        now shares a line with the pills and has to stay in proportion to them. A
        px floor could not do that: at a 334px card 4.091cqw is 13.7px, so the
@@ -1098,7 +1099,7 @@
        glyph is inset in its own box — the path runs 3.5 to 20.5 of a 24 viewBox,
        so it draws at 71% of whatever this resolves to — which is why matching the
        pill's box still reads as the quieter of the two things on the line. */
-    --sp-arrow: calc(var(--sp-tag) * var(--sp-tag-vr) + 1px);
+    --sp-arrow: calc(var(--sp-tag) * var(--sp-tag-vr) + 2px);
     --sp-textcol: 74.318cqw;             /* 1308px */
 
     display: block;
@@ -1227,12 +1228,12 @@
 
   /* Outlined chips. The font-size is set on the row so the chips' padding and
      gap can be em of the label and hold their ratio to it at any size.
-     Fully round, with a half-pixel hairline of the card's ink. It does not
+     Fully round, with a 1px stroke of the card's ink. It does not
      scale with the label. */
   .hp-case__tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.6em;                       /* 0.6 of the label */
+    gap: 0.75em;                      /* 0.75 of the label */
     margin: 0;
     padding: 0;
     list-style: none;
@@ -1246,8 +1247,8 @@
     /* The ink at full strength first, then the softened version. If a browser
        does not understand rgb()'s slash alpha or has no --card-ink-rgb to read,
        the chip keeps a visible outline rather than losing its shape entirely. */
-    border: 0.5px solid var(--card-ink);
-    border-color: rgb(var(--card-ink-rgb) / 0.38);
+    border: 1px solid var(--card-ink);
+    border-color: rgb(var(--card-ink-rgb) / 0.55);
     border-radius: 99999px;
     background: transparent;
     color: var(--card-ink);
@@ -1712,9 +1713,9 @@
          against the band above at the 600px edge. */
       --sp-desc-ratio: 0.0375;
       --sp-tag: clamp(8.2px, calc(4.21px + 1.376cqw), 15px);
-      --sp-tag-py: 0.28em;
-      --sp-tag-px: 0.76em;
-      --sp-tag-vr: 1.76;
+      --sp-tag-py: 0.34em;
+      --sp-tag-px: 1em;
+      --sp-tag-vr: 1.88;
     }
 
     /* The one width where the three-quarter measure and the three-line ceiling
