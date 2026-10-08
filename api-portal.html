@@ -632,11 +632,6 @@
   .cs-hero .cs-figure {
     flex: 0 0 auto;
     margin-top: clamp(52px, 7.4vh, 108px);
-    /* The homepage card's corner, as a share of this picture. Top-left and
-       bottom-right only: the other two stay square. cqw so the curve follows
-       the picture when the column narrows. */
-    container-type: inline-size;
-    --hero-r: max(14px, 3.4cqw);
   }
   /* The picture at the column's width, and as tall as that makes it. No
      object-fit and no object-position: both existed to place a picture inside a
@@ -652,7 +647,6 @@
     display: block;
     width: 100%;
     height: auto;
-    border-radius: var(--hero-r) 0 var(--hero-r) 0;
     /* .cs-figure img draws every picture on the page at --fig-w, which is right
        for a chapter figure and wrong for this one. The hero is the page's opening
        image and the only one allowed the column's full width; without this it
