@@ -73,6 +73,11 @@
      rooms, which is why the picture itself carries the sofa hours and the 70%
      wish to exercise. See the insight figure under that chapter.
      ---------- */
+  @property --text-end {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+  }
   :root {
     --ff-display: 'Manrope', 'Inter', -apple-system, sans-serif;
     --ff-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -351,6 +356,10 @@
   .cs-col {
     max-width: var(--measure);
     margin: 0 auto;
+    /* The line is longer than a narrow reading measure, so the writing uses
+       more of the column. Registered as a length on this element: ch follows
+       this font, and a larger paragraph does not stretch the line with it. */
+    --text-end: 70ch;
   }
 
   /* ---------- HERO ----------
@@ -497,62 +506,42 @@
       var(--glow-tint) 0%, transparent 68%);
   }
 
-  /* The homepage card's chip in the page's ink: the same 38% hairline around the
-     same full-strength label, and the same em padding and gap. These were a 52%
-     outline around a 74% label for a while, which read the wrong way round — on
-     the card the outline is the quiet part and the label carries the chip, and
-     at those strengths this was an outline with text inside it instead.
+  /* The homepage card's chip, in this page's ink. The card sets the label
+     from its own width (--sp-tag), and the one you are looking at is at
+     scale 1, so this follows that curve rather than the resting 0.85. From
+     the phone band up to where the card hits its 1120px cap, the card is 88vw
+     (the page minus 6vw of gutter each side), which is 8.6px + 0.5016vw, and
+     the 15px cap is the same cap the card hits. Padding and gap are the
+     card's own ratios. The stroke is not: on the open page a 1px line at 55%
+     reads as a hard outline, so this one is a half-pixel hairline.
 
-     Size is the deliberate difference. The card's chip is sized against a 40.7px
-     sentence and runs 10px to 15px on a curve; this one sits in body copy, where
-     15px would be close enough to the text around it to stop reading as a label
-     at all. Padding and gap are em of the label, so the row is resized by moving
-     font-size alone. The border is the exception: it is a hairline at any size,
-     and scaling it with the text would only make it heavier here than it is on
-     the card these came from.
-
-     The 0.38 is written out rather than reaching for --ink-3 at 0.40. Two
-     hundredths is invisible, but this number's job is to be the card's number,
-     and a token that moves for its own reasons would quietly break that.
-
-     The size is deliberately the same on all four case studies. These pills are
-     one component wearing one size, and a page whose pills were a point larger
-     than the next page's would read as a mistake rather than as a decision. */
+     The row sits further under the heading than the heading sits under the
+     eyebrow, and the photograph sits further down again. Same two gaps on
+     every case study. */
   .cs-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.6em;
-    margin: clamp(20px, 2.8vh, 30px) 0 0;
+    gap: 0.75em;
+    margin: clamp(48px, 6.4vh, 72px) 0 0;
     padding: 0;
     list-style: none;
-    /* Sized to what the homepage chip is seen at, which is not what it computes
-       at: the cards carry a scale(0.85), so a chip whose font-size resolves to
-       13.78px is drawn at 11.72 and its pill stands 23.7px tall. Comparing the
-       two stylesheets' numbers compares the wrong thing, and doing that is how
-       this arrived at 15px — a chip half again the size of the one on the card
-       it was supposed to match.
-
-       Seen, the card's chip is flat from 1024 up: its container caps, so the
-       curve stops climbing. This holds 11.7px over the same range and comes
-       down below it, which is where the card's own chip gets smaller too.
-
-       The floor is 10px rather than the 7.2 the card is drawn at on a phone.
-       That is the one place these part company, and deliberately: 7.2px is a
-       size a chip can only be when it is inside a card that has been scaled
-       down as a whole, and on the open page it would be unreadable. */
-    font-size: clamp(10px, calc(4.5px + 0.7vw), 11.7px);
+    font-size: clamp(10px, calc(8.6px + 0.5016vw), 15px);
   }
   .cs-tags li {
     display: inline-flex;
     align-items: center;
-    padding: 0.34em 0.85em;
-    border: 1px solid rgba(255,255,255,0.38);
+    justify-content: center;
+    padding: 0.42em 1.15em;
+    border: 0.5px solid rgb(255 255 255 / 0.42);
     border-radius: 99999px;
+    background: transparent;
     color: var(--ink);
+    font-family: var(--ff-body);
     font-size: 1em;
     font-weight: 500;
     line-height: 1.2;
     letter-spacing: -0.004em;
+    text-align: center;
     white-space: nowrap;
   }
 
@@ -591,13 +580,45 @@
     height: auto;
     aspect-ratio: var(--ar, auto);
   }
+  /* Two phones, at the size each one would be in a row of four. The four-screen
+     sheets are 2.1753 wide for their height and this one is 1.046, so matching
+     the heights keeps the phones from jumping up a size. */
+  .cs-story .cs-chapter .cs-figure.cs-figure--pair {
+    width: calc(100% * 1.046 / 2.1753);
+    justify-self: start;
+  }
+  /* Two labels over one row of phones: the agency's direction on the left,
+     the badges it became on the right. They share the picture's width so each
+     label starts where its pair of screens does. */
+  .cs-sides {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0 0 16px;
+  }
+  .cs-sides p {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  /* The flow map is one tall board. Drawn at the column's width it runs on for
+     most of a screen, and the cards are too small to read. The page keeps the
+     opening and the next band of the tree. The rest, at a size the type can be
+     read, is what the viewer is for. */
+  .cs-figure--flow img {
+    object-fit: cover;
+    object-position: top center;
+  }
   /* ---------- Enlarge ----------
      Eight of the figures open, and which eight is not a list kept here: a figure
      opens if its markup carries a srcset, which is true exactly of the ones the
      build gives a viewer copy to. The campaign photograph has a single rung at
      its own size, so it has no srcset, no zoom copy and no button — a viewer over
-     it would open the pixels it was launched from. The insight diptych used to
-     be in the same boat (a 1024px still); a 5760 re-supply put it on the ladder.
+     it would open the pixels it was launched from. The insight diptych is a
+     5760 slide, so it takes the ladder and a viewer.
 
      This is what lets --fig-w answer to the writing rather than to the largest size
      the artwork needs. Every figure is drawn at the measure, so the toolkits sheet
@@ -625,12 +646,71 @@
     color: inherit;
     font: inherit;
     text-align: left;
-    cursor: zoom-in;
+    cursor: pointer;
   }
-  /* No label over the picture, matching the decision on the Boots page: on a
-     desktop these are large enough to read as pictures rather than as
-     thumbnails asking to be opened, and on a phone a pill floating over the
-     artwork reads as part of the artwork. The cursor says it instead. */
+  /* One label for every picture that opens. It follows the pointer, 20px
+     down and to the right, and only while the pointer is on the artwork, so
+     the writing never gets it. The same dark glass as the homepage index,
+     with a slow sheen that rests, then crosses once, then rests again.
+     A phone never draws it. */
+  .cs-peek {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 90;
+    padding: 9px 14px 10px;
+    border-radius: 999px;
+    color: #fff;
+    font-family: var(--ff-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.011em;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    overflow: hidden;
+    background: rgba(18,18,22,0.55);
+    border: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(28px) saturate(1.6);
+    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+    transition: opacity 180ms ease-out;
+  }
+  .cs-peek::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 88%;
+    background: linear-gradient(100deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.04) 30%,
+      rgba(255,255,255,0.24) 50%,
+      rgba(255,255,255,0.04) 70%,
+      rgba(255,255,255,0) 100%);
+    transform: translateX(-140%);
+  }
+  .cs-peek.is-on { opacity: 1; }
+  .cs-peek.is-on::after { animation: cs-peek-glim 11s ease-in-out infinite; }
+  @keyframes cs-peek-glim {
+    0% { transform: translateX(-140%); }
+    48% { transform: translateX(200%); }
+    100% { transform: translateX(200%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cs-peek { transition: none; }
+    .cs-peek::after,
+    .cs-peek.is-on::after { animation: none; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .cs-peek {
+      background: #121216;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
   .cs-lb[hidden] { display: none; }
   .cs-lb {
     position: fixed;
@@ -680,6 +760,19 @@
     transition: opacity 0.5s ease 0.06s,
                 transform 0.8s cubic-bezier(0.16,1,0.3,1) 0.06s;
   }
+  /* The product map is the one figure the viewer shows at the copy's own size
+     rather than fitted to the stage. Fitted, its type is a couple of pixels.
+     At its own width the cards can be read, and the stage scrolls to the rest. */
+  .cs-lb.is-wide .cs-lb__stage { overflow: auto; }
+  .cs-lb.is-wide .cs-lb__img { max-width: none; width: auto; height: auto; }
+  /* The questions board is one long strip. Its full height fits the stage, so
+     the whole board is on screen, and what doesn't fit moves sideways. */
+  .cs-lb.is-strip .cs-lb__stage {
+    overflow-x: auto;
+    overflow-y: hidden;
+    text-align: left;
+  }
+  .cs-lb.is-strip .cs-lb__img { max-width: none; width: auto; }
   .cs-lb__btn {
     display: inline-flex;
     align-items: center;
@@ -773,7 +866,7 @@
      block rather than as a title and then a photograph. */
   .cs-hero .cs-figure {
     flex: 0 0 auto;
-    margin-top: clamp(52px, 7.4vh, 108px);
+    margin-top: clamp(72px, 9vh, 128px);
   }
   /* Kept for the render, which is out of the hero but still in /assets. No
      object-fit and no object-position: both existed to place a picture inside a
@@ -823,15 +916,14 @@
   }
 
   /* ---------- Overview ----------
-     The two paragraphs the draft calls the facts and the reframe. Same reading
-     size as the chapters: 16px, which is what the Boots study settled on after
-     this used to be set larger. */
+     The same reading size as the chapters. The three rows sit under the
+     writing: title left, note right. */
   .cs-overview {
     padding-top: var(--section);
   }
   .cs-overview__body {
     margin: clamp(28px, 4vh, 44px) 0 0;
-    max-width: 58ch;
+    max-width: var(--text-end);
   }
   .cs-overview__body p {
     margin: 0 0 1.1em;
@@ -841,7 +933,233 @@
     color: var(--ink-1);
   }
   .cs-overview__body p:last-child { margin-bottom: 0; }
-  .cs-overview__body strong { color: var(--ink); font-weight: 500; }
+  .cs-overview__body strong,
+  .cs-lead strong,
+  .cs-path__body strong {
+    color: inherit;
+    font-weight: inherit;
+  }
+  /* The three pieces of the work. Same shape as the Boots study: the title
+     holds the left, the note sits beside it, and the writing stays the same
+     size as the overview rather than a narrower column. */
+  .cs-lead {
+    margin: clamp(28px, 4vh, 44px) 0 0;
+    max-width: var(--text-end);
+  }
+  .cs-lead p {
+    margin: 0 0 1.1em;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-lead p:last-child { margin-bottom: 0; }
+  .cs-lead p:has(+ .cs-figure) { margin-bottom: 0; }
+  .cs-lead .cs-figure { margin: clamp(48px, 7vh, 80px) 0; }
+  .cs-paths {
+    margin-top: clamp(36px, 5vh, 56px);
+    max-width: min(100%, calc(13ch + clamp(28px, 4.5vw, 88px) + var(--text-end)));
+  }
+  .cs-path {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    column-gap: clamp(28px, 4.5vw, 88px);
+    align-items: start;
+    padding: clamp(26px, 3.6vh, 36px) 0;
+  }
+  .cs-path + .cs-path {
+    background-image: linear-gradient(var(--rule), var(--rule));
+    background-repeat: no-repeat;
+    background-position: left top;
+    background-size: 100% 1px;
+  }
+  .cs-path__body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: baseline;
+  }
+  .cs-path__note { min-width: 0; }
+  .cs-path__note p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-path__no {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-2);
+  }
+  .cs-path__title {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(20px, 1.7vw, 24px);
+    line-height: 1.15;
+    letter-spacing: -0.028em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-path__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .cs-path__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: clamp(32px, 4.2vh, 44px);
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .cs-path__more svg { width: 16px; height: 16px; display: block; }
+  .cs-path__more:hover .cs-path__arrow,
+  .cs-path__more:focus-visible .cs-path__arrow { transform: translate(3px, -3px); }
+  .cs-path__arrow { display: inline-flex; transition: transform 100ms ease-out; }
+  .cs-path__title a:focus-visible,
+  .cs-path__more:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+  }
+  /* The three pieces named above. The number is the same size as on the Boots
+     study, and the chapters of a piece sit in the writing column under it. */
+  .cs-stories {
+    padding-top: clamp(96px, 13vh, 148px);
+  }
+  .cs-story {
+    --story-gap: clamp(28px, 4.5vw, 88px);
+    display: grid;
+    grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
+    column-gap: var(--story-gap);
+    align-items: start;
+    scroll-margin-top: var(--nav-clear);
+  }
+  .cs-story > .cs-path__no {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(48px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    color: var(--ink-2);
+  }
+  .cs-story__main { min-width: 0; }
+  .cs-story__title {
+    margin: 0 0 clamp(56px, 8vh, 88px);
+    max-width: var(--text-end);
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(28px, 2.7vw, 36px);
+    line-height: 1.08;
+    letter-spacing: -0.034em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-story + .cs-story {
+    margin-top: clamp(96px, 13vh, 148px);
+    padding-top: clamp(64px, 8vh, 100px);
+    border-top: 1px solid var(--rule);
+  }
+  .cs-story .cs-chapter {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 0;
+  }
+  .cs-story .cs-chapter + .cs-chapter {
+    margin-top: 0;
+    padding-top: clamp(84px, 11vh, 128px);
+    border-top: 0;
+  }
+  .cs-story .cs-chapter__body,
+  .cs-story .cs-chapter .cs-figure {
+    grid-column: 1;
+    max-width: var(--text-end);
+  }
+  /* A story that opens on a paragraph uses the title's own gap. The paragraph's
+     rhythm starts at the second one. */
+  .cs-story__main > .cs-chapter:first-of-type > .cs-chapter__body > p:first-child {
+    margin-top: 0;
+  }
+  /* Two pictures that belong to the same passage. The second keeps a pause,
+     not the full gap a figure takes after writing. Writing that follows the
+     pair opens with that same gap, and its first line does not add another. */
+  .cs-story .cs-figure + .cs-figure {
+    margin-top: clamp(28px, 4vh, 44px);
+  }
+  .cs-story .cs-figure + .cs-chapter__body {
+    margin-top: clamp(64px, 9vh, 108px);
+  }
+  .cs-story .cs-figure + .cs-chapter__body > p:first-child {
+    margin-top: 0;
+  }
+  /* The four decisions are parts of a story, not stories. The number is the
+     small one from the overview, sitting on the heading rather than in the
+     story's rail. */
+  .cs-story .cs-chapter--num > .cs-path__no {
+    margin: 0 0 12px;
+  }
+  .cs-story .cs-chapter--num .cs-chapter__title {
+    /* The split line under a chapter title pulls the next paragraph up by
+       0.16em. The sentence belongs with the heading, so that pull is put back
+       and the gap itself is set on the sentence. */
+    margin-bottom: 0.16em;
+    font-weight: 700;
+    font-size: clamp(28px, 2.7vw, 36px);
+    line-height: 1.08;
+    letter-spacing: -0.034em;
+  }
+  .cs-story .cs-chapter--num .cs-chapter__body > h2 + p {
+    margin-top: 20px;
+  }
+  .cs-story .cs-chapter__body p { margin-top: 1.7em; }
+  .cs-story .cs-chapter__body .cs-decide p { margin-top: 0; }
+  .cs-story .cs-chapter__body .cs-decide > p + p { margin-top: 1.25em; }
+  /* The sequence spans the story, number included, the width it was built for.
+     The writing after it stays in the indented column. */
+  .cs-story > .cs-seq + .cs-story__main {
+    grid-column: 2;
+    min-width: 0;
+    margin-top: clamp(84px, 11vh, 128px);
+  }
+  .cs-chapter__points {
+    margin: 1.35em 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-chapter__points li {
+    position: relative;
+    margin-top: 0.85em;
+    padding-left: 19px;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-chapter__points li:first-child { margin-top: 0; }
+  .cs-chapter__points li::before {
+    content: '';
+    position: absolute;
+    left: 1px;
+    top: 0.72em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.42);
+  }
+  .cs-chapter__body + .cs-figure + .cs-chapter__body {
+    margin-top: clamp(48px, 7vh, 80px);
+  }
+  .cs-chapter__body + .cs-figure + .cs-chapter__body > p:first-child {
+    margin-top: 0;
+  }
 
   /* ---------- Chapters ----------
      Two columns: a rail carrying the chapter's number and its beat, and the
@@ -909,6 +1227,84 @@
     color: var(--ink-2);
   }
   .cs-chapter__body { max-width: 62ch; }
+  .cs-chapter__body .cs-chapter__kicker {
+    margin: 0 0 12px;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--ink-2);
+  }
+  /* Their question beside hers, then the recommendation, in the same quiet
+     fill Boots uses for a comparison. One line between the two questions.
+     The same diagonal as those boxes: a curve on the top left and the bottom
+     right, sized off the writing column so it tracks the card. */
+  .cs-chapter__body:has(.cs-decide) { container-type: inline-size; }
+  .cs-decide {
+    display: grid;
+    margin-top: clamp(28px, 4vh, 40px);
+    padding: clamp(40px, 5vh, 56px) clamp(32px, 3.6vw, 48px);
+    background: rgba(255,255,255,0.04);
+    border-radius: max(14px, 3.4cqw) 0 max(14px, 3.4cqw) 0;
+  }
+  .cs-decide__pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    margin-bottom: clamp(36px, 5vh, 56px);
+  }
+  .cs-decide__pair > div:first-child {
+    padding-right: clamp(32px, 3.8vw, 48px);
+  }
+  .cs-decide__pair > div + div {
+    padding-left: clamp(32px, 3.8vw, 48px);
+    border-left: 1px solid var(--rule);
+  }
+  .cs-chapter__body .cs-decide > p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.65;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-chapter__body .cs-decide > p + p {
+    margin-top: 1.25em;
+  }
+  .cs-chapter__body .cs-decide__label {
+    margin: 0 0 18px;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .cs-chapter__body .cs-decide__pair > div > p:last-child {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.65;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+    text-wrap: pretty;
+  }
+  /* A held place for a screen that is not in the file yet. The note is the
+     picture she named, set where the figure will sit, so the chapter still
+     ends on an image. */
+  .cs-await {
+    display: flex;
+    align-items: flex-end;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 280px;
+    padding: 20px 22px;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    color: var(--ink-2);
+    font-size: 15px;
+    line-height: 1.45;
+    letter-spacing: -0.006em;
+  }
   .cs-chapter__title {
     margin: 0;
     font-family: var(--ff-display);
@@ -1116,17 +1512,18 @@
     letter-spacing: -0.008em;
   }
 
-  /* The card the steps are shown in, and the only surface on the page with a
-     fill. It is 1.5% of white — enough that the panel reads as a thing being
-     flipped through rather than as page, and quiet enough that it is not a
-     panel in a different design system. The border and radius are the
-     figcaption's, two pixels up because this box is ten times the size. */
   .cs-seq__panels {
-    border: 1px solid var(--rule);
-    border-radius: 12px;
-    padding: clamp(22px, 2.2vw, 32px);
-    background: rgba(255,255,255,0.015);
+    border: 0;
+    padding: 0;
+    background: none;
+    overflow: visible;
+  }
+  .cs-seq__stage {
+    background: rgba(255,255,255,0.04);
     overflow: hidden;
+  }
+  .cs-seq__panel {
+    padding: clamp(40px, 5vh, 56px) clamp(32px, 3.6vw, 48px);
   }
   .cs-seq__stage { position: relative; }
   /* Selecting a step changes how much writing is in the card, so it changes the
@@ -1183,6 +1580,13 @@
     line-height: 1.16;
     letter-spacing: -0.024em;
     color: var(--ink);
+  }
+  .cs-seq__lead {
+    margin: 14px 0 0;
+    font-size: 16px;
+    line-height: 1.6;
+    letter-spacing: -0.005em;
+    color: var(--ink-1);
   }
   .cs-seq__list {
     margin: 20px 0 0;
@@ -1316,6 +1720,84 @@
      size and body grey it reads as a paragraph that forgot to say anything.
      Lifting it to full ink and a step up in size is what makes the two
      paragraphs under it read as its list. */
+  /* ---------- Impact ----------
+     The close, as on the Boots study: a band a step off the page, writing in
+     the same column, three findings each held by a bar. */
+  .cs-impact {
+    margin-top: clamp(88px, 12vh, 140px);
+    padding: clamp(72px, 11vh, 128px) var(--pad-x);
+    background: #141418;
+  }
+  .cs-impact .cs-chapter { padding-top: 0; }
+  .cs-impact .cs-chapter__body {
+    grid-column: 2;
+    max-width: var(--text-end);
+  }
+  .cs-impact .cs-figure {
+    grid-column: 2;
+    max-width: var(--text-end);
+  }
+  .cs-impact .cs-chapter__title {
+    font-weight: 800;
+    font-size: clamp(40px, 4.6vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+  .cs-impact .cs-chapter__body > p:first-of-type {
+    margin-top: clamp(28px, 4vh, 44px);
+  }
+  .cs-impact .cs-points {
+    margin: clamp(36px, 4.8vh, 52px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-impact .cs-points li {
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 18px;
+  }
+  .cs-impact .cs-points li + li {
+    margin-top: clamp(28px, 3.6vh, 40px);
+  }
+  .cs-impact .cs-points li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 3px;
+    bottom: 4px;
+    width: 3px;
+    border-radius: 2px;
+    background: #fff;
+  }
+  .cs-impact .cs-chapter__body p.cs-points__title {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-impact .cs-points li p + p {
+    margin: 0.45em 0 0;
+    font-size: 16px;
+    line-height: 1.55;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+    text-wrap: pretty;
+  }
+  .cs-impact .cs-points + p {
+    margin-top: clamp(32px, 4.2vh, 48px);
+  }
+  main:has(.cs-impact) + .hp-footer {
+    margin-top: clamp(56px, 8vh, 96px);
+  }
+  /* The impact band is already the break before the footer, so the hairline
+     that usually opens Let's talk would be a second one. */
+  main:has(.cs-impact) + .hp-footer::before {
+    content: none;
+  }
   .cs-reflection__body p:first-child {
     margin-bottom: 1.5em;
     font-size: clamp(18px, 1.42vw, 21px);
@@ -1573,6 +2055,14 @@
      band of their own to turn three columns into three rows; they are rows at
      every width now, so there is nothing left to switch. */
 
+  @media (max-width: 800px) {
+    .cs-paths { max-width: var(--text-end); }
+    .cs-path {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 14px;
+    }
+  }
+
   @media (min-width: 601px) and (max-width: 900px) {
     /* 20px of offset and a 74px pill. */
     :root { --nav-clear: 120px; }
@@ -1615,10 +2105,18 @@
 
     .cs-wrap { padding-left: 22px; padding-right: 22px; }
 
+    /* The card's phone pair: a smaller label and tighter padding. The floor
+       stays at 10px. On the card the label can fall to 8.2px because the whole
+       card has been scaled down; at that size on the open page it stops
+       reading as a label. */
+    .cs-tags { font-size: clamp(10px, calc(4.21px + 1.211vw), 15px); }
+    .cs-tags li { padding: 0.34em 1em; }
+
     /* The rail stops being a column beside the writing and becomes a line
        above it. A 13ch column on a 346px screen leaves the body 20ch, which is
        not a measure. */
-    .cs-chapter {
+    .cs-chapter,
+    .cs-story {
       grid-template-columns: minmax(0, 1fr);
       row-gap: 18px;
     }
@@ -1638,7 +2136,23 @@
       grid-column: 1;
       max-width: none;
     }
+    .cs-story > .cs-seq + .cs-story__main { grid-column: 1; }
+    /* The chapter's row-gap is for the story number sitting above its writing.
+       A decision number is a small label on its heading, and that gap would
+       open a hole under it. */
+    .cs-story .cs-chapter--num { row-gap: 0; }
+    .cs-decide { padding: 32px 24px; }
+    .cs-seq__panel { padding: 32px 24px; }
+    .cs-decide__pair { grid-template-columns: minmax(0, 1fr); row-gap: 28px; margin-bottom: 32px; }
+    .cs-decide__pair > div:first-child { padding-right: 0; }
+    .cs-decide__pair > div + div {
+      padding-left: 0;
+      border-left: 0;
+    }
 
+    .cs-impact { padding-left: 22px; padding-right: 22px; }
+    .cs-impact .cs-chapter__body { grid-column: 1; max-width: none; }
+    .cs-impact .cs-figure { grid-column: 1; max-width: none; }
     .hp-footer { --foot-x: 22px; padding: 66px var(--foot-x) 28px; }
     .hp-footer__title { font-size: clamp(46px, 13vw, 76px); }
     .hp-footer__ctas { margin-top: 32px; }
@@ -1719,6 +2233,72 @@
     .cs-lb__img { opacity: 1; transform: none; }
     .cs-lb__close { opacity: 1; transform: none; }
   }
+  /* ---------- ARRIVING FROM THE HOMEPAGE ----------
+     Cross-document view transition, opted into on both sides. The homepage
+     names the clicked card's sentence, chip row and artwork as it leaves;
+     this page names its heading, tags and hero picture the same, and the
+     browser carries each from where it was to where it is. The nav pill is
+     named too and holds still. Everything else cross-fades.
+
+     The pseudo-elements are styled by the page being arrived at, which is
+     this one, so this is where the journey is described.
+
+     The artwork and the picture are different shapes — the card is nearly
+     square, this picture is 3:2 — so both snapshots fill the travelling box
+     and are cropped by it rather than the taller hanging out of the bottom.
+     The type is not blended with plus-lighter, the default, which flares on
+     two copies of white text passing over each other.
+
+     Reduced motion opts out: a page that changes in one frame is the right
+     answer there. Browsers without the feature navigate as they always did. */
+  @view-transition { navigation: auto; }
+  .hp-nav { view-transition-name: hp-nav; }
+  .cs-hero__statement { view-transition-name: cs-title; }
+  .cs-hero .cs-tags { view-transition-name: cs-tags; }
+  .cs-hero .cs-figure img { view-transition-name: cs-art; }
+
+  ::view-transition-group(*) {
+    animation-duration: 0.62s;
+    animation-timing-function: cubic-bezier(0.32,0.72,0,1);
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.32,0.72,0,1);
+  }
+  ::view-transition-group(cs-art) { overflow: clip; }
+  ::view-transition-old(cs-art),
+  ::view-transition-new(cs-art) {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center top;
+  }
+  ::view-transition-image-pair(cs-title),
+  ::view-transition-image-pair(cs-tags) { isolation: auto; }
+  ::view-transition-old(cs-title),
+  ::view-transition-new(cs-title),
+  ::view-transition-old(cs-tags),
+  ::view-transition-new(cs-tags) {
+    mix-blend-mode: normal;
+    height: 100%;
+    width: 100%;
+    object-fit: contain;
+    object-position: left top;
+  }
+  /* Arrived by transition: the tags travelled here and are already in place,
+     so they do not get the entrance below as well. The script adds the class
+     before first paint. Specificity matches the is-in rule above and this is
+     later in the sheet, so it wins. */
+  .cs-motion.cs-via .cs-hero .cs-tags,
+  .cs-motion.cs-via .cs-hero.is-in .cs-tags {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+  }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -1728,6 +2308,24 @@
      The longer note, including why the window.va shim from Vercel's snippet is not
      here, is in index.html. -->
 <script defer src="/_vercel/insights/script.js"></script>
+<!-- Two things for arriving here from a card on the homepage by view transition.
+
+     The link holds the first paint until the article has been parsed, so the
+     heading, the tags and the hero picture exist when the browser takes the
+     snapshot it animates toward. Without it the page may paint from the head
+     alone and the elements the card is travelling to are not there yet.
+
+     The script records the reveal. pagereveal fires once, at that first paint,
+     and the page's own script at the end of the body may not have run by then
+     — so this is where it is caught, and the class that stands down the
+     hero's letter-by-letter entrance is set before anything is drawn. -->
+<link rel="expect" href="#cs-main" blocking="render">
+<script>
+  window.addEventListener('pagereveal', function(e) {
+    window.__csReveal = e;
+    if (e.viewTransition) document.documentElement.classList.add('cs-via');
+  }, { once: true });
+</script>
 </head>
 <body>
 
@@ -1799,508 +2397,395 @@
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
       <div class="cs-overview__body" data-reveal data-stagger>
-        <p>As <strong>design lead</strong>, I led a team of designers, content writers, strategists and consultants from a blank page to launch in <strong>12 weeks</strong>. Sofa to Saddle is a cycling app for Lloyds Bank and British Cycling.</p>
-        <p>I also built a parallel front end in Cursor. First time Elixirr had seen a designer code an app properly. We wrote the practice down. <strong>It&rsquo;s how this work gets staffed and sold now.</strong></p>
-        <p>On the surface, this was an app build. Underneath, <strong>a way back onto a bike.</strong></p>
+        <p>Research showed that for most people, cycling isn&rsquo;t a fitness problem. It&rsquo;s a confidence one. The average Briton spends 18 hours a week on the sofa and 70% say they should exercise more, but most don&rsquo;t know where to start.</p>
+        <p>British Cycling saw an opportunity there. As part of its goal to get a million more people cycling by 2028, it partnered with Lloyds Bank to launch Sofa to Saddle, an app to help people build the habit. It had 12 weeks, a fraction of the time and budget a build like this usually gets.</p>
+        <p>As design lead, I was hands on from the first sketch to the last line of front end code. I designed most of the UX and UI and built the entire front end in Cursor. Alongside that, I led a small team of content writers and another designer, and steered both client organisations through the product strategy.</p>
+        <p>Doing it in 12 weeks meant getting three things right:</p>
+      </div>
+      <div class="cs-paths">
+        <article class="cs-path" data-reveal>
+          <div class="cs-path__body">
+            <p class="cs-path__no">01</p>
+            <h2 class="cs-path__title"><a href="#strategy" data-story-jump>Turning a feature list into a strategy-led product.</a></h2>
+          </div>
+          <div class="cs-path__note">
+            <p>The brief arrived as a list of features, with no clear sense of how the app would build a habit or what success looked like long term. With two organisations and around 20 stakeholders, I needed to guide both clients to a shared proposition: should the app keep people in, or help them build the habit and move on?</p>
+            <a class="cs-path__more" href="#strategy" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+          </div>
+        </article>
+        <article class="cs-path" data-reveal>
+          <div class="cs-path__body">
+            <p class="cs-path__no">02</p>
+            <h2 class="cs-path__title"><a href="#ui" data-story-jump>Building the components and flows that brought the brand to life.</a></h2>
+          </div>
+          <div class="cs-path__note">
+            <p>An agency had created the brand guidelines, but there was no design system behind them, and a bank and a national sporting body don&rsquo;t naturally say &ldquo;fun&rdquo; or &ldquo;for beginners&rdquo;. I had to turn them into components and flows that felt encouraging and approachable, nothing like a serious cycling app, for people nervous about getting back on a bike.</p>
+            <a class="cs-path__more" href="#ui" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+          </div>
+        </article>
+        <article class="cs-path" data-reveal>
+          <div class="cs-path__body">
+            <p class="cs-path__no">03</p>
+            <h2 class="cs-path__title"><a href="#front-end" data-story-jump>Can a designer ship a production-quality front end?</a></h2>
+          </div>
+          <div class="cs-path__note">
+            <p>Building it myself with AI only mattered if it matched an experienced engineer on quality and security. Being in the code also meant I could refine the experience as it came to life, fixing what we saw in the build rather than waiting for QA.</p>
+            <a class="cs-path__more" href="#front-end" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+          </div>
+        </article>
       </div>
     </div>
   </section>
 
-  <section class="cs-chapters cs-wrap" aria-label="The work, chapter by chapter">
+  <div class="cs-stories cs-wrap">
     <div class="cs-col">
+      <section class="cs-story" id="strategy" aria-labelledby="strategy-h">
+        <p class="cs-path__no" data-reveal>01</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="strategy-h" data-reveal>Turning a feature list into a strategy-led product.</h2>
 
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">01<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">State</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">A blank page, and a deadline that didn&rsquo;t care.</h2>
-          <p>There was no existing app to modernise, no legacy patterns, no accumulated user data.</p>
-          <p>What made it hard wasn&rsquo;t the idea, <strong>it was the timeframe</strong>. We had a fraction of the time a build like this usually gets, and a budget to match. I was leading designers, content writers, strategists and consultants into that. Twelve weeks only works if people can keep moving. I wasn&rsquo;t going to spend it holding court over a Figma file.</p>
-          <p>And it wasn&rsquo;t one app. <strong>The contract committed us to two</strong>: Sofa to Saddle, and a second app for children, with the same functionality underneath both. Every requirement came out of workshops with Lloyds and British Cycling in the room together, and nothing was settled until both had put their input in and both had signed it off. So before designing anything I mapped the two propositions stage by stage to find where they genuinely overlapped and where they had to diverge. That told us how to structure the app, and what twelve weeks and this budget could actually buy.</p>
+          <p>The brief was a list of features. Each one made sense on its own, but there was no product strategy behind them, and no clear idea of the value the product should create.</p>
+          <p>A first version made that gap visible. Mapped out as journeys and mid-fidelity wireframes, it gave both clients something concrete to react to.</p>
+          <p>I then ran a workshop with around 20 senior stakeholders from Lloyds Bank and British Cycling. It surfaced the decisions that would shape the product. It also showed that most of them were being framed around the app, such as how to keep people progressing and coming back.</p>
         </div>
-        <figure class="cs-figure" style="--ar: 2.0647" data-reveal>
-          <img src="/assets/saddle-requirements-1120.b547ac21.webp"
-               srcset="/assets/saddle-requirements-1120.b547ac21.webp 1120w,
-                       /assets/saddle-requirements-1680.b547ac21.webp 1680w,
-                       /assets/saddle-requirements-2240.b547ac21.webp 2240w"
-               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
-               width="30438" height="14742"
-               alt="A working board in three lanes. Along the top, the youth development app: a row of stage cards running from discovery and awareness through first app experience and on by week, with acceptance criteria and open questions stacked underneath each one. Sofa to Saddle runs the same way in the lane below it. A third lane at the foot, headed Overlapping requirements, collects the parts both apps could share."
+        <figure class="cs-figure" style="--ar: 6.1763" data-zoom="/assets/saddle-questions-read.352804ec.webp" data-reveal>
+          <img src="/assets/saddle-questions-1120.352804ec.webp"
+               srcset="/assets/saddle-questions-1120.352804ec.webp 1120w,
+                       /assets/saddle-questions-1680.352804ec.webp 1680w,
+                       /assets/saddle-questions-2240.352804ec.webp 2240w"
+               sizes="(min-width: 900px) 720px, 92vw"
+               width="27472" height="4448"
+               alt="A board titled Sofa to Saddle, user flow and requirements questions. Pink cards are the stages, from seeing the campaign and downloading the app, through onboarding and creating an account, to landing on the home page. Grey cards underneath are the questions still open, including how old children have to be, whether each child has their own account, and whether a new account asks the same things as the British Cycling website."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The top row was the child app and the middle row was Sofa to Saddle, with the journey documented in coloured post-its and questions in grey. The bottom lane flagged overlapping requirements so we could see where the two had synergies.</span></figcaption>
         </figure>
-      </section>
-
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">02<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">Insight</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Getting back on a bike isn&rsquo;t a fitness problem. It&rsquo;s a confidence one.</h2>
-          <p>This was the insight that fuelled the ambition. Cycling has an intimidation problem: lycra, jargon, the sense that everyone else already knows what they&rsquo;re doing. Some people simply weren&rsquo;t motivated. A lot more already knew they should exercise, and wanted to. They just needed a helping hand. British Cycling&rsquo;s research put numbers to that: over 18 hours of sofa time a week, and 70% who think they should exercise more.</p>
-          <p>What riding gives back is almost none of it fitness. It is how a ride leaves people feeling: clearer-headed, calmer, better about themselves. <strong>So the aim of the app was a confidence one</strong>: a free plan pointed at the hurdles rather than at fitness, the same insight Couch to 5k built on for running.</p>
-        </div>
-        <!-- The research as campaign language, in place of the three numbers this
-             chapter used to set as type. The prose above still names British
-             Cycling's research; the picture is what that research looked like once
-             it had to speak to the people it was about — scrolling to rolling,
-             with the sofa hours and the 70% wish to exercise written into the
-             blue panel. Same slide treatment as the velodrome photograph later
-             (black frame cropped off), but the source is 5760 so it takes the
-             full ladder and a viewer — the 1024px still that first landed here
-             was a downscale and went soft at the measure. See PHOTOS in
-             build-saddle-figures.py. -->
-        <figure class="cs-figure" style="--ar: 2.0690" data-reveal>
-          <img src="/assets/saddle-insight-1120.3b4bc6cd.webp"
-               srcset="/assets/saddle-insight-1120.3b4bc6cd.webp 1120w,
-                       /assets/saddle-insight-1680.3b4bc6cd.webp 1680w,
-                       /assets/saddle-insight-2240.3b4bc6cd.webp 2240w"
-               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
-               width="4320" height="2088"
-               alt="A campaign diptych on a blurred green woodland background. On the left, a woman in a black helmet and a rainbow-gradient cycling jersey rides with one arm raised, under the words SCROLLING and ROLLING in white capitals with a green toggle switched on between them. On the right, a blue panel reads: The average Briton spends 18 hours a week on the sofa. 70% say they should exercise more. Sofa to Saddle turns that gap into a bike ride."
+        <figure class="cs-figure cs-figure--flow" style="--ar: 1.45" data-zoom="/assets/saddle-flow-read.5f7ffb54.webp" data-reveal>
+          <img src="/assets/saddle-flow-1120.5f7ffb54.webp"
+               srcset="/assets/saddle-flow-1120.5f7ffb54.webp 1120w,
+                       /assets/saddle-flow-1680.5f7ffb54.webp 1680w,
+                       /assets/saddle-flow-2240.5f7ffb54.webp 2240w"
+               sizes="(min-width: 900px) 720px, 92vw"
+               width="25920" height="29696"
+               alt="The whole product as a flow map: some forty screen cards joined by arrows, each headed with the screen&rsquo;s name and divided into two columns, Context and Interaction. It begins at seeing the campaign and downloading the app, runs down through the welcome screen, single sign-on and sign-up, then splits on whether the rider has taken the quiz — one branch leading to a populated plan, progress and profile, the other to the same screens as empty states. Pale blue notes are pinned to individual cards where a question was still open."
                loading="lazy" decoding="async">
         </figure>
       </section>
 
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">03<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">Principle</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Meet people at their actual level, not the level the sport assumes.</h2>
-          <p>Every plan starts from where the user actually is, not where a cyclist is assumed to be. Competency-based plans, levels that unlock as you go, badges that reward <strong>consistency over performance</strong>.</p>
-          <p>Alongside the rides, the eight weeks carry the things a nervous beginner actually needs and a training plan usually leaves out: milestone rewards, basic bike care, and step-by-step route support from health professionals and Great Britain Cycling Team specialists. <strong>Each of those is there to answer something the research turned up</strong> rather than to add a feature.</p>
-          <p>None of that is a technically difficult pattern. What mattered was resisting the instinct to make it look more sophisticated than it needed to be.</p>
+          <h2 class="cs-chapter__title">Changing the questions we were answering.</h2>
+          <p>I got both client teams to reframe each decision around the rider instead, and what would help someone build a cycling habit that supports their own goal, whatever that might be. One insight ran through every answer. Getting back on a bike is a confidence problem before it&rsquo;s a fitness one.</p>
+          <p>For each decision, I talked both teams through the options and trade-offs. Where a call needed evidence, I tested it with new riders before making a recommendation.</p>
         </div>
-        <!-- The onboarding quiz, in place of the Your Plan screen this chapter
-             used to carry. The chapter's claim is that a plan starts from where
-             the rider actually is; the plan screen was the answer, and this is
-             the part that asks. The render is still in assets/ — see PHONES in
-             build-saddle-figures.py. -->
+      </section>
+
+      <section class="cs-chapter cs-chapter--num">
+        <p class="cs-path__no" data-reveal>01</p>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Plan structure</h2>
+          <p>Every training app needs a way for riders to progress. The question was what that progress should lead to.</p>
+          <div class="cs-decide">
+            <div class="cs-decide__pair">
+              <div>
+                <p class="cs-decide__label">They asked</p>
+                <p>How do we keep riders in the app?</p>
+              </div>
+              <div>
+                <p class="cs-decide__label">I asked</p>
+                <p>When does someone stop needing us?</p>
+              </div>
+            </div>
+            <p>We talked through three ways to structure the plan. Levels based on competency gave a clear sense of progress, but focused on how good someone was rather than whether they kept riding. A series of plans with different objectives offered variety, but no natural end. A single plan, matched to each rider&rsquo;s starting point, ended in graduation.</p>
+            <p>I made the case for the single plan as the best fit for people building a new habit. A clear finish feels manageable and keeps the focus on turning up. Graduation also gives the app a natural moment to point riders to their next step, whether that&rsquo;s with British Cycling or somewhere else. Riders can still adjust the plan if it feels too hard or too easy, and in testing, the finish line made the goal feel attainable.</p>
+          </div>
+        </div>
+        <figure class="cs-figure" style="--ar: 2.7239" data-reveal>
+          <img src="/assets/saddle-plan-1120.21588123.webp"
+               srcset="/assets/saddle-plan-1120.21588123.webp 1120w,
+                       /assets/saddle-plan-1680.21588123.webp 1680w,
+                       /assets/saddle-plan-2240.21588123.webp 2240w"
+               sizes="(min-width: 900px) 720px, 92vw"
+               width="6935" height="2546"
+               alt="Five screens of the plan. Your plan at level 2 of 8, with a ride-ready checklist and adjust plan. Level 2, Finding your rhythm, ready to start. Coming up, with the next three levels. How would you like to adjust your plan, offering harder, easier, or remove. Level 8, the graduation: you&rsquo;ve completed all 8 levels, then a prompt to find a British Cycling club."
+               loading="lazy" decoding="async">
+        </figure>
+      </section>
+
+      <section class="cs-chapter cs-chapter--num">
+        <p class="cs-path__no" data-reveal>02</p>
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Personalisation</h2>
+          <p>Every rider takes a short quiz before their plan starts. The question was what the plan should change in response.</p>
+          <div class="cs-decide">
+            <div class="cs-decide__pair">
+              <div>
+                <p class="cs-decide__label">They asked</p>
+                <p>How do we match each plan to how fit someone is?</p>
+              </div>
+              <div>
+                <p class="cs-decide__label">I asked</p>
+                <p>What made them want to ride in the first place?</p>
+              </div>
+            </div>
+            <p>Personalising on fitness alone was the simplest to build, but treated everyone at the same level the same way. A separate plan for each goal would fit people closely, but meant building far more rides. Our research showed people ride for very different reasons, so I steered the clients towards a middle path. Rides stay matched to ability, while the content around them changes in tone of voice and context to fit each rider&rsquo;s reason for riding. A content strategist and a sports psychologist wrote each version, and I shaped the structure and reviewed every one. In testing, riders expected the plan to reflect why they were riding.</p>
+          </div>
+        </div>
         <figure class="cs-figure" style="--ar: 2.1753" data-reveal>
           <img src="/assets/saddle-quiz-1120.5b08d162.webp"
                srcset="/assets/saddle-quiz-1120.5b08d162.webp 1120w,
                        /assets/saddle-quiz-1680.5b08d162.webp 1680w,
                        /assets/saddle-quiz-2240.5b08d162.webp 2240w"
-               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
+               sizes="(min-width: 900px) 720px, 92vw"
                width="5486" height="2522"
-               alt="The four screens of the onboarding quiz, each numbered out of four above a progress bar. What is your main cycling goal, offering commuting, riding with people, mental health, a health condition, getting outdoors, fitness and losing weight. Do you currently have access to a bike, noting that any type is fine &mdash; static, indoor, outdoor, borrowed or hired. When did you last ride a bike, running from in the last week down to I&rsquo;ve never ridden a bike, under a line saying this helps us find a comfortable starting level for you. And how much do you exercise each week, starting at I don&rsquo;t exercise, under a line saying exercise is anything that gets you moving."
+               alt="The four screens of the onboarding quiz, each numbered out of four above a progress bar. What is your main cycling goal, offering commuting, riding with people, mental health, a health condition, getting outdoors, fitness and losing weight. Do you currently have access to a bike, noting that any type is fine, static, indoor, outdoor, borrowed or hired. When did you last ride a bike, running from in the last week down to I&rsquo;ve never ridden a bike. And how much do you exercise each week, starting at I don&rsquo;t exercise."
                loading="lazy" decoding="async">
         </figure>
       </section>
 
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">04<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">Craft</span>
-        </div>
+      <section class="cs-chapter cs-chapter--num">
+        <p class="cs-path__no" data-reveal>03</p>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Confidence from one, rhythm from the other.</h2>
-          <p>Two brands that had appeared together before, but never had to speak with one voice. Lloyds brought trust and restraint. British Cycling brought energy and speed. Neither language was built to sit next to the other, and a straight compromise would have satisfied nobody.</p>
-          <p>We built an identity that <strong>borrowed confidence from Lloyds and rhythm from British Cycling</strong>, without trying to look exactly like either parent brand. It wasn&rsquo;t an easy sign-off, but it was the version both sides could actually stand behind.</p>
+          <h2 class="cs-chapter__title">Ride tracking</h2>
+          <p>Riders need a way to record each ride. The question was what that record should show.</p>
+          <div class="cs-decide">
+            <div class="cs-decide__pair">
+              <div>
+                <p class="cs-decide__label">They asked</p>
+                <p>Can we plug in Strava?</p>
+              </div>
+              <div>
+                <p class="cs-decide__label">I asked</p>
+                <p>How should someone feel when they finish their first ride?</p>
+              </div>
+            </div>
+            <p>We compared three ways to track a ride. Strava was credible, but built around performance, and would take beginners out of our app at their least confident. Native phone tracking kept them with us, but risked turning each ride into numbers to fall short on. A simple timer meant giving up distance and route data. Most rides in the plan were time-based, so I recommended the timer. It works on any bike, including static and borrowed ones, and distance stays optional for riders who want it.</p>
+          </div>
         </div>
-        <!-- The two parent toolkits, which is the input to this chapter rather
-             than its output. The identity itself is already on the page in every
-             screen above and below; what could not be seen until now is what it
-             had to be made out of, and the claim that neither language was built
-             to sit next to the other is the sort of thing a reader either takes
-             on trust or sees. Set on white rather than the page, because it is
-             black type on white cards — see SHEETS in the build script. -->
-        <figure class="cs-figure" style="--ar: 0.8092" data-reveal>
-          <img src="/assets/saddle-toolkits-1120.ad473dd6.webp"
-               srcset="/assets/saddle-toolkits-1120.ad473dd6.webp 1120w,
-                       /assets/saddle-toolkits-1680.ad473dd6.webp 1680w,
-                       /assets/saddle-toolkits-2240.ad473dd6.webp 2240w"
-               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
-               width="6076" height="7509"
-               alt="Two brand toolkit sheets, one above the other. British Cycling&rsquo;s: the winged-rider logo with the wordmark in mono and in red and blue, a headline specimen setting ENJOY THE RIDE in Anton on a strong blue with Inter beneath it for body copy, swatches labelled BC Blue, BC Red, BC Dark Navy, BC Off White and BC Light Blue, and three photographs of racing &mdash; a BMX rider mid-track, riders at a start line, a group laughing after a ride. Lloyds&rsquo;: the black horse in three lockups, a specimen setting Charming, Playful, Bold in GT Ultra on a mid green, a palette of five greens from near-black to almost white, with a row of greys and a row of pastel accents beneath, and softer imagery &mdash; a woman on a sofa with a mug, and line illustrations of a plant, a telescope and a terrarium."
+        <figure class="cs-figure" style="--ar: 2.1753" data-reveal>
+          <img src="/assets/saddle-timer-1120.30fd97e9.webp"
+               srcset="/assets/saddle-timer-1120.30fd97e9.webp 1120w,
+                       /assets/saddle-timer-1680.30fd97e9.webp 1680w,
+                       /assets/saddle-timer-2240.30fd97e9.webp 2240w"
+               sizes="(min-width: 900px) 720px, 92vw"
+               width="5486" height="2522"
+               alt="Four screens of the ride timer. Ready to start at 00:00 for a 15 minute ride, under way at 08:38 with Keep going, and finished at 17:58 with You&rsquo;ve completed it, great job. The last screen lets the rider correct the time: Easy ride completed, 17 minutes and 58 seconds, with an optional distance of 3 km."
                loading="lazy" decoding="async">
         </figure>
       </section>
 
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">05<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">Leadership</span>
-        </div>
+      <section class="cs-chapter cs-chapter--num">
+        <p class="cs-path__no" data-reveal>04</p>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Two sets of objectives, one call to make.</h2>
-          <p>Good judgement meant knowing both brands&rsquo; objectives well enough to decide, case by case, whose priority mattered most and why. Every call still had to earn its keep commercially: <strong>good enough to ship, never gold-plated past scope or budget</strong>.</p>
-          <p>The designers got the same standard. I review work offline, leave comments in Figma, then we talk it through in a 1-1. I&rsquo;ll show how I would have gone at it. Not to take the work off them. So they leave seeing the problem differently.</p>
-          <p>The product map is where a lot of the strategy got done. I mapped the whole flow and we walked it screen by screen with both clients in the room, looking for the gaps. Not in the screens. In the proposition. <strong>The sharpest one: the app exists to get a nervous beginner out on a first ride, and British Cycling&rsquo;s own offer, insurance and membership, is built for riders who already are one.</strong> Getting someone from finishing a plan to a real relationship with British Cycling was never an interaction we could design our way out of, and the map is what put it on the table early enough to be a strategy conversation instead of a launch problem.</p>
+          <h2 class="cs-chapter__title">Engagement</h2>
+          <p>A habit needs something to bring riders back between rides. The question was how much the app should do.</p>
+          <div class="cs-decide">
+            <div class="cs-decide__pair">
+              <div>
+                <p class="cs-decide__label">They asked</p>
+                <p>How do we make sure nobody forgets about us?</p>
+              </div>
+              <div>
+                <p class="cs-decide__label">I asked</p>
+                <p>What makes someone want to ride again next week?</p>
+              </div>
+            </div>
+            <p>More touchpoints might lift engagement early, but risked overwhelming beginners. Badges for every event could stack until they meant nothing, and frequent nudges tend to get switched off. Fewer moments meant fewer chances to bring someone back, so each one had to count. I steered the clients towards that approach. Content unlocks in small steps, badges mark real milestones, and riders self-report their rides to keep the focus on turning up. I cut the proposed notifications to five, each placed where a nudge was most likely to help.</p>
+          </div>
         </div>
-        <figure class="cs-figure" style="--ar: 0.8728" data-reveal>
-          <img src="/assets/saddle-flow-1120.5f7ffb54.webp"
-               srcset="/assets/saddle-flow-1120.5f7ffb54.webp 1120w,
-                       /assets/saddle-flow-1680.5f7ffb54.webp 1680w,
-                       /assets/saddle-flow-2240.5f7ffb54.webp 2240w"
-               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
-               width="25920" height="29696"
-               alt="The whole product as a flow map: some forty screen cards joined by arrows, each headed with the screen&rsquo;s name and divided into two columns, Context and Interaction. It begins at seeing the campaign and downloading the app, runs down through the welcome screen, single sign-on and sign-up, then splits on whether the rider has taken the quiz — one branch leading to a populated plan, progress and profile, the other to the same screens as empty states. Pale blue notes are pinned to individual cards where a question was still open."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Every screen in the product, and what happens on it. The split in the middle is whether the rider has taken the quiz: one side arrives at a plan already filled in, the other at empty states.</span></figcaption>
-        </figure>
-      </section>
-
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">06<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">System</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">A progress system built once, used everywhere.</h2>
-          <p>The level and badge system was designed as <strong>a single reusable component</strong> rather than one-off screens for each milestone. Whichever plan a user is on, the same progress logic and badge structure applies underneath. That meant we could add new plans later without redesigning the core experience each time.</p>
-        </div>
-        <!-- One figure here, not two. The home screen showing the path of
-             levels used to sit above this row and came out on the owner's
-             instruction: two figures back to back made the chapter the only one
-             on the page carrying a pair, and of the two this is the one that
-             argues. The render is still in assets/ as saddle-levels-531 and the
-             build still produces it — see PHONES in build-saddle-figures.py.
-
-             Seven of them, which is the argument. This chapter claims one
-             reusable component rather than a screen per milestone, and that is a
-             claim about sameness: it cannot be shown by one award screen, only
-             by several that are visibly the same screen. Hence the whole row
-             rather than a choice from it. -->
         <figure class="cs-figure" style="--ar: 3.7950" data-reveal>
           <img src="/assets/saddle-badges-1120.5c0692a4.webp"
                srcset="/assets/saddle-badges-1120.5c0692a4.webp 1120w,
                        /assets/saddle-badges-1680.5c0692a4.webp 1680w,
                        /assets/saddle-badges-2240.5c0692a4.webp 2240w"
-               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
+               sizes="(min-width: 900px) 720px, 92vw"
                width="9829" height="2590"
-               alt="Seven badge award screens in a row, all built the same way: a headline, a badge symbol in a circle, the line You just earned the such-and-such badge, a sentence of explanation and a Continue button. Two are dark navy &mdash; You&rsquo;re off, for the Off the Sofa badge, and First ride done, for Wheels in Motion. Two are bright blue &mdash; Ride ready, and Knowledge is power for the Love to Learn badge. Three are green &mdash; Keep moving, two levels to go, and First reflection for the Pedal and Ponder badge."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">One screen, seven times. The badge, the colour and the words change; the structure underneath doesn&rsquo;t, which is what made adding a milestone cheap.</span></figcaption>
-        </figure>
-      </section>
-
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">07<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">Craft</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">A voice that encourages without patronising.</h2>
-          <p>Habit-forming apps live or die on tone. I defined the principles and worked with a copywriter to develop it <strong>alongside the UI, not after it</strong>, so tone of voice and interaction design grew together instead of one dictating to the other. Same as with the designers. Comments in the file, then a conversation.</p>
-          <p>The voice we landed on was matter-of-fact rather than relentlessly upbeat, acknowledging effort without treating every ride like a triumph.</p>
-        </div>
-        <!-- The tone of voice page from the brand guidelines, supplied by the owner
-             for this chapter. It replaces the learning-module render, which came out
-             first, and the swap is the right way round: the render was one screen
-             the voice had been applied to, so a reader had to infer the rules from a
-             single sample, and this is the rules themselves — three principles, and
-             a list of what to use against what to avoid. A chapter that says the
-             voice was defined and then worked out alongside the UI can show either
-             the definition or one result of it, and the definition is the part that
-             was the design work.
-
-             It is also the only figure here that is not a Figma export. It is a
-             frame of a 1080p recording of the guidelines deck, so it is 1920px where
-             the other sheets are five or six thousand, and that shows in two places:
-             it stops at a 1680 rung where they reach 2240, and the viewer opens it
-             at 1920 rather than 3360. Both are handled in the build (see ZOOM_MIN)
-             and neither is visible on the page — 1920 across a 626px figure is more
-             than a 2x screen asks for. A still exported from Figma would upgrade
-             both by dropping the file in.
-
-             The one thing to know is that this is a page of small print. At 626 its
-             body lines land near 9px, which is a picture of a specification rather
-             than a specification; opened, they are about 17px and read normally. It
-             is the clearest case on the page for the viewer existing at all.
-
-             The render it replaced is still in assets/ as saddle-module-531 and the
-             build still produces it — see PHONES in build-saddle-figures.py. Its
-             leaving is also why --fig-w could become the measure: it was a 531px
-             file at a 0.58 aspect, so it could not be drawn past 531 and stood 865px
-             tall even at 504. Nothing on the page has either problem now. -->
-        <figure class="cs-figure" style="--ar: 1.7778" data-reveal>
-          <img src="/assets/saddle-voice-1120.86ad9091.webp"
-               srcset="/assets/saddle-voice-1120.86ad9091.webp 1120w,
-                       /assets/saddle-voice-1680.86ad9091.webp 1680w"
-               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
-               width="1920" height="1080"
-               alt="A tone of voice page from the Sofa to Saddle guidelines, headed TONE OF VOICE PRINCIPLES in condensed capitals, black over blue, with a note that the principles reflect the warm, encouraging and down-to-earth personality of Sofa to Saddle. Two panels sit below it. The blue one holds three principles, each a heading over a line of explanation: ENCOURAGING, inspires action and confidence; WARM AND FRIENDLY, approachable and human; DOWN-TO-EARTH, relatable, real, and everyday. The green one is split into Use and Avoid. Use: short, familiar, everyday words, especially headlines; language that builds belief, not pressure; action-led phrases that feel rhythmic and full of momentum. Avoid: sporty or performance-focused language; technical cycling terms; anything that signals &lsquo;cycling culture&rsquo;."
+               alt="Seven badge award screens in a row, all built the same way: a headline, a badge symbol in a circle, the line You just earned the such-and-such badge, a sentence of explanation and a Continue button. Two are dark navy, You&rsquo;re off for the Off the Sofa badge and First ride done for Wheels in Motion. Two are bright blue, Ride ready and Knowledge is power for the Love to Learn badge. Three are green, Keep moving, two levels to go, and First reflection for the Pedal and Ponder badge."
                loading="lazy" decoding="async">
         </figure>
       </section>
 
-      <!-- The beat is Experiment rather than the System it used to be, and the
-           title now says who was doing what: the chapter is not about the two
-           front ends existing, it is about a designer being the one who built
-           one of them. The two paragraphs are her copy, untouched. -->
+        </div>
+      </section>
+
+      <section class="cs-story" id="ui" aria-labelledby="ui-h">
+        <p class="cs-path__no" data-reveal>02</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="ui-h" data-reveal>Building the components and flows that brought the brand to life.</h2>
+
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">08<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">Experiment</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Could a designer build the front end? I used Cursor to find out.</h2>
-          <p>Alongside the development team building the app&rsquo;s front end, I ran a parallel build: could a designer produce a production-quality front end using AI, matching an experienced engineer on quality and security. Before writing a line of code, we wrote our coding standards into rules for the AI, and held the output to the same bar an engineer would hold themselves to.</p>
-          <p>I was in the code, so engineers came in for the pieces that needed them. Interaction and motion problems showed up in the build, not as a QA ticket two weeks later. <strong>The two front ends came out equally solid.</strong> First time Elixirr had proved it. We wrote the practice down for the next client team. That&rsquo;s how this work gets sold and staffed now.</p>
+          <p>An agency had created the brand guidelines: bold blue and green, condensed type, capsule shapes and a fast-forward motif. They set the tone, but they weren&rsquo;t built for a product, and there was no design system behind them.</p>
+          <p>Working at pace with one other designer, I owned the moments that would make or break a nervous beginner&rsquo;s confidence, along with the system underneath that let us both move quickly. I reviewed the rest as it developed, leaving comments in Figma and then talking them through in a 1-1, showing how I&rsquo;d have approached it. The aim wasn&rsquo;t to take the work off them, but to help them see the problem differently, so the whole app held the same standard.</p>
         </div>
+      </section>
 
-        <!-- Six steps, one on screen at a time. See the .cs-seq block in the
-             stylesheet for why this is tabs, and the build sequence block at
-             the foot of the page for what is applied to it from script.
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Onboarding: momentum from the first tap.</h2>
+          <p>Sign-up is where a hesitant rider is most likely to give up, so it had to feel like progress, not admin. One question per screen keeps each step light. Each screen changes colour, the capsules frame photography of real riders, and the chevrons push people forward, so filling in a form feels like momentum. The brand&rsquo;s &ldquo;switch on&rdquo; toggle marks the moment sign-up is complete.</p>
+        </div>
+        <figure class="cs-figure" style="--ar: 2.1753" data-reveal>
+          <img src="/assets/saddle-onboard-1120.a2f56216.webp"
+               srcset="/assets/saddle-onboard-1120.a2f56216.webp 1120w,
+                       /assets/saddle-onboard-1680.a2f56216.webp 1680w,
+                       /assets/saddle-onboard-2240.a2f56216.webp 2240w"
+               sizes="(min-width: 900px) 720px, 92vw"
+               width="5486" height="2522"
+               alt="Four screens of sign-up. What&rsquo;s your name, on green. What&rsquo;s your email, on blue. Check your email, with a prompt to open the email app. You&rsquo;ve confirmed your email, marked with the switch-on tick."
+               loading="lazy" decoding="async">
+        </figure>
+      </section>
 
-             Six rather than the eleven this started as, and no dates. The
-             eleven were the commit batches as they happened, which is the
-             repo's own unit and not the reader's: three of them were a day's
-             work on one screen, and a rail eleven long asks for eleven clicks
-             to find out that some of them are a paragraph. These are the six
-             things that actually had to be decided, each holding the batches
-             that belong to it, and the order is still the order they were
-             built in. The dates went with the same reasoning — 7 May against
-             8 May tells a reader nothing they can use, and it made every step
-             look like a status report.
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">The quiz and plan: making the first step look small.</h2>
+          <p>The quiz is deliberately plain, so the questions do the work. Not every rider takes it straight away, so I designed the screens they&rsquo;d land on instead. Home and the plan tab both point to the same &ldquo;Get started&rdquo; button. On home, the ask is short: four questions, under two minutes. The plan tab is where someone might wonder if this is a proper plan, so it says who built it before asking for anything. The photography shows everyday riders rather than athletes, because someone starting out needs to see themselves in it.</p>
+          <p>Once the quiz is done, each level shows what it&rsquo;s for and how long it takes. Ride checklists and bike care videos sit on the plan itself, since that&rsquo;s where beginners look first.</p>
+        </div>
+        <figure class="cs-figure cs-figure--pair" style="--ar: 1.046" data-reveal>
+          <img src="/assets/saddle-start-1120.53ca71ae.webp"
+               srcset="/assets/saddle-start-1120.53ca71ae.webp 1120w,
+                       /assets/saddle-start-1680.53ca71ae.webp 1680w,
+                       /assets/saddle-start-2240.53ca71ae.webp 2240w"
+               sizes="(min-width: 900px) 346px, 46vw"
+               width="2590" height="2476"
+               alt="Two screens for a rider who has not taken the quiz. Home greets them and offers Find your starting level: four quick questions, get started, it takes less than two minutes. The plan tab is the empty state, No training plan yet, Training plan built around you, with the same prompt to get started."
+               loading="lazy" decoding="async">
+        </figure>
+      </section>
 
-             Written for a design reader, at the owner's instruction, and it
-             used to be the opposite: file names, symbol names, package versions
-             and Figma frame ids quoted verbatim, on the argument that quoting
-             the repo was what proved the build was real. It proves it to an
-             engineer. To everyone else it read as a changelog, and this is a
-             designer's portfolio — the visitor is a design director deciding
-             whether she can be trusted with a team, not a reviewer checking a
-             pull request.
-
-             So every step now says what was decided and why it mattered, and
-             nothing that can only be read as code survives. The names that do
-             stay are the ones a design lead already knows or can look up in one
-             search — Figma, Firebase, React Native, GraphQL, OWASP — and the
-             counts, which are evidence in any language: 26 rules, 13 skills,
-             three reviewers, six automatic checks. What went is every filename,
-             every variable, every version number and the frame ids. The claim
-             is the same size; it is just no longer addressed to the wrong
-             reader.
-
-             Then cut by about a third, on the owner's instruction, and it is the
-             plain-English pass that made that possible: rewriting for a design
-             reader had left a lot of "which means", "rather than", "so that" —
-             explaining the same decision twice, once in a clause and again in
-             its justification. Nothing was dropped. Every count and every claim
-             survives; what went is the second telling. The bullets sit around
-             twenty words now rather than thirty-five, which matters because a
-             reader clicking through six steps is scanning them, not reading
-             them, and a bullet that runs to four lines is a paragraph wearing a
-             marker.
-
-             Step 01 is the exception, and deliberately the longest of the six.
-             The cut had taken it too far — the owner's read was that it had lost
-             the detail that made it credible, and she is right about which one
-             it is. This step is the whole claim of the chapter: a designer
-             matched an engineer because the standards were written down and
-             enforced, not because the AI is clever. "Six automatic checks" is an
-             assertion. Naming them — destructive commands blocked, Figma writes
-             blocked, type-checker and tests run on stop — is the evidence, and
-             it is the kind a design lead can interrogate. So this panel says
-             what each layer actually was, at the cost of being three bullets
-             longer than the rest.
-
-             What it does not do is name things that cannot be checked. The
-             counts, the swappable styling rules, the three hooks and the OWASP
-             standard are all from the repo. The 13 skills and five commands are
-             given as counts with one example each, because that is as far as the
-             record goes; inventing plausible names for the rest would put made-up
-             detail next to true detail in a section whose whole job is being
-             believable. -->
-
-
-        <!-- No title over the steps: the paragraph above leads into them, and
-             the panel titles are h3 again because of it. They were h4 while
-             there was a "Build sequence breakdown" heading above them to be
-             subsections of; with that gone they are the chapter's own
-             subsections and h2 → h4 would skip a level. -->
-        <div class="cs-seq" data-seq data-reveal>
-          <div class="cs-seq__body">
-            <div class="cs-seq__steps" data-seq-steps>
-              <button class="cs-seq__step is-active" type="button" data-seq-step>
-                <span class="cs-seq__step-no">01</span>
-                <span class="cs-seq__step-label">Rules first</span>
-              </button>
-              <button class="cs-seq__step" type="button" data-seq-step>
-                <span class="cs-seq__step-no">02</span>
-                <span class="cs-seq__step-label">Setup and sign-in</span>
-              </button>
-              <button class="cs-seq__step" type="button" data-seq-step>
-                <span class="cs-seq__step-no">03</span>
-                <span class="cs-seq__step-label">Screens and flows</span>
-              </button>
-              <button class="cs-seq__step" type="button" data-seq-step>
-                <span class="cs-seq__step-no">04</span>
-                <span class="cs-seq__step-label">Fidelity and security</span>
-              </button>
-              <button class="cs-seq__step" type="button" data-seq-step>
-                <span class="cs-seq__step-no">05</span>
-                <span class="cs-seq__step-label">Real data and accounts</span>
-              </button>
-              <button class="cs-seq__step" type="button" data-seq-step>
-                <span class="cs-seq__step-no">06</span>
-                <span class="cs-seq__step-label">Polish</span>
-              </button>
-            </div>
-
-            <div class="cs-seq__panels">
-              <div class="cs-seq__stage" data-seq-stage>
-
-                <div class="cs-seq__panel is-active" data-seq-panel>
-                  <h3 class="cs-seq__title">Agreeing the rules before writing any code</h3>
-                  <ul class="cs-seq__list">
-                    <li>26 rules in the repo before a line of app code: file structure, naming, how a screen is composed, how a component is built, what has to be tested.</li>
-                    <li>Five were the styling rules, kept swappable, so one command could repoint the whole standard at a different styling approach.</li>
-                    <li>13 skills for the jobs that recurred, five saved commands, and three review agents checking the work as it went. One was a security reviewer working to OWASP&rsquo;s mobile standard.</li>
-                    <li>Six hooks enforced it instead of my memory: destructive commands blocked, writes back to Figma blocked so designs could be read but never overwritten, and the type checker and tests run the moment the AI stopped.</li>
-                    <li>Jira and Figma connected directly, so a ticket and the frame it referred to were read from the source.</li>
-                  </ul>
-                </div>
-
-                <div class="cs-seq__panel" data-seq-panel>
-                  <h3 class="cs-seq__title">The foundations, and a real sign-in</h3>
-                  <ul class="cs-seq__list">
-                    <li>Built on the same standard React Native setup as the development team, so any of them could pick it up.</li>
-                    <li>Every screen built from one small set of shared components, with every colour, type size and spacing value in a single file. A Figma change lands in one place, not forty.</li>
-                    <li>Sign-up, sign-in, password reset and email verification all run on Firebase, so passwords and sessions are handled by a service built for it.</li>
-                    <li>The signed-in check sits at the entrance to the app, not on each screen, so a new screen can&rsquo;t be left unprotected.</li>
-                  </ul>
-                </div>
-
-                <div class="cs-seq__panel" data-seq-panel>
-                  <h3 class="cs-seq__title">The screens, built before the data existed</h3>
-                  <ul class="cs-seq__list">
-                    <li>Onboarding, a ten-screen sign-up, and the six-question quiz that picks a rider&rsquo;s plan: their goal, how much they exercise, their last ride, whether they can get a bike.</li>
-                    <li>Then the plans: eight levels of content, progress tracking, badges and the rules that unlock them, the achievements grid, and the mood capture after a ride.</li>
-                    <li>All of it ran on stand-in data while the backend was still being built, so the whole app could be clicked through from day one.</li>
-                    <li>Wired as three separate switches, so each part moved to real data as it arrived. No single risky changeover.</li>
-                  </ul>
-                </div>
-
-                <div class="cs-seq__panel" data-seq-panel>
-                  <h3 class="cs-seq__title">Checked against the designs, then against security</h3>
-                  <ul class="cs-seq__list">
-                    <li>Every screen rebuilt against the Figma frames themselves, read out of the file rather than measured off a screenshot.</li>
-                    <li>Brand fonts loading properly, and the shapes Figma draws by masking rebuilt so they hold their edges at any size.</li>
-                    <li>One iOS bug kept returning: the display font clipped the tops of its capitals. Fixed inside the shared components, then written into the rules.</li>
-                    <li>Then a security review against OWASP&rsquo;s mobile standard. Two things worth fixing: a password-reset code travelling in a web address, and a default that could have fallen back to fake data.</li>
-                  </ul>
-                </div>
-
-                <div class="cs-seq__panel" data-seq-panel>
-                  <h3 class="cs-seq__title">Real data, and the account screens</h3>
-                  <ul class="cs-seq__list">
-                    <li>Stand-in data swapped for the real backend one area at a time: quiz, sign-up, profile, plans, activity. Then deleted outright rather than left switched off.</li>
-                    <li>Profile screens reuse the sign-up screens with the progress bar and Next button taken out, rather than a second copy of the same form.</li>
-                    <li>Changing a password and deleting an account both ask the rider to sign in again first.</li>
-                    <li>Learning content and FAQs moved into a content management system, so British Cycling can change the words without an app release.</li>
-                  </ul>
-                </div>
-
-                <div class="cs-seq__panel" data-seq-panel>
-                  <h3 class="cs-seq__title">Polish, on real phones</h3>
-                  <ul class="cs-seq__list">
-                    <li>Fixes driven by testing on real handsets rather than a simulator: clipped type, an off-centre avatar initial, a misplaced heading, screens redrawing badly after a ride.</li>
-                    <li>Every bug that turned up twice was written down with its fix, so nothing was worked out twice.</li>
-                  </ul>
-                </div>
-
-              </div>
-            </div>
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Badges: rewards that mean something.</h2>
+          <p>The guidelines defined badges as abstract geometric shapes that looked striking but didn&rsquo;t tell riders what they&rsquo;d achieved. I kept the geometric language and gave every badge a meaning you could read at a glance: a sofa for getting off it, a bike for the first ride, a heart for reflecting on how a ride felt. Because event-driven badges could stack two or three in a single ride, each was reshaped into a distinct milestone. Every badge uses the same template, so new ones can be added without redesigning anything.</p>
+        </div>
+        <figure class="cs-figure cs-figure--sides" style="--ar: 2.0159" data-reveal>
+          <div class="cs-sides">
+            <p>The direction</p>
+            <p>What it became</p>
           </div>
-        </div>
-      </section>
-
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">09<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">Honest bit</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">A deliberate bet on speed over scope.</h2>
-          <p>The budget didn&rsquo;t stretch to anything experimental, so version one shipped as a focused MVP: level plans, badges, progress tracking. <strong>That was a choice, not a limitation we settled for.</strong></p>
-          <p>The ambition went into speed and coherence, not feature breadth, because the app wasn&rsquo;t working alone. Joe Marler fronted the campaign, it made the news, and the real goal was getting people talking about cycling. The digital experience was there to support that, not carry it alone.</p>
-        </div>
-        <!-- The campaign, in place of the ride timer that used to sit here. The
-             chapter's second paragraph is the argument of the whole page's
-             honest bit: the app was not the campaign, it was the part of the
-             campaign you could install. A screenshot of the timer illustrated
-             the first paragraph, that scope was small on purpose, which is the
-             claim that needs a picture least — small scope is what every other
-             figure on this page already shows. This one is the only evidence of
-             the thing the app was supporting, and the reason its scope was the
-             right bet. The timer render is still built (see PHONES in
-             build-saddle-figures.py) if it is ever wanted back.
-
-             This figure carried an inline height cap of its own, because under
-             the old rule the picture could stop being the thing that bound and
-             the caption would then run wider than the picture it belongs to. One
-             width for every figure removes the problem rather than patching it:
-             the figure is capped and both fill it, so they are in step at every
-             viewport.
-
-             It is also the one figure the measure costs something. The source is a
-             1024px still and 924 of it survives the crop, so drawn at 626 it has
-             1.5 device pixels per CSS pixel where a 2x screen wants 2 — where the
-             boards have a 2240px rung and do not care. There is nothing larger of
-             this in existence, and it is the right place for the cost to land: it
-             is a photograph of a sofa on a velodrome, with no ruled edges and no
-             small type, which is where softness would show. -->
-        <figure class="cs-figure" style="--ar: 1.5" data-reveal>
-          <img src="/assets/saddle-campaign-924.4322c82b.webp"
-               width="924" height="616"
-               alt="Joe Marler riding a green bike that tows a green velvet Chesterfield sofa on wheels around the boards of an empty velodrome, paced by four riders in British Cycling kit on track bikes. Lloyds branding runs along the trackside advertising, with more riders following behind the sofa."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">What the app was supporting: Joe Marler towing a sofa round a velodrome, paced by the GB squad. Most people met Sofa to Saddle here rather than in an app store, which is what made shipping quickly the better bet than shipping more.</span></figcaption>
-        </figure>
-      </section>
-
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">10<span class="cs-chapter__of"> / 10</span></span>
-          <span class="cs-chapter__beat">Outcome</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Live, and still just the beginning.</h2>
-          <p><strong>3,000 sign-ups on day one</strong>, and growing. Sofa to Saddle is live, in a fraction of the usual time, by the team I led. It counts towards <strong>1 million more people cycling by 2028</strong>.</p>
-          <p>That target is a share of something already moving. British Cycling counted 30 million people in the UK who cycled at least once in the past year, four million more than in 2022, and cycling here is reckoned to save the NHS £72.7 million. <strong>A million more riders is a public health number before it is a product one.</strong> Worth remembering, given the app is an eight-week plan and a set of badges.</p>
-          <p>The other thing that left with us: a designer can own the front end, and pull engineers in for the bits that need them. Elixirr pitches and staffs that way now. The badge and progress system is built to take whatever comes next.</p>
-        </div>
-        <!-- Four screens of the live product, under the outcome that says it
-             shipped. No caption: the chapter already says what is live, and the
-             strip is the exhibit rather than something that needs naming. See
-             SHEETS in build-saddle-figures.py. -->
-        <figure class="cs-figure" style="--ar: 1.7778" data-reveal>
-          <img src="/assets/saddle-screens-1120.33d40313.webp"
-               srcset="/assets/saddle-screens-1120.33d40313.webp 1120w,
-                       /assets/saddle-screens-1680.33d40313.webp 1680w,
-                       /assets/saddle-screens-2240.33d40313.webp 2240w"
-               sizes="(min-width: 908px) 626px, (min-width: 601px) 69vw, 92vw"
-               width="4320" height="2430"
-               alt="Four Sofa to Saddle app screens on a green ground. Find your starting level, with a Get started button and British Cycling and Lloyds logos beneath. Hear from our team, a quote from Mark Wright, Lead Sports Scientist, above a Real beginners, not experts story. Level 1, Your plan, with a Ride ready checklist and Video library, and Level 1 Getting started listed below. And a learning module step, 10 of 10, with two video lessons and a Mark completed button."
+          <img src="/assets/saddle-marks-1120.73228b6e.webp"
+               srcset="/assets/saddle-marks-1120.73228b6e.webp 1120w,
+                       /assets/saddle-marks-1680.73228b6e.webp 1680w,
+                       /assets/saddle-marks-2240.73228b6e.webp 2240w"
+               sizes="(min-width: 900px) 720px, 92vw"
+               width="5072" height="2516"
+               alt="Four badge screens. On the left, the direction from the brand agency: Your badges, drawn as abstract shapes. On the right, what that became: You&rsquo;re off, the Off the Sofa badge, and First ride done, the Wheels in Motion badge."
                loading="lazy" decoding="async">
         </figure>
       </section>
 
+        </div>
+      </section>
+
+      <section class="cs-story" id="front-end" aria-labelledby="front-end-h">
+        <p class="cs-path__no" data-reveal>03</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="front-end-h" data-reveal>Can a designer ship a production-quality front end?</h2>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <p>Alongside the development team, I ran a parallel build in Cursor to answer one question: could a designer produce a production-quality front end with AI, matching an experienced engineer on quality and security? Speed only mattered if the result could be trusted. So the rules came before the code, and an engineer reviewed the result independently.</p>
+          <p>AI-built front ends are usually treated as prototypes, quick to make and thrown away before production. My view was that this didn&rsquo;t have to be true. The gap between a design and the shipped app is where most experiences lose their quality. If a designer could build to an engineer&rsquo;s standard, that gap closes, and the experience can keep improving as it&rsquo;s built.</p>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Making trust the first thing I built.</h2>
+          <p>The risk with AI isn&rsquo;t speed. It&rsquo;s that it can be confidently inconsistent. So before any screen existed, I worked with one of the developers to write our engineering standard down, then made the tooling enforce it, so quality never depended on me remembering.</p>
+          <ul class="cs-chapter__points">
+            <li>26 rules in the repo before a line of app code, with the styling rules kept swappable so one command could repoint the whole standard.</li>
+            <li>Six hooks that blocked destructive commands, kept Figma read-only, and ran the type checker and tests the moment the AI stopped.</li>
+            <li>Three review agents checking the work as it went, including a security reviewer working to OWASP&rsquo;s mobile standard.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Building something engineers would want to inherit.</h2>
+          <p>A designer&rsquo;s build only has value if engineers would happily take it over. So I matched their world rather than inventing my own.</p>
+          <ul class="cs-chapter__points">
+            <li>The same React Native setup as the development team, so any of them could pick it up.</li>
+            <li>One small set of shared components, with every colour, type size and spacing value in a single file. A Figma change lands in one place, not forty.</li>
+            <li>Real sign-in on Firebase from day one, with the signed-in check at the app&rsquo;s entrance so no new screen could be left unprotected.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Usable before the backend existed.</h2>
+          <p>Usually, nobody can use the app until the backend lands, and by then changing the experience is expensive. Here, the whole journey could be used from day one.</p>
+          <ul class="cs-chapter__points">
+            <li>Sign-up, the quiz, eight levels of plan content, badges and their unlock rules, and the post-ride mood capture, all running on stand-in data.</li>
+            <li>Wired as three separate switches, so each area moved to real data as it arrived, with no single risky changeover.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">What being in the code made possible.</h2>
+          <p>Figma shows how an app should look. A running build shows how it behaves, and I could change it there. An engineer only came in where a change genuinely needed one.</p>
+          <ul class="cs-chapter__points">
+            <li>Layouts that broke on a smaller phone were reworked in the build, moving elements or adding a screen where the flow needed it.</li>
+            <li>Motion and the smaller interactions were tuned by using the app, not described in a handover.</li>
+            <li>Error and empty states were tried with real data, so problems showed up before QA.</li>
+            <li>Testing on real phones caught clipped type, an off-centre avatar initial, a misplaced heading and screens that redrew badly after a ride.</li>
+            <li>On iOS the display font clipped the tops of its capitals. It was fixed once in the shared components, then written into the rules so it couldn&rsquo;t come back.</li>
+          </ul>
+        </div>
+        <figure class="cs-figure" style="--ar: 1.6705" data-reveal>
+          <img src="/assets/saddle-cursor-1024.adbe2690.webp"
+               width="1024" height="613"
+               alt="The front end being built. On the left, the Expo server running Sofa to Saddle. In the centre, the iPhone simulator on the plan tab: no training plan yet, with Get started. On the right, Cursor, checking that screen against the linked Figma frame."
+               loading="lazy" decoding="async">
+        </figure>
+      </section>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Holding it to the same bar as engineering.</h2>
+          <p>Matching an engineer meant matching their scrutiny, not just their output.</p>
+          <ul class="cs-chapter__points">
+            <li>Every screen rebuilt against the Figma frames themselves, read from the file rather than measured off a screenshot.</li>
+            <li>A security review against OWASP&rsquo;s mobile standard found two issues worth fixing. A password-reset code was being passed in a web address, where it could be logged and reused. And a default setting could have quietly fallen back to stand-in data in the live app. Both were fixed before release.</li>
+            <li>Learning content moved into a content management system, so British Cycling can change the words without an app release.</li>
+          </ul>
+          <p>An independent engineer reviewed both front ends, and they came out equally solid on quality and security. The difference was that mine had been refined throughout, because the designer could iterate on it as it was built. The point was never to replace the development team. It was to show that design and engineering can run in parallel, with the designer owning the experience right through to the code.</p>
+        </div>
+      </section>
+
+        </div>
+      </section>
     </div>
-  </section>
+  </div>
 
-  <!-- Reflection is hers: under stacked constraints, rename success so the
-       team can actually hit it (analytics on levels are in the product, so the
-       old "launch is not proof" miss is out); and get a room comfortable with
-       AI by proving it is safe, via an engineer reading the code and writing a
-       report. Nothing claimed the chapters contradict. -->
-  <section class="cs-reflection cs-wrap" aria-labelledby="cs-reflection-h">
+  <section class="cs-impact" aria-label="The impact so far">
     <div class="cs-col">
-      <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Reflection</span>
-      <h2 class="cs-reflection__title" id="cs-reflection-h" data-reveal>What this one changed about how I work.</h2>
-      <div class="cs-reflection__body" data-reveal data-stagger>
-        <p>Two things I&rsquo;m taking forward.</p>
-        <p>When the constraints are this stacked, you have to say out loud what done actually is. Twelve weeks, two clients, two apps, a budget that would not take the original scope. Leave that picture standing and the team is already behind. So we named a smaller success: ship a coherent first version under the campaign, with analytics on the levels so we would know if people were progressing. Not more features. <strong>A definition the team could hit.</strong></p>
-        <p>The other one is the AI. People will not follow you into something they do not understand if the only argument is speed. They need to know it is safe. I brought an engineer in to check the code and write a report, so the claim had backing that was not mine. Rules in the repo before a line of app code. The same bar an engineer would hold. <strong>Comfort is evidence, not a demo.</strong></p>
-      </div>
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">The impact so far.</h2>
+          <p>Sofa to Saddle went live in twelve weeks, and it&rsquo;s already doing its job.</p>
+          <ul class="cs-points">
+            <li>
+              <p class="cs-points__title">3,000 riders on day one</p>
+              <p>Sign-ups landed on launch day, with strong early feedback. Every one counts towards British Cycling&rsquo;s goal of a million more people cycling by 2028.</p>
+            </li>
+            <li>
+              <p class="cs-points__title">A new way Elixirr delivers</p>
+              <p>I proved a designer can own the front end without the quality slipping. The two builds came out equally solid on quality and security, and Elixirr now pitches and staffs projects that way.</p>
+            </li>
+            <li>
+              <p class="cs-points__title">British Cycling asked for me back</p>
+              <p>On the strength of Sofa to Saddle and the relationships built along the way, British Cycling asked for me to lead the redesign of their clubs and events platform.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
     </div>
   </section>
 
@@ -2404,11 +2889,19 @@
 
   function openLb(img, src) {
     opener = document.activeElement;
+    // The product map's zoom copy is sized so its type can be read. The
+    // questions board fits its height instead, and scrolls sideways. Every
+    // other figure still fits the stage.
+    lb.classList.toggle('is-wide', /saddle-flow-read/.test(src));
+    lb.classList.toggle('is-strip', /saddle-questions-read/.test(src));
     lbImg.src = src;
     lbImg.alt = img.alt;
     lb.hidden = false;
     lbStage.scrollTop = 0;
     resetZoom();
+    // The first card sits in the middle of the board. Opening at the corner
+    // lands on empty ground, so the viewer starts on that card.
+    placeWide();
 
     // The scrollbar's width is given back as padding so that locking the page
     // does not shift everything under the overlay sideways by 15px.
@@ -2447,6 +2940,11 @@
     // resident for a viewer nobody is looking at.
     var finish = function() { lb.hidden = true; lbImg.removeAttribute('src'); };
     if (REDUCED) finish(); else setTimeout(finish, 340);
+    lb.classList.remove('is-wide');
+    lb.classList.remove('is-strip');
+    lbImg.style.width = '';
+    lbImg.style.height = '';
+    lbImg.style.maxWidth = '';
     if (opener && opener.focus) opener.focus();
     opener = null;
   }
@@ -2477,17 +2975,69 @@
   var pinch = null, last = null, moved = false, downOn = null;
   var vx = 0, vy = 0, glide = 0, lastTap = 0;
 
+  lbImg.addEventListener('load', function() {
+    if (lb.classList.contains('is-strip')) fitStrip();
+    else placeWide();
+  });
+
   function fitWidth() {
     var cs = getComputedStyle(lbStage);
     return lbStage.clientWidth
       - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
   }
 
+  function stripHeight() {
+    var cs = getComputedStyle(lbStage);
+    return lbStage.clientHeight
+      - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  }
+
+  // Height is the stage, and the width follows the picture, so the whole board
+  // is in view and the rest is off to the right. Measured twice because the
+  // sideways scrollbar only appears once the picture is wider than the stage,
+  // and it takes a few pixels of that height with it.
+  function fitStrip() {
+    if (!lb.classList.contains('is-strip') || !lbImg.naturalWidth) return;
+    lbImg.style.maxWidth = 'none';
+    lbImg.style.width = 'auto';
+    var h = stripHeight();
+    lbImg.style.height = h + 'px';
+    var h2 = stripHeight();
+    if (h2 > 0 && h2 !== h) lbImg.style.height = h2 + 'px';
+    lbStage.scrollLeft = 0;
+    lbStage.scrollTop = 0;
+  }
+
+  window.addEventListener('resize', function() {
+    if (lb.hidden || zoom !== 1 || !lb.classList.contains('is-strip')) return;
+    fitStrip();
+  });
+
+  function placeWide() {
+    if (!lb.classList.contains('is-wide') || !lbImg.offsetWidth) return;
+    var x = lbImg.offsetWidth * 0.52;
+    lbStage.scrollLeft = Math.max(0, Math.min(x, lbImg.offsetWidth - lbStage.clientWidth));
+    lbStage.scrollTop = 0;
+  }
+
+  function baseWidth() {
+    // The map opens already at the size its type can be read. Pinching scales
+    // that, rather than the stage, or the first pinch would shrink it. The
+    // questions board opens fitted to the stage's height, and pinches from there.
+    if (lb.classList.contains('is-strip') && lbImg.naturalHeight) {
+      return stripHeight() * (lbImg.naturalWidth / lbImg.naturalHeight);
+    }
+    if (lb.classList.contains('is-wide') && lbImg.naturalWidth) return lbImg.naturalWidth;
+    return fitWidth();
+  }
+
   function resetZoom() {
     zoom = 1;
     lbImg.style.width = '';
+    lbImg.style.height = '';
     lbImg.style.maxWidth = '';
     lbStage.scrollLeft = 0;
+    if (lb.classList.contains('is-strip')) fitStrip();
   }
 
   // mx/my is the point the gesture is centred on, and it is held still while the
@@ -2497,7 +3047,8 @@
   // computed, so the stage's padding and the centring of a picture narrower than
   // the stage are accounted for without being modelled.
   function setZoom(next, mx, my) {
-    next = Math.max(1, Math.min(MAXZ, next));
+    var cap = lb.classList.contains('is-wide') ? 2 : MAXZ;
+    next = Math.max(1, Math.min(cap, next));
     if (Math.abs(next - zoom) < 0.001) return;
 
     var r0 = lbImg.getBoundingClientRect();
@@ -2507,10 +3058,13 @@
     zoom = next;
     if (zoom === 1) {
       lbImg.style.width = '';
+      lbImg.style.height = '';
       lbImg.style.maxWidth = '';
+      if (lb.classList.contains('is-strip')) fitStrip();
     } else {
       lbImg.style.maxWidth = 'none';
-      lbImg.style.width = (fitWidth() * zoom) + 'px';
+      lbImg.style.width = (baseWidth() * zoom) + 'px';
+      if (lb.classList.contains('is-strip')) lbImg.style.height = (stripHeight() * zoom) + 'px';
     }
 
     var r1 = lbImg.getBoundingClientRect();
@@ -2617,11 +3171,121 @@
   // worth more than one rung — which is the same test that gives it a zoom copy.
   // The campaign photograph has a single rung at its own size, so it has no
   // srcset and is skipped, which is correct: there is nothing larger of it to
-  // open. The insight diptych carries a srcset now that its source is 5760.
+  // open. The insight diptych carries a srcset: its source is 5760.
+  // One label for the page. It is only drawn while the pointer is on a
+  // picture that opens, and it sits 20px below and to the right of the cursor.
+  // The follow is a spring: stiffness 500, damping 60, mass 1, which is
+  // overdamped, so it eases onto the cursor and does not bounce.
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    var peek = document.createElement('span');
+    peek.className = 'cs-peek';
+    peek.setAttribute('aria-hidden', 'true');
+    peek.textContent = 'Take a closer peek';
+    document.body.appendChild(peek);
+
+    var px = 0, py = 0, vx = 0, vy = 0, tx = 0, ty = 0;
+    var cursorX = 0, cursorY = 0, hasCursor = false;
+    var peekOn = false, peekRaf = 0, peekLast = 0, scrollQueued = false;
+    var w0 = Math.sqrt(500);
+    var zeta = 60 / (2 * w0);
+    var spread = w0 * Math.sqrt(zeta * zeta - 1);
+    var root1 = -w0 * zeta + spread;
+    var root2 = -w0 * zeta - spread;
+
+    function springAxis(pos, vel, target, dt) {
+      var offset = pos - target;
+      var a = (vel - root2 * offset) / (root1 - root2);
+      var b = offset - a;
+      var e1 = Math.exp(root1 * dt);
+      var e2 = Math.exp(root2 * dt);
+      return [target + a * e1 + b * e2, a * root1 * e1 + b * root2 * e2];
+    }
+
+    function placePeek() {
+      peek.style.transform = 'translate3d(' + px.toFixed(2) + 'px,' + py.toFixed(2) + 'px,0)';
+    }
+
+    function peekFrame(now) {
+      var dt = peekLast ? Math.min(0.064, (now - peekLast) / 1000) : 0.016;
+      peekLast = now;
+      if (REDUCED) {
+        px = tx; py = ty; vx = 0; vy = 0;
+      } else {
+        var nx = springAxis(px, vx, tx, dt);
+        var ny = springAxis(py, vy, ty, dt);
+        px = nx[0]; vx = nx[1];
+        py = ny[0]; vy = ny[1];
+      }
+      placePeek();
+      var resting = Math.abs(tx - px) < 0.2 && Math.abs(ty - py) < 0.2
+        && Math.abs(vx) < 0.2 && Math.abs(vy) < 0.2;
+      if (peekOn || !resting) peekRaf = requestAnimationFrame(peekFrame);
+      else { peekRaf = 0; peekLast = 0; }
+    }
+
+    function aimPeek(clientX, clientY, snap) {
+      var w = peek.offsetWidth;
+      var h = peek.offsetHeight;
+      var nx = clientX + 20;
+      var ny = clientY + 20;
+      var edge = 8;
+      if (w && nx + w > window.innerWidth - edge) nx = window.innerWidth - edge - w;
+      if (h && ny + h > window.innerHeight - edge) ny = window.innerHeight - edge - h;
+      if (nx < edge) nx = edge;
+      if (ny < edge) ny = edge;
+      tx = nx;
+      ty = ny;
+      if (snap || REDUCED) {
+        px = tx; py = ty; vx = 0; vy = 0;
+        placePeek();
+      }
+      if (!peekRaf) peekRaf = requestAnimationFrame(peekFrame);
+    }
+
+    function syncPeek() {
+      if (!hasCursor) return;
+      var el = document.elementFromPoint(cursorX, cursorY);
+      var hit = el && el.closest && el.closest('.cs-figure__open');
+      if (!hit) {
+        if (peekOn) { peekOn = false; peek.classList.remove('is-on'); }
+        return;
+      }
+      var arrive = !peekOn;
+      peekOn = true;
+      peek.classList.add('is-on');
+      aimPeek(cursorX, cursorY, arrive);
+    }
+
+    document.addEventListener('pointermove', function(e) {
+      if (e.pointerType && e.pointerType !== 'mouse') return;
+      cursorX = e.clientX;
+      cursorY = e.clientY;
+      hasCursor = true;
+      syncPeek();
+    });
+
+    // Scrolling moves the picture out from under a still cursor, and no
+    // pointermove fires, so the label would stay painted on the writing.
+    window.addEventListener('scroll', function() {
+      if (!hasCursor || scrollQueued) return;
+      scrollQueued = true;
+      requestAnimationFrame(function() {
+        scrollQueued = false;
+        syncPeek();
+      });
+    }, { passive: true });
+
+    document.documentElement.addEventListener('mouseleave', function() {
+      hasCursor = false;
+      peekOn = false;
+      peek.classList.remove('is-on');
+    });
+  }
+
   [].forEach.call(document.querySelectorAll('.cs-figure img[srcset]'), function(img) {
-    var src = zoomSrc(img.getAttribute('src'));
-    if (!src) return;
     var fig = img.closest('.cs-figure');
+    var src = (fig && fig.getAttribute('data-zoom')) || zoomSrc(img.getAttribute('src'));
+    if (!src) return;
     var figcap = fig && (fig.querySelector('.cs-figure__text')
                          || fig.querySelector('figcaption'));
     var caption = figcap ? figcap.textContent.trim() : '';
@@ -2834,6 +3498,9 @@
   }
 
   var started = false;
+  // Set by the arrival handler below; see there.
+  var via = false;
+  var heroTl = null;
   function start() {
     if (started) return;
     started = true;
@@ -2841,16 +3508,17 @@
     requestAnimationFrame(function() {
       requestAnimationFrame(function() {
         hero.classList.add('is-in');
-        if (!heroChars) return;
+        if (!heroChars || via) return;
         // The eyebrow is already on its way up on the CSS transition above, and
         // the letters start a beat into it, so the rule appears to be what
         // releases the sentence. Timings are the homepage's.
-        gsap.timeline({
+        heroTl = gsap.timeline({
           defaults: { ease: 'expo.out', force3D: true },
           onComplete: function() {
             // yPercent is cleared before the field takes over, because the
             // field drives y and GSAP would otherwise add the two together.
             gsap.set(heroChars, { yPercent: 0, y: 0 });
+            heroTl = null;
             cursorField(heroChars);
           }
         }).to(heroChars, {
@@ -2865,6 +3533,37 @@
   } else {
     start();
   }
+
+  // ---------- ARRIVING FROM THE HOMEPAGE ----------
+  // When the reader has come from a card on the homepage by view transition,
+  // the sentence, the tags and the picture have travelled here from that card
+  // and are in place the moment this page first paints. The letter-by-letter
+  // entrance would take the sentence away again and rebuild it, so it is
+  // stood down: the letters are set back to rest, the timeline is killed if
+  // the font has already released it, and the eyebrow, which did not travel,
+  // fades in once the transition has finished. The cursor field takes the
+  // letters from there.
+  //
+  // The reveal is caught in the head, because it can fire before this script
+  // runs; or it has not fired yet and is waited for here. Either order is
+  // paint-safe — pagereveal precedes the first paint, and this script runs
+  // before it or inside the same task.
+  var arrived = false;
+  function arrive(e) {
+    if (arrived || !e || !e.viewTransition) return;
+    arrived = true;
+    via = true;
+    document.documentElement.classList.add('cs-via');
+    if (heroTl) { heroTl.kill(); heroTl = null; }
+    if (heroChars) gsap.set(heroChars, { yPercent: 0, opacity: 1, y: 0 });
+    e.viewTransition.finished.then(function() {
+      if (!started) { started = true; splits.forEach(splitLines); }
+      requestAnimationFrame(function() { hero.classList.add('is-in'); });
+      if (heroChars) cursorField(heroChars);
+    });
+  }
+  if (window.__csReveal) arrive(window.__csReveal);
+  else if ('onpagereveal' in window) window.addEventListener('pagereveal', arrive, { once: true });
 
   // rootMargin's bottom is negative so a section starts its fade once it is
   // 12% of the way up the screen rather than the instant its first pixel
@@ -2924,6 +3623,24 @@
   // is doing the smoothing.
   gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
   gsap.ticker.lagSmoothing(0);
+
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest && e.target.closest('a[data-story-jump]');
+    if (!a) return;
+    var id = (a.getAttribute('href') || '').slice(1);
+    var el = document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    var clear = parseFloat(getComputedStyle(el).scrollMarginTop) || 188;
+    if (lenis && !REDUCED) lenis.scrollTo(el, { offset: -clear });
+    else window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - clear, behavior: REDUCED ? 'auto' : 'smooth' });
+    if (history.replaceState) history.replaceState(null, '', '#' + id);
+    var head = document.getElementById(id + '-h');
+    if (head) {
+      head.setAttribute('tabindex', '-1');
+      head.focus({ preventScroll: true });
+    }
+  });
 
   // The instance used to be handed out on window, because the build sequence had
   // to be able to move the page while it was pinned and a plain window.scrollTo
