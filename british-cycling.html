@@ -108,7 +108,9 @@
 
   .hp-eyebrow {
     display: block;
-    font-size: 12px;
+    /* 12px from about 545px of window up. Below that it comes down with the
+       viewport, so on a phone it is not the same size as on a desktop. */
+    font-size: clamp(8.5px, 2.2vw, 12px);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--ink-3);
@@ -117,11 +119,11 @@
   .hp-eyebrow--rule {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: clamp(8px, 2vw, 12px);
   }
   .hp-eyebrow--rule::before {
     content: '';
-    width: 28px;
+    width: clamp(16px, 4.2vw, 28px);
     height: 1px;
     background: rgba(255,255,255,0.3);
   }
@@ -302,19 +304,25 @@
   .cs-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin: clamp(40px, 5.2vh, 60px) 0 0;
+    /* 0.57em of the label is 8px when the label is 14px. The label follows
+       the homepage card: that card is the viewport minus the homepage gutter,
+       and the same curve is capped at 14px, so a desktop pill stays this
+       page's box and a phone pill is the one on the card. */
+    gap: 0.57em;
+    margin: clamp(48px, 6.4vh, 72px) 0 0;
     padding: 0;
     list-style: none;
+    font-size: clamp(8.2px, calc(4.21px + 1.376 * (100vw - 2 * clamp(28px, 6vw, 110px)) / 100), 14px);
   }
   .cs-tags li {
     display: inline-flex;
     align-items: center;
-    padding: 10px 14px;
-    border: 1px solid var(--rule);
+    /* 0.5em / 1em is 7px / 14px at the 14px ceiling. */
+    padding: 0.5em 1em;
+    border: 0.5px solid rgba(255,255,255,0.22);
     border-radius: 999px;
     color: var(--ink-1);
-    font-size: 14px;
+    font-size: 1em;
     font-weight: 500;
     line-height: 1.2;
     letter-spacing: -0.01em;
@@ -433,6 +441,211 @@
     object-fit: cover;
     object-position: center bottom;
   }
+  /* ---------- NEXT ----------
+     The study after this one, as a card on the white close under the impact
+     section. The picture is the owner's own export for this slot — the
+     card's black, its rounded corners and the screen on the right are all
+     in the file — and the copy is laid over the empty left of it. The card
+     is a size container so the type, the inset and the corner scale with
+     the card and hold the composition at every width.
+
+     As wide as the reading column, so it shares its edges with the impact
+     section above. The ink is pinned: once the page has turned light the
+     tokens are the white page's and the card has not turned with them. */
+  .cs-next {
+    display: block;
+    width: min(var(--measure), calc(100% - 2 * var(--pad-x)));
+    margin: var(--section) auto 0;
+    container-type: inline-size;
+    color: #ffffff;
+    text-decoration: none;
+    transition: transform 0.55s cubic-bezier(0.32,0.72,0,1);
+  }
+  /* The impact section's own bottom padding is the gap above every other
+     close. The card wants more than that: the writing should be gone before
+     the next study arrives. */
+  .cs-impact:has(+ .cs-next) {
+    margin-top: clamp(200px, 28vh, 320px);
+    padding-top: 0;
+    padding-bottom: clamp(200px, 28vh, 320px);
+  }
+  .cs-impact + .cs-next { margin: 0 auto clamp(72px, 11vh, 128px); }
+  @media (hover: hover) {
+    .cs-next:hover { transform: translateY(-6px); }
+    .cs-next:active { transform: translateY(-4px); transition-duration: 0.18s; }
+  }
+  .cs-next:focus-visible { outline: none; }
+  .cs-next:focus-visible .cs-next__card {
+    outline: 2px solid #0a0a0c;
+    outline-offset: 4px;
+  }
+  .cs-next__card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    /* The export's own corner: 342px on a 10902px frame. */
+    border-radius: 3.14cqw;
+    background: #0a0a0b;
+  }
+  /* On the studies that close in black rather than on the white sheet, the
+     card's black is the page's black, and a hairline is what keeps it a card. */
+  .cs-next__card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+    pointer-events: none;
+  }
+  .cs-impact + .cs-next .cs-next__card::after { content: none; }
+  .cs-next__art { display: block; }
+  .cs-next__art img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  /* Where the comp sets it: 6.4% in, the kicker a fifth of the way down,
+     the sentence in the left 40%. */
+  .cs-next__copy {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    top: 19%;
+    left: 6.4%;
+    width: 40%;
+  }
+  .cs-next__kicker {
+    display: block;
+    font-family: var(--ff-display);
+    font-size: max(13px, 1.5cqw);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+  }
+  .cs-next__line {
+    display: block;
+    margin-top: 2.6cqw;
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: max(18px, 2.45cqw);
+    line-height: 1.16;
+    letter-spacing: -0.026em;
+    color: #ffffff;
+    text-wrap: pretty;
+  }
+  .cs-next__line strong { color: #ffffff; font-weight: 600; }
+  .cs-next__lockup { white-space: nowrap; }
+  /* Keep the desktop composition through small tablets. Its text area opens
+     slightly and the type scales with the card here, so the sentence still
+     clears the artwork before the dedicated phone composition takes over. */
+  @media (min-width: 431px) and (max-width: 700px) {
+    .cs-next__copy { width: 48%; }
+    .cs-next__kicker { font-size: clamp(11px, 2cqw, 13px); }
+    .cs-next__line {
+      font-size: clamp(13px, 3cqw, 18px);
+      line-height: 1.16;
+      text-wrap: pretty;
+    }
+  }
+  /* Bridge the 22px phone gutter into the page’s fluid gutter without a
+     one-pixel breakpoint where the card gets narrower as the viewport grows.
+     This equals calc(100% - 44px) at 430/431px and the normal 12vw gutter
+     at 700px, so both ends meet without a jump. */
+  @media (min-width: 431px) and (max-width: 700px) {
+    .cs-next { width: min(var(--measure), calc(85.185vw + 19.704px)); }
+  }
+  /* Mobile has its own tall artwork: the same composition as the desktop
+     card, redrawn for the narrow frame. The copy stays over the clear top of
+     that artwork, at the inset and scale of the owner's reference. */
+  @media (max-width: 430px) {
+    .cs-next { width: calc(100% - 44px); }
+    .cs-next__card {
+      display: block;
+      aspect-ratio: 5979 / 7923;
+      border-radius: 18px;
+    }
+    .cs-next__art {
+      position: absolute;
+      inset: 0;
+    }
+    .cs-next__art picture {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .cs-next__copy {
+      position: absolute;
+      top: 9.4%;
+      left: 11.7%;
+      width: 76.6%;
+      padding: 0;
+    }
+    .cs-next__kicker { font-size: 12px; }
+    .cs-next__line {
+      margin-top: 17px;
+      font-size: clamp(16px, 4.4vw, 18px);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      text-wrap: pretty;
+    }
+    .cs-next__art img {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cs-next,
+    .cs-next:hover,
+    .cs-next:active { transform: none; transition: none; }
+  }
+
+  /* ---------- POINTER ----------
+     The homepage's, and only while the pointer is on this band. A fine
+     pointer grows from a small white dot into a white circle with a black
+     arrow — the same object a card on the homepage grows into. The rest of
+     the study keeps the browser's cursor. Coarse pointers never get it.
+     Position stays 1:1. Only the size eases, 480ms of sine ease-in-out,
+     the same travel as the homepage. */
+  .hp-cursor {
+    --cursor-size: 68px;
+    position: fixed;
+    z-index: 1000001;
+    top: 0;
+    left: 0;
+    width: var(--cursor-size);
+    height: var(--cursor-size);
+    margin-top: calc(var(--cursor-size) / -2);
+    margin-left: calc(var(--cursor-size) / -2);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+    pointer-events: none;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    will-change: transform;
+  }
+  .hp-cursor.is-on { opacity: 1; }
+  .hp-cursor__arrow {
+    width: 32px;
+    height: 32px;
+    display: block;
+    opacity: 0;
+  }
+  @media (pointer: fine) {
+    html.hp-cursor-live,
+    html.hp-cursor-live * {
+      cursor: none !important;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hp-cursor,
+    .hp-cursor__arrow { transition: none; }
+  }
+
   /* ---------- FOOTER ----------
      The case study footer exactly: the contact card, then the base row with the
      pair of controls. It is below the fold on a page one screen tall, which is
@@ -440,12 +653,26 @@
      is someone looking for a way to ask about it. */
   .hp-footer {
     --foot-x: var(--pad-x);
+    /* The contact close is always black, including after a study has turned
+       white for its impact section. Pin every inherited colour here. */
+    --bg: #0a0a0c;
+    --ink: #ffffff;
+    --ink-1: rgba(255,255,255,0.74);
+    --ink-2: rgba(255,255,255,0.52);
+    --ink-3: rgba(255,255,255,0.40);
+    --rule: rgba(255,255,255,0.10);
+    --rule-2: rgba(255,255,255,0.30);
+    --wash: rgba(255,255,255,0.04);
+    --cta-bg: #ffffff;
+    --cta-ink: #0a0a0c;
     padding: clamp(64px, 10vh, 130px) var(--foot-x) clamp(32px, 4vh, 52px);
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: var(--bg);
+    background: #0a0a0c;
+    box-shadow: 0 0 0 100vmax #0a0a0c;
+    clip-path: inset(0 -100vmax);
     max-width: var(--shell);
     margin-left: auto;
     margin-right: auto;
@@ -689,6 +916,49 @@
     .hp-footer__back:hover .hp-footer__cta-arrow,
     .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
   }
+  /* ---------- ARRIVING FROM THE HOMEPAGE ----------
+     Cross-document view transition, opted into on both sides, so a card on
+     the homepage cross-fades into this page rather than cutting to it. The
+     nav pill is named and holds still. Nothing else here is named: on the
+     full case studies the card's sentence, chips and artwork travel into the
+     hero, but this page's tags rise in from hidden on arrival and a hidden
+     element is nothing to travel to.
+
+     The pseudo-elements are styled by the page being arrived at, which is
+     this one. Reduced motion opts out: a page that changes in one frame is
+     the right answer there. Browsers without the feature navigate as they
+     always did. */
+  @view-transition { navigation: auto; }
+  .hp-nav { view-transition-name: hp-nav; }
+
+  ::view-transition-group(*) {
+    animation-duration: 0.62s;
+    animation-timing-function: cubic-bezier(0.32,0.72,0,1);
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 0.5s;
+    animation-timing-function: cubic-bezier(0.32,0.72,0,1);
+  }
+  /* Up next uses the same restrained dissolve as the complete case studies.
+     The nav remains named, so it holds perfectly still above the change. */
+  @keyframes cs-vt-next-out {
+    to { opacity: 0; transform: scale(0.985); }
+  }
+  @keyframes cs-vt-next-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  html.cs-via-next::view-transition-old(root) {
+    transform-origin: 50% 50%;
+    animation: cs-vt-next-out 0.38s ease-out both;
+  }
+  html.cs-via-next::view-transition-new(root) {
+    animation: cs-vt-next-in 0.52s cubic-bezier(0.32,0.72,0,1) 0.12s both;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    @view-transition { navigation: none; }
+  }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -698,6 +968,20 @@
      The longer note, including why the window.va shim from Vercel's snippet is not
      here, is in index.html. -->
 <script defer src="/_vercel/insights/script.js"></script>
+<script>
+  try {
+    if (sessionStorage.getItem('cs-next-transition') === '1') {
+      document.documentElement.classList.add('cs-via-next');
+      sessionStorage.removeItem('cs-next-transition');
+    }
+  } catch (_) {}
+  window.addEventListener('pagereveal', function(e) {
+    if (!e.viewTransition) return;
+    e.viewTransition.finished.then(function() {
+      document.documentElement.classList.remove('cs-via-next');
+    });
+  }, { once: true });
+</script>
 </head>
 <body>
 
@@ -861,6 +1145,7 @@
         </li>
     </ul>
   </div>
+
 </main>
 
 <footer class="hp-footer">
@@ -903,6 +1188,164 @@
   // Armed here rather than in the stylesheet so the hidden state cannot outlive
   // the thing that clears it: with scripting off nothing is ever hidden.
   document.documentElement.classList.add('cs-anim');
+})();
+</script>
+
+<script>
+/* Mark this navigation as the restrained Up next dissolve. */
+(function() {
+  var next = document.querySelector('.cs-next');
+  if (!next) return;
+  next.addEventListener('click', function(e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    try { sessionStorage.setItem('cs-next-transition', '1'); } catch (_) {}
+    document.documentElement.classList.add('cs-nexting');
+  });
+  window.addEventListener('pageshow', function() {
+    document.documentElement.classList.remove('cs-nexting');
+  });
+})();
+</script>
+
+<script>
+/* The homepage's pointer, scoped to the next-study band. See .hp-cursor. */
+(function() {
+  var fine = window.matchMedia('(pointer: fine)');
+  var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var node = null;
+  var arrow = null;
+  var x = 0;
+  var y = 0;
+  var shown = false;
+  var raf = 0;
+  var running = false;
+  var minScale = 8 / 68;
+  var scale = minScale;
+  var target = minScale;
+  var TRAVEL = 480;
+  var fromScale = minScale;
+  var toScale = minScale;
+  var started = 0;
+  var dur = 0;
+
+  function easeInOut(t) {
+    return (1 - Math.cos(Math.PI * t)) / 2;
+  }
+  function paint() {
+    if (!node) return;
+    node.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) scale(' + scale + ')';
+    if (!arrow) return;
+    var p = (scale - minScale) / (1 - minScale);
+    if (p < 0) p = 0;
+    else if (p > 1) p = 1;
+    var a = (p - 0.62) / 0.38;
+    if (a < 0) a = 0;
+    else if (a > 1) a = 1;
+    arrow.style.opacity = String(a);
+    if (!shown && scale <= minScale + 0.001 && target === minScale) {
+      node.classList.remove('is-on');
+      document.documentElement.classList.remove('hp-cursor-live');
+    }
+  }
+  function step(now) {
+    var t = dur > 0 ? (now - started) / dur : 1;
+    if (t >= 1) {
+      scale = toScale;
+      running = false;
+      paint();
+      return;
+    }
+    if (t < 0) t = 0;
+    scale = fromScale + (toScale - fromScale) * easeInOut(t);
+    paint();
+    raf = requestAnimationFrame(step);
+  }
+  function kick() {
+    if (motion.matches) {
+      scale = target;
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      paint();
+      return;
+    }
+    fromScale = scale;
+    toScale = target;
+    var dist = Math.abs(toScale - fromScale);
+    dur = dist < 0.0008 ? 0 : TRAVEL * (dist / (1 - minScale));
+    started = performance.now();
+    if (dur <= 0) {
+      scale = target;
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      paint();
+      return;
+    }
+    if (running) return;
+    running = true;
+    raf = requestAnimationFrame(step);
+  }
+  function setTarget(next) {
+    if (next === target) return;
+    target = next;
+    kick();
+  }
+  function overBand(el) {
+    return !!(el && el.closest && el.closest('.cs-next'));
+  }
+  function mount() {
+    if (node || !fine.matches) return;
+    node = document.createElement('div');
+    node.className = 'hp-cursor';
+    node.setAttribute('aria-hidden', 'true');
+    node.innerHTML = '<svg class="hp-cursor__arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="#000" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    arrow = node.firstChild;
+    document.body.appendChild(node);
+    scale = minScale;
+    target = minScale;
+    paint();
+    window.addEventListener('pointermove', onMove, true);
+    document.documentElement.addEventListener('pointerleave', onLeave);
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+  function place(clientX, clientY, el) {
+    x = clientX;
+    y = clientY;
+    var on = overBand(el);
+    if (on && !shown) {
+      shown = true;
+      node.classList.add('is-on');
+      document.documentElement.classList.add('hp-cursor-live');
+      scale = minScale;
+    }
+    if (!on) shown = false;
+    setTarget(on ? 1 : minScale);
+    paint();
+  }
+  function onMove(e) {
+    if (!node) return;
+    if (e.pointerType && e.pointerType !== 'mouse') {
+      onLeave();
+      return;
+    }
+    place(e.clientX, e.clientY, e.target);
+  }
+  function onLeave() {
+    shown = false;
+    setTarget(minScale);
+    paint();
+  }
+  function onScroll() {
+    if (!node || !shown) return;
+    setTarget(overBand(document.elementFromPoint(x, y)) ? 1 : minScale);
+    if (!overBand(document.elementFromPoint(x, y))) shown = false;
+  }
+  function sync() {
+    if (fine.matches) mount();
+  }
+  if (fine.addEventListener) fine.addEventListener('change', sync);
+  sync();
 })();
 </script>
 

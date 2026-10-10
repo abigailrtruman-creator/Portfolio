@@ -78,16 +78,93 @@
     inherits: true;
     initial-value: 0px;
   }
+  /* ---------- THE PAGE TURNS LIGHT AT THE CLOSE ----------
+     The Boots study's close, carried over whole: reading, the page is black;
+     as the impact section comes up the window only the ground turns white.
+     The outgoing white writing keeps its colour and dissolves into that ground,
+     while the close is already black and emerges from it. This is the mechanic
+     on Dilara Cumhur's homepage: one surface changing underneath two fixed ink
+     colours rather than the whole page inverting. The contact footer remains
+     pinned to black.
+
+     Every surface that can be on screen at the turn, or after it, is a token
+     and not a colour: the nav pill, the eyebrow dash, the bullet marks, the
+     footer buttons. The pill's light surface is its own pair of values
+     because it is glass over the page and not part of it. The figures on this
+     page are flattened onto the dark page colour by build-saddle-figures.py;
+     the only one near the turn is the Cursor photograph, which is edge-to-edge
+     picture and has no black to show. If the trigger ever moves earlier, the
+     figures above it would need re-exporting with alpha, as Boots' last one
+     was. See boots-checkout.html for the full account; the trigger is in the
+     script, next to the nav. */
+  @property --bg       { syntax: "<color>"; inherits: true; initial-value: #0a0a0c; }
+  @property --ink      { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+  @property --ink-1    { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.74); }
+  @property --ink-2    { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.52); }
+  @property --ink-3    { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.40); }
+  @property --rule     { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.10); }
+  @property --rule-2   { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.30); }
+  @property --mark     { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.42); }
+  @property --wash     { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.04); }
+  @property --nav-bg   { syntax: "<color>"; inherits: true; initial-value: rgba(18,18,22,0.55); }
+  @property --nav-line { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.09); }
+  @property --nav-ink  { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+  @property --nav-dim  { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.55); }
+  @property --nav-wash { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.06); }
+  @property --cta-bg   { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+  @property --cta-ink  { syntax: "<color>"; inherits: true; initial-value: #0a0a0c; }
+  @property --nav-hi   { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.07); }
+  @property --nav-sh-1 { syntax: "<color>"; inherits: true; initial-value: rgba(0,0,0,0.55); }
+  @property --nav-sh-2 { syntax: "<color>"; inherits: true; initial-value: rgba(0,0,0,0.28); }
+  @property --turn     { syntax: "<number>"; inherits: true; initial-value: 0; }
+  @property --ink-turn { syntax: "<number>"; inherits: true; initial-value: 0; }
+  html.is-light { --turn: 1; }
   :root {
     --ff-display: 'Manrope', 'Inter', -apple-system, sans-serif;
     --ff-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
-    --bg: #0a0a0c;
-    --ink: #ffffff;
-    --ink-1: rgba(255,255,255,0.74);
-    --ink-2: rgba(255,255,255,0.52);
-    --ink-3: rgba(255,255,255,0.40);
-    --rule: rgba(255,255,255,0.10);
+    /* 0 on the black page, 1 once the close has settled; the script writes
+       both from the impact section's position. Each token is `light by the
+       turn, over dark`. The light values are the Boots page's exactly: the
+       greys are the dark ones mirrored and then pushed a good step stronger,
+       because a 40% black on white is fainter to the eye than a 40% white on
+       black, and the footer's small type and its two hairlines were the first
+       things to go missing on white.
+
+       Ink does not animate with the ground. The reading page inherits zero,
+       while the impact close pins this to one. The old white writing therefore
+       fades into the arriving white and the new black writing appears from it. */
+    --turn: 0;
+    --ink-turn: 0;
+    --bg:    color-mix(in srgb, #ffffff calc(var(--turn) * 100%), #0a0a0c);
+    --ink:   color-mix(in srgb, #0a0a0c calc(var(--ink-turn) * 100%), #ffffff);
+    --ink-1: color-mix(in srgb, rgba(10,10,12,0.78) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.74));
+    --ink-2: color-mix(in srgb, rgba(10,10,12,0.66) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.52));
+    --ink-3: color-mix(in srgb, rgba(10,10,12,0.58) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.40));
+    --rule:  color-mix(in srgb, rgba(10,10,12,0.16) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.10));
+    /* The short dash before an eyebrow. */
+    --rule-2: color-mix(in srgb, rgba(10,10,12,0.44) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.30));
+    /* The dot before a bullet point. */
+    --mark:  color-mix(in srgb, rgba(10,10,12,0.50) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.42));
+    /* Everything except the ground holds its colour through the handoff.
+       The impact section supplies its own light-page wash below. */
+    --wash: rgba(255,255,255,0.04);
+    /* Like the reference's fixed white pill, this page's dark glass nav keeps
+       one appearance while the surface beneath it changes. */
+    --nav-bg: rgba(18,18,22,0.55);
+    --nav-line: rgba(255,255,255,0.09);
+    --nav-ink: #ffffff;
+    --nav-dim: rgba(255,255,255,0.55);
+    --nav-wash: rgba(255,255,255,0.06);
+    --nav-hi: rgba(255,255,255,0.07);
+    --nav-sh-1: rgba(0,0,0,0.55);
+    --nav-sh-2: rgba(0,0,0,0.28);
+    --cta-bg:  color-mix(in srgb, #0a0a0c calc(var(--ink-turn) * 100%), #ffffff);
+    --cta-ink: color-mix(in srgb, #ffffff calc(var(--ink-turn) * 100%), #0a0a0c);
+
+    /* Half a second, with the same property and curve as Dilara Cumhur's
+       homepage: the background changes and the ink on either side stays put. */
+    transition: --turn 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
     /* Her homepage card colour for this project, tinting the glow under the
        hero so each case study carries its own colour rather than the same grey
@@ -184,7 +261,9 @@
        Below a 692px window the column is narrower than this and takes over. */
     --fig-w: 62ch;
   }
-
+  @media (prefers-reduced-motion: reduce) {
+    :root { transition: none; }
+  }
   html {
     background: var(--bg);
     scroll-padding-top: var(--nav-clear);
@@ -207,8 +286,8 @@
     top: 0;
     z-index: 200;
     padding: 14px 20px;
-    background: #fff;
-    color: #0a0a0c;
+    background: var(--cta-bg);
+    color: var(--cta-ink);
     border-radius: 0 0 12px 0;
     font-size: 15px;
     font-weight: 500;
@@ -219,7 +298,9 @@
   /* ---------- Shared primitives (homepage) ---------- */
   .hp-eyebrow {
     display: block;
-    font-size: 12px;
+    /* 12px from about 545px of window up. Below that it comes down with the
+       viewport, so on a phone it is not the same size as on a desktop. */
+    font-size: clamp(8.5px, 2.2vw, 12px);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--ink-3);
@@ -228,13 +309,13 @@
   .hp-eyebrow--rule {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: clamp(8px, 2vw, 12px);
   }
   .hp-eyebrow--rule::before {
     content: '';
-    width: 28px;
+    width: clamp(16px, 4.2vw, 28px);
     height: 1px;
-    background: rgba(255,255,255,0.3);
+    background: var(--rule-2);
   }
 
   /* ---------- NAV (floating pill, from the homepage) ----------
@@ -257,16 +338,26 @@
        radius is half the height and the avatar is concentric with it only when
        the two paddings match. */
     padding: 15px 11px 15px 15px;
-    background: rgba(18,18,22,0.55);
-    border: 1px solid rgba(255,255,255,0.09);
+    background: var(--nav-bg);
+    border: 1px solid var(--nav-line);
     border-radius: 999px;
     backdrop-filter: blur(28px) saturate(1.6);
     -webkit-backdrop-filter: blur(28px) saturate(1.6);
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.07),
-      0 32px 80px -16px rgba(0,0,0,0.55),
-      0 6px 24px rgba(0,0,0,0.28);
+      inset 0 1px 0 var(--nav-hi),
+      0 32px 80px -16px var(--nav-sh-1),
+      0 6px 24px var(--nav-sh-2);
     transform: translateX(-50%);
+    /* Out of the way while the reader is scrolling down, back the moment they
+       scroll up or bring the pointer to the top edge — the homepage's
+       behaviour, with the same timing, see initNavHide. */
+    transition: opacity 0.45s cubic-bezier(0.32,0.72,0,1),
+                transform 0.45s cubic-bezier(0.32,0.72,0,1);
+  }
+  .hp-nav.is-hidden {
+    opacity: 0;
+    transform: translate(-50%, -28px);
+    pointer-events: none;
   }
   .hp-nav__brand {
     display: flex;
@@ -276,7 +367,7 @@
        one value: the name's side is this padding, the label's side is the pill's
        gap plus the link's own left padding, 24 + 18 here. */
     padding-right: 42px;
-    border-right: 1px solid rgba(255,255,255,0.09);
+    border-right: 1px solid var(--nav-line);
     text-decoration: none;
     /* The brand is an <a> here and a plain div on the homepage, so without this
        it computes to the browser's default link blue. */
@@ -287,7 +378,7 @@
     height: 46px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid rgba(255,255,255,0.16);
+    border: 1px solid var(--nav-line);
     display: block;
   }
   .hp-nav__name {
@@ -295,7 +386,7 @@
     font-weight: 500;
     letter-spacing: -0.015em;
     line-height: 1.2;
-    color: #fff;
+    color: var(--nav-ink);
     white-space: nowrap;
   }
 
@@ -314,7 +405,7 @@
     font-size: 15px;
     font-weight: 500;
     letter-spacing: -0.005em;
-    color: #fff;
+    color: var(--nav-ink);
     text-decoration: none;
     white-space: nowrap;
     border-radius: 999px;
@@ -322,20 +413,20 @@
     touch-action: manipulation;
     transition: background 100ms ease-out, color 100ms ease-out, transform 100ms ease-out;
   }
-  .hp-nav__link:hover { background: rgba(255,255,255,0.06); }
+  .hp-nav__link:hover { background: var(--nav-wash); }
   .hp-nav__link:active,
   .hp-nav__link.is-pressed {
-    background: rgba(255,255,255,0.10);
+    background: var(--nav-line);
     transform: scale(0.97);
   }
   .hp-nav__arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255,255,255,0.55);
+    color: var(--nav-dim);
     transition: color 100ms ease-out, transform 100ms ease-out;
   }
-  .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
+  .hp-nav__link:hover .hp-nav__arrow { color: var(--nav-ink); transform: translate(3px, -3px); }
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
 
   /* ---------- Page shell ---------- */
@@ -396,10 +487,38 @@
     padding-top: clamp(148px, 15vh, 168px);
     padding-bottom: clamp(24px, 3vh, 44px);
   }
+  /* The chapters' grid, at the owner's request: a rail for the number and
+     the writing beside it. The hero has no number, but the eyebrow, the
+     sentence and the pills sit in the writing column anyway, so the page
+     has one left edge for its words from top to bottom and the hero's text
+     is a step in from the film rather than flush with it. The same columns
+     and gap as .cs-chapter and .cs-story, so the edges agree to the pixel;
+     the film spans both columns. The grid collapses where the chapters'
+     does — see the 600px band. */
   .cs-hero > .cs-col {
+    display: grid;
+    grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
+    column-gap: clamp(28px, 4.5vw, 88px);
+    align-items: start;
+    /* Stated, because the hero is a flex column and this child centres with
+       auto margins, which in a flex column also sizes it to its contents —
+       and a container's contents (see below) have no size to offer. The
+       max-width above still caps it. */
+    width: 100%;
+  }
+  .cs-hero__text {
+    grid-column: 1 / -1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
+    /* A container, so the sentence can size itself to the column it has —
+       see .cs-hero__statement's font-size. */
+    container-type: inline-size;
   }
+  /* The hero spans the rail as well, so the eyebrow, sentence, pills and
+     picture start on the overview's edge. The stories keep the rail for
+     their numbers. */
+  .cs-hero .cs-figure { grid-column: 1 / -1; }
 
   /* The page's heading, and what the project was rather than what it was called
      — the eyebrow above it already reads "Case study · British Cycling app".
@@ -435,17 +554,60 @@
      which is where 5.4vh drops under the 38px ceiling, so on any ordinary laptop
      this is 38px and three lines. */
   .cs-hero__statement {
-    margin: clamp(18px, 2.6vh, 30px) 0 0;
-    max-width: min(930px, 100%);
+    /* Close under the eyebrow, which is this heading's label; the pills get
+       more below. Same numbers on every case page. */
+    margin: clamp(22px, min(3.2vh, 3vw), 32px) 0 0;
+    /* The measure that gives the sentence its shape — three lines, each a
+       little shorter than the one above:
+
+         Creating British Cycling x Lloyds’ habit-forming
+         cycling app, launched at pace by
+         embracing AI throughout.
+
+       "habit-forming" is held whole (see .cs-hero__lockup): split into one
+       box per word for the entrance, the heading cannot break at the hyphen,
+       and on arrival from the homepage it is set plain and could, so the
+       word is pinned at both ends and on the card. The closing phrase is a
+       block of its own (.cs-hero__tail): "at pace" is short enough that
+       "embracing" would otherwise fit on the second line and leave
+       "throughout." alone, and the card breaks before "embracing".
+
+       In em so the breaks are the same at every size. The homepage cards
+       share one cap of their own, so this measure is the page's. Greedy
+       wrapping, not balance: balance evens the lines out, which is the
+       opposite of a taper. 100% is the floor for a column narrower than
+       this. */
+    max-width: min(21.4em, 100%);
     font-family: var(--ff-display);
     font-weight: 500;
-    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh), 38px);
+    /* The last term keeps the measure above inside the writing column: 21.4em
+       at this size must not exceed the column (100cqi, from .cs-hero__text),
+       so where the column is narrower than the sentence wants, the type comes
+       down until it fits rather than the lines re-wrapping. That is what
+       keeps the breaks the card's at every width the grid is in play — the
+       column lost a rail's worth to the indent, and this is the longest
+       sentence in the set, so it binds from about 1100px of window down. The
+       24px floor still wins on a phone, where the grid has collapsed. */
+    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh, 100cqi / 21.4), 38px);
     line-height: 1.14;
     letter-spacing: -0.028em;
     color: var(--ink);
-    text-wrap: balance;
+    text-wrap: wrap;
   }
-  .cs-hero__statement strong { color: var(--ink); font-weight: 500; }
+  /* 600 on the lifted phrase, as the homepage card has it: the two snapshots
+     the transition blends have to be the same glyphs at the same weight. */
+  .cs-hero__statement strong { color: var(--ink); font-weight: 600; }
+  /* As wide as its pills and no wider, as the card's row is. The transition
+     snapshots the element's box, and a row stretched to the column here and
+     shrunk to its pills there is two boxes of different proportions holding
+     the same pills. The gap under the heading is the card's, for the same
+     reason. */
+  .cs-hero .cs-tags {
+    /* About one and a half times the eyebrow's distance above the heading,
+       so the stack steps — label close, footnote further, picture furthest. */
+    margin-top: clamp(24px, min(5vh, 4.2vw), 48px);
+    align-self: flex-start;
+  }
   /* The two clients are one lockup, and the "x" holding them together is a
      single character. Left free to break at both of its spaces it ends a line at
      every width from a phone up to about 560px. A non-breaking space cannot do
@@ -455,6 +617,12 @@
      after "Cycling" on the narrowest screens. */
   .cs-hero__lockup { white-space: nowrap; }
   .cs-hero__statement-inner { display: block; }
+  /* See the measure above. Only while that measure is what sets the lines —
+     on a phone the 24px floor rewraps the sentence, and a forced break
+     there would add one. */
+  @media (min-width: 601px) {
+    .cs-hero__tail { display: block; }
+  }
   /* The pieces the splitter leaves behind. Words stay whole so the sentence
      still breaks at spaces; letters are the things that move. */
   .cs-hero__word { display: inline-block; white-space: nowrap; }
@@ -506,42 +674,34 @@
       var(--glow-tint) 0%, transparent 68%);
   }
 
-  /* The homepage card's chip, in this page's ink. The card sets the label
-     from its own width (--sp-tag), and the one you are looking at is at
-     scale 1, so this follows that curve rather than the resting 0.85. From
-     the phone band up to where the card hits its 1120px cap, the card is 88vw
-     (the page minus 6vw of gutter each side), which is 8.6px + 0.5016vw, and
-     the 15px cap is the same cap the card hits. Padding and gap are the
-     card's own ratios. The stroke is not: on the open page a 1px line at 55%
-     reads as a hard outline, so this one is a half-pixel hairline.
-
-     The row sits further under the heading than the heading sits under the
-     eyebrow, and the photograph sits further down again. Same two gaps on
-     every case study. */
+  /* One pill, the same size on every case study. It sits further under the
+     heading than the heading sits under the eyebrow, so the three read as
+     label, then sentence, then a row of their own. */
   .cs-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75em;
+    /* 0.57em of the label is 8px when the label is 14px. The label follows
+       the homepage card: that card is the viewport minus the homepage gutter,
+       and the same curve is capped at 14px, so a desktop pill stays this
+       page's box and a phone pill is the one on the card. */
+    gap: 0.57em;
     margin: clamp(48px, 6.4vh, 72px) 0 0;
     padding: 0;
     list-style: none;
-    font-size: clamp(10px, calc(8.6px + 0.5016vw), 15px);
+    font-size: clamp(8.2px, calc(4.21px + 1.376 * (100vw - 2 * clamp(28px, 6vw, 110px)) / 100), 14px);
   }
   .cs-tags li {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    padding: 0.42em 1.15em;
-    border: 0.5px solid rgb(255 255 255 / 0.42);
-    border-radius: 99999px;
-    background: transparent;
-    color: var(--ink);
-    font-family: var(--ff-body);
+    /* 0.5em / 1em is 7px / 14px at the 14px ceiling. */
+    padding: 0.5em 1em;
+    border: 0.5px solid rgba(255,255,255,0.22);
+    border-radius: 999px;
+    color: var(--ink-1);
     font-size: 1em;
     font-weight: 500;
     line-height: 1.2;
-    letter-spacing: -0.004em;
-    text-align: center;
+    letter-spacing: -0.01em;
     white-space: nowrap;
   }
 
@@ -585,7 +745,7 @@
      the heights keeps the phones from jumping up a size. */
   .cs-story .cs-chapter .cs-figure.cs-figure--pair {
     width: calc(100% * 1.046 / 2.1753);
-    justify-self: start;
+    justify-self: center;
   }
   /* Two labels over one row of phones: the agency's direction on the left,
      the badges it became on the right. They share the picture's width so each
@@ -648,35 +808,58 @@
     text-align: left;
     cursor: pointer;
   }
-  /* One label for every picture that opens. It follows the pointer, 20px
-     down and to the right, and only while the pointer is on the artwork, so
-     the writing never gets it. The same dark glass as the homepage index,
-     with a slow sheen that rests, then crosses once, then rests again.
-     A phone never draws it. */
+  /* ---------- POINTER ----------
+     The homepage's pointer, carried over. On a fine pointer the native cursor
+     is put away and an 8px dot of the page's ink is drawn in its place, above
+     everything and off the hit path so the figures still get the click. Over
+     a picture that opens, the same dot swells into a pill that says "Take a
+     closer peek" — one object changing size, not a label fading in beside the
+     cursor. Position stays 1:1 with the pointer; only the size eases, about
+     480ms from dot to pill on a sine ease-in-out, so it swells gradually and
+     settles without a snap. The words come up over the last stretch of the
+     growth, once there is room for them. Leaving the picture runs the same
+     curve back. The script writes width and height each frame; the -50%,-50%
+     translate keeps whatever size it is centred on the pointer.
+     Two materials, because one cannot do both jobs. The dot is the page's
+     ink, which is the only thing that reads at 8px on a dark page (and goes
+     black with the type on Sofa to Saddle's white close). The pill is the
+     nav's dark glass, the look it had before this was a cursor. --peek-mat
+     is written by the script alongside the size and runs the ink into the
+     glass over the first part of the swell, so by the time the words can be
+     read the pill is the glass and the dot is a memory. The same slow sheen
+     as before, once the pill is fully open.
+     The viewer keeps the native cursor: zoom-out and the close button are its
+     own affordances, and the dot steps aside while it is open. Reduced motion
+     still shows the right size; it just does not travel. A coarse pointer
+     never gets the element, and a phone never draws it. */
   .cs-peek {
+    --peek-mat: 0;
+    /* The nav pill's glass, as it was before this was a cursor. Thinner and
+       more see-through panes were tried and read as either flat grey or lost
+       in the artwork; this one sits on top of it. On Boots and Sofa to Saddle
+       it is the nav's own variables, so it turns with the page. */
+    --peek-glass: var(--nav-bg, rgba(18,18,22,0.55));
+    --peek-line: var(--nav-line, rgba(255,255,255,0.09));
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 90;
-    padding: 9px 14px 10px;
+    z-index: 1000001;
+    box-sizing: border-box;
+    width: 8px;
+    height: 8px;
     border-radius: 999px;
-    color: #fff;
-    font-family: var(--ff-body);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: -0.011em;
-    line-height: 1;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    overflow: hidden;
-    background: rgba(18,18,22,0.55);
-    border: 1px solid rgba(255,255,255,0.09);
+    background: color-mix(in srgb, var(--peek-glass) calc(var(--peek-mat) * 100%), var(--ink));
+    border: 1px solid color-mix(in srgb, var(--peek-line) calc(var(--peek-mat) * 100%), transparent);
+    color: var(--nav-ink, #fff);
     backdrop-filter: blur(28px) saturate(1.6);
     -webkit-backdrop-filter: blur(28px) saturate(1.6);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
-    transition: opacity 180ms ease-out;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0;
+    will-change: transform;
   }
+  .cs-peek.is-on { opacity: 1; }
   .cs-peek::after {
     content: '';
     position: absolute;
@@ -692,21 +875,36 @@
       rgba(255,255,255,0) 100%);
     transform: translateX(-140%);
   }
-  .cs-peek.is-on { opacity: 1; }
-  .cs-peek.is-on::after { animation: cs-peek-glim 11s ease-in-out infinite; }
+  .cs-peek.is-pill::after { animation: cs-peek-glim 11s ease-in-out infinite; }
   @keyframes cs-peek-glim {
     0% { transform: translateX(-140%); }
     48% { transform: translateX(200%); }
     100% { transform: translateX(200%); }
   }
+  .cs-peek__label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--ff-body);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.011em;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 0;
+  }
+  @media (pointer: fine) {
+    html.cs-cursor-live,
+    html.cs-cursor-live * { cursor: none !important; }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .cs-peek { transition: none; }
     .cs-peek::after,
-    .cs-peek.is-on::after { animation: none; }
+    .cs-peek.is-pill::after { animation: none; }
   }
   @media (prefers-reduced-transparency: reduce) {
     .cs-peek {
-      background: #121216;
+      --peek-glass: #121216;
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
     }
@@ -894,8 +1092,8 @@
      does it instead. Without it the box is zero-high until YouTube's player
      answers and everything below the hero jumps when it does.
 
-     The film is a bare rectangle. Figures on this page carry no frame of their
-     own, and this one does not either. */
+     The corner is the homepage card's, applied with the hero picture
+     below. Figures further down the page carry no frame of their own. */
   .cs-hero__video {
     position: relative;
     width: 100%;
@@ -913,6 +1111,15 @@
     width: 100%;
     height: 100%;
     border: 0;
+  }
+
+  /* The homepage card's corner, and the up next card's. 3.4% of the
+     picture's own width, and never sharper than 14px, which is the floor
+     the homepage uses once the picture is small. */
+  .cs-hero .cs-figure { container-type: inline-size; }
+  .cs-hero .cs-figure img,
+  .cs-hero__video {
+    border-radius: max(14px, 3.4cqw);
   }
 
   /* ---------- Overview ----------
@@ -1027,7 +1234,7 @@
   .cs-path__arrow { display: inline-flex; transition: transform 100ms ease-out; }
   .cs-path__title a:focus-visible,
   .cs-path__more:focus-visible {
-    outline: 2px solid #fff;
+    outline: 2px solid var(--ink);
     outline-offset: 3px;
   }
   /* The three pieces named above. The number is the same size as on the Boots
@@ -1152,7 +1359,7 @@
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.42);
+    background: var(--mark);
   }
   .cs-chapter__body + .cs-figure + .cs-chapter__body {
     margin-top: clamp(48px, 7vh, 80px);
@@ -1215,17 +1422,6 @@
     font-size: 0.48em;
     letter-spacing: -0.01em;
   }
-  /* Brighter than the number above it, which looks backwards written down and
-     is right on the page: 11px of letterspaced uppercase needs 4.5:1 where the
-     34px number needs 3:1, so matching their inks would leave the small one
-     harder to read than the large one. The size is what ranks them. */
-  .cs-chapter__beat {
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--ink-2);
-  }
   .cs-chapter__body { max-width: 62ch; }
   .cs-chapter__body .cs-chapter__kicker {
     margin: 0 0 12px;
@@ -1245,7 +1441,7 @@
     display: grid;
     margin-top: clamp(28px, 4vh, 40px);
     padding: clamp(40px, 5vh, 56px) clamp(32px, 3.6vw, 48px);
-    background: rgba(255,255,255,0.04);
+    background: var(--wash);
     border-radius: max(14px, 3.4cqw) 0 max(14px, 3.4cqw) 0;
   }
   .cs-decide__pair {
@@ -1519,7 +1715,7 @@
     overflow: visible;
   }
   .cs-seq__stage {
-    background: rgba(255,255,255,0.04);
+    background: var(--wash);
     overflow: hidden;
   }
   .cs-seq__panel {
@@ -1624,7 +1820,7 @@
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.42);
+    background: var(--mark);
   }
   /* There was a rule for <code> here, setting the filenames and symbol names
      these steps used to quote in a monospace face. The copy is written for a
@@ -1721,12 +1917,20 @@
      Lifting it to full ink and a step up in size is what makes the two
      paragraphs under it read as its list. */
   /* ---------- Impact ----------
-     The close, as on the Boots study: a band a step off the page, writing in
-     the same column, three findings each held by a bar. */
+     The close, as on the Boots study. The page cross-fades to white as this
+     arrives. The margin above is larger than a section's so the last of the
+     writing is on its way out before the ground leaves black. */
   .cs-impact {
-    margin-top: clamp(88px, 12vh, 140px);
+    --ink: #0a0a0c;
+    --ink-1: rgba(10,10,12,0.78);
+    --ink-2: rgba(10,10,12,0.66);
+    --ink-3: rgba(10,10,12,0.58);
+    --rule: rgba(10,10,12,0.16);
+    --rule-2: rgba(10,10,12,0.44);
+    --mark: rgba(10,10,12,0.50);
+    --wash: rgba(10,10,12,0.04);
+    margin-top: clamp(180px, 32vh, 340px);
     padding: clamp(72px, 11vh, 128px) var(--pad-x);
-    background: #141418;
   }
   .cs-impact .cs-chapter { padding-top: 0; }
   .cs-impact .cs-chapter__body {
@@ -1767,7 +1971,7 @@
     bottom: 4px;
     width: 3px;
     border-radius: 2px;
-    background: #fff;
+    background: var(--ink);
   }
   .cs-impact .cs-chapter__body p.cs-points__title {
     margin: 0;
@@ -1791,10 +1995,10 @@
     margin-top: clamp(32px, 4.2vh, 48px);
   }
   main:has(.cs-impact) + .hp-footer {
-    margin-top: clamp(56px, 8vh, 96px);
+    margin-top: 0;
   }
-  /* The impact band is already the break before the footer, so the hairline
-     that usually opens Let's talk would be a second one. */
+  /* No hairline above Let's talk here: on the white close the footer follows
+     the impact copy as one page, and a rule read as a box lid. */
   main:has(.cs-impact) + .hp-footer::before {
     content: none;
   }
@@ -1802,6 +2006,199 @@
     margin-bottom: 1.5em;
     font-size: clamp(18px, 1.42vw, 21px);
     color: var(--ink);
+  }
+
+  /* ---------- NEXT ----------
+     The study after this one, as a card on the white close under the impact
+     section. The picture is the owner's own export for this slot — the
+     card's black, its rounded corners and the screen on the right are all
+     in the file — and the copy is laid over the empty left of it. The card
+     is a size container so the type, the inset and the corner scale with
+     the card and hold the composition at every width.
+
+     As wide as the reading column, so it shares its edges with the impact
+     section above. The ink is pinned: once the page has turned light the
+     tokens are the white page's and the card has not turned with them. */
+  .cs-next {
+    display: block;
+    width: min(var(--measure), calc(100% - 2 * var(--pad-x)));
+    margin: var(--section) auto 0;
+    container-type: inline-size;
+    color: #ffffff;
+    text-decoration: none;
+    transition: transform 0.55s cubic-bezier(0.32,0.72,0,1);
+  }
+  /* The impact section's own bottom padding is the gap above every other
+     close. The card wants more than that: the writing should be gone before
+     the next study arrives. */
+  .cs-impact:has(+ .cs-next) {
+    margin-top: clamp(200px, 28vh, 320px);
+    padding-top: 0;
+    padding-bottom: clamp(200px, 28vh, 320px);
+  }
+  .cs-impact + .cs-next { margin: 0 auto clamp(72px, 11vh, 128px); }
+  @media (hover: hover) {
+    .cs-next:hover { transform: translateY(-6px); }
+    .cs-next:active { transform: translateY(-4px); transition-duration: 0.18s; }
+  }
+  .cs-next:focus-visible { outline: none; }
+  .cs-next:focus-visible .cs-next__card {
+    outline: 2px solid #0a0a0c;
+    outline-offset: 4px;
+  }
+  .cs-next__card {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    /* The export's own corner: 342px on a 10902px frame. */
+    border-radius: 3.14cqw;
+    background: #0a0a0b;
+  }
+  /* On the studies that close in black rather than on the white sheet, the
+     card's black is the page's black, and a hairline is what keeps it a card. */
+  .cs-next__card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+    pointer-events: none;
+  }
+  .cs-impact + .cs-next .cs-next__card::after { content: none; }
+  .cs-next__art { display: block; }
+  .cs-next__art img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  /* Where the comp sets it: 6.4% in, the kicker a fifth of the way down,
+     the sentence in the left 40%. */
+  .cs-next__copy {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    top: 19%;
+    left: 6.4%;
+    width: 40%;
+  }
+  .cs-next__kicker {
+    display: block;
+    font-family: var(--ff-display);
+    font-size: max(1.5cqw, clamp(11px, 2.2cqw, 13px));
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+  }
+  .cs-next__line {
+    display: block;
+    margin-top: 2.6cqw;
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: min(3.2cqw, max(18px, 2.45cqw));
+    line-height: 1.16;
+    letter-spacing: -0.026em;
+    color: #ffffff;
+    text-wrap: pretty;
+  }
+  .cs-next__line strong { color: #ffffff; font-weight: 600; }
+  .cs-next__lockup { white-space: nowrap; }
+  /* Bridge the 22px phone gutter into the page’s fluid gutter without a
+     one-pixel breakpoint where the card gets narrower as the viewport grows.
+     This equals calc(100% - 44px) at 430/431px and the normal 12vw gutter
+     at 700px, so both ends meet without a jump. */
+  @media (min-width: 431px) and (max-width: 700px) {
+    .cs-next { width: min(var(--measure), calc(85.185vw + 19.704px)); }
+  }
+  /* Mobile has its own tall artwork: the same composition as the desktop
+     card, redrawn for the narrow frame. The copy stays over the clear top of
+     that artwork, at the inset and scale of the owner's reference. */
+  @media (max-width: 430px) {
+    .cs-next { width: calc(100% - 44px); }
+    .cs-next__card {
+      display: block;
+      aspect-ratio: 5979 / 7923;
+      border-radius: 18px;
+    }
+    .cs-next__art {
+      position: absolute;
+      inset: 0;
+    }
+    .cs-next__art picture {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .cs-next__copy {
+      position: absolute;
+      top: 9.4%;
+      left: 11.7%;
+      width: 76.6%;
+      padding: 0;
+    }
+    .cs-next__kicker { font-size: 12px; }
+    .cs-next__line {
+      margin-top: min(17px, 4.4cqw);
+      font-size: clamp(14px, 4.66cqw, 18px);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      text-wrap: pretty;
+    }
+    .cs-next__art img {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: auto;
+      object-fit: cover;
+      object-position: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cs-next,
+    .cs-next:hover,
+    .cs-next:active { transform: none; transition: none; }
+  }
+
+  /* ---------- POINTER ----------
+     The homepage's, and only while the pointer is on this band. A fine
+     pointer grows from a small white dot into a white circle with a black
+     arrow — the same object a card on the homepage grows into. The rest of
+     the study keeps the browser's cursor. Coarse pointers never get it.
+     Position stays 1:1. Only the size eases, 480ms of sine ease-in-out,
+     the same travel as the homepage. */
+  .hp-cursor {
+    --cursor-size: 68px;
+    position: fixed;
+    z-index: 1000001;
+    top: 0;
+    left: 0;
+    width: var(--cursor-size);
+    height: var(--cursor-size);
+    margin-top: calc(var(--cursor-size) / -2);
+    margin-left: calc(var(--cursor-size) / -2);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+    pointer-events: none;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    will-change: transform;
+  }
+  .hp-cursor.is-on { opacity: 1; }
+  .hp-cursor__arrow {
+    width: 32px;
+    height: 32px;
+    display: block;
+    opacity: 0;
+  }
+  @media (pointer: fine) {
+    html.hp-cursor-live,
+    html.hp-cursor-live * {
+      cursor: none !important;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hp-cursor,
+    .hp-cursor__arrow { transition: none; }
   }
 
   /* ---------- FOOTER ----------
@@ -1818,13 +2215,27 @@
      page with one thing at each end instead of a pair crowded onto the right. */
   .hp-footer {
     --foot-x: var(--pad-x);
+    /* The contact close is always black, including after a study has turned
+       white for its impact section. Pin every inherited colour here. */
+    --bg: #0a0a0c;
+    --ink: #ffffff;
+    --ink-1: rgba(255,255,255,0.74);
+    --ink-2: rgba(255,255,255,0.52);
+    --ink-3: rgba(255,255,255,0.40);
+    --rule: rgba(255,255,255,0.10);
+    --rule-2: rgba(255,255,255,0.30);
+    --wash: rgba(255,255,255,0.04);
+    --cta-bg: #ffffff;
+    --cta-ink: #0a0a0c;
     margin-top: var(--section);
     padding: clamp(64px, 10vh, 130px) var(--foot-x) clamp(32px, 4vh, 52px);
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: var(--bg);
+    background: #0a0a0c;
+    box-shadow: 0 0 0 100vmax #0a0a0c;
+    clip-path: inset(0 -100vmax);
     max-width: var(--shell);
     margin-left: auto;
     margin-right: auto;
@@ -1864,8 +2275,8 @@
     gap: 12px;
     min-height: 44px;
     padding: 18px 24px;
-    background: #fff;
-    color: #0a0a0c;
+    background: var(--cta-bg);
+    color: var(--cta-ink);
     border-radius: 999px;
     font-size: 15px;
     font-weight: 500;
@@ -1877,8 +2288,8 @@
   }
   .hp-footer__cta.is-ghost {
     background: transparent;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--ink);
+    border: 1px solid var(--rule-2);
   }
   .hp-footer__cta:active,
   .hp-footer__cta.is-pressed {
@@ -2105,13 +2516,6 @@
 
     .cs-wrap { padding-left: 22px; padding-right: 22px; }
 
-    /* The card's phone pair: a smaller label and tighter padding. The floor
-       stays at 10px. On the card the label can fall to 8.2px because the whole
-       card has been scaled down; at that size on the open page it stops
-       reading as a label. */
-    .cs-tags { font-size: clamp(10px, calc(4.21px + 1.211vw), 15px); }
-    .cs-tags li { padding: 0.34em 1em; }
-
     /* The rail stops being a column beside the writing and becomes a line
        above it. A 13ch column on a 346px screen leaves the body 20ch, which is
        not a measure. */
@@ -2120,6 +2524,11 @@
       grid-template-columns: minmax(0, 1fr);
       row-gap: 18px;
     }
+    /* The hero's grid is the chapters', so it collapses with them and the
+       sentence has the whole column again. */
+    .cs-hero > .cs-col { grid-template-columns: minmax(0, 1fr); }
+    .cs-hero__text,
+    .cs-hero .cs-figure { grid-column: 1; }
     .cs-chapter__rail {
       flex-direction: row;
       align-items: baseline;
@@ -2234,20 +2643,40 @@
     .cs-lb__close { opacity: 1; transform: none; }
   }
   /* ---------- ARRIVING FROM THE HOMEPAGE ----------
-     Cross-document view transition, opted into on both sides. The homepage
-     names the clicked card's sentence, chip row and artwork as it leaves;
-     this page names its heading, tags and hero picture the same, and the
-     browser carries each from where it was to where it is. The nav pill is
-     named too and holds still. Everything else cross-fades.
+     Cross-document view transition, opted into on both sides. The words are
+     the thing that stays.
+
+     The card's sentence and this heading are the same words, in the same
+     face at the same weight and tracking, wrapped to the same three lines
+     (the card borrows this heading's measure in em, so the breaks agree at
+     any size). The chips under the sentence are this page's tags to the
+     pixel, in the same order and at the same distance. So what travels is one
+     block of type — sentence over chips — lifting off the card and settling
+     at the top of the page, growing a little on the way. Nothing is stretched
+     into something else; the two snapshots the browser blends are the same
+     glyphs, which is the one case plus-lighter was designed for, so the
+     default blend is kept and the move is clean.
+
+     The pictures do not travel. The card's artwork and this photograph are
+     different pictures, and a transition that pretends otherwise is a blur
+     with a destination. Each is given a move of its own instead, under a name
+     the other page does not use: the artwork sinks and dims as the words lift
+     off it, and this photograph rises into place under the heading once the
+     heading has landed. The two never overlap.
 
      The pseudo-elements are styled by the page being arrived at, which is
-     this one, so this is where the journey is described.
+     this one, so this is where the journey is described. The same block is
+     on every case page; change it in all of them or none.
 
-     The artwork and the picture are different shapes — the card is nearly
-     square, this picture is 3:2 — so both snapshots fill the travelling box
-     and are cropped by it rather than the taller hanging out of the bottom.
-     The type is not blended with plus-lighter, the default, which flares on
-     two copies of white text passing over each other.
+     The order of events:
+       0.00  Homepage falls back: fades to the black, shrinks a touch (0.34s).
+             The artwork begins to sink under the words (0.46s).
+       0.00  The block of type lifts and glides to the top of the page
+             (0.70s on the site's decelerating curve). The nav pill holds.
+       0.14  This page's black arrives beneath the moving type (0.42s).
+       0.36  The photograph rises in under the heading (0.56s), so its
+             arrival is the end of the move rather than a second event.
+       0.70  Type lands. The eyebrow then takes its usual entrance.
 
      Reduced motion opts out: a page that changes in one frame is the right
      answer there. Browsers without the feature navigate as they always did. */
@@ -2255,36 +2684,64 @@
   .hp-nav { view-transition-name: hp-nav; }
   .cs-hero__statement { view-transition-name: cs-title; }
   .cs-hero .cs-tags { view-transition-name: cs-tags; }
-  .cs-hero .cs-figure img { view-transition-name: cs-art; }
+  /* Named, but under a name the homepage never uses — see below. */
+  .cs-hero .cs-figure { view-transition-name: cs-figure; }
 
-  ::view-transition-group(*) {
-    animation-duration: 0.62s;
-    animation-timing-function: cubic-bezier(0.32,0.72,0,1);
+  /* The current hero is several screens above an Up next click. Remove its
+     shared-element names for that navigation so it cannot fly back through
+     the viewport on the way to the following study. */
+  html.cs-nexting .cs-hero__statement,
+  html.cs-nexting .cs-hero .cs-tags,
+  html.cs-nexting .cs-hero .cs-figure { view-transition-name: none; }
+
+  @keyframes cs-vt-root-out {
+    to { opacity: 0; transform: scale(0.965); }
   }
-  ::view-transition-old(root),
+  @keyframes cs-vt-root-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes cs-vt-art-sink {
+    to { opacity: 0; transform: translateY(3%) scale(0.97); }
+  }
+  @keyframes cs-vt-figure-rise {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: none; }
+  }
+  ::view-transition-old(root) {
+    transform-origin: 50% 42%;
+    animation: cs-vt-root-out 0.34s cubic-bezier(0.32,0.72,0,1) both;
+  }
   ::view-transition-new(root) {
-    animation-duration: 0.5s;
+    animation: cs-vt-root-in 0.42s cubic-bezier(0.32,0.72,0,1) 0.14s both;
+  }
+  ::view-transition-group(cs-title),
+  ::view-transition-group(cs-tags) {
+    z-index: 2;
+    animation-duration: 0.7s;
     animation-timing-function: cubic-bezier(0.32,0.72,0,1);
   }
-  ::view-transition-group(cs-art) { overflow: clip; }
-  ::view-transition-old(cs-art),
-  ::view-transition-new(cs-art) {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    object-position: center top;
-  }
-  ::view-transition-image-pair(cs-title),
-  ::view-transition-image-pair(cs-tags) { isolation: auto; }
+  /* The old side of each pair is the card's; it is the same type, so it can
+     go early and leave the new copy to finish the move alone. A full-length
+     cross-fade of two near-identical bitmaps at different scales is where
+     the faint doubling would come from, if it came from anywhere. */
   ::view-transition-old(cs-title),
+  ::view-transition-old(cs-tags) {
+    animation-duration: 0.3s;
+  }
   ::view-transition-new(cs-title),
-  ::view-transition-old(cs-tags),
   ::view-transition-new(cs-tags) {
-    mix-blend-mode: normal;
-    height: 100%;
-    width: 100%;
-    object-fit: contain;
-    object-position: left top;
+    animation-duration: 0.3s;
+  }
+  /* Exit only: there is no hp-art here to arrive at. */
+  ::view-transition-group(hp-art) { z-index: 1; }
+  ::view-transition-old(hp-art) {
+    transform-origin: 50% 0;
+    animation: cs-vt-art-sink 0.46s cubic-bezier(0.32,0.72,0,1) both;
+  }
+  /* Entrance only: the homepage names no cs-figure. */
+  ::view-transition-new(cs-figure) {
+    animation: cs-vt-figure-rise 0.56s cubic-bezier(0.32,0.72,0,1) 0.36s both;
   }
   /* Arrived by transition: the tags travelled here and are already in place,
      so they do not get the entrance below as well. The script adds the class
@@ -2295,6 +2752,25 @@
     opacity: 1;
     transform: none;
     transition: none;
+  }
+  /* Up next is a restrained dissolve: the nav stays anchored while the old
+     page softens away and the following study settles upward by a few pixels. */
+  html.cs-via-next .cs-hero__statement,
+  html.cs-via-next .cs-hero .cs-tags,
+  html.cs-via-next .cs-hero .cs-figure { view-transition-name: none; }
+  @keyframes cs-vt-next-out {
+    to { opacity: 0; transform: scale(0.985); }
+  }
+  @keyframes cs-vt-next-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+  html.cs-via-next::view-transition-old(root) {
+    transform-origin: 50% 50%;
+    animation: cs-vt-next-out 0.38s ease-out both;
+  }
+  html.cs-via-next::view-transition-new(root) {
+    animation: cs-vt-next-in 0.52s cubic-bezier(0.32,0.72,0,1) 0.12s both;
   }
   @media (prefers-reduced-motion: reduce) {
     @view-transition { navigation: none; }
@@ -2321,9 +2797,20 @@
      hero's letter-by-letter entrance is set before anything is drawn. -->
 <link rel="expect" href="#cs-main" blocking="render">
 <script>
+  try {
+    if (sessionStorage.getItem('cs-next-transition') === '1') {
+      document.documentElement.classList.add('cs-via-next');
+      sessionStorage.removeItem('cs-next-transition');
+    }
+  } catch (_) {}
   window.addEventListener('pagereveal', function(e) {
     window.__csReveal = e;
-    if (e.viewTransition) document.documentElement.classList.add('cs-via');
+    if (e.viewTransition) {
+      document.documentElement.classList.add('cs-via');
+      e.viewTransition.finished.then(function() {
+        document.documentElement.classList.remove('cs-via-next');
+      });
+    }
   }, { once: true });
 </script>
 </head>
@@ -2359,18 +2846,22 @@
 
   <header class="cs-hero cs-wrap">
     <div class="cs-col">
-      <span class="hp-eyebrow hp-eyebrow--rule">Case study &middot; British Cycling app</span>
-      <!-- aria-label carries the sentence intact, because the inner span is
-           about to be taken apart into one element per letter and a screen
-           reader given that reads it out a letter at a time. -->
-      <h1 class="cs-hero__statement" aria-label="Creating British Cycling x Lloyds&rsquo; habit-forming cycling app, launched in record time by embracing AI throughout.">
-        <span class="cs-hero__statement-inner" aria-hidden="true">Creating <strong>British Cycling <span class="cs-hero__lockup">x Lloyds&rsquo;</span></strong> habit-forming cycling app, launched in record time by embracing AI throughout.</span>
-      </h1>
-      <ul class="cs-tags">
-        <li>UX &amp; UI</li>
-        <li>AI Development</li>
-        <li>Strategy</li>
-      </ul>
+      <!-- In the chapters' writing column, a rail's width in from the film,
+           at the owner's request — see .cs-hero__text. -->
+      <div class="cs-hero__text">
+        <span class="hp-eyebrow hp-eyebrow--rule">Case study &middot; British Cycling app</span>
+        <!-- aria-label carries the sentence intact, because the inner span is
+             about to be taken apart into one element per letter and a screen
+             reader given that reads it out a letter at a time. -->
+        <h1 class="cs-hero__statement" aria-label="Creating British Cycling x Lloyds&rsquo; habit-forming cycling app, launched at pace by embracing AI throughout.">
+          <span class="cs-hero__statement-inner" aria-hidden="true">Creating <strong>British Cycling <span class="cs-hero__lockup">x Lloyds&rsquo;</span></strong> <span class="cs-hero__lockup">habit-forming</span> cycling app, launched at pace by <span class="cs-hero__tail">embracing AI throughout.</span></span>
+        </h1>
+        <ul class="cs-tags">
+          <li>UX &amp; UI</li>
+          <li>AI Development</li>
+          <li>Strategy</li>
+        </ul>
+      </div>
 
       <!-- The launch film rather than the three-screen render this used to
            carry. The render and its three widths are still in /assets under
@@ -2787,7 +3278,33 @@
         </div>
       </section>
     </div>
+
   </section>
+
+<a class="cs-next" href="/api-portal">
+  <span class="cs-next__card">
+    <span class="cs-next__art">
+      <picture>
+        <source media="(max-width: 430px)"
+                srcset="/assets/next-api-mobile-800.517077cd.webp 800w,
+                        /assets/next-api-mobile-1600.517077cd.webp 1600w"
+                sizes="calc(100vw - 44px)">
+        <img src="/assets/next-api-2240.f729f886.webp"
+             srcset="/assets/next-api-1280.f729f886.webp 1280w,
+                     /assets/next-api-2240.f729f886.webp 2240w,
+                     /assets/next-api-3360.f729f886.webp 3360w"
+             sizes="min(1120px, 88vw)"
+             width="3360" height="1441"
+             alt=""
+             loading="lazy" decoding="async">
+      </picture>
+    </span>
+    <span class="cs-next__copy">
+      <span class="cs-next__kicker">Up next</span>
+      <span class="cs-next__line">Shaping the new digital experience for a <strong>wholesale <span class="cs-next__lockup">full-fibre</span> provider</strong> built to outpace the industry.</span>
+    </span>
+  </span>
+</a>
 
 </article>
 
@@ -3172,92 +3689,145 @@
   // The campaign photograph has a single rung at its own size, so it has no
   // srcset and is skipped, which is correct: there is nothing larger of it to
   // open. The insight diptych carries a srcset: its source is 5760.
-  // One label for the page. It is only drawn while the pointer is on a
-  // picture that opens, and it sits 20px below and to the right of the cursor.
-  // The follow is a spring: stiffness 500, damping 60, mass 1, which is
-  // overdamped, so it eases onto the cursor and does not bounce.
+  // ---------- Pointer ----------
+  // The homepage's cursor, carried over. A dot that is the pointer, and that
+  // swells into the "Take a closer peek" pill while the pointer is on a
+  // picture that opens. Position is 1:1 with the pointer; only the size is
+  // animated, and the script drives it rather than a CSS transition so that a
+  // pointer that leaves half-way through the swell turns back from where it
+  // is, taking time in proportion to how far it has to go — the same curve
+  // and the same 480ms as the homepage. The label fades up over the last
+  // quarter of the growth, by which point the pill is wide enough to hold it.
+  // The viewer keeps the native cursor, so the dot is put away while it is
+  // up and comes back once it has gone.
   if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     var peek = document.createElement('span');
     peek.className = 'cs-peek';
     peek.setAttribute('aria-hidden', 'true');
-    peek.textContent = 'Take a closer peek';
+    var peekLabel = document.createElement('span');
+    peekLabel.className = 'cs-peek__label';
+    peekLabel.textContent = 'Take a closer peek';
+    peek.appendChild(peekLabel);
     document.body.appendChild(peek);
 
-    var px = 0, py = 0, vx = 0, vy = 0, tx = 0, ty = 0;
-    var cursorX = 0, cursorY = 0, hasCursor = false;
-    var peekOn = false, peekRaf = 0, peekLast = 0, scrollQueued = false;
-    var w0 = Math.sqrt(500);
-    var zeta = 60 / (2 * w0);
-    var spread = w0 * Math.sqrt(zeta * zeta - 1);
-    var root1 = -w0 * zeta + spread;
-    var root2 = -w0 * zeta - spread;
+    var DOT = 8;
+    var PILL_PAD_X = 16;
+    var PILL_PAD_Y = 10;
+    var TRAVEL = 480;
+    var pillW = DOT, pillH = DOT;
+    var cursorX = 0, cursorY = 0, hasCursor = false, peekOn = false;
+    var grow = 0;      // 0 is the dot, 1 is the pill
+    var growTarget = 0;
+    var growFrom = 0, growTo = 0, growStart = 0, growDur = 0;
+    var peekRaf = 0, scrollQueued = false;
 
-    function springAxis(pos, vel, target, dt) {
-      var offset = pos - target;
-      var a = (vel - root2 * offset) / (root1 - root2);
-      var b = offset - a;
-      var e1 = Math.exp(root1 * dt);
-      var e2 = Math.exp(root2 * dt);
-      return [target + a * e1 + b * e2, a * root1 * e1 + b * root2 * e2];
+    function easeInOut(t) {
+      return (1 - Math.cos(Math.PI * t)) / 2;
     }
 
-    function placePeek() {
-      peek.style.transform = 'translate3d(' + px.toFixed(2) + 'px,' + py.toFixed(2) + 'px,0)';
+    function paintPeek() {
+      var w = DOT + (pillW - DOT) * grow;
+      var h = DOT + (pillH - DOT) * grow;
+      peek.style.width = w.toFixed(2) + 'px';
+      peek.style.height = h.toFixed(2) + 'px';
+      peek.style.transform = 'translate3d(' + cursorX + 'px,' + cursorY + 'px,0) translate(-50%,-50%)';
+      var a = (grow - 0.75) / 0.25;
+      if (a < 0) a = 0;
+      else if (a > 1) a = 1;
+      peekLabel.style.opacity = String(a);
+      // Ink to glass over the first 60% of the swell; see the CSS.
+      var m = grow / 0.6;
+      if (m < 0) m = 0;
+      else if (m > 1) m = 1;
+      peek.style.setProperty('--peek-mat', m.toFixed(3));
+      peek.classList.toggle('is-pill', grow > 0.98);
     }
 
-    function peekFrame(now) {
-      var dt = peekLast ? Math.min(0.064, (now - peekLast) / 1000) : 0.016;
-      peekLast = now;
-      if (REDUCED) {
-        px = tx; py = ty; vx = 0; vy = 0;
-      } else {
-        var nx = springAxis(px, vx, tx, dt);
-        var ny = springAxis(py, vy, ty, dt);
-        px = nx[0]; vx = nx[1];
-        py = ny[0]; vy = ny[1];
+    // The label is nowrap and absolutely placed, so its own box is the words'
+    // natural width whatever size the pill around it is at. Measured again
+    // once the webfont is in, which is what changes it.
+    function measurePill() {
+      pillW = peekLabel.offsetWidth + PILL_PAD_X * 2;
+      pillH = peekLabel.offsetHeight + PILL_PAD_Y * 2;
+      paintPeek();
+    }
+
+    function growStep(now) {
+      var t = growDur > 0 ? (now - growStart) / growDur : 1;
+      if (t >= 1) {
+        grow = growTo;
+        peekRaf = 0;
+        paintPeek();
+        return;
       }
-      placePeek();
-      var resting = Math.abs(tx - px) < 0.2 && Math.abs(ty - py) < 0.2
-        && Math.abs(vx) < 0.2 && Math.abs(vy) < 0.2;
-      if (peekOn || !resting) peekRaf = requestAnimationFrame(peekFrame);
-      else { peekRaf = 0; peekLast = 0; }
+      if (t < 0) t = 0;
+      grow = growFrom + (growTo - growFrom) * easeInOut(t);
+      paintPeek();
+      peekRaf = requestAnimationFrame(growStep);
     }
 
-    function aimPeek(clientX, clientY, snap) {
-      var w = peek.offsetWidth;
-      var h = peek.offsetHeight;
-      var nx = clientX + 20;
-      var ny = clientY + 20;
-      var edge = 8;
-      if (w && nx + w > window.innerWidth - edge) nx = window.innerWidth - edge - w;
-      if (h && ny + h > window.innerHeight - edge) ny = window.innerHeight - edge - h;
-      if (nx < edge) nx = edge;
-      if (ny < edge) ny = edge;
-      tx = nx;
-      ty = ny;
-      if (snap || REDUCED) {
-        px = tx; py = ty; vx = 0; vy = 0;
-        placePeek();
+    function kickGrow() {
+      if (peekRaf) cancelAnimationFrame(peekRaf);
+      peekRaf = 0;
+      growFrom = grow;
+      growTo = growTarget;
+      var dist = Math.abs(growTo - growFrom);
+      growDur = (REDUCED || dist < 0.0008) ? 0 : TRAVEL * dist;
+      if (growDur <= 0) {
+        grow = growTarget;
+        paintPeek();
+        return;
       }
-      if (!peekRaf) peekRaf = requestAnimationFrame(peekFrame);
+      growStart = performance.now();
+      peekRaf = requestAnimationFrame(growStep);
+    }
+
+    function setGrowTarget(next) {
+      if (next === growTarget) return;
+      growTarget = next;
+      kickGrow();
+    }
+
+    function showPeek() {
+      if (peekOn) return;
+      peekOn = true;
+      peek.classList.add('is-on');
+      document.documentElement.classList.add('cs-cursor-live');
+    }
+
+    function hidePeek() {
+      peekOn = false;
+      peek.classList.remove('is-on');
+      document.documentElement.classList.remove('cs-cursor-live');
+      if (peekRaf) cancelAnimationFrame(peekRaf);
+      peekRaf = 0;
+      grow = 0;
+      growTarget = 0;
+      paintPeek();
     }
 
     function syncPeek() {
       if (!hasCursor) return;
-      var el = document.elementFromPoint(cursorX, cursorY);
-      var hit = el && el.closest && el.closest('.cs-figure__open');
-      if (!hit) {
-        if (peekOn) { peekOn = false; peek.classList.remove('is-on'); }
+      // The viewer has its own cursors — zoom-out on the stage, the pointer
+      // on its close — so the dot is put away for as long as it is up.
+      if (!lb.hidden) {
+        if (peekOn) hidePeek();
         return;
       }
-      var arrive = !peekOn;
-      peekOn = true;
-      peek.classList.add('is-on');
-      aimPeek(cursorX, cursorY, arrive);
+      showPeek();
+      var el = document.elementFromPoint(cursorX, cursorY);
+      var hit = el && el.closest && el.closest('.cs-figure__open');
+      setGrowTarget(hit ? 1 : 0);
+      paintPeek();
     }
 
+
     document.addEventListener('pointermove', function(e) {
-      if (e.pointerType && e.pointerType !== 'mouse') return;
+      if (e.pointerType && e.pointerType !== 'mouse') {
+        hasCursor = false;
+        if (peekOn) hidePeek();
+        return;
+      }
       cursorX = e.clientX;
       cursorY = e.clientY;
       hasCursor = true;
@@ -3265,7 +3835,7 @@
     });
 
     // Scrolling moves the picture out from under a still cursor, and no
-    // pointermove fires, so the label would stay painted on the writing.
+    // pointermove fires, so the pill would stay open on the writing.
     window.addEventListener('scroll', function() {
       if (!hasCursor || scrollQueued) return;
       scrollQueued = true;
@@ -3277,9 +3847,19 @@
 
     document.documentElement.addEventListener('mouseleave', function() {
       hasCursor = false;
-      peekOn = false;
-      peek.classList.remove('is-on');
+      hidePeek();
     });
+
+    // hidden comes off the viewer the moment it opens and goes back on once
+    // its fade is over, so this is the dot leaving as the viewer arrives and
+    // returning, at the pointer, once it has gone.
+    if (window.MutationObserver) {
+      new MutationObserver(function() { syncPeek(); })
+        .observe(lb, { attributes: true, attributeFilter: ['hidden'] });
+    }
+
+    measurePill();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measurePill);
   }
 
   [].forEach.call(document.querySelectorAll('.cs-figure img[srcset]'), function(img) {
@@ -3297,6 +3877,82 @@
     btn.appendChild(img);
     btn.addEventListener('click', function() { openLb(img, src); });
   });
+
+  // ---------- Nav: away while reading down, back on the way up ----------
+  // The homepage's initNavHide, against the window rather than its scroller.
+  // Down past a dead band hides the pill; up past it, a pointer at the top
+  // edge, or focus landing inside it brings it back. Within the first 120px it
+  // stays regardless, because the hero is composed with it in place.
+  //
+  // Before the motion gate below on purpose: this is wayfinding, not an
+  // entrance, and a reader who has asked for reduced motion still wants the
+  // pill off their heading.
+  (function initNavHide() {
+    var nav = document.querySelector('.hp-nav');
+    if (!nav) return;
+    var last = window.scrollY;
+    var hidden = false;
+    var HOLD = 120;
+    var BAND = 8;
+    function set(h) {
+      if (h === hidden) return;
+      hidden = h;
+      nav.classList.toggle('is-hidden', h);
+    }
+    window.addEventListener('scroll', function() {
+      var y = window.scrollY;
+      var d = y - last;
+      if (y < HOLD) { set(false); last = y; return; }
+      if (d > BAND) set(true);
+      else if (d < -BAND) set(false);
+      if (Math.abs(d) > BAND) last = y;
+    }, { passive: true });
+    if (!window.matchMedia('(hover: none)').matches) {
+      window.addEventListener('mousemove', function(e) {
+        if (e.clientY < 90) set(false);
+      }, { passive: true });
+    }
+    nav.addEventListener('focusin', function() { set(false); });
+  })();
+
+  // ---------- The turn to white ----------
+  // A background cross-fade, not a whole-page inversion. is-light goes on once
+  // the impact section has come about a fifth of the way into the window —
+  // the same moment Dilara Cumhur's homepage lets go of black. The outgoing
+  // white ink stays white and disappears into the new ground; the impact's
+  // black ink is already in place and emerges from it. Scrolling back reverses
+  // the same handoff. A few pixels of hysteresis stops trackpad flicker.
+  //
+  // Ahead of the motion gate. Reduced motion gets the same state as a cut;
+  // the transition is switched off in the stylesheet.
+  (function initLight() {
+    var band = document.querySelector('.cs-impact');
+    if (!band) return;
+    var root = document.documentElement;
+    var on = false;
+    var queued = false;
+    function check() {
+      queued = false;
+      var top = band.getBoundingClientRect().top;
+      var line = window.innerHeight * 0.8 + (on ? 48 : 0);
+      var next = top < line;
+      if (next === on) return;
+      on = next;
+      root.classList.toggle('is-light', on);
+    }
+    function queue() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(check);
+    }
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue);
+    // A page opened at its foot should be white already, not fade into it.
+    root.style.transition = 'none';
+    check();
+    void root.offsetWidth;
+    root.style.transition = '';
+  })();
 
   // ---------- Motion ----------
   // The class that arms every hidden state in the stylesheet, set only once we
@@ -3429,62 +4085,12 @@
     return [].slice.call(el.querySelectorAll('.cs-hero__char'));
   }
 
-  // Letters lift and swell towards the pointer and settle back as it leaves.
-  // The one piece of motion on the page that answers the reader rather than the
-  // scroll, which is the point: it cannot be triggered by accident and it
-  // cannot get in the way of reading, because it only happens where the cursor
-  // already is.
-  function cursorField(chars) {
-    if (window.matchMedia('(hover: none)').matches) return;
-    var RADIUS = 165, LIFT = 16;
-    var items = chars.map(function(el) {
-      return {
-        el: el,
-        setY: gsap.quickTo(el, 'y', { duration: 0.55, ease: 'power3' }),
-        setScale: gsap.quickTo(el, 'scale', { duration: 0.55, ease: 'power3' }),
-        cx: 0, cy: 0
-      };
-    });
-    function measure() {
-      items.forEach(function(it) {
-        var r = it.el.getBoundingClientRect();
-        it.cx = r.left + r.width / 2;
-        it.cy = r.top + r.height / 2;
-      });
-    }
-    var mx = -9999, my = -9999, queued = false;
-    function apply() {
-      queued = false;
-      items.forEach(function(it) {
-        var dx = mx - it.cx, dy = my - it.cy;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        var f = 0;
-        if (dist < RADIUS) {
-          f = 1 - dist / RADIUS;
-          f = f * f * (3 - 2 * f);
-        }
-        it.setY(-LIFT * f);
-        it.setScale(1 + 0.06 * f);
-      });
-    }
-    measure();
-    var reMeasure;
-    function scheduleMeasure() {
-      clearTimeout(reMeasure);
-      reMeasure = setTimeout(measure, 120);
-    }
-    window.addEventListener('resize', scheduleMeasure);
-    window.addEventListener('scroll', scheduleMeasure, { passive: true });
-    window.addEventListener('mousemove', function(e) {
-      mx = e.clientX;
-      my = e.clientY;
-      if (!queued) { queued = true; requestAnimationFrame(apply); }
-    });
-    hero.addEventListener('mouseleave', function() {
-      mx = my = -9999;
-      apply();
-    });
-  }
+  // There used to be a cursor field here — letters lifting and swelling
+  // towards the pointer — the homepage's, brought over with the entrance. It
+  // went from the homepage, then from the Boots page, and now from here, at
+  // the owner's request: a heading that moves under the pointer is a heading
+  // that is hard to read with the pointer on it. The letters are still split,
+  // for the entrance.
 
   // Hidden here rather than in the stylesheet, so that a page which never gets
   // GSAP shows the sentence instead of hiding it forever. The library is a
@@ -3492,6 +4098,8 @@
   // the letters are set down before the first paint.
   var statement = document.querySelector('.cs-hero__statement-inner');
   var heroChars = null;
+  // Kept so the arrival handler can put the sentence back together; see there.
+  var statementHtml = statement ? statement.innerHTML : '';
   if (statement && !REDUCED && typeof gsap !== 'undefined') {
     heroChars = splitChars(statement);
     gsap.set(heroChars, { yPercent: 55, opacity: 0 });
@@ -3515,11 +4123,8 @@
         heroTl = gsap.timeline({
           defaults: { ease: 'expo.out', force3D: true },
           onComplete: function() {
-            // yPercent is cleared before the field takes over, because the
-            // field drives y and GSAP would otherwise add the two together.
             gsap.set(heroChars, { yPercent: 0, y: 0 });
             heroTl = null;
-            cursorField(heroChars);
           }
         }).to(heroChars, {
           yPercent: 0, opacity: 1, duration: 1, stagger: 0.011
@@ -3536,13 +4141,17 @@
 
   // ---------- ARRIVING FROM THE HOMEPAGE ----------
   // When the reader has come from a card on the homepage by view transition,
-  // the sentence, the tags and the picture have travelled here from that card
-  // and are in place the moment this page first paints. The letter-by-letter
-  // entrance would take the sentence away again and rebuild it, so it is
-  // stood down: the letters are set back to rest, the timeline is killed if
-  // the font has already released it, and the eyebrow, which did not travel,
-  // fades in once the transition has finished. The cursor field takes the
-  // letters from there.
+  // the sentence and the tags have travelled here from that card and are in
+  // place the moment this page first paints (see ARRIVING FROM THE HOMEPAGE
+  // in the styles). The letter-by-letter entrance would take the sentence
+  // away again and rebuild it, so it is stood down — and the sentence is put
+  // back together, not just set to rest. One inline-block per letter loses
+  // the kerning between letters, so a split heading is a hair wider than the
+  // same words set plain on the card, and the two snapshots the transition
+  // blends drift apart along each line. Restored to plain text before the
+  // snapshot, the heading is the card's sentence to the pixel. What is left
+  // of the hero's entrance — the eyebrow — runs once the transition has
+  // finished.
   //
   // The reveal is caught in the head, because it can fire before this script
   // runs; or it has not fired yet and is waited for here. Either order is
@@ -3555,11 +4164,13 @@
     via = true;
     document.documentElement.classList.add('cs-via');
     if (heroTl) { heroTl.kill(); heroTl = null; }
-    if (heroChars) gsap.set(heroChars, { yPercent: 0, opacity: 1, y: 0 });
+    if (heroChars && statement) {
+      statement.innerHTML = statementHtml;
+      heroChars = null;
+    }
     e.viewTransition.finished.then(function() {
       if (!started) { started = true; splits.forEach(splitLines); }
       requestAnimationFrame(function() { hero.classList.add('is-in'); });
-      if (heroChars) cursorField(heroChars);
     });
   }
   if (window.__csReveal) arrive(window.__csReveal);
@@ -3819,5 +4430,163 @@
   seq.classList.add('is-live');
 })();
 </script>
+<script>
+/* Mark this navigation as the restrained Up next dissolve and remove the
+   off-screen hero's shared names before the outgoing snapshot. */
+(function() {
+  var next = document.querySelector('.cs-next');
+  if (!next) return;
+  next.addEventListener('click', function(e) {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    try { sessionStorage.setItem('cs-next-transition', '1'); } catch (_) {}
+    document.documentElement.classList.add('cs-nexting');
+  });
+  window.addEventListener('pageshow', function() {
+    document.documentElement.classList.remove('cs-nexting');
+  });
+})();
+</script>
+<script>
+/* The homepage's pointer, scoped to the next-study band. See .hp-cursor. */
+(function() {
+  var fine = window.matchMedia('(pointer: fine)');
+  var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var node = null;
+  var arrow = null;
+  var x = 0;
+  var y = 0;
+  var shown = false;
+  var raf = 0;
+  var running = false;
+  var minScale = 8 / 68;
+  var scale = minScale;
+  var target = minScale;
+  var TRAVEL = 480;
+  var fromScale = minScale;
+  var toScale = minScale;
+  var started = 0;
+  var dur = 0;
+
+  function easeInOut(t) {
+    return (1 - Math.cos(Math.PI * t)) / 2;
+  }
+  function paint() {
+    if (!node) return;
+    node.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) scale(' + scale + ')';
+    if (!arrow) return;
+    var p = (scale - minScale) / (1 - minScale);
+    if (p < 0) p = 0;
+    else if (p > 1) p = 1;
+    var a = (p - 0.62) / 0.38;
+    if (a < 0) a = 0;
+    else if (a > 1) a = 1;
+    arrow.style.opacity = String(a);
+    if (!shown && scale <= minScale + 0.001 && target === minScale) {
+      node.classList.remove('is-on');
+      document.documentElement.classList.remove('hp-cursor-live');
+    }
+  }
+  function step(now) {
+    var t = dur > 0 ? (now - started) / dur : 1;
+    if (t >= 1) {
+      scale = toScale;
+      running = false;
+      paint();
+      return;
+    }
+    if (t < 0) t = 0;
+    scale = fromScale + (toScale - fromScale) * easeInOut(t);
+    paint();
+    raf = requestAnimationFrame(step);
+  }
+  function kick() {
+    if (motion.matches) {
+      scale = target;
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      paint();
+      return;
+    }
+    fromScale = scale;
+    toScale = target;
+    var dist = Math.abs(toScale - fromScale);
+    dur = dist < 0.0008 ? 0 : TRAVEL * (dist / (1 - minScale));
+    started = performance.now();
+    if (dur <= 0) {
+      scale = target;
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      paint();
+      return;
+    }
+    if (running) return;
+    running = true;
+    raf = requestAnimationFrame(step);
+  }
+  function setTarget(next) {
+    if (next === target) return;
+    target = next;
+    kick();
+  }
+  function overBand(el) {
+    return !!(el && el.closest && el.closest('.cs-next'));
+  }
+  function mount() {
+    if (node || !fine.matches) return;
+    node = document.createElement('div');
+    node.className = 'hp-cursor';
+    node.setAttribute('aria-hidden', 'true');
+    node.innerHTML = '<svg class="hp-cursor__arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="#000" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    arrow = node.firstChild;
+    document.body.appendChild(node);
+    scale = minScale;
+    target = minScale;
+    paint();
+    window.addEventListener('pointermove', onMove, true);
+    document.documentElement.addEventListener('pointerleave', onLeave);
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+  function place(clientX, clientY, el) {
+    x = clientX;
+    y = clientY;
+    var on = overBand(el);
+    if (on && !shown) {
+      shown = true;
+      node.classList.add('is-on');
+      document.documentElement.classList.add('hp-cursor-live');
+      scale = minScale;
+    }
+    if (!on) shown = false;
+    setTarget(on ? 1 : minScale);
+    paint();
+  }
+  function onMove(e) {
+    if (!node) return;
+    if (e.pointerType && e.pointerType !== 'mouse') {
+      onLeave();
+      return;
+    }
+    place(e.clientX, e.clientY, e.target);
+  }
+  function onLeave() {
+    shown = false;
+    setTarget(minScale);
+    paint();
+  }
+  function onScroll() {
+    if (!node || !shown) return;
+    setTarget(overBand(document.elementFromPoint(x, y)) ? 1 : minScale);
+    if (!overBand(document.elementFromPoint(x, y))) shown = false;
+  }
+  function sync() {
+    if (fine.matches) mount();
+  }
+  if (fine.addEventListener) fine.addEventListener('change', sync);
+  sync();
+})();
+</script>
+
 </body>
 </html>

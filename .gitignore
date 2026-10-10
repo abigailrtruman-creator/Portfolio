@@ -16,6 +16,9 @@ sofa-reel-motion.png
 *.md
 # Build/authoring scripts — not part of the site
 *.py
+__pycache__/
+*.py[cod]
+phone-preview.html
 
 # Squarespace injection build, obsolete now the site is hosted directly
 squarespace-injection.html
