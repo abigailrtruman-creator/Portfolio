@@ -352,15 +352,15 @@
     grid-template-columns: minmax(0, 1fr);
     /* Four tracks, two of them empty, so spare height is *divided* rather
        than pooled. Rows 1 and 3 are the clearance above the copy block and the
-       open field below it. They share the slack equally, so the copy sits on
-       the centre line of the space between the top of the hero and the marks;
-       the marks' own band adds weight at the bottom, which lifts the copy a
-       touch above true centre, where a block of this size reads as placed
-       rather than sunk. The minmax() floor on row 3 is the smallest gap the
+       open field below it. The slack splits 1 : 1.3, so the copy sits a
+       little above the centre of the space between the top of the hero and
+       the marks. True centre read as low: the marks' band adds weight at the
+       bottom, and a block of this size wants to be placed rather than sunk.
+       The minmax() floor on row 3 is the smallest gap the
        marks may ever have from the copy: they are pinned to the foot of the
        first screen, and they must never read as part of the paragraph. Both
        spacer tracks collapse on short viewports where there is no slack. */
-    grid-template-rows: 1fr auto minmax(clamp(96px, 14vh, 180px), 1fr) auto;
+    grid-template-rows: 1fr auto minmax(clamp(96px, 14vh, 180px), 1.3fr) auto;
     gap: 0;
   }
   /* Ambient glow. The copy is capped at --shell, but light in a room is not,
