@@ -1016,15 +1016,8 @@
   }
   .cs-hero .cs-ph { display: grid; }
 
-
-  /* The homepage card's corner, and the up next card's. 3.4% of the
-     picture's own width, and never sharper than 14px, which is the floor
-     the homepage uses once the picture is small. */
-  .cs-hero .cs-figure { container-type: inline-size; }
-  .cs-hero .cs-figure img,
-  .cs-hero__video {
-    border-radius: max(14px, 3.4cqw);
-  }
+  /* Square corners, at the owner's request. The homepage card and the Up
+     next card keep theirs; the hero is a photograph on the page, not a card. */
 
   /* ---------- Overview ----------
      Two opening paragraphs, then the three summaries. The role in the first
@@ -1851,25 +1844,31 @@
   }
 
   /* ---------- NEXT ----------
-     The study after this one, as a card on the white close under the impact
-     section. The picture is the owner's own export for this slot — the
-     card's black, its rounded corners and the screen on the right are all
-     in the file — and the copy is laid over the empty left of it. The card
-     is a size container so the type, the inset and the corner scale with
-     the card and hold the composition at every width.
+     The study after this one, as a plain card in the page's own ink under
+     the close: black on the white close, white on the black one. Three
+     things on it, the eyebrow, the arrow and the next study's sentence, with
+     one padding on all four sides, so the inside of the card reads as a
+     different kind of space from the column it sits in. No artwork: the
+     sentence is the picture, and it breaks where it breaks on the homepage
+     card, so it lands in the same three lines there and here.
 
-     As wide as the reading column, so it shares its edges with the impact
-     section above. The ink is pinned: once the page has turned light the
-     tokens are the white page's and the card has not turned with them. */
+     Padding and type are in container units, so the card keeps its
+     proportions from a phone to a wide screen. As wide as the reading
+     column, so it shares its edges with the impact section above. */
   .cs-next {
+    --next-bg: #ffffff;
+    --next-ink: #0a0a0c;
     display: block;
     width: min(var(--measure), calc(100% - 2 * var(--pad-x)));
-    margin: var(--section) auto 0;
+    /* Where the card follows a plain closing section rather than the impact
+       section, these are the gaps: the writing well out of the way above,
+       and clear water below before the footer's own hairline. */
+    margin: clamp(160px, 22vh, 280px) auto clamp(40px, 6vh, 72px);
     container-type: inline-size;
-    color: #ffffff;
     text-decoration: none;
-    transition: transform 0.55s cubic-bezier(0.32,0.72,0,1);
   }
+  /* On the studies that close on the white sheet, the card is the ink. */
+  .cs-next--ink { --next-bg: #0a0a0c; --next-ink: #ffffff; }
   /* The impact section's own bottom padding is the gap above every other
      close. The card wants more than that: the writing should be gone before
      the next study arrives. */
@@ -1878,78 +1877,90 @@
     padding-top: 0;
     padding-bottom: clamp(200px, 28vh, 320px);
   }
-  .cs-impact + .cs-next { margin: 0 auto clamp(72px, 11vh, 128px); }
-  @media (hover: hover) {
-    .cs-next:hover { transform: translateY(-6px); }
-    .cs-next:active { transform: translateY(-4px); transition-duration: 0.18s; }
-  }
+  /* And below it, enough that a black card is not sitting on the black
+     footer: on a phone that is 135px of white between the two. */
+  .cs-impact + .cs-next { margin: 0 auto clamp(120px, 16vh, 176px); }
   .cs-next:focus-visible { outline: none; }
   .cs-next:focus-visible .cs-next__card {
-    outline: 2px solid #0a0a0c;
+    outline: 2px solid var(--next-bg);
     outline-offset: 4px;
   }
   .cs-next__card {
     position: relative;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    /* One padding on all four sides: 72px at the column's full width, 32px
+       on a phone. */
+    padding: clamp(32px, 7.8cqw, 72px);
+    background: var(--next-bg);
+    color: var(--next-ink);
     overflow: hidden;
-    /* The export's own corner: 342px on a 10902px frame. */
-    border-radius: 3.14cqw;
-    background: #0a0a0b;
   }
-  /* The green export carries transparent opposing corners. Let the white
-     close show through them instead of exposing the default black card bed. */
-  .cs-next--dark-copy .cs-next__card { background: transparent; }
-  /* On the studies that close in black rather than on the white sheet, the
-     card's black is the page's black, and a hairline is what keeps it a card. */
+  /* Hover is a tint, not a move: it lightens the black card and darkens the
+     white one by the same amount. */
   .cs-next__card::after {
     content: '';
     position: absolute;
     inset: 0;
-    border-radius: inherit;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+    background: rgba(127,127,127,0.1);
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.32,0.72,0,1);
     pointer-events: none;
   }
-  .cs-impact + .cs-next .cs-next__card::after { content: none; }
-  .cs-next__art { display: block; }
-  .cs-next__art img {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-  /* Where the comp sets it: 6.4% in, the kicker a fifth of the way down,
-     the sentence in the left 40%. */
-  .cs-next__copy {
-    display: block;
-    position: absolute;
-    z-index: 1;
-    top: 19%;
-    left: 6.4%;
-    width: 40%;
+  .cs-next__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   .cs-next__kicker {
-    display: block;
-    font-family: var(--ff-display);
-    font-size: max(1.5cqw, clamp(11px, 2.2cqw, 13px));
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--ff-body);
+    font-size: clamp(10px, 1.3cqw, 12px);
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.62;
   }
+  .cs-next__kicker::before {
+    content: '';
+    width: clamp(18px, 3cqw, 28px);
+    height: 1px;
+    background: currentColor;
+  }
+  .cs-next__arrow {
+    display: inline-flex;
+    width: clamp(22px, 3cqw, 28px);
+    height: clamp(22px, 3cqw, 28px);
+    transition: transform 0.5s cubic-bezier(0.32,0.72,0,1);
+  }
+  .cs-next__arrow svg { width: 100%; height: 100%; display: block; }
+  .cs-next__arrow path { stroke-width: 1.5; }
   .cs-next__line {
     display: block;
-    margin-top: 2.6cqw;
+    margin-top: clamp(32px, 6cqw, 56px);
     font-family: var(--ff-display);
-    font-weight: 500;
-    font-size: min(3.2cqw, max(18px, 2.45cqw));
-    line-height: 1.16;
-    letter-spacing: -0.026em;
-    color: #ffffff;
+    font-weight: 600;
+    font-size: clamp(19px, 2.7cqw, 25px);
+    line-height: 1.22;
+    letter-spacing: -0.024em;
+    color: var(--next-ink);
     text-wrap: pretty;
   }
-  .cs-next__line strong { color: #ffffff; font-weight: 600; }
-  .cs-next--dark-copy .cs-next__kicker,
-  .cs-next--dark-copy .cs-next__line,
-  .cs-next--dark-copy .cs-next__line strong { color: #0a0a0c; }
+  .cs-next__line strong { font-weight: 700; color: inherit; }
+  /* The homepage card's own line breaks. On a phone they release and the
+     sentence wraps as one run; the spaces between the spans are real ones. */
+  .cs-next__l { display: block; }
   .cs-next__lockup { white-space: nowrap; }
+  @container (max-width: 560px) {
+    .cs-next__l { display: inline; }
+    .cs-next__line { font-size: clamp(18px, 5.6cqw, 24px); }
+  }
+  @media (hover: hover) {
+    .cs-next:hover .cs-next__card::after { opacity: 1; }
+    .cs-next:hover .cs-next__arrow { transform: translate(3px, -3px); }
+  }
   /* Bridge the 22px phone gutter into the page’s fluid gutter without a
      one-pixel breakpoint where the card gets narrower as the viewport grows.
      This equals calc(100% - 44px) at 430/431px and the normal 12vw gutter
@@ -1957,52 +1968,12 @@
   @media (min-width: 431px) and (max-width: 700px) {
     .cs-next { width: min(var(--measure), calc(85.185vw + 19.704px)); }
   }
-  /* Mobile has its own tall artwork: the same composition as the desktop
-     card, redrawn for the narrow frame. The copy stays over the clear top of
-     that artwork, at the inset and scale of the owner's reference. */
   @media (max-width: 430px) {
     .cs-next { width: calc(100% - 44px); }
-    .cs-next__card {
-      display: block;
-      aspect-ratio: 5979 / 7923;
-      border-radius: 18px;
-    }
-    .cs-next__art {
-      position: absolute;
-      inset: 0;
-    }
-    .cs-next__art picture {
-      display: block;
-      width: 100%;
-      height: 100%;
-    }
-    .cs-next__copy {
-      position: absolute;
-      top: 9.4%;
-      left: 11.7%;
-      width: 76.6%;
-      padding: 0;
-    }
-    .cs-next__kicker { font-size: 12px; }
-    .cs-next__line {
-      margin-top: min(17px, 4.4cqw);
-      font-size: clamp(14px, 4.66cqw, 18px);
-      line-height: 1.2;
-      letter-spacing: -0.02em;
-      text-wrap: pretty;
-    }
-    .cs-next__art img {
-      width: 100%;
-      height: 100%;
-      aspect-ratio: auto;
-      object-fit: cover;
-      object-position: center;
-    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .cs-next,
-    .cs-next:hover,
-    .cs-next:active { transform: none; transition: none; }
+    .cs-next__card::after,
+    .cs-next__arrow { transition: none; }
   }
 
   /* ---------- POINTER ----------
@@ -2677,20 +2648,33 @@
     .cs-lb__close { opacity: 1; transform: none; }
   }
   /* ---------- ARRIVING FROM THE HOMEPAGE ----------
-     Cross-document view transition, opted into on both sides. The homepage
-     names the clicked card's sentence, chip row and artwork as it leaves;
-     this page names its heading, tags and hero picture the same, and the
-     browser carries each from where it was to where it is. The nav pill is
-     named too and holds still. Everything else cross-fades.
+     Cross-document view transition, opted into on both sides. The words are
+     the thing that stays.
+
+     The card's sentence on the homepage and this heading are the same words,
+     in the same face at the same weight and tracking, wrapped to the same
+     three lines (the card borrows this heading's measure in em, so the
+     breaks agree at any size). The chips under the sentence are this page's
+     tags to the pixel, in the same order and at the same distance. The
+     homepage names both as it leaves; this page names its heading and tags
+     the same, and the browser carries the one block of type, sentence over
+     chips, from the card to the top of this page, growing a little on the
+     way. The artwork does not travel: it leaves with the homepage in its one
+     fade, and this page's photograph rises into place under the heading once
+     it has landed. The nav pill is named too and holds still.
 
      The pseudo-elements are styled by the page being arrived at, which is
-     this one, so this is where the journey is described.
+     this one, so this is where the journey is described. The same block is
+     on every case page; change it in all of them or none.
 
-     The artwork and the picture are different shapes — the card is nearly
-     square, this picture is 4:3 — so both snapshots fill the travelling box
-     and are cropped by it rather than the taller hanging out of the bottom.
-     The type is not blended with plus-lighter, the default, which flares on
-     two copies of white text passing over each other.
+     The order of events:
+       0.00  Homepage falls back: fades to the black, shrinks a touch (0.42s).
+       0.00  The block of type lifts and glides to the top of the page
+             (0.85s on the site's decelerating curve). The nav pill holds.
+       0.16  This page's black arrives beneath the moving type (0.5s).
+       0.40  The photograph rises in under the heading (0.6s), so its
+             arrival is the end of the move rather than a second event.
+       0.85  Type lands. The eyebrow then takes its usual entrance.
 
      Reduced motion opts out: a page that changes in one frame is the right
      answer there. Browsers without the feature navigate as they always did. */
@@ -2698,7 +2682,7 @@
   .hp-nav { view-transition-name: hp-nav; }
   .cs-hero__statement { view-transition-name: cs-title; }
   .cs-hero .cs-tags { view-transition-name: cs-tags; }
-  /* Named, but under a name the homepage never uses — see below. */
+  /* Named, but under a name the homepage never uses: an entrance of its own. */
   .cs-hero .cs-figure { view-transition-name: cs-figure; }
 
   /* The current hero is several screens above an Up next click. Remove its
@@ -2708,47 +2692,12 @@
   html.cs-nexting .cs-hero .cs-tags,
   html.cs-nexting .cs-hero .cs-figure { view-transition-name: none; }
 
-  /* PROTOTYPE — the words are the thing that stays.
-
-     The card's sentence and this heading are the same words, in the same
-     face at the same weight and tracking, wrapped to the same three lines
-     (the card borrows this heading's measure in em, so the breaks agree at
-     any size). The chips under the sentence are this page's tags to the
-     pixel, in the same order and at the same distance. So what travels is one
-     block of type — sentence over chips — lifting off the card and settling
-     at the top of the page, growing a little on the way. Nothing is stretched
-     into something else; the two snapshots the browser blends are the same
-     glyphs, which is the one case plus-lighter was designed for, so the
-     default blend is kept and the move is clean.
-
-     The pictures do not travel. The card's artwork and this photograph are
-     different pictures, and a transition that pretends otherwise is a blur
-     with a destination. Each is given a move of its own instead, under a name
-     the other page does not use: the artwork sinks and dims as the words lift
-     off it, and this photograph rises into place under the heading once the
-     heading has landed. The two never overlap.
-
-     The order of events:
-       0.00  Homepage falls back: fades to the black, shrinks a touch (0.34s).
-             The artwork begins to sink under the words (0.46s).
-       0.00  The block of type lifts and glides to the top of the page
-             (0.70s on the site's decelerating curve). The nav pill holds.
-       0.14  This page's black arrives beneath the moving type (0.42s).
-       0.36  The photograph rises in under the heading (0.56s), so its
-             arrival is the end of the move rather than a second event.
-       0.70  Type lands. The eyebrow then takes its usual entrance.
-
-     Reduced motion opts out: a page that changes in one frame is the right
-     answer there. Browsers without the feature navigate as they always did. */
   @keyframes cs-vt-root-out {
-    to { opacity: 0; transform: scale(0.965); }
+    to { opacity: 0; transform: scale(0.97); }
   }
   @keyframes cs-vt-root-in {
     from { opacity: 0; }
     to { opacity: 1; }
-  }
-  @keyframes cs-vt-art-sink {
-    to { opacity: 0; transform: translateY(3%) scale(0.97); }
   }
   @keyframes cs-vt-figure-rise {
     from { opacity: 0; transform: translateY(28px); }
@@ -2756,15 +2705,15 @@
   }
   ::view-transition-old(root) {
     transform-origin: 50% 42%;
-    animation: cs-vt-root-out 0.34s cubic-bezier(0.32,0.72,0,1) both;
+    animation: cs-vt-root-out 0.42s cubic-bezier(0.32,0.72,0,1) both;
   }
   ::view-transition-new(root) {
-    animation: cs-vt-root-in 0.42s cubic-bezier(0.32,0.72,0,1) 0.14s both;
+    animation: cs-vt-root-in 0.5s cubic-bezier(0.32,0.72,0,1) 0.16s both;
   }
   ::view-transition-group(cs-title),
   ::view-transition-group(cs-tags) {
     z-index: 2;
-    animation-duration: 0.7s;
+    animation-duration: 0.85s;
     animation-timing-function: cubic-bezier(0.32,0.72,0,1);
   }
   /* The old side of each pair is the card's; it is the same type, so it can
@@ -2772,27 +2721,19 @@
      cross-fade of two near-identical bitmaps at different scales is where
      the faint doubling would come from, if it came from anywhere. */
   ::view-transition-old(cs-title),
-  ::view-transition-old(cs-tags) {
-    animation-duration: 0.3s;
-  }
+  ::view-transition-old(cs-tags),
   ::view-transition-new(cs-title),
   ::view-transition-new(cs-tags) {
-    animation-duration: 0.3s;
-  }
-  /* Exit only: there is no hp-art here to arrive at. */
-  ::view-transition-group(hp-art) { z-index: 1; }
-  ::view-transition-old(hp-art) {
-    transform-origin: 50% 0;
-    animation: cs-vt-art-sink 0.46s cubic-bezier(0.32,0.72,0,1) both;
+    animation-duration: 0.32s;
   }
   /* Entrance only: the homepage names no cs-figure. */
   ::view-transition-new(cs-figure) {
-    animation: cs-vt-figure-rise 0.56s cubic-bezier(0.32,0.72,0,1) 0.36s both;
+    animation: cs-vt-figure-rise 0.6s cubic-bezier(0.32,0.72,0,1) 0.4s both;
   }
   /* Arrived by transition: the tags travelled here and are already in place,
-     so they do not get the entrance below as well. The script adds the class
-     before first paint. Specificity matches the is-in rule above and this is
-     later in the sheet, so it wins. */
+     so they do not get the hero's entrance as well. The script adds the
+     class before first paint. Specificity matches the is-in rule above and
+     this is later in the sheet, so it wins. */
   .cs-motion.cs-via .cs-hero .cs-tags,
   .cs-motion.cs-via .cs-hero.is-in .cs-tags {
     opacity: 1;
@@ -2929,12 +2870,12 @@
       <!-- The writing column, rail left empty, so the picture starts where
            the sentence does. -->
       <figure class="cs-figure">
-        <img src="/assets/boots-hero-1120.a62517b9.webp"
-             srcset="/assets/boots-hero-1120.a62517b9.webp 1120w,
-                     /assets/boots-hero-1680.a62517b9.webp 1680w,
-                     /assets/boots-hero-2240.a62517b9.webp 2240w"
+        <img src="/assets/boots-hero-1120.e6b34cee.webp"
+             srcset="/assets/boots-hero-1120.e6b34cee.webp 1120w,
+                     /assets/boots-hero-1680.e6b34cee.webp 1680w,
+                     /assets/boots-hero-2240.e6b34cee.webp 2240w"
              sizes="(min-width: 1000px) 924px, 92vw"
-             width="4500" height="3375"
+             width="3911" height="3129"
              alt="The rebuilt Boots.com checkout open on a laptop: contact, delivery and payment on one page with the order summary beside them."
              fetchpriority="high" decoding="async">
       </figure>
@@ -3363,28 +3304,13 @@
     </div>
   </section>
 
-<a class="cs-next cs-next--dark-copy" href="/sofa-to-saddle">
+<a class="cs-next cs-next--ink" href="/sofa-to-saddle">
   <span class="cs-next__card">
-    <span class="cs-next__art">
-      <picture>
-        <source media="(max-width: 430px)"
-                srcset="/assets/next-saddle-mobile-800.e7f38214.webp 800w,
-                        /assets/next-saddle-mobile-1600.e7f38214.webp 1600w"
-                sizes="calc(100vw - 44px)">
-        <img src="/assets/next-saddle-2240.136bbe91.webp"
-             srcset="/assets/next-saddle-1280.136bbe91.webp 1280w,
-                     /assets/next-saddle-2240.136bbe91.webp 2240w,
-                     /assets/next-saddle-3360.136bbe91.webp 3360w"
-             sizes="min(1120px, 88vw)"
-             width="3360" height="1441"
-             alt=""
-             loading="lazy" decoding="async">
-      </picture>
-    </span>
-    <span class="cs-next__copy">
+    <span class="cs-next__top">
       <span class="cs-next__kicker">Up next</span>
-      <span class="cs-next__line">Creating <strong>British Cycling <span class="cs-next__lockup">x Lloyds&rsquo;</span></strong> <span class="cs-next__lockup">habit-forming</span> cycling app, launched at pace by embracing AI throughout.</span>
+      <span class="cs-next__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     </span>
+    <span class="cs-next__line"><span class="cs-next__l">Creating <strong>British Cycling <span class="cs-next__lockup">x Lloyds&rsquo;</span></strong> <span class="cs-next__lockup">habit-forming</span></span> <span class="cs-next__l">cycling app, launched at pace by</span> <span class="cs-next__l">embracing AI throughout.</span></span>
   </span>
 </a>
 

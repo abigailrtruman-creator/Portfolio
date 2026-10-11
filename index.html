@@ -3868,24 +3868,34 @@
         if (a.getAttribute('href') === path) link = a;
       });
       if (!link) return;
-      // PROTOTYPE — the words are the thing that stays. The sentence and the
-      // chips are named as the case page names its heading and tags, and
+      // The words are the thing that stays. The card's sentence and its chip
+      // row are named as the case page names its heading and tags, and
       // travel to them: same face, same words, same wrapping, so the move is
-      // one block of type gliding to the top of the next page.
+      // one block of type gliding to the top of the next page. The artwork
+      // is not named; it leaves with the rest of this page in its one fade.
+      // The journey itself is described on the arriving page (ARRIVING FROM
+      // THE HOMEPAGE in each case study's styles).
       //
-      // The artwork is named too, but under a name no case page uses, on
-      // purpose. The two pictures are different pictures and are not
-      // pretended to be one. A name with nothing to match on the far side
-      // gives the artwork an exit of its own — it sinks and dims as the words
-      // lift off it — instead of fading flat with the rest of the page. The
-      // case pages give their hero picture the same treatment in reverse.
+      // Names are cleared from every card first. Coming back from the
+      // bfcache restores this page exactly as it was left, inline names
+      // included, and a second card given the same name while the first
+      // still holds it is a duplicate — which makes the browser skip the
+      // whole transition and cut to the next page instead.
+      clearCaseNames();
       var desc = link.querySelector('.hp-case__desc');
       var tags = link.querySelector('.hp-case__tags');
-      var art = link.querySelector('.hp-case__art');
       if (desc) desc.style.viewTransitionName = 'cs-title';
       if (tags) tags.style.viewTransitionName = 'cs-tags';
-      if (art) art.style.viewTransitionName = 'hp-art';
     });
+    // And on the way back in, for the same reason: no card should still be
+    // carrying a name from the last time it was clicked.
+    window.addEventListener('pageshow', function(e) { if (e.persisted) clearCaseNames(); });
+  }
+  function clearCaseNames() {
+    Array.prototype.forEach.call(
+      document.querySelectorAll('.hp-case__desc, .hp-case__tags'),
+      function(el) { el.style.viewTransitionName = ''; }
+    );
   }
 
   function init() {
