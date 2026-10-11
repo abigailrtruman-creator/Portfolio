@@ -345,19 +345,22 @@
     margin: 0 auto;
     padding: clamp(112px, 13vh, 150px) var(--pad-x) clamp(36px, 5vh, 64px);
     display: grid;
+    /* One column, and it must be allowed to be narrower than its content.
+       The logo row is a track many times the width of the hero. Without a
+       floor of zero the grid sizes the column to that track, the hairline
+       runs out through the right padding, and the window clips the marks. */
+    grid-template-columns: minmax(0, 1fr);
     /* Four tracks, two of them empty, so spare height is *divided* rather
        than pooled. Rows 1 and 3 are the clearance above the copy block and the
-       open field below it; splitting the slack 1.55 : 1 keeps those two
-       intervals visibly unequal, which is what stops the copy reading as
-       something floating between two identical gaps — the measured failure
-       that put the rule here in the first place. The minmax() floor on row 3
-       guarantees the copy never crowds the rule, and both spacer tracks
-       collapse to nothing on short viewports where there is no slack to divide
-       in the first place.
-       The floor is generous for display type — the statement ends the block, and
-       a 74px glyph needs less clearance above a hairline than body copy did — but
-       it is kept as-is so the open field stays the hero's largest interval. */
-    grid-template-rows: 1.55fr auto minmax(clamp(48px, 7vh, 96px), 1fr) auto;
+       open field below it. They share the slack equally, so the copy sits on
+       the centre line of the space between the top of the hero and the marks;
+       the marks' own band adds weight at the bottom, which lifts the copy a
+       touch above true centre, where a block of this size reads as placed
+       rather than sunk. The minmax() floor on row 3 is the smallest gap the
+       marks may ever have from the copy: they are pinned to the foot of the
+       first screen, and they must never read as part of the paragraph. Both
+       spacer tracks collapse on short viewports where there is no slack. */
+    grid-template-rows: 1fr auto minmax(clamp(96px, 14vh, 180px), 1fr) auto;
     gap: 0;
   }
   /* Ambient glow. The copy is capped at --shell, but light in a room is not,
@@ -467,6 +470,9 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    /* On the centre line, with the nav above it and the marks below. */
+    align-items: center;
+    text-align: center;
     gap: clamp(18px, 2.2vh, 28px);
   }
   .hp-hero__greeting {
@@ -481,7 +487,7 @@
 
   .hp-hero__statement {
     margin: 0;
-    max-width: 30ch;
+    max-width: 26ch;
     font-family: var(--ff-display);
     /* 500, against 700-800 everywhere else the display face is used. Three
        sentences at 700 set a slab with no air in it — the weight that keeps a
@@ -566,7 +572,10 @@
   .hp-hero__sentence:has(.hp-hero__line) {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    /* Each line box is as wide as its own words, so the boxes have to be
+       centred as items or the statement arrives ragged-left and snaps to the
+       centre when the boxes come off. */
+    align-items: center;
   }
   /* The blank line is the only device marking the seam, and it is enough. The
      setup was briefly set at --ink-1 against the last sentence's full white, and
@@ -598,69 +607,79 @@
      this is an improvement on rather than a dependency. */
   .hp-hero__sentence { text-wrap: balance; }
 
-  /* The closing band: the hairline and the cue under it, and nothing else.
-     The cue sits on the same left axis as the copy, so the whole hero reads
-     down one column — greeting, statement, rule, cue — instead of the eye being
-     thrown to the opposite corner at the end of it. */
+  /* The closing band: the clients drifting along the foot of the first
+     screen. There is no rule above them. A hairline here sat in the middle
+     of the open field, nearer the marks than the words, and read as a lid on
+     the logos rather than as an edge of anything; the dark does the
+     separating, and the marks fading at either end are the only edge the
+     band needs. */
   .hp-hero__lower {
     grid-row: 4;
     position: relative;
-    display: flex;
-    align-items: flex-end;
-    /* Two things on the band now, at its two ends: the cue on the left, where
-       it has always been, and the clients on the right. The band used to carry
-       the cue alone and read as lopsided — one small word under a rule that
-       runs the whole width of the hero. */
-    justify-content: space-between;
-    gap: 24px;
-    padding-top: clamp(20px, 2.8vh, 34px);
-    border-top: 1px solid var(--rule);
+    display: block;
+    min-width: 0;
   }
 
   /* ---------- RECENT CLIENTS ----------
-     The proof, and the one thing a hiring manager used to have to scroll five
-     screens to find. A short label at the hero's body size and the four marks
-     after it, in one grey.
+     The proof, drifting along the line that closes the hero. Logos rather
+     than names: a mark is recognised before it is read. One colour and no
+     colour. These are a list, and a row of brand colours would be the loudest
+     thing on a page that is otherwise black and white.
 
-     Logos rather than names. Four words in a row read as a sentence that has
-     to be parsed; four marks read as four clients before they are read at all,
-     and the marks are what a hiring manager recognises on the way past. One
-     colour and no colour: these are not here as brands, they are here as a
-     list, and a row of brand colours in the hero would be the loudest thing on
-     a page that is otherwise black and white.
+     Each mark is a mask over the current colour, so the SVGs and the PNGs
+     take the same grey and the same hover without a treatment each. Lloyds
+     is the horse and the word as one mark. Each gets its own height, because
+     a script, a symbol lockup and a heavy wordmark at one height do not look
+     one size. The heights were set by eye. The widths follow each file's
+     own ratio. Amundi is the lockup as given, word, rule and line, at a
+     height that sits with the others. The small line is part of the mark
+     even where it cannot be read.
 
-     Each mark is drawn as a mask over the current colour, so the SVGs and the
-     PNGs take the same grey, the same hover and the same transition without
-     four different treatments. Lloyds is the horse and the word as one mark.
-     Each gets its own height, because a script, a symbol lockup and a heavy
-     lowercase wordmark at one height do not look one size — the heights below
-     were set by eye until the four carried the same weight. The widths follow
-     from each file's own ratio. */
+     The row is drawn twice and moved by half its own width, so the join is
+     two copies of the same gap and the loop has no seam. The fade is a mask
+     on the window, not a cover laid over the page: the marks thin out at
+     the edges instead of arriving as a hard cut. Hover and keyboard focus
+     pause it, because a mark you are trying to read or reach should hold
+     still. Under reduced motion the second copy goes and the first sits. */
   .hp-hero__clients {
-    flex: 0 1 auto;
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5em 1.6em;
+    width: 100%;
     min-height: 44px;
-    font-size: var(--hero-body);
-    line-height: 1.3;
-    letter-spacing: -0.01em;
+  }
+  .hp-hero__marquee {
+    overflow: hidden;
+    width: 100%;
+    --fade: clamp(32px, 8vw, 120px);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+  }
+  .hp-hero__track {
+    display: flex;
+    width: max-content;
+    animation: hp-clients-drift 48s linear infinite;
+    will-change: transform;
+  }
+  .hp-hero__marquee:hover .hp-hero__track,
+  .hp-hero__marquee:focus-within .hp-hero__track {
+    animation-play-state: paused;
+  }
+  @keyframes hp-clients-drift {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
   }
   .hp-hero__clients-list {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6em 2.1em;
+    flex: none;
+    /* Half a gap of padding each side, so the seam between the two copies
+       is the same interval as the gap between two marks. */
+    --logo-gap: clamp(56px, 6.4vw, 108px);
+    gap: var(--logo-gap);
     margin: 0;
-    padding: 0;
+    padding: 0 calc(var(--logo-gap) / 2);
     list-style: none;
   }
   .hp-hero__client {
     display: block;
-    /* Rest is the same grey as the cue. Hover and keyboard focus take the
-       statement's white. The mask is painted with background-color rather
-       than currentColor so the change can actually transition. */
     color: var(--ink-2);
     background-color: var(--ink-2);
     text-decoration: none;
@@ -673,109 +692,25 @@
   }
   .hp-hero__logo {
     display: block;
-    /* --h is the mark's height, --r its width over its height. */
+    /* --h is the frame. The ink does not fill every frame the same way:
+       a script and a circle use the whole height, a word under a set of
+       bars or over a tagline does not. The height is chosen so the ink
+       matches, and --oy slides a mark whose weight is not in the middle
+       of its frame. */
     height: var(--h);
     width: calc(var(--h) * var(--r));
+    transform: translateY(var(--oy, 0));
     -webkit-mask: var(--mark) center / contain no-repeat;
     mask: var(--mark) center / contain no-repeat;
+    background-color: var(--ink-2);
   }
-  .hp-hero__logo--boots   { --h: 28px; --r: 1.887; --mark: url(/assets/logo-boots.e629e6b8.svg); }
-  .hp-hero__logo--bc      { --h: 22px; --r: 2.802; --mark: url(/assets/logo-british-cycling.5e9b5aaf.png); }
-  .hp-hero__logo--lloyds  { --h: 19px; --r: 3.633; --mark: url(/assets/logo-lloyds.96ad6dfe.png); }
-  .hp-hero__logo--pwc     { --h: 31px; --r: 1.936; --mark: url(/assets/logo-pwc.2065f915.svg); }
+  .hp-hero__logo--boots   { --h: 22px; --r: 1.887; --mark: url(/assets/logo-boots.e629e6b8.svg); }
+  .hp-hero__logo--bc      { --h: 24px; --r: 2.802; --mark: url(/assets/logo-british-cycling.5e9b5aaf.png); }
+  .hp-hero__logo--lloyds  { --h: 24px; --r: 3.633; --mark: url(/assets/logo-lloyds.96ad6dfe.png); }
+  .hp-hero__logo--pwc     { --h: 26px; --r: 1.936; --oy: -6%; --mark: url(/assets/logo-pwc.2065f915.svg); }
+  .hp-hero__logo--amundi  { --h: 25px; --r: 2.547; --oy: 8%; --mark: url(/assets/logo-amundi.92ce4aa1.png); }
+  .hp-hero__logo--imi     { --h: 24px; --r: 2.043; --mark: url(/assets/logo-imi.64e95895.png); }
 
-  /* Scroll cue. One word and the mouse, no container. The ring it used to sit
-     in was the only circle anywhere on the page and it read as a button the
-     cue is not.
-
-     The label takes --hero-body rather than a smaller curve of its own, so it is
-     the greeting's size exactly: 21.6px against 21.6px at 1440, 15px against
-     15px on a phone. It was 12.24px at 1440, and the owner read that as the word
-     being wrong rather than as a label.
-     Matching the greeting is not just the nearest available number now that the
-     support paragraph has gone — it is the better composition. The greeting and
-     the cue are the two small lines that top and tail the statement, and at one
-     size they read as a deliberate pair bracketing the display type instead of
-     as two different afterthoughts.
-
-     Same tone as well as same size, and the arrow is included in it: a grey word
-     beside a white arrow is the icon-with-a-caption reading that the stem-weight
-     matching below exists specifically to defeat, so the pair takes one colour
-     and the arrow inherits it rather than declaring its own.
-     --ink-2 rather than --ink because nothing here is a control any more — the
-     click handler is gone — and full white on the one line in the hero that does
-     nothing was the loudest thing at the bottom of the composition. At 0.52 over
-     --bg it measures 5.65:1, so it clears WCAG AA for body text at every size
-     the clamp produces, which is the floor that matters now that this is being
-     read rather than pressed. */
-  .hp-hero__cue {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    /* In em, like the arrow and the bob below: one size governs the whole pair,
-       so the cue is resized by changing font-size and nothing else. */
-    gap: 0.8em;
-    /* 44px, and no longer as a tap target — nothing here is tappable. It is the
-       height the closing band was composed against, so it stays as the band's
-       measure rather than letting the row collapse to the cap height of one
-       word and pull the hairline down onto the copy. */
-    min-height: 44px;
-    font-size: var(--hero-body);
-    /* 400, matching the back-to-top control — the owner's reference for how
-       heavy a piece of furniture on this page should sit. 600 was set to make
-       the line read as something other than more of the copy above it, but the
-       distinction it was drawing does not need weight to draw it: the cue is
-       already the only line in the hero sitting below a rule, beside an arrow,
-       and at --ink-2 rather than --ink. Weight on top of that was the fourth
-       signal and the only loud one, and it made six letters heavier than the
-       greeting they are meant to pair with.
-       Declared rather than left to inherit, because the greeting's 500 would
-       come down the cascade otherwise. */
-    font-weight: 400;
-    /* Sentence case, on the owner's instruction: one capital and no shouting.
-       The 0.01em of tracking that came down with the caps has gone with the size
-       it was calibrated for — it was the residue that kept six letters at
-       12-14px from setting tight, and at 16-21px the word needs no help. */
-    color: var(--ink-2);
-  }
-  /* No cursor, no hover, no focus ring, because there is nothing to focus: this
-     is a label on a <span aria-hidden>, not a button. The pointer cursor and the
-     focus-visible outline both went with the click handler rather than being
-     left to advertise an interaction that no longer exists — a pointer cursor
-     over dead text is a worse lie than no affordance at all, and an outline on
-     an element that cannot be reached by keyboard can never be drawn.
-     The scroll it used to perform is not replaced. It duplicated the gesture the
-     visitor is already making, and the section it jumped to is the very next
-     thing on the page. */
-  .hp-hero__cue-arrow {
-    display: block;
-    /* Same slot the arrow had, so the word and the mark stay one pair. The
-       mouse is stroke 2 of a 32 viewBox; at 1.35em its line sits close to the
-       word's own weight rather than outgrowing the label. */
-    --arrow: 1.35em;
-    width: var(--arrow);
-    height: var(--arrow);
-    /* No colour of its own: the SVG strokes with currentColor, so it takes the
-       label's --ink-2 by inheritance. */
-  }
-  .hp-hero__cue-arrow svg { width: 100%; height: 100%; display: block; }
-  /* The wheel from the scroll-down file: a short stroke that draws, travels
-     down the mouse and fades, then rests. 3s is the file's own loop, 90 frames
-     at 30fps. The travel is 3 units of the 32 viewBox, written in em so it
-     stays that fraction of the icon at every size. */
-  .hp-cue-wheel {
-    stroke-dasharray: 6;
-    stroke-dashoffset: 0;
-    animation: hp-cue-wheel 3s linear infinite;
-  }
-  @keyframes hp-cue-wheel {
-    0%   { stroke-dashoffset: 6; opacity: 0; transform: translateY(0); }
-    11%  { stroke-dashoffset: 4; opacity: 1; }
-    33%  { stroke-dashoffset: 0; opacity: 1; transform: translateY(0.063em); }
-    55%  { stroke-dashoffset: -4; opacity: 1; transform: translateY(0.105em); }
-    67%  { stroke-dashoffset: -6; opacity: 0; transform: translateY(0.127em); }
-    100% { stroke-dashoffset: -6; opacity: 0; transform: translateY(0.127em); }
-  }
 
   /* ---------- WORDMARK (3 rows converge → scale down) ----------
      Motion, scale values and scroll cost are locked; only the mechanism has
@@ -1653,7 +1588,7 @@
          as the owner asked. */
       --hero-body: min(15px, 3.5vw);
       padding: 94px 22px 30px;
-      grid-template-rows: 1.5fr auto minmax(24px, 1fr) auto;
+      grid-template-rows: 1fr auto minmax(56px, 1fr) auto;
     }
     .hp-hero__main { gap: 14px; }
     /* Size comes from the base clamp; this only tightens the setting. */
@@ -1662,18 +1597,9 @@
       line-height: 1.06;
       letter-spacing: -0.032em;
     }
-    /* The hairline still closes the hero, and the clients are what sit under
-       it. The cue goes: a drawing of a mouse wheel is a desktop instruction,
-       and on a phone the band has room for one of the two, so it holds the
-       one that says something. The marks sit on the right, against the
-       copy's right edge. */
-    .hp-hero__lower { align-items: stretch; padding-top: 20px; }
-    .hp-hero__cue { display: none; }
-    /* Full width of the band so a wrapped row ends on the same edge as a
-       single one. A touch smaller than the desktop marks. */
-    .hp-hero__clients { align-items: flex-start; justify-content: flex-end; width: 100%; }
-    .hp-hero__clients-list { gap: 0.6em 1.5em; justify-content: flex-end; width: 100%; }
-    .hp-hero__logo { height: calc(var(--h) * 0.86); width: calc(var(--h) * 0.86 * var(--r)); }
+    /* The marks come down a little, so six of them still read as one line
+       rather than as the heaviest thing on a phone. */
+    .hp-hero__logo { height: calc(var(--h) * 0.82); width: calc(var(--h) * 0.82 * var(--r)); }
 
     .hp-cases {
       /* The height cap comes off here, and here rather than at 900px, because
@@ -1874,17 +1800,10 @@
       margin-top: 0.35em;
       margin-top: 0.35lh;
     }
-    .hp-hero__lower {
-      position: absolute;
-      right: var(--pad-x);
-      bottom: 0;
-      padding-top: 0;
-      border-top: 0;
-    }
-    /* The copy is the composition here and the cue is a corner marker; a row
-       of four names beside it would be a second line of furniture in a hero
-       that has no height to spare. */
-    .hp-hero__clients { display: none; }
+    /* No height for a line under the copy. The marquee would land below the
+       fold, which is the thing this breakpoint exists to prevent, so the
+       band goes rather than becoming a corner marker. */
+    .hp-hero__lower { display: none; }
   }
 
   /* The band between the landscape treatment above and the full-height layout.
@@ -1981,15 +1900,25 @@
       will-change: auto;
       transition: none;
     }
-    /* The wheel is the same kind of ambient motion the bob was: the mouse
-       already says scroll, so the travelling line goes and the static mark
-       stays. */
-    .hp-cue-wheel {
-      animation: none;
-      opacity: 1;
-      stroke-dashoffset: 0;
-      transform: none;
+    /* The drift is ambient motion. It stops, the fade comes off so nothing
+       is hidden for the sake of a loop that is not running, and the second
+       copy goes so the list is not read twice. */
+    .hp-hero__marquee {
+      -webkit-mask-image: none;
+      mask-image: none;
+      overflow: visible;
     }
+    .hp-hero__track {
+      animation: none;
+      will-change: auto;
+      width: 100%;
+    }
+    .hp-hero__clients-list {
+      flex-wrap: wrap;
+      width: 100%;
+      row-gap: 18px;
+    }
+    .hp-hero__clients-list + .hp-hero__clients-list { display: none; }
     /* The index is information, not decoration, so it stays — it just stops
        arriving. Held on rather than left to the scroll trigger, because a pill
        that fades itself in is doing the one thing this mode is asked not to,
@@ -2207,23 +2136,34 @@
     // strands `depth.` on the 26ch measure, `the product.` ends up alone on a
     // last line, and `I design, I lead,` splits at the triad's hinge.
     statement: '<span class="hp-hero__sentence">Seven years in, from consultancy pace to <span class="hp-hero__keep">in-house depth.</span></span> ' +
-      '<span class="hp-hero__sentence"><span class="hp-hero__keep">I design, I lead,</span> and I put as much into people as I do <span class="hp-hero__keep">the product.</span></span>',
-    cue: 'Scroll'
+      '<span class="hp-hero__sentence"><span class="hp-hero__keep">I design, I lead,</span> and I put as much into people as I do <span class="hp-hero__keep">the product.</span></span>'
   };
 
   // In the order the cards are in, because that is the order a visitor who
-  // scrolls on will meet them. Four, not five: the fibre provider is unnamed
-  // on its own card and stays unnamed here. Lloyds is on the British Cycling
-  // app card as the co-client and is listed on that basis. `key` picks the
-  // mark's modifier class in the stylesheet, where the file and its size live.
-  // `slug` is the card the mark scrolls to. British Cycling and Lloyds both
-  // open the app card; Lloyds is the co-client on that study.
+  // scrolls on will meet them. The fibre provider is unnamed on its own card
+  // and stays unnamed here. Lloyds is on the British Cycling app card as the
+  // co-client and is listed on that basis. `key` picks the mark's modifier
+  // class, where the file and its size live. `slug` is the card the mark
+  // scrolls to. British Cycling and Lloyds both open the app card. Amundi
+  // and IMI have no study on this page, so they are marks and not links.
   var CLIENTS = [
     { name: 'Boots', key: 'boots', slug: 'boots' },
     { name: 'British Cycling', key: 'bc', slug: 'saddle' },
     { name: 'Lloyds', key: 'lloyds', slug: 'saddle' },
-    { name: 'PwC', key: 'pwc', slug: 'pwc' }
+    { name: 'PwC', key: 'pwc', slug: 'pwc' },
+    { name: 'Amundi', key: 'amundi' },
+    { name: 'IMI', key: 'imi' }
   ];
+
+  function clientMarks(clone) {
+    return CLIENTS.map(function(c) {
+      var mark = c.slug
+        ? '<a class="hp-hero__client hp-hero__logo hp-hero__logo--' + c.key + '" href="#hp-cases" data-case="' + c.slug + '"' +
+            (clone ? ' tabindex="-1"' : '') + ' aria-label="' + c.name + '"></a>'
+        : '<span class="hp-hero__logo hp-hero__logo--' + c.key + '" role="img" aria-label="' + c.name + '"></span>';
+      return '<li>' + mark + '</li>';
+    }).join('');
+  }
 
   var WORDMARK = 'Selected work';
 
@@ -2757,29 +2697,16 @@
           '</h1>' +
         '</div>' +
         '<div class="hp-hero__lower">' +
-          // A span, not a button: this reports that the page continues, and the
-          // whole thing is aria-hidden because "Scroll" describes a mouse gesture
-          // to someone who may not be making one. A screen reader reaching the end
-          // of the hero is told the next section's heading, which is the same
-          // information without the instruction.
-          '<span class="hp-hero__cue" aria-hidden="true">' +
-            '<span class="hp-hero__cue-arrow">' +
-              '<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25 21c0 5-4 9-9 9h0c-4.9 0-9-4-9-9V11c0-4.9 4.1-9 9-9h0c5 0 9 4.1 9 9V21z" stroke="currentColor" stroke-width="2"/><line class="hp-cue-wheel" x1="16" y1="8" x2="16" y2="14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>' +
-            '</span>' +
-            '<span>' + HERO.cue + '</span>' +
-          '</span>' +
-          // The clients, at the band's other end. Each mark is a link to its
-          // card in the scroller below, named for a screen reader, drawn by
-          // the mask. British Cycling and Lloyds both scroll to the app card,
-          // where Lloyds is the co-client.
+          // Drawn twice. The second copy is what makes the loop seamless, and
+          // it is hidden from the tree so the list is announced once. Its
+          // links stay clickable but stay out of the tab order.
           '<div class="hp-hero__clients" id="hp-clients">' +
-            '<ul class="hp-hero__clients-list" aria-label="Recent clients">' +
-              CLIENTS.map(function(c) {
-                return '<li>' +
-                  '<a class="hp-hero__client hp-hero__logo hp-hero__logo--' + c.key + '" href="#hp-cases" data-case="' + c.slug + '" aria-label="' + c.name + '"></a>' +
-                '</li>';
-              }).join('') +
-            '</ul>' +
+            '<div class="hp-hero__marquee">' +
+              '<div class="hp-hero__track">' +
+                '<ul class="hp-hero__clients-list" aria-label="Recent clients">' + clientMarks(false) + '</ul>' +
+                '<ul class="hp-hero__clients-list" aria-hidden="true">' + clientMarks(true) + '</ul>' +
+              '</div>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</section>';
@@ -2913,6 +2840,21 @@
     btn.addEventListener('click', function() {
       root.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
     });
+  }
+
+  // The loop's duration is a speed, not a period. 36px a second is slow
+  // enough to read a mark and obvious enough that the line is moving.
+  // Measured off the copy, so a wider set of marks takes longer rather than
+  // rushing.
+  function initClientMarquee() {
+    var track = document.querySelector('.hp-hero__track');
+    if (!track || REDUCED) return;
+    function pace() {
+      var half = track.scrollWidth / 2;
+      if (half) track.style.animationDuration = (half / 36) + 's';
+    }
+    pace();
+    window.addEventListener('resize', pace);
   }
 
   // A client mark scrolls the homepage scroller, not the window, until that
@@ -3063,8 +3005,8 @@
 
   // The hero is the opening moment — no splash gate in front of it.
   //
-  // Four things arrive: the greeting, the statement's lines, the closing band,
-  // and the client names inside the band. The statement is uncovered a line at
+  // Three things arrive: the greeting, the statement's lines, and the closing
+  // band, marks already drifting inside it. The statement is uncovered a line at
   // a time, each line rising into a box clipped to its own height, so what the
   // reader watches is a sentence appearing rather than a hundred letters
   // settling. Nothing in here lifts toward the pointer afterwards: that effect
@@ -3077,7 +3019,6 @@
     var inner = document.querySelector('.hp-hero__statement-inner');
     var greeting = document.querySelector('.hp-hero__greeting');
     var below = document.querySelectorAll('.hp-hero__lower');
-    var clients = document.querySelectorAll('.hp-hero__client');
     if (!inner) return;
 
     // Hidden before first paint. The entrance cannot start until the lines are
@@ -3085,7 +3026,6 @@
     gsap.set(inner, { opacity: 0 });
     gsap.set([greeting], { opacity: 0, y: 16 });
     gsap.set(below, { opacity: 0, y: 22 });
-    gsap.set(clients, { opacity: 0, y: 8 });
 
     // The display face, or 700ms, whichever is first. A face that never
     // arrives must not mean a hero that never does. fonts.ready can resolve
@@ -3136,12 +3076,10 @@
         // at 1.0 — the expo ease has a line visibly in place well before its
         // duration is up.
         .to(movers, { yPercent: 0, duration: 1.15, stagger: 0.1 }, 0.18)
-        // The band arrives under a statement that is still arriving, as before.
-        .to(below, { opacity: 1, y: 0, duration: 1.1 }, 0.7)
-        // The names come in one at a time, last, after the band is in place and
-        // as the last line of the statement is landing: the proof follows the
-        // claim.
-        .to(clients, { opacity: 1, y: 0, duration: 0.9, stagger: 0.08 }, 1.05);
+        // The band arrives under a statement that is still arriving. The marks
+        // are already drifting inside it, so they come in with the line
+        // rather than one at a time.
+        .to(below, { opacity: 1, y: 0, duration: 1.1 }, 0.7);
     });
   }
 
@@ -3905,7 +3843,8 @@
       initNavHide();
       initBackToTop();
       initWorkAnchor();
-      initHero();          // the clients' cycle and the exit start once it lands
+      initHero();          // the closing line and the exit start once it lands
+      initClientMarquee();
       initClientLinks();
       initHeroLight();     // independent of the entrance: the room is lit first
       initScrollScenes();

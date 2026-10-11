@@ -898,22 +898,95 @@
     width: min(100%, 62ch);
   }
 
+  /* ---------- Parts ----------
+     This study is two pieces of work on one platform, a design-and-strategy
+     piece and a research piece, and they were different projects. Each is a
+     story in the sense the Boots and Sofa to Saddle pages use: a big number
+     in the margin, a title in the writing column, and the chapters under it
+     unnumbered and un-ruled, so the two parts are the breaks on the page and
+     a heading in the middle of one does not look like the start of a new
+     piece. The sizes are those pages' story styles, not restated. */
+  .cs-story {
+    display: grid;
+    grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
+    column-gap: clamp(28px, 4.5vw, 88px);
+    align-items: start;
+    scroll-margin-top: var(--nav-clear);
+  }
+  .cs-story__no {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(48px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    color: var(--ink-2);
+  }
+  .cs-story__main { min-width: 0; }
+  .cs-story__title {
+    margin: 0;
+    max-width: 62ch;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(28px, 2.7vw, 36px);
+    line-height: 1.08;
+    letter-spacing: -0.034em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-story__lede {
+    margin: clamp(16px, 2.4vh, 24px) 0 clamp(56px, 8vh, 88px);
+    max-width: 58ch;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  /* The two stories are the breaks: a line and a real gap between them. */
+  .cs-story + .cs-story {
+    margin-top: clamp(96px, 13vh, 148px);
+    padding-top: clamp(64px, 8vh, 100px);
+    border-top: 1px solid var(--rule);
+  }
+  /* Inside a story the chapters are one column under the title, with no
+     number and no hairline, and a smaller, lighter heading than the story's. */
+  .cs-story .cs-chapter {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 0;
+  }
+  .cs-story .cs-chapter + .cs-chapter {
+    margin-top: 0;
+    padding-top: clamp(84px, 11vh, 128px);
+    border-top: 0;
+  }
+  .cs-story .cs-chapter__body { grid-column: 1; max-width: 62ch; }
+  .cs-story .cs-chapter .cs-figure { grid-column: 1; }
+  .cs-story .cs-chapter__title {
+    font-weight: 600;
+    font-size: clamp(21px, 1.8vw, 26px);
+    letter-spacing: -0.026em;
+  }
+
   /* ---------- Reflection ---------- */
   .cs-reflection {
     padding-top: var(--section);
   }
+  /* The same heading as a chapter and as the impact section that closes
+     Boots and Sofa to Saddle: this is the last section of the article, not a
+     second hero, so it takes the article's own heading size and weight. */
   .cs-reflection__title {
     margin: clamp(20px, 3vh, 34px) 0 0;
     font-family: var(--ff-display);
-    font-weight: 800;
-    font-size: clamp(32px, 3.9vw, 62px);
-    line-height: 1.0;
-    letter-spacing: -0.04em;
+    font-weight: 700;
+    font-size: clamp(25px, 2.35vw, 34px);
+    line-height: 1.08;
+    letter-spacing: -0.032em;
     color: var(--ink);
-    max-width: 18ch;
+    max-width: 26ch;
+    text-wrap: balance;
   }
   .cs-reflection__body {
-    margin: clamp(30px, 4.5vh, 52px) 0 0;
+    margin: clamp(22px, 3.2vh, 32px) 0 0;
     max-width: 60ch;
   }
   .cs-reflection__body p {
@@ -961,6 +1034,11 @@
   }
   /* On the studies that close on the white sheet, the card is the ink. */
   .cs-next--ink { --next-bg: #0a0a0c; --next-ink: #ffffff; }
+  /* Dark on white reads lighter than white on black, so the white card's
+     small marks get back the weight the eye takes off them: the kicker and
+     its rule come up from 62% to 80%, and the arrow's stroke thickens. */
+  .cs-next--light .cs-next__kicker { opacity: 0.8; font-weight: 600; }
+  .cs-next--light .cs-next__arrow path { stroke-width: 1.75; }
   /* The impact section's own bottom padding is the gap above every other
      close. The card wants more than that: the writing should be gone before
      the next study arrives. */
@@ -986,6 +1064,9 @@
     padding: clamp(32px, 7.8cqw, 72px);
     background: var(--next-bg);
     color: var(--next-ink);
+    /* The homepage cards' corner, 3.4% of the card's width with a 14px
+       floor, so the next study is drawn with the same shape it has there. */
+    border-radius: max(14px, 3.4cqw);
     overflow: hidden;
   }
   /* Hover is a tint, not a move: it lightens the black card and darkens the
@@ -1033,7 +1114,9 @@
     display: block;
     margin-top: clamp(32px, 6cqw, 56px);
     font-family: var(--ff-display);
-    font-weight: 600;
+    /* The homepage's sentence weight: 500 for the run of it, with only the
+       project name lifted to bold, as it is on the card there. */
+    font-weight: 500;
     font-size: clamp(19px, 2.7cqw, 25px);
     line-height: 1.22;
     letter-spacing: -0.024em;
@@ -1522,6 +1605,10 @@
       grid-template-columns: minmax(0, 1fr);
       row-gap: 18px;
     }
+    .cs-story {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 18px;
+    }
     /* The hero's grid is the chapters', so it collapses with them and the
        sentence has the whole column again. */
     .cs-hero > .cs-col { grid-template-columns: minmax(0, 1fr); }
@@ -1837,8 +1924,8 @@
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
       <div class="cs-overview__body" data-reveal data-stagger>
-        <p>I joined <strong>Junction</strong>, PwC&rsquo;s client delivery platform for Deals, after the core product had already been built. Historically practitioners handed clients their analysis as 200-page reports, burdensome at both ends. Junction replaced that with something continuous: less project management overhead, better collaboration, and expert insight reaching clients early enough to shorten their decision-making. My role was to assess the experience as it stood, find where it was costing people time, and deliver the improvements that came out of that.</p>
-        <p>On the surface, this was feature work on a platform that already worked. Underneath, it was an <strong>alignment problem</strong>. Junction did not operate alone: territories had built their own tools around it, so a decision about something as ordinary as who can see what needed agreement from senior stakeholders across regions who each wanted a different end state. What follows is one feature and one research study, as the example.</p>
+        <p>I joined <strong>Junction</strong>, PwC&rsquo;s client delivery platform for Deals, after the core product had shipped. Practitioners used to hand clients their analysis as 200-page reports, burdensome at both ends. Junction replaced that with something continuous: less project management overhead, better collaboration, and expert insight reaching clients early enough to shorten their decisions. I was brought in to find where a platform people already depended on was costing them time, and to fix it without disrupting the engagements running on it.</p>
+        <p>On the surface, that was feature work. Underneath, it was an <strong>alignment problem</strong>, and I treated it as one. Junction did not operate alone: four territories had built their own tools around it, so a question as ordinary as who can see what needed senior stakeholders across regions, each with a different end state in mind, to agree. The two pieces of work below show how I steered that: a strategy I had to get agreed across the business, and a feature I argued should not go to build until users had tried it.</p>
       </div>
     </div>
   </section>
@@ -1846,37 +1933,34 @@
   <section class="cs-chapters cs-wrap" aria-label="The work, chapter by chapter">
     <div class="cs-col">
 
+      <section class="cs-story" id="user-management" aria-labelledby="user-management-h">
+        <p class="cs-story__no" data-reveal>01</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="user-management-h" data-reveal>A user management solution that unified an ecosystem of six tools.</h2>
+          <p class="cs-story__lede" data-reveal>One model for roles and permissions that held across every tool and every territory: agreed by the four territories driving the decision, designed for a global user base.</p>
+
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">01</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">A platform already live, and a seam around it.</h2>
-          <p>No blank page here and no rebuild. Junction was built, shipped and in use, which made the work a different shape: finding where a product people already depended on was quietly costing them time, and fixing it without disrupting the engagements running on it.</p>
-          <p>When a Deals engagement begins there are numerous workspaces to stand up before any work can be delivered, and each one wants much the same information: users, roles, client, project type. Several territories had solved that locally, building their own provisioning tools so that <strong>one project initiation journey</strong> could set all of them up at once.</p>
+          <p>Junction was already live and in daily use when I joined. One pain point had come up in research time and time again, and it sat between Junction and the other tools a Deals team relies on rather than inside any one of them. That was the problem I took ownership of.</p>
+          <p>When a Deals engagement begins there are six workspaces to stand up before any work can be delivered, and each one wants much the same information: users, roles, client, project type. Several territories had solved that locally, building their own provisioning tools so that <strong>one project initiation journey</strong> set all six up at once. Sensible, and nobody owned how the tools agreed with each other once they were set up.</p>
         </div>
       </section>
 
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">02</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Roles that didn&rsquo;t travel between the tools.</h2>
-          <p>Research surfaced user management between the platforms as the pain point. Roles didn&rsquo;t mean the same thing in each tool, and a permission changed in one didn&rsquo;t reliably reach the others. People ended up holding access they shouldn&rsquo;t have had, or without access they had been given.</p>
-          <p>Individually these were small errors. Together they did something worse than waste time: they <strong>cost people confidence in the tools</strong>, which took the value straight back out of provisioning everything in one pass. I was asked to help the business align on a strategy, then design the solution across the connected platforms.</p>
+          <p>Research put user management between the platforms at the top of the list. Roles didn&rsquo;t mean the same thing in each tool, and a permission changed in one didn&rsquo;t reliably reach the others. People ended up holding access they shouldn&rsquo;t have had, or without access they had been given.</p>
+          <p>Individually, small errors. Together they <strong>cost people confidence in the tools</strong>, which took the value straight back out of provisioning everything in one pass. A settings screen could not fix a disagreement between platforms about what a role was, so I took ownership of both halves: getting the business to agree one model, then designing against it across the connected platforms.</p>
         </div>
       </section>
 
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">03</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Three options, priced. Then the deadline picked one.</h2>
-          <p>Alignment was the hard part. The decision landed on multiple territories and multiple groups of users, which meant agreement from several senior stakeholders who each held a different vision of where this should end up.</p>
-          <p>I mapped the feasible options and set out how roles and permissions would flow between the tools under each one, then made <strong>balanced recommendations</strong> rather than arguing for a favourite: what each option bought the user, what it cost to build, and what it was genuinely worth to the business.</p>
-          <p>The client was under pressure to move fast and rebuild confidence across territories, so the quick win won. Users could configure roles as they needed on a platform that was stable and reliable, and the business logic underneath stayed more complicated than it should have been. It was the right call for that moment. <strong>It was also a debt</strong>, and quick wins of this kind get repaid later at a higher rate.</p>
+          <h2 class="cs-chapter__title">Three options, priced. I recommended the third.</h2>
+          <p>Alignment was the hard part. The decision affected a global user base, and four territories were driving it, each with its own tools and its own senior stakeholders who held a different vision of where this should end up, and who were rarely in the same room.</p>
+          <p>I mapped the three feasible options and drew how roles and permissions would flow between the tools under each, then priced them the same way: what it bought the user, what it cost to build, and what it was worth to the business. I <strong>recommended the third</strong>, the one that fixed the cause rather than the symptom, and I was explicit about what the cheaper two would cost later.</p>
+          <p>The client was under pressure to move fast and rebuild confidence across territories, so the quick win won. Users could configure roles as they needed on a platform that was stable and reliable, and the logic underneath stayed more complicated than it should have been. I understood the call and backed it. I also put it on record as what it was: <strong>a debt</strong>, which quick wins of this kind repay later at a higher rate. That record is what let me reopen it.</p>
         </div>
         <figure class="cs-figure" style="--ar: 1.7690" data-reveal>
           <img src="/assets/junction-options-1120.3288359f.webp"
@@ -1887,18 +1971,15 @@
                width="6411" height="3624"
                alt="Three option boards side by side, each mapping roles and permissions between the provisioning tool, Junction and Digital Start, with screen flows beneath and pros, cons and open questions on sticky notes. The third is headed option three, recommended."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Three ways the roles and permissions could flow between the tools, each carrying the mapping it implied and the case for and against it.</span></figcaption>
+          <figcaption><span class="cs-figure__text">Three ways the roles and permissions could flow between the tools, each priced the same way: what it bought the user, what it cost to build, what it was worth. The third is the one I recommended.</span></figcaption>
         </figure>
       </section>
 
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">04</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Designing around logic I couldn&rsquo;t change.</h2>
-          <p>With the deadline set, the job was to build an experience that either kept the agreed logic out of the user&rsquo;s way or signposted it so plainly it stopped being a trap. Working from the design system, I designed each affected journey and set the responsiveness guidance for the agreed breakpoints: scrollable tabs on narrow screens, a more compact user card. Then iterated with design leadership and the client through to sign-off.</p>
-          <p>Users were sectioned by the role they held, which made the page scannable and let someone be added straight into a role rather than added and then assigned. Alongside it I explored a master table of every user, with filtering, conditional logic, global search and a single point of action for adding someone. And where the logic was genuinely confusing, <strong>large, unmissable banners said so</strong> and named the platform or process that actually handled it.</p>
+          <p>With the deadline set, I gave myself one rule: either keep the agreed logic out of the user&rsquo;s way, or signpost it so plainly it stopped being a trap. I designed every affected journey from the design system and set the responsive rules for the agreed breakpoints: scrollable tabs on narrow screens, a more compact user card.</p>
+          <p>The decisions that mattered: users are grouped by the role they hold, so the page scans and someone can be added straight into a role rather than added and then assigned. I also prototyped a master table of every user, with filtering, global search and a single place to add someone, so that stakeholders could see how the agreed logic actually played out across a whole user list rather than reason about it in the abstract. And where the logic was genuinely confusing, I chose to say so. <strong>Large, unmissable banners</strong> name the platform or process that actually owns the change, rather than pretending the seam isn&rsquo;t there.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.9947" data-reveal>
           <img src="/assets/junction-roles-1120.23332faa.webp"
@@ -1909,18 +1990,15 @@
                width="5622" height="5652"
                alt="The Junction settings page at desktop and phone width: a banner reading that the project was created in Digital Start, explaining which roles are managed where and offering a button to open it, then members listed under Engagement Lead, Engagement Manager and Project Admin, with a bar showing three members selected and a change permission control."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The banner naming the platform that actually owns the change, users grouped under the role they hold, and the same page once the tabs have to scroll.</span></figcaption>
+          <figcaption><span class="cs-figure__text">The banner naming the platform that actually owns the change, users grouped under the role they hold, and the same page once the tabs have to scroll.</span></figcaption>
         </figure>
       </section>
 
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">05</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The mechanics that decide whether a page is quick.</h2>
-          <p>Accepting a new user took one click, but an admin was rarely accepting one. A multi-select with a <strong>global checkbox</strong> at the top meant selecting everybody and deselecting the few exceptions, so a large intake was approved in one pass rather than forty. Switching someone&rsquo;s role moved into the more menu on their row; before that, changing a role meant deleting the user and adding them back, a destructive operation standing in for a routine one.</p>
-          <p>What lands afterwards matters as much. An approval arrives with a success toast for whoever made it and a <strong>&lsquo;new&rsquo; tag</strong> beside the name for everybody else: the practitioners who didn&rsquo;t make the change and would otherwise have no way of noticing it. The tag lasts up to a week and clears once someone has opened the page and left again, because acknowledged is a better trigger than expired.</p>
+          <p>Accepting a new user took one click, but an admin was rarely accepting one. I designed for the real intake: a multi-select with a <strong>global checkbox</strong>, so forty approvals became select all, untick the exceptions, done. Changing someone&rsquo;s role moved into the more menu on their row; before that it meant deleting the user and adding them back, a destructive operation standing in for a routine one. Neither is a feature anyone asks for. Both are the difference between a page that is quick and one that only looks it.</p>
+          <p>What lands afterwards matters as much. An approval arrives with a success toast for whoever made it and a <strong>&lsquo;new&rsquo; tag</strong> beside the name for everybody else: the practitioners who didn&rsquo;t make the change and would otherwise have no way of noticing it. The tag lasts up to a week and clears once someone has opened the page and left again. I argued for acknowledged over expired as the trigger, because a tag that disappears on a timer tells you nothing about whether anyone saw it.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.5854" data-reveal>
           <img src="/assets/junction-approvals-1120.2f7f56be.webp"
@@ -1931,18 +2009,15 @@
                width="3969" height="6780"
                alt="The client members pending approval table with five of ten rows checked and a bar reading five members selected, deselect all, approve all, decline all. Below it the same page afterwards: the approved names gone from the queue, a success toast reading five client members approved with an undo, and a new tag beside a name in the client admin list."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Five approvals as one action, and what the rest of the team sees afterwards: the toast for the person who did it, the tag for everyone who didn&rsquo;t.</span></figcaption>
+          <figcaption><span class="cs-figure__text">Five approvals as one action, and what the rest of the team sees afterwards: the toast for the person who did it, the tag for everyone who didn&rsquo;t.</span></figcaption>
         </figure>
       </section>
 
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">06</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The week in Tampa that reopened it.</h2>
-          <p>Quick wins need investment later, and sometimes that means undoing what shipped. Armed with user feedback and the case for the better experience, we reopened the strategy during a week of planning with core leadership in Tampa: the pain points, the opportunities to improve, and several routes out of it.</p>
-          <p>Being physically in the room was the whole difference. I documented each approach as it was discussed so there was always something to point at, and <strong>business directors started sketching their own ideas</strong> on top of it. By the end of the week, addressing this properly was agreed as a priority.</p>
+          <p>Quick wins need investment later, and sometimes that means undoing what shipped. I built the case from user feedback and the debt we had written down, and used a week of planning with core leadership in Tampa to reopen it as a strategy question rather than a backlog item: the pain points, the opportunities, and several routes out.</p>
+          <p>Being in the room was the whole difference, and I made sure the argument had something to land on. I drew each approach live as it was discussed, so the directors were debating a thing on the wall rather than a thing in the air, and by mid-week <strong>business directors were sketching their own ideas</strong> on top of my drawings. That is how a permissions matrix got agreed by people who had been disagreeing about it for three months. By the end of the week, doing this properly was a priority.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.7412" data-reveal>
           <img src="/assets/junction-tampa-1120.e32a9f31.webp"
@@ -1953,40 +2028,40 @@
                width="3669" height="4950"
                alt="Photographs from the Tampa week: a whiteboard headed potential new UM approach, sketching an engagement hub and the workspaces and roles around it; a flip chart mapping client permissions for each tool and activity against four levels; and two further boards working through a team members list and an engagement hub with permissions and tags."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The approach as it was being argued, and the permissions matrix the room built on top of it. Not my handwriting on all of it, which was the point.</span></figcaption>
+          <figcaption><span class="cs-figure__text">The approach as it was being argued, and the permissions matrix the room built on top of it.</span></figcaption>
         </figure>
       </section>
 
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">07</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">The feature nobody will ever praise.</h2>
-          <p>Deployed, this let <strong>thousands of users</strong> manage their project participants and clients with confidence: permissions assigned correctly, and terminology that meant the same thing whichever region you were working in.</p>
-          <p>There are no metrics to put against it, and there shouldn&rsquo;t be. User management is supposed to disappear. Get it right and people go back to thinking about the engagement instead of the software.</p>
+          <h2 class="cs-chapter__title">The feature that should never have been this hard.</h2>
+          <p>The new user management is live across every territory. <strong>Thousands of users worldwide</strong> now manage their project participants and clients with confidence: permissions assigned correctly, and terminology that means the same thing whichever region you work in.</p>
+          <p>User management was never going to be the feature that drove Junction&rsquo;s key metrics. It was the feature that should never have been as bad as it was, and that was costing the platform trust every day it stayed that way. What I made sure of was that the fix matched the complexity of the ecosystem it sat in: <strong>the best solution for a global platform and the tools built around it</strong>, not the quickest one for a single screen.</p>
+        </div>
+      </section>
+
+        </div>
+      </section>
+
+      <section class="cs-story" id="report-builder" aria-labelledby="report-builder-h">
+        <p class="cs-story__no" data-reveal>02</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="report-builder-h" data-reveal>Does the report builder actually save anyone time?</h2>
+          <p class="cs-story__lede" data-reveal>A separate project on the same platform: a usability study I ran before a round of new design work went to build.</p>
+
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">What had been added, and why I stopped it there.</h2>
+          <p>The report builder takes everything uploaded to Junction (content, data, analysis) and automates a fully formatted report ready to share with a client. A round of design iterations had added a lot to it: more than one way to organise content, organising from the table of contents as well as the sliders, one action to add and remove dividers, report templates, editable section titles. It was heading for build. I made the case that <strong>none of it should go further</strong> until it had been in front of users, because every one of those additions was a guess about how practitioners build reports, and nobody had checked.</p>
+          <p>I scoped the study around the question the product owners actually needed answered: does this save anyone time? Semi-structured interviews first, for the context: how a report really gets made in PowerPoint today, how much of it is customised, whether templates are used at all. Then [n] participants worked through an interactive prototype: adding and removing sections, customising titles, organising content. I chose the sample deliberately, the groups most likely to adopt first, and defended that choice rather than wait for the resource to test everyone.</p>
         </div>
       </section>
 
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">08</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Does the report builder actually save anyone time?</h2>
-          <p>The report builder takes everything uploaded to Junction (content, data, analysis) and automates a fully formatted report ready to share with a client. A round of design iterations had added several things to it: more than one way to organise the content, the option to organise from the table of contents rather than only by sliders, one action to add and remove dividers, report templates, and editable table of contents titles. All of it needed usability testing before it went further.</p>
-          <p>I ran semi-structured interviews for the context: how a report actually gets made in PowerPoint today, how much of it is customised, whether templates are used at all. Then participants worked through an interactive prototype covering adding and removing sections, customising titles, and organising content.</p>
-        </div>
-      </section>
-
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">09</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Turning verbatim into something you can show.</h2>
-          <p>I verified every note against the recordings, then mapped all the responses against each question across the topics before categorising the verbatim answers into themes.</p>
-          <p>This is the analysis. It is the half that earns the recommendations. Done properly, <strong>a trend becomes something you can point at</strong> rather than something you remember hearing. That matters when the person you are showing it to was not in any of the sessions.</p>
+          <p>I verified every note against the recordings, mapped every response against its question across the topics, then clustered the verbatim answers into themes. It is slow, and it is the half of research that earns the other half.</p>
+          <p>Done properly, <strong>a trend becomes something you can point at</strong> rather than something you remember hearing. That matters when the person you are persuading was not in any of the sessions, and the recommendation you are making is that their last round of design work needs undoing.</p>
         </div>
         <figure class="cs-figure" style="--ar: 0.8164" data-reveal>
           <img src="/assets/junction-analysis-1120.c4f59231.webp"
@@ -1997,18 +2072,15 @@
                width="6122" height="7499"
                alt="A research board: hundreds of sticky notes in columns headed participant, current process, checking slides and organising content, one row per participant. Below it the same responses regrouped into themes such as what works well, pain points, moving a section, and preference between the table of contents and the slides."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Every response against its question first, then the same answers clustered into the themes the recommendations came out of.</span></figcaption>
+          <figcaption><span class="cs-figure__text">Every response against its question first, then the same answers clustered into the themes the recommendations came out of.</span></figcaption>
         </figure>
       </section>
 
       <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">10</span>
-        </div>
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">Findings, and what they changed.</h2>
-          <p>The report set out the as-is process for creating a report, the pain points inside it, and the usability improvements to make, including the ones that were uncomfortable. Most participants failed to find the call to action the whole feature turns on.</p>
-          <p>In the playback with the designers and product owners we went through the findings in detail, refined the recommendations together, and <strong>agreed the specific actions</strong> we would take.</p>
+          <p>The report set out how a report gets made today, where the process costs more effort than it should, and the usability improvements to make, including the uncomfortable ones. The headline: <strong>most participants could not find the call to action the whole feature turns on</strong>, [n] of [n] missed it, and the edit bar the previous round had invested in needed rethinking.</p>
+          <p>I ran the playback with the designers and product owners as a working session rather than a presentation: findings in detail, recommendations refined together, and a list of actions agreed in the room. [Name two or three: the add-section action moved to X, the edit bar became Y, templates were Z.] The feature went to build against that list, not the original one.</p>
         </div>
         <figure class="cs-figure" style="--ar: 1.7447" data-reveal>
           <img src="/assets/junction-findings-1120.66403689.webp"
@@ -2019,8 +2091,11 @@
                width="5904" height="3384"
                alt="Four slides from the research report: the current report creation process drawn as a four-step flow from gathering financial data to reviewing the draft; a finding that the add a new section call to action was difficult for most participants; a slide on where the current process takes more effort than it should; and feedback that the right-hand edit bar could be made more intuitive. Each carries participant quotes."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The report as it was played back: how a report gets made today, where it costs more effort than it should, and what the prototype turned up.</span></figcaption>
+          <figcaption><span class="cs-figure__text">The report as it was played back: how a report gets made today, where it costs more effort than it should, and what the prototype turned up.</span></figcaption>
         </figure>
+      </section>
+
+        </div>
       </section>
 
     </div>

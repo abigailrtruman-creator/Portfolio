@@ -913,18 +913,22 @@
   .cs-reflection {
     padding-top: var(--section);
   }
+  /* The same heading as a chapter and as the impact section that closes
+     Boots and Sofa to Saddle: this is the last section of the article, not a
+     second hero, so it takes the article's own heading size and weight. */
   .cs-reflection__title {
     margin: clamp(20px, 3vh, 34px) 0 0;
     font-family: var(--ff-display);
-    font-weight: 800;
-    font-size: clamp(32px, 3.9vw, 62px);
-    line-height: 1.0;
-    letter-spacing: -0.04em;
+    font-weight: 700;
+    font-size: clamp(25px, 2.35vw, 34px);
+    line-height: 1.08;
+    letter-spacing: -0.032em;
     color: var(--ink);
-    max-width: 18ch;
+    max-width: 26ch;
+    text-wrap: balance;
   }
   .cs-reflection__body {
-    margin: clamp(30px, 4.5vh, 52px) 0 0;
+    margin: clamp(22px, 3.2vh, 32px) 0 0;
     max-width: 60ch;
   }
   .cs-reflection__body p {
@@ -972,6 +976,11 @@
   }
   /* On the studies that close on the white sheet, the card is the ink. */
   .cs-next--ink { --next-bg: #0a0a0c; --next-ink: #ffffff; }
+  /* Dark on white reads lighter than white on black, so the white card's
+     small marks get back the weight the eye takes off them: the kicker and
+     its rule come up from 62% to 80%, and the arrow's stroke thickens. */
+  .cs-next--light .cs-next__kicker { opacity: 0.8; font-weight: 600; }
+  .cs-next--light .cs-next__arrow path { stroke-width: 1.75; }
   /* The impact section's own bottom padding is the gap above every other
      close. The card wants more than that: the writing should be gone before
      the next study arrives. */
@@ -997,6 +1006,9 @@
     padding: clamp(32px, 7.8cqw, 72px);
     background: var(--next-bg);
     color: var(--next-ink);
+    /* The homepage cards' corner, 3.4% of the card's width with a 14px
+       floor, so the next study is drawn with the same shape it has there. */
+    border-radius: max(14px, 3.4cqw);
     overflow: hidden;
   }
   /* Hover is a tint, not a move: it lightens the black card and darkens the
@@ -1044,7 +1056,9 @@
     display: block;
     margin-top: clamp(32px, 6cqw, 56px);
     font-family: var(--ff-display);
-    font-weight: 600;
+    /* The homepage's sentence weight: 500 for the run of it, with only the
+       project name lifted to bold, as it is on the card there. */
+    font-weight: 500;
     font-size: clamp(19px, 2.7cqw, 25px);
     line-height: 1.22;
     letter-spacing: -0.024em;
