@@ -136,6 +136,9 @@
     --ink-2: rgba(255,255,255,0.52);
     --ink-3: rgba(255,255,255,0.40);
     --rule: rgba(255,255,255,0.10);
+    /* A rule that has to be seen on its own, not as an edge of something:
+       the hairline that joins the A to the T in the hero. */
+    --rule-2: rgba(255,255,255,0.30);
 
     --pad-x: clamp(28px, 6vw, 110px);
     --shell: 1560px;
@@ -324,11 +327,14 @@
      roll below plays out. Under the name, one line of body type: what she
      does, in ink, and where, in grey. At the foot, the clients. */
   /* ---------- THE ROLL ----------
-     After the entrance the hero holds for a screen of scroll, and then the
-     tails of the name roll through the three pairs the initials stand for —
-     Abstract → Tangible, Ambiguity → Traction, Assumption → Truth — and come
-     home to Abbie Truman, with each pair's two lines said beside it as it
-     is shown. Then the hero lets go and leaves as it always did.
+     After the entrance the hero holds, then the line under the name sets
+     the idea up — most people take an idea from A to B; she takes it from
+     A to T — with a hairline drawn from the A down to the T to show the two
+     initials as one mark. Then the tails of the name roll through the three
+     pairs the initials stand for — Abstract → Tangible, Ambiguity →
+     Traction, Assumption → Truth — and come home to Abbie Truman, with each
+     pair's two lines said beside it as it is shown. Then the hero lets go
+     and leaves as it always did.
 
      The track is the distance that takes: one screen for the hero to sit on,
      plus --hero-story of travel. The hero sticks inside it. Sticky, not a
@@ -337,11 +343,11 @@
      jitters, and sticky is the compositor doing the holding.
 
      Desktop and laptop only. On a phone or a short window the roll is off,
-     the track is as tall as the hero, and the pairs are a list under the
-     name instead, in full ink. The script decides once, at build, and
+     the track is as tall as the hero, and the set-up and the pairs are a
+     list under the name instead, in full ink. The script decides once, at build, and
      writes the modifier. */
   .hp-hero-track {
-    --hero-story: 220vh;
+    --hero-story: 260vh;
     position: relative;
   }
   .hp-hero-track--story { height: calc(100vh + var(--hero-story)); }
@@ -353,10 +359,11 @@
     min-height: 0;
   }
   .hp-hero {
-    /* The hero's body size. The role line and, with the roll off, the pairs'
-       lines are the non-display type in here, and they read as one size — so
-       it is declared once and they all take it, rather than each carrying a
-       curve of its own that has to be kept in step by hand. */
+    /* The hero's body size. The lines under the name and, with the roll off,
+       the set-up line and the pairs' lines are the non-display type in here,
+       and they read as one size — so it is declared once and they all take
+       it, rather than each carrying a curve of its own that has to be kept in
+       step by hand. */
     --hero-body: clamp(17px, 1.5vw, 24px);
     position: relative;
     min-height: 100vh;
@@ -482,11 +489,11 @@
   }
 
   /* The copy block: the name with, when the roll is on, the pair said beside
-     it; the role under the name; and, when the roll is off, the pairs as a
-     list under that. Left-aligned on the hero's own left edge where the
+     it; the two lines under the name; and, when the roll is off, the set-up
+     line and the pairs as a list under that. Left-aligned on the hero's own left edge where the
      wordmark rows are centred: a signature, not a title card. `gap` is the
-     name-to-role interval, the tightest in the hero, so the role reads as
-     the name's caption rather than as a separate line of text. */
+     interval from the name to the lines under it, the tightest in the hero,
+     so they read as the name's caption rather than as a separate block. */
   .hp-hero__main {
     grid-row: 2;
     position: relative;
@@ -520,6 +527,7 @@
      block and not as two headlines. */
   .hp-name {
     margin: 0;
+    position: relative;
     flex: 0 0 auto;
     font-family: var(--ff-display);
     font-weight: 800;
@@ -554,8 +562,31 @@
     align-items: baseline;
     will-change: transform;
   }
-  /* The initial never moves. */
+  /* The initial never moves. The probe inside it is an empty inline-block,
+     which sits with its bottom edge on the baseline: it is how the script
+     finds the baseline of the A and the T without guessing at font metrics. */
   .hp-name__cap { flex: 0 0 auto; }
+  .hp-name__base { display: inline-block; width: 0; height: 0; }
+  /* The join: a hairline from the foot of the A's left stem to the top of
+     the T beneath it, the two initials shown as one mark. The script places
+     it from the cap boxes at every refresh and draws it down with scaleY;
+     the roll's set-up beat is what calls for it, so it is there only with
+     the roll on, and starts undrawn. */
+  .hp-name__join { display: none; }
+  .hp-hero-track--story .hp-name__join {
+    display: block;
+    position: absolute;
+    width: 1px;
+    background: var(--rule-2);
+    transform: scaleY(0);
+    transform-origin: 50% 0%;
+    will-change: transform;
+    pointer-events: none;
+  }
+  /* The tails dim while the pairs roll through them, so the A and the T
+     are the fixed points and the words are what passes. Set on the tail,
+     not its letters, whose opacity belongs to the flaps. */
+  .hp-name__tail { will-change: opacity; }
   /* The tail: a grid with every variant in the one cell. The box is as wide
      as the widest of them — `ssumption` on the first line, `angible` on the
      second — so nothing reflows as they roll and the T stays exactly under
@@ -611,23 +642,98 @@
   .hp-hero__side-pair .hp-hero__side-then { margin-top: 0.55em; color: var(--ink-2); }
   .hp-hero__side-close { color: var(--ink); }
 
-  /* The role, under the name: the one sentence of body type in the hero's
-     copy block. The role itself in ink, the setting in grey. */
-  .hp-hero__role {
+  /* Under the name: two short lines of body type that say who she is, and,
+     with the roll on, the set-up line that takes their place for the length
+     of the roll. The two share one grid cell so the set-up line arrives at
+     the first line's position and the block never changes height. */
+  .hp-hero__under {
+    display: grid;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
+    font-size: var(--hero-body);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+    will-change: transform, opacity;
+  }
+  .hp-hero__under > * { grid-area: 1 / 1; }
+  .hp-hero__intro { will-change: opacity; }
+  .hp-hero__intro p { margin: 0; }
+  /* The greeting and the role, in ink; the line about people, in grey. */
+  .hp-hero__role { color: var(--ink); }
+  .hp-hero__role strong { font-weight: 500; }
+  .hp-hero__intro .hp-hero__people { color: var(--ink-2); margin-top: 0.3em; }
+
+  /* The set-up line. `A to B` is the phrase everyone reaches for; the B is
+     struck and `T.` written in after it, and then `Most people take`
+     becomes `I take`. Two versions of it, one per mode.
+       --roll  is the one the roll animates, shown with the roll on. Its
+               stylesheet state is the start: no strike, the B in ink, the
+               T. and the `I` not yet there. Every piece that changes is in
+               layout from the start at its full width, so nothing reflows
+               as it plays. The one thing that moves is the rest of the
+               line, which closes up by a transform as the subject
+               shortens.
+       --still is the finished state as one sentence, shown with the roll
+               off: struck B, dim, the T. in place, and the second sentence
+               after it. */
+  .hp-hero__setup {
     margin: 0;
     font-size: var(--hero-body);
     line-height: 1.3;
     letter-spacing: -0.01em;
     font-weight: 500;
-    color: var(--ink-2);
+    color: var(--ink);
+    white-space: nowrap;
   }
-  .hp-hero__role strong { color: var(--ink); font-weight: 500; }
+  .hp-hero__setup--roll { display: none; opacity: 0; will-change: opacity; }
+  .hp-hero-track--story .hp-hero__setup--roll { display: block; }
+  .hp-hero-track--story .hp-hero__setup--still { display: none; }
+  .hp-hero__setup--still { white-space: normal; max-width: 640px; }
+  /* The subject: both readings in one cell, as wide as the longer. */
+  .hp-hero__setup-who { display: inline-grid; }
+  /* Each sits at its own width, not stretched to the cell's: the script
+     reads the two widths to know how far the rest of the line closes up. */
+  .hp-hero__setup-who > span { grid-area: 1 / 1; justify-self: start; white-space: nowrap; }
+  .hp-hero__setup-i { opacity: 0; }
+  .hp-hero__setup-rest { display: inline-block; will-change: transform; }
+  /* The strike. The line is a pseudo-element scaled along x from the left;
+     --strike is the scale, so the script has one number to animate.
+     Positioned a touch above the mathematical middle, where a strike reads
+     as crossing the letter rather than underlining its top half. */
+  .hp-hero__strike {
+    --strike: 1;
+    position: relative;
+    display: inline-block;
+    color: var(--ink-3);
+    text-decoration: none;
+  }
+  .hp-hero__strike::after {
+    content: '';
+    position: absolute;
+    left: -0.03em;
+    right: -0.03em;
+    top: 0.5em;
+    height: max(1px, 0.07em);
+    background: currentColor;
+    transform: scaleX(var(--strike));
+    transform-origin: 0 50%;
+    border-radius: 1px;
+  }
+  .hp-hero__setup--roll .hp-hero__strike { --strike: 0; color: var(--ink); }
+  /* The full stop after the B. It stays in layout as the space between the
+     struck B and the T. that follows, and only its ink goes. */
+  .hp-hero__setup-dot { display: inline-block; }
+  .hp-hero__setup-t { display: inline-block; will-change: transform, opacity; }
+  .hp-hero__setup--roll .hp-hero__setup-t { opacity: 0; }
+  .hp-hero__setup--still .hp-hero__setup-dot { opacity: 0; }
 
-  /* The method, as a list: the three pairs with their two lines, and the
-     line they add up to. This is the copy's one accessible home — the roll
-     and the side copy are hidden from the tree — so it is always in the
-     document. With the roll on it is visually hidden, in the usual way;
-     with it off it is the block under the role, in full ink. */
+  /* The method, as a list: the three pairs with their two lines. This is
+     the pairs' one accessible home — the roll and the side copy are hidden
+     from the tree — so it is always in the document. With the roll on it is
+     visually hidden, in the usual way; with it off it is the block under the
+     set-up line, in full ink. */
   .hp-hero__method {
     display: flex;
     flex-direction: column;
@@ -677,15 +783,6 @@
   }
   .hp-hero__pairs-lead { color: var(--ink-1); }
   .hp-hero__pairs-then { color: var(--ink-2); margin-top: 0.4em; }
-  .hp-hero__pairs-close {
-    margin: 0;
-    font-family: var(--ff-display);
-    font-weight: 500;
-    font-size: clamp(24px, 2.6vw, 32px);
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    color: var(--ink);
-  }
 
   /* The closing band: the clients drifting along the foot of the first
      screen. There is no rule above them. A hairline here sat in the middle
@@ -2143,10 +2240,28 @@
   var LINKEDIN = 'https://www.linkedin.com/in/abigail-truman/';
 
   var HERO = {
-    // The role, under the name. The name is the greeting now — set at the
-    // size of the wordmark, it is the page's opening line — so this is the
-    // one sentence under it: what she does, in ink, and where, in grey.
-    role: '<strong>Product Design Leader</strong> in the UK.',
+    // Under the name, two lines: who she is, then what she is like. The
+    // greeting voice is the first line's; the second is the one thing said
+    // about her that is not a title.
+    intro: {
+      hey: 'Hey. <strong>Product Design Leader</strong> in the UK.',
+      people: 'I put as much into people as I do the product.'
+    },
+    // The set-up, said before the pairs so they land as what they are: `A
+    // to B` is the phrase everyone reaches for, and she is A to T. `most`
+    // and `i` are the two subjects the line is read with, in that order;
+    // `rest` is the line up to the B; `still` is the finished thought as a
+    // single sentence, for where the roll is off.
+    setup: {
+      most: 'Most people take',
+      i: 'I take',
+      rest: 'an idea from A to',
+      spoken: 'I take an idea from A to T.',
+      still: 'Most people take an idea from A to {B}T. I take it from A to T.',
+      stillSpoken: 'Most people take an idea from A to B. I take it from A to T.'
+    },
+    // Beside the name once it is itself again.
+    homeSide: 'A to T. Every time.',
     // The method, hidden in the name. A and T are her initials, and each
     // pair is a word beginning with each: on scroll the tails of the name
     // roll through them and come home. `from` and `to` are the two words;
@@ -2168,9 +2283,7 @@
         lead: 'Opinions are free. Being wrong isn&rsquo;t.',
         then: 'So I test early, while changing course is still cheap.'
       }
-    ],
-    // What the pairs add up to, said once the name is itself again.
-    close: 'I take ideas from A to T.'
+    ]
   };
 
   // In the order the cards are in, because that is the order a visitor who
@@ -2674,7 +2787,7 @@
       }).join('');
       return '<span class="hp-name__line">' +
           '<span class="hp-name__in">' +
-            '<span class="hp-name__cap">' + cap + '</span>' +
+            '<span class="hp-name__cap">' + cap + '<i class="hp-name__base"></i></span>' +
             '<span class="hp-name__tail">' + variants + '</span>' +
           '</span>' +
         '</span>';
@@ -2700,14 +2813,43 @@
             '</div>';
         }).join('') +
         '<div class="hp-hero__side-pair hp-hero__side-pair--home">' +
-          '<p class="hp-hero__side-close">' + HERO.close + '</p>' +
+          '<p class="hp-hero__side-close">' + HERO.homeSide + '</p>' +
         '</div>' +
       '</div>';
 
-    // The method as a list: the copy's accessible home, and the visible
-    // block under the role when the roll is off. The heading's accessible
-    // name is the plain words — an arrow glyph read aloud is noise and the
-    // bold is a visual device.
+    // Under the name. The two lines, and the set-up line in both its forms;
+    // the stylesheet shows one form per mode. Each form is one <p> whose
+    // accessible text is the finished sentence, with the pieces the strike
+    // and the swap play on hidden from the tree, so a reader is never given
+    // a struck B or two subjects.
+    // The struck B, with its full stop kept in layout as the space before
+    // the T. that follows it.
+    var struckB = '<span class="hp-hero__strike">B</span><span class="hp-hero__setup-dot">.</span>';
+    var underHtml = '<div class="hp-hero__under">' +
+        '<div class="hp-hero__intro">' +
+          '<p class="hp-hero__role">' + HERO.intro.hey + '</p>' +
+          '<p class="hp-hero__people">' + HERO.intro.people + '</p>' +
+        '</div>' +
+        '<p class="hp-hero__setup hp-hero__setup--roll" aria-label="' + HERO.setup.spoken + '">' +
+          '<span aria-hidden="true">' +
+            '<span class="hp-hero__setup-who">' +
+              '<span class="hp-hero__setup-most">' + HERO.setup.most + '</span>' +
+              '<span class="hp-hero__setup-i">' + HERO.setup.i + '</span>' +
+            '</span> ' +
+            '<span class="hp-hero__setup-rest">' + HERO.setup.rest + ' ' + struckB +
+              '<span class="hp-hero__setup-t">T.</span>' +
+            '</span>' +
+          '</span>' +
+        '</p>' +
+      '</div>';
+    var stillHtml = '<p class="hp-hero__setup hp-hero__setup--still" aria-label="' + HERO.setup.stillSpoken + '">' +
+        '<span aria-hidden="true">' + HERO.setup.still.replace('{B}', struckB) + '</span>' +
+      '</p>';
+
+    // The method as a list: the pairs' accessible home, and the visible
+    // block under the set-up line when the roll is off. The heading's
+    // accessible name is the plain words — an arrow glyph read aloud is
+    // noise and the bold is a visual device.
     var methodHtml = '<div class="hp-hero__method">' +
         '<ol class="hp-hero__pairs" aria-label="From A to T">' +
           HERO.pairs.map(function(p) {
@@ -2722,7 +2864,6 @@
               '</li>';
           }).join('') +
         '</ol>' +
-        '<p class="hp-hero__pairs-close">' + HERO.close + '</p>' +
       '</div>';
 
     var heroHtml = '' +
@@ -2749,10 +2890,12 @@
                 nameLine('A', tailsOf(0)) +
                 nameLine('T', tailsOf(1)) +
               '</span>' +
+              '<span class="hp-name__join" aria-hidden="true"></span>' +
             '</h1>' +
             sideHtml +
           '</div>' +
-          '<p class="hp-hero__role">' + HERO.role + '</p>' +
+          underHtml +
+          stillHtml +
           methodHtml +
         '</div>' +
         '<div class="hp-hero__lower">' +
@@ -3023,11 +3166,64 @@
     if (!HERO_STORY) return;
     Array.prototype.forEach.call(name.querySelectorAll('.hp-name__tail'), function(tail) {
       var vs = tail.querySelectorAll('.hp-name__v');
+      gsap.set(tail, { opacity: 1 });
       Array.prototype.forEach.call(vs, function(v, i) {
         var letters = v.querySelectorAll('.hp-name__ch');
         if (i === 0) gsap.set(letters, { rotationX: 0, opacity: 1, transformOrigin: '50% 100%' });
         else gsap.set(letters, { rotationX: 90, opacity: 0, transformOrigin: '50% 0%' });
       });
+    });
+    // The join, undrawn, and the set-up line at its start: the stylesheet
+    // already says so, and these are so GSAP owns the values outright.
+    gsap.set(name.querySelector('.hp-name__join'), { scaleY: 0, transformOrigin: '50% 0%' });
+    var setup = document.querySelector('.hp-hero__setup--roll');
+    if (setup) {
+      gsap.set(setup, { opacity: 0, color: '#ffffff' });
+      gsap.set(setup.querySelector('.hp-hero__strike'), { '--strike': 0, color: '#ffffff' });
+      gsap.set(setup.querySelector('.hp-hero__setup-dot'), { opacity: 1 });
+      gsap.set(setup.querySelector('.hp-hero__setup-t'), { opacity: 0, y: 6 });
+      gsap.set(setup.querySelector('.hp-hero__setup-most'), { opacity: 1 });
+      gsap.set(setup.querySelector('.hp-hero__setup-i'), { opacity: 0 });
+      gsap.set(setup.querySelector('.hp-hero__setup-rest'), { x: 0 });
+    }
+  }
+
+  // Where the join goes: from the baseline of the A to the cap height of
+  // the T, on the caps' shared left edge. Offsets rather than client rects,
+  // so a transform on the stage (the exit's) does not get into the
+  // measurement; the cap height is the T's own, measured off a canvas in
+  // the face the heading is set in, with the face's usual proportion as
+  // the fallback.
+  function placeJoin() {
+    var name = document.querySelector('.hp-name');
+    var join = name && name.querySelector('.hp-name__join');
+    if (!join || !HERO_STORY) return;
+    var caps = name.querySelectorAll('.hp-name__cap');
+    var bases = name.querySelectorAll('.hp-name__base');
+    if (caps.length < 2 || bases.length < 2) return;
+    var cs = getComputedStyle(caps[1]);
+    var size = parseFloat(cs.fontSize);
+    var capHeight = size * 0.72;
+    try {
+      var ctx = document.createElement('canvas').getContext('2d');
+      ctx.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      var m = ctx.measureText('T');
+      if (m && m.actualBoundingBoxAscent) capHeight = m.actualBoundingBoxAscent;
+    } catch (e) {}
+    // Offsets summed up the chain to the heading, because the line box in
+    // between is an offsetParent of its own (it is transformed by the
+    // entrance), and offsetTop alone stops there.
+    function within(el, prop) {
+      var v = 0;
+      while (el && el !== name) { v += el[prop]; el = el.offsetParent; }
+      return v;
+    }
+    var top = within(bases[0], 'offsetTop');                  // the A's baseline
+    var bottom = within(bases[1], 'offsetTop') - capHeight;    // the T's cap height
+    gsap.set(join, {
+      left: within(caps[0], 'offsetLeft'),
+      top: top,
+      height: Math.max(0, bottom - top)
     });
   }
 
@@ -3044,8 +3240,10 @@
 
     var main = document.querySelector('.hp-hero__main');
     var name = document.querySelector('.hp-name');
-    var role = document.querySelector('.hp-hero__role');
-    var method = document.querySelector('.hp-hero__method');
+    var intro = document.querySelectorAll('.hp-hero__intro p');
+    // The set-up line and the list only enter when they are visible, which
+    // is when the roll is off.
+    var method = document.querySelectorAll('.hp-hero__setup--still, .hp-hero__method');
     var below = document.querySelectorAll('.hp-hero__lower');
     if (!main || !name) return;
     var movers = name.querySelectorAll('.hp-name__in');
@@ -3057,9 +3255,8 @@
     main.classList.add('is-entering');
     gsap.set(name, { opacity: 0 });
     gsap.set(movers, { yPercent: 125 });
-    gsap.set(role, { opacity: 0, y: 14 });
-    // The list only enters when it is visible, which is when the roll is off.
-    if (method && !HERO_STORY) gsap.set(method, { opacity: 0, y: 18 });
+    gsap.set(intro, { opacity: 0, y: 14 });
+    if (!HERO_STORY) gsap.set(method, { opacity: 0, y: 18 });
     gsap.set(below, { opacity: 0, y: 22 });
     primeRoll(name);
 
@@ -3110,8 +3307,9 @@
         // as settled at 1.0 — the expo ease has a line visibly in place well
         // before its duration is up.
         .to(movers, { yPercent: 0, duration: 1.25, stagger: 0.14 }, 0)
-        .to(role, { opacity: 1, y: 0, duration: 1 }, 0.6);
-      if (method && !HERO_STORY) tl.to(method, { opacity: 1, y: 0, duration: 1 }, 0.75);
+        // The two lines under it, one after the other.
+        .to(intro, { opacity: 1, y: 0, duration: 1, stagger: 0.12 }, 0.6);
+      if (!HERO_STORY) tl.to(method, { opacity: 1, y: 0, duration: 1, stagger: 0.1 }, 0.8);
       // The band arrives under a name that is still arriving. The marks are
       // already drifting inside it, so they come in with the line.
       tl.to(below, { opacity: 1, y: 0, duration: 1.1 }, 0.8);
@@ -3119,15 +3317,23 @@
   }
 
   // ---------- THE ROLL ----------
-  // Scrubbed to the scroll across the track. The name holds, then its tails
-  // roll through the three pairs and home: four rolls, each a tenth of the
-  // track, with a hold between.
+  // Scrubbed to the scroll across the track. The name holds; the line under
+  // it sets the idea up and turns it; then the tails roll through the three
+  // pairs and home.
   //
-  //   hold        0.00 – 0.08   Abbie Truman
-  //   roll 1      0.08 – 0.18   → Abstract Tangible,   hold to 0.30
-  //   roll 2      0.30 – 0.40   → Ambiguity Traction,  hold to 0.52
-  //   roll 3      0.52 – 0.62   → Assumption Truth,    hold to 0.74
-  //   roll home   0.74 – 0.84   → Abbie Truman,        hold to 1.00
+  //   hold      0.00 – 0.06   Abbie Truman, the two lines under it
+  //   set-up    0.06 – 0.16   the two lines give way to `Most people take an
+  //                           idea from A to B.`; the join draws from the A
+  //                           down to the T; the tails dim, the caps hold
+  //   the turn  0.16 – 0.24   B. struck, T. written in; `Most people take`
+  //                           becomes `I take`.             hold to 0.30
+  //   roll 1    0.30 – 0.39   → Abstract Tangible,          hold to 0.47
+  //   roll 2    0.47 – 0.56   → Ambiguity Traction,         hold to 0.64
+  //   roll 3    0.64 – 0.73   → Assumption Truth,           hold to 0.80
+  //   home      0.80 – 0.90   → Abbie Truman; the two lines come back; the
+  //                           join retracts; the tails come back to ink;
+  //                           `A to T. Every time.` beside the name
+  //   hold      0.90 – 1.00
   //
   // Then the sticky releases and the exit runs.
   //
@@ -3138,26 +3344,48 @@
   // the perspective is on the variant, so a half-turned letter reads as a
   // flap and not as a squashed glyph.
   //
-  // Beside the name, the pair's two lines arrive a little ahead of its roll
-  // and leave a little ahead of the next, so the words are there as the
-  // name lands on them.
+  // From the set-up on, the line under the name is the caption to what the
+  // tails are doing: at reading grey while the pairs roll, so the pairs are
+  // what is read. Beside the name, the pair's two lines arrive a little
+  // ahead of its roll and leave a little ahead of the next.
   //
   // Every tween states both ends, so a refresh part-way through — fonts
   // landing, a window resize — re-records the same ends and not whatever a
   // letter was holding at that moment; and none renders at build, because
   // the rest state is primeRoll's. The exit that follows writes to the
-  // stage and the role, which nothing here touches: one owner per property.
-  var ROLL_AT = [0.08, 0.30, 0.52, 0.74];
-  var ROLL_FLAP = 0.055;     // one letter's turn, in track
-  var ROLL_STAGGER = 0.006;  // the next letter starts this much later
+  // stage, the block under the name, the band and the light, which nothing
+  // here touches: one owner per property. Within here the same rule holds:
+  // the flaps own the letters, the dimming owns the tails, the swap owns
+  // the intro block and the set-up line's pieces.
+  var SETUP_AT = 0.06;
+  var TURN_AT = 0.16;
+  var ROLL_AT = [0.30, 0.47, 0.64, 0.80];
+  var ROLL_FLAP = 0.05;      // one letter's turn, in track
+  var ROLL_STAGGER = 0.005;  // the next letter starts this much later
+  var TAIL_DIM = 0.7;
   function initHeroStory() {
     if (!HERO_STORY) return;
     var track = document.getElementById('hp-hero-track');
     var tails = Array.prototype.slice.call(document.querySelectorAll('.hp-name__tail'));
     var sides = Array.prototype.slice.call(document.querySelectorAll('.hp-hero__side-pair'));
-    if (!track || !tails.length) return;
+    var join = document.querySelector('.hp-name__join');
+    var intro = document.querySelector('.hp-hero__intro');
+    var setup = document.querySelector('.hp-hero__setup--roll');
+    if (!track || !tails.length || !join || !intro || !setup) return;
+    var strike = setup.querySelector('.hp-hero__strike');
+    var dot = setup.querySelector('.hp-hero__setup-dot');
+    var tee = setup.querySelector('.hp-hero__setup-t');
+    var most = setup.querySelector('.hp-hero__setup-most');
+    var me = setup.querySelector('.hp-hero__setup-i');
+    var rest = setup.querySelector('.hp-hero__setup-rest');
+    var ink3 = getComputedStyle(document.getElementById('hp-root')).getPropertyValue('--ink-3').trim() || 'rgba(255,255,255,0.4)';
 
     gsap.registerPlugin(ScrollTrigger);
+    // The join is placed from the cap boxes, now and on every refresh, so
+    // it survives a resize and a late font.
+    placeJoin();
+    ScrollTrigger.addEventListener('refreshInit', placeJoin);
+
     var tl = gsap.timeline({
       defaults: { ease: 'none', force3D: true },
       scrollTrigger: {
@@ -3172,6 +3400,35 @@
         scrub: true
       }
     });
+
+    // ---- the set-up
+    // The two lines go, the set-up line arrives in their place. The join
+    // draws down as it does, and the tails fall back to let the caps hold.
+    tl.fromTo(intro, { opacity: 1 }, { opacity: 0, duration: 0.04, ease: 'power1.in', immediateRender: false }, SETUP_AT);
+    tl.fromTo(setup, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out', immediateRender: false }, SETUP_AT + 0.03);
+    tl.fromTo(join, { scaleY: 0 }, { scaleY: 1, duration: 0.06, ease: 'power2.inOut', immediateRender: false }, SETUP_AT + 0.04);
+    tl.fromTo(tails, { opacity: 1 }, { opacity: TAIL_DIM, duration: 0.08, immediateRender: false }, SETUP_AT + 0.02);
+
+    // ---- the turn
+    // The line through the B, the B to grey and its full stop gone, the
+    // T. written in; then the subject: `Most people take` out, the rest of
+    // the line closing up to where `I take` is, `I take` in. The closing-up
+    // is a transform by the difference between the two subjects' widths,
+    // measured at every refresh.
+    tl.fromTo(strike, { '--strike': 0 }, { '--strike': 1, duration: 0.03, ease: 'power2.out', immediateRender: false }, TURN_AT);
+    tl.fromTo(strike, { color: '#ffffff' }, { color: ink3, duration: 0.025, ease: 'power1.out', immediateRender: false }, TURN_AT + 0.015);
+    tl.fromTo(dot, { opacity: 1 }, { opacity: 0, duration: 0.02, immediateRender: false }, TURN_AT + 0.02);
+    tl.fromTo(tee, { opacity: 0, y: 6 }, { opacity: 1, y: 0, duration: 0.03, ease: 'power2.out', immediateRender: false }, TURN_AT + 0.03);
+    tl.fromTo(most, { opacity: 1 }, { opacity: 0, duration: 0.02, ease: 'power1.in', immediateRender: false }, TURN_AT + 0.055);
+    tl.fromTo(rest, { x: 0 }, {
+      x: function() { return -(most.getBoundingClientRect().width - me.getBoundingClientRect().width); },
+      duration: 0.03, ease: 'power2.inOut', immediateRender: false
+    }, TURN_AT + 0.065);
+    tl.fromTo(me, { opacity: 0 }, { opacity: 1, duration: 0.02, ease: 'power1.out', immediateRender: false }, TURN_AT + 0.075);
+
+    // ---- the pairs
+    // The caption falls back to grey as the first pair rolls in.
+    tl.fromTo(setup, { color: '#ffffff' }, { color: ink3, duration: 0.03, immediateRender: false }, ROLL_AT[0] - 0.01);
 
     function letters(v) { return Array.prototype.slice.call(v.querySelectorAll('.hp-name__ch')); }
     function flipOut(v, at) {
@@ -3204,20 +3461,32 @@
     });
 
     // The side copy. Pair i is shown by roll i and leaves ahead of roll i+1;
-    // the home line is shown by the last roll and stays until the release.
+    // the home line is shown once the name is itself again, and stays until
+    // the release.
     sides.forEach(function(pair, i) {
       var at = ROLL_AT[i];
       var next = ROLL_AT[i + 1];
       if (at == null) return;
+      var isHome = i === ROLL_AT.length - 1;
       tl.fromTo(pair, { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.07, ease: 'power2.out', immediateRender: false }, at - 0.01);
+        { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out', immediateRender: false },
+        isHome ? at + 0.07 : at - 0.01);
       if (next != null) {
         tl.fromTo(pair, { opacity: 1, y: 0 },
-          { opacity: 0, y: -8, duration: 0.05, ease: 'power2.in', immediateRender: false }, next - 0.035);
+          { opacity: 0, y: -8, duration: 0.04, ease: 'power2.in', immediateRender: false }, next - 0.03);
       }
     });
 
-    // The hold to the end: a no-op that pads the timeline so the last roll
+    // ---- home
+    // The caption goes, the two lines come back, the join retracts and the
+    // tails are ink again, all as the name rolls back to itself.
+    var home = ROLL_AT[ROLL_AT.length - 1];
+    tl.fromTo(setup, { opacity: 1 }, { opacity: 0, duration: 0.03, ease: 'power1.in', immediateRender: false }, home);
+    tl.fromTo(intro, { opacity: 0 }, { opacity: 1, duration: 0.05, ease: 'power2.out', immediateRender: false }, home + 0.05);
+    tl.fromTo(join, { scaleY: 1 }, { scaleY: 0, duration: 0.05, ease: 'power2.inOut', immediateRender: false }, home + 0.01);
+    tl.fromTo(tails, { opacity: TAIL_DIM }, { opacity: 1, duration: 0.08, immediateRender: false }, home + 0.02);
+
+    // The hold to the end: a no-op that pads the timeline so the last beat
     // does not land on the release.
     tl.to({}, { duration: 0.01 }, 1 - 0.01);
   }
@@ -3319,9 +3588,10 @@
   // that which does not shake is the one where every write is a composited
   // property.
   //
-  // One owner per property: the roll writes to the letters and the side
-  // pairs, this writes to the stage that holds them, the role, the band and
-  // the light. Nothing is written twice.
+  // One owner per property: the roll writes to the letters, the tails, the
+  // join, the side pairs and the pieces under the name; this writes to the
+  // stage that holds the name, the block under it, the band and the light.
+  // Nothing is written twice.
   function initHeroExit() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
     // No exit under reduced motion, and nothing to add for it either: with
@@ -3334,10 +3604,10 @@
     if (!hero) return;
 
     var stage = hero.querySelector('.hp-hero__stage');
-    var role = hero.querySelector('.hp-hero__role');
+    var under = hero.querySelector('.hp-hero__under');
     var lower = hero.querySelector('.hp-hero__lower');
     var glow = hero.querySelector('.hp-hero__glow');
-    if (!stage || !role || !lower || !glow) return;
+    if (!stage || !under || !lower || !glow) return;
 
     // Half travel below 900px, where the copy block is most of the screen and
     // the same displacement reads as the headline being yanked rather than
@@ -3378,9 +3648,9 @@
       .to(stage, { y: travel(-84), duration: 1 }, 0)
       .to(stage, { scale: 0.965, duration: 1 }, 0)
       .to(stage, { opacity: 0, duration: 0.56, ease: 'power1.in' }, 0)
-      // The role, under it: a little less travel, a little later gone.
-      .to(role, { y: travel(-48), duration: 1 }, 0)
-      .to(role, { opacity: 0, duration: 0.6, ease: 'power1.in' }, 0)
+      // The lines under it: a little less travel, a little later gone.
+      .to(under, { y: travel(-48), duration: 1 }, 0)
+      .to(under, { opacity: 0, duration: 0.6, ease: 'power1.in' }, 0)
       // The closing band. Downward, against everything else: it is the
       // bottom edge of the composition and it stays behind rather than
       // joining the exit.
