@@ -1473,10 +1473,11 @@
     background: rgba(10,10,12,0.93);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     /* 12px on the 691px card a 1440x820 window lays out, 13px from a 748px
-       card up, and no smaller than 10px on the narrowest window the build
-       runs on. The box is the panel, so the type has to follow the card for
-       a 33-character line to keep fitting. */
-    font-size: clamp(10px, 1.737cqw, 13px);
+       card up, and no smaller than 9px on the smallest card the build runs
+       on (a 901x561 window lays out a 473px card). The box is the panel, so
+       the type has to follow the card for the longest line, 31 characters
+       with its one-space indent, to keep fitting without being clipped. */
+    font-size: clamp(9px, 1.737cqw, 13px);
     line-height: 1.55;
     letter-spacing: -0.015em;
     color: rgba(252,249,245,0.7);
@@ -3136,16 +3137,16 @@
   // panel at the smallest card the build runs on. Tags, attribute names and
   // braces carry the quieter class; values and the words read first.
   var CODE_LINES = [
-    '<span class="t">&lt;nav aria-label=</span>"Checkout steps"<span class="t">&gt;</span>',
-    '<span class="t">&lt;label for=</span>"email"<span class="t">&gt;</span>Email<span class="t">&lt;/label&gt;</span>',
+    '<span class="t">&lt;nav aria-label=</span>"Checkout"<span class="t">&gt;</span>',
+    '<span class="t">&lt;label for=</span>"mail"<span class="t">&gt;</span>Email<span class="t">&lt;/label&gt;</span>',
     '<span class="t">&lt;fieldset&gt;</span>',
-    '  <span class="t">&lt;legend&gt;</span>Payment method<span class="t">&lt;/legend&gt;</span>',
-    '  <span class="t">&lt;input type=</span>"radio"<span class="t"> id=</span>"card"<span class="t">&gt;</span>',
-    '  <span class="t">&lt;label for=</span>"card"<span class="t">&gt;</span>Card<span class="t">&lt;/label&gt;</span>',
-    '<span class="t">&lt;p aria-live=</span>"polite"<span class="t">&gt;</span>£59.98<span class="t">&lt;/p&gt;</span>',
+    ' <span class="t">&lt;legend&gt;</span>Payment<span class="t">&lt;/legend&gt;</span>',
+    ' <span class="t">&lt;input type=</span>"radio"<span class="t"> id=</span>"card"<span class="t">&gt;</span>',
+    ' <span class="t">&lt;label for=</span>"card"<span class="t">&gt;</span>Card<span class="t">&lt;/label&gt;</span>',
+    '<span class="t">&lt;p aria-live=</span>"polite"<span class="t">&gt;</span>£60<span class="t">&lt;/p&gt;</span>',
     '<span class="t">button:focus-visible {</span>',
-    '  <span class="t">outline:</span> 2px solid<span class="t">; }</span>',
-    '<span class="t">&lt;button type=</span>"submit"<span class="t">&gt;</span>Pay<span class="t">&lt;/button&gt;</span>'
+    ' <span class="t">outline:</span> 2px solid<span class="t">; }</span>',
+    '<span class="t">&lt;button&gt;</span>Pay securely<span class="t">&lt;/button&gt;</span>'
   ];
   function buildCodeHtml() {
     return '<div class="hp-build__code" aria-hidden="true">' +
