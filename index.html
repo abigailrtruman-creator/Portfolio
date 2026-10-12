@@ -317,37 +317,45 @@
   }
   .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
-  /* The sound switch. A button wearing the link's exact clothes, so the three
-     read as one row; the only things reset are the ones a button brings of
-     its own. Its icon is a 12px mark in the arrow's grey: two arcs when the
-     sound is on, one slash when it is off, chosen by aria-pressed so the
-     state the screen reader hears and the state the eye sees are one value.
-     Hidden where the build cannot run: below 901px there is no stage and so
-     nothing this could ever switch, and a control that does nothing is worse
-     than none. Reduced motion keeps it — the preference is still hers to set
-     for the next visit on a machine where it does play. */
-  .hp-nav__sound {
-    background: none;
-    border: 0;
-    margin: 0;
-    cursor: pointer;
-    line-height: inherit;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  .hp-nav__sound:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: -2px; }
-  .hp-nav__sound-icon {
+  /* The sound prompt. There is no switch in the nav: sound is opt-in, once
+     per visit, from one button that sits on the build's stage while the card
+     is being drawn — the only time anything on the site makes a noise — and
+     goes when it is pressed or when the drawing is done. It wears the index
+     pill's clothes, mirrored to the other corner, so the two read as the
+     stage's furniture. Inside the sticky stage rather than fixed, so it rides
+     up and off with the card instead of outliving it. */
+  .hp-build__sound {
+    position: absolute;
+    right: var(--pad-x);
+    bottom: clamp(18px, 3.5vh, 34px);
+    z-index: 5;
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    color: rgba(255,255,255,0.55);
-    transition: color 0.25s ease;
+    gap: 9px;
+    padding: 9px 14px 10px;
+    border-radius: 999px;
+    background: rgba(18,18,22,0.55);
+    border: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(28px) saturate(1.6);
+    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+    color: var(--ink);
+    font-family: var(--ff-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), border-color 0.25s ease;
   }
-  .hp-nav__sound:hover .hp-nav__sound-icon { color: #fff; }
-  .hp-nav__sound-icon svg { width: 12px; height: 12px; display: block; }
-  .hp-nav__sound[aria-pressed="true"] .hp-nav__sound-off,
-  .hp-nav__sound[aria-pressed="false"] .hp-nav__sound-on { display: none; }
-  @media (max-width: 900px) { .hp-nav__sound { display: none; } }
+  .hp-build__sound.is-on { opacity: 1; pointer-events: auto; }
+  .hp-build__sound:hover { border-color: rgba(255,255,255,0.22); }
+  .hp-build__sound:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
+  .hp-build__sound svg { width: 12px; height: 12px; display: block; color: rgba(255,255,255,0.55); }
 
   /* ---------- HERO ----------
      All three pieces of copy are one block: the greeting reads into the
@@ -2275,24 +2283,19 @@
   // same tick, and each sound throttled so a fast scroll thins them instead
   // of stacking them.
   //
-  // Browsers will not start audio until the page has been touched, so the
-  // context is created, or resumed, only from a gesture: the first pointerdown
-  // or keydown on the document, or the switch in the nav. Nothing plays while
-  // the tab is hidden, nothing plays under reduced motion, and the preference
-  // is kept in localStorage under at-sound, on by default.
+  // Browsers will not start audio until the page has been touched, and a
+  // wheel is not a touch they count, so sound here is opt-in: off until the
+  // prompt on the build's stage is pressed, and that press is the gesture the
+  // context is created from. Nothing is stored between visits — a return
+  // visit would need the click anyway, so a remembered preference could only
+  // ever promise sound it cannot start. Nothing plays while the tab is hidden
+  // and nothing plays under reduced motion, where the build is off.
   var SOUND = (function() {
-    var KEY = 'at-sound';
-    var ctx = null, master = null, noiseBuf = null, enabled = null;
+    var ctx = null, master = null, noiseBuf = null, enabled = false;
     var last = {};
     var THROTTLE = { tick: 45, chapter: 300, found: 600, on: 200 };
 
-    function isOn() {
-      if (enabled === null) {
-        try { enabled = window.localStorage.getItem(KEY) !== '0'; }
-        catch (e) { enabled = true; }
-      }
-      return enabled;
-    }
+    function isOn() { return enabled; }
     function context() {
       if (!ctx) {
         var AC = window.AudioContext || window.webkitAudioContext;
@@ -2386,30 +2389,22 @@
       if (ctx.state === 'suspended') ctx.resume().catch(function() {});
       try { VOICES[name](ctx, ctx.currentTime + 0.001); } catch (e) {}
     }
-    function set(on) {
-      if (isOn() === on) return;
-      enabled = on;
-      try { window.localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) {}
-      // Called from the switch's click, which is the gesture the context
-      // needs, so switching on is also what unlocks it.
-      if (on) { context(); play('on'); }
+    // Called from the prompt's click, which is the gesture the context
+    // needs, so switching on is also what starts it.
+    function enable() {
+      if (enabled) return;
+      enabled = true;
+      context();
+      play('on');
     }
 
-    return {
-      unlock: function() { if (isOn()) context(); },
-      play: play,
-      enabled: isOn,
-      set: set,
-      toggle: function() { set(!isOn()); }
-    };
+    return { play: play, enabled: isOn, enable: enable };
   })();
 
-  // The nav switch's mark: two arcs for on, a slash for off. Both are in the
-  // file and aria-pressed picks one, see .hp-nav__sound.
+  // The prompt's mark: two arcs, the usual sign for sound.
   var SOUND_ICON = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
-    '<path class="hp-nav__sound-on" d="M10 8.5a5 5 0 0 1 0 7"/>' +
-    '<path class="hp-nav__sound-on" d="M14 4.8a10 10 0 0 1 0 14.4"/>' +
-    '<path class="hp-nav__sound-off" d="M6.5 17.5l11-11"/>' +
+    '<path d="M10 8.5a5 5 0 0 1 0 7"/>' +
+    '<path d="M14 4.8a10 10 0 0 1 0 14.4"/>' +
     '</svg>';
 
   var ARROW_NE = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -3265,12 +3260,6 @@
             '<span>LinkedIn</span>' +
             '<span class="hp-nav__arrow" aria-hidden="true">' + ARROW_NE + '</span>' +
           '</a>' +
-          // The sound switch, after the two links. aria-pressed is the stored
-          // preference, so a return visit opens with the mark already right.
-          '<button type="button" class="hp-nav__link hp-nav__sound" data-sound aria-pressed="' + (SOUND.enabled() ? 'true' : 'false') + '">' +
-            '<span>Sound</span>' +
-            '<span class="hp-nav__sound-icon" aria-hidden="true">' + SOUND_ICON + '</span>' +
-          '</button>' +
         '</div>' +
       '</nav>';
 
@@ -3349,6 +3338,11 @@
         '<div class="hp-build__stage">' +
           buildGuidesSvg() +
           cardsHtml.shift() +
+          // The one way to turn sound on. Shown by the timeline while the
+          // card is being drawn; see .hp-build__sound and initSoundPrompt.
+          '<button type="button" class="hp-build__sound" data-sound>' +
+            SOUND_ICON + '<span>Sound on</span>' +
+          '</button>' +
         '</div>' +
       '</section>';
     }
@@ -3402,23 +3396,18 @@
     setTimeout(function() { nav.classList.add('is-live'); }, 1000);
   }
 
-  // The first touch of the page is what lets audio start, so it is caught once,
-  // in the capture phase, from either input, and the context is made then. A
-  // wheel is not a gesture the browser counts, so a visitor who only scrolls
-  // hears nothing until they click — the switch itself is one such click.
-  function initSoundToggle() {
+  // The prompt is shown and hidden by the build's timeline (see
+  // initBuildScene); this only handles the press. One press: the sound comes
+  // on with its own small note, the prompt fades, and once it has faded it is
+  // taken out of the tab order for good.
+  function initSoundPrompt() {
     var btn = document.querySelector('[data-sound]');
-    function unlock() {
-      SOUND.unlock();
-      document.removeEventListener('pointerdown', unlock, true);
-      document.removeEventListener('keydown', unlock, true);
-    }
-    document.addEventListener('pointerdown', unlock, true);
-    document.addEventListener('keydown', unlock, true);
     if (!btn) return;
     btn.addEventListener('click', function() {
-      SOUND.toggle();
-      btn.setAttribute('aria-pressed', SOUND.enabled() ? 'true' : 'false');
+      SOUND.enable();
+      btn.classList.remove('is-on');
+      btn.setAttribute('data-done', '');
+      setTimeout(function() { btn.hidden = true; }, 750);
     });
   }
 
@@ -4121,6 +4110,7 @@
     // ahead of the drawing by up to the catch-up time, and a tick for a line
     // that has not been drawn yet is just a wrong noise.
     var countEl = document.getElementById('hp-count');
+    var prompt = stage.querySelector('.hp-build__sound');
     function onUpdate() {
       var p = tl.progress();
       // The index pill's own trigger brings it on at 0.72 of the scroll; this
@@ -4128,6 +4118,11 @@
       // write the same class with the same rule, so whichever ran last agrees
       // with the other once the timeline has caught up.
       if (countEl) countEl.classList.toggle('is-on', p >= 0.72);
+      // The sound prompt is offered while there is something to hear: from
+      // the first line to the navy, and not once it has been pressed.
+      if (prompt && !prompt.hasAttribute('data-done')) {
+        prompt.classList.toggle('is-on', p > 0.015 && p < 0.72);
+      }
       var s = 1;
       for (var i = 1; i < STATES.length; i++) if (p >= STATES[i]) s = i + 1;
       if (s !== state) {
@@ -4852,7 +4847,7 @@
       BUILD_ON = decideBuild();
       build();
       revealNav();
-      initSoundToggle();
+      initSoundPrompt();
       initNavHide();
       initBackToTop();
       initWorkAnchor();
