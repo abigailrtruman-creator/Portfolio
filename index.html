@@ -567,6 +567,39 @@
   /* Same mechanism one level up: a run of words that must not be split from
      each other, so the statement can never end on a single word. */
   .hp-hero__keep { white-space: nowrap; }
+  /* The strike. `A to B` is the phrase everyone reaches for; the B is
+     struck and `T.` written in after it. What the stylesheet describes is
+     the finished state — line drawn, B at reading grey, T. present — so a
+     visitor without the entrance (reduced motion, no script) gets the joke
+     as a still, and the story and exit timelines that follow the entrance
+     never have to hold a state the stylesheet disagrees with. The entrance
+     winds these back before first paint and plays them forward last.
+     The line is a pseudo-element scaled along x from the left; --strike is
+     the scale, so the script has one number to animate. Positioned a touch
+     above the mathematical middle, where a cap-height strike reads as
+     crossing the letter rather than underlining its top half. */
+  .hp-hero__strike {
+    --strike: 1;
+    position: relative;
+    display: inline-block;
+    color: var(--ink-3);
+  }
+  .hp-hero__strike::after {
+    content: '';
+    position: absolute;
+    left: -0.02em;
+    right: -0.02em;
+    top: 0.5em;
+    height: 0.075em;
+    background: currentColor;
+    transform: scaleX(var(--strike));
+    transform-origin: 0 50%;
+    border-radius: 1px;
+  }
+  /* The words that arrive after the strike. In layout from the start, at
+     their full width, so writing them in moves nothing; the entrance has
+     only their ink and a few pixels of rise to play with. */
+  .hp-hero__tail { display: inline-block; }
 
   /* The entrance works a line at a time rather than a letter at a time. After
      the webfont has landed the words are measured, grouped by the line they
@@ -798,7 +831,11 @@
   }
   .hp-corridor--story .hp-corridor__track {
     display: flex;
-    align-items: center;
+    /* From the top, not the middle: the panels are different heights, and
+       centred each would put its heading at a different line, so the
+       headings would step up and down as the strip went by. From the top
+       they sit on one line; the stage centres the track as a whole. */
+    align-items: flex-start;
     gap: var(--corridor-gap);
     /* The first panel starts in the middle of the stage, and every panel
        after it is reached by the track moving left. The padding is what
@@ -823,41 +860,61 @@
     align-items: flex-start;
     gap: clamp(18px, 2.4vh, 28px);
   }
-  .hp-corridor__mark {
-    display: block;
-    margin-top: 6px;
+  /* The illustration's box, on panel one. Empty until stage 3 draws the
+     monogram sequence in it; sized now so that arrival moves nothing. To
+     the right of the heading rather than above it, so the three headings
+     sit level as the strip goes by: a box above would drop panel one's by
+     its own height and read as a mistake in the row. The panel becomes a
+     two-column grid for it, text left, art right, both from the top. */
+  .hp-corridor__panel--art {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto;
+    column-gap: clamp(20px, 2.4vw, 36px);
+    align-items: start;
   }
-  /* Elixirr, as a word for now: see the build for why. The weight and size
-     are a mark's, so the three panels sit level when it is replaced. */
-  .hp-corridor__mark--word {
+  .hp-corridor__panel--art .hp-corridor__title { grid-column: 1; grid-row: 1; }
+  .hp-corridor__panel--art .hp-corridor__lines { grid-column: 1; grid-row: 2; }
+  .hp-corridor__art {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    width: clamp(120px, 11vw, 168px);
+    height: clamp(104px, 9.5vw, 144px);
+  }
+  /* The pair. Display face at a mark's size, one line. The initials carry
+     the weight: 800 against the word's 500, which is the whole pattern
+     shown and none of it explained. */
+  .hp-corridor__title {
+    margin: 0;
     font-family: var(--ff-display);
-    font-weight: 800;
-    font-size: clamp(30px, 3.2vw, 44px);
-    line-height: 1;
-    letter-spacing: -0.03em;
+    font-weight: 500;
+    font-size: clamp(32px, 3.4vw, 50px);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
     color: var(--ink);
+    white-space: nowrap;
   }
-  /* The marks: the same masked-SVG drawing as the client band in the hero,
-     at full ink and a reading size rather than a strip size. --h is the
-     frame and --r its aspect, as there. */
-  .hp-corridor__logo {
-    height: var(--h);
-    width: calc(var(--h) * var(--r));
-    -webkit-mask: var(--mark) center / contain no-repeat;
-    mask: var(--mark) center / contain no-repeat;
-    background-color: var(--ink);
+  .hp-corridor__cap { font-weight: 800; }
+  /* The arrow is Manrope's own glyph, so its stroke is the type's stroke.
+     A shade back from the words: it is the hinge, not a third word. */
+  .hp-corridor__arrow { color: var(--ink-2); font-weight: 500; }
+  .hp-corridor__lines {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45em;
+    font-size: clamp(19px, 1.75vw, 27px);
   }
-  .hp-corridor__logo--pwc   { --h: clamp(34px, 3.4vw, 46px); --r: 1.936; --mark: url(/assets/logo-pwc.2065f915.svg); }
-  .hp-corridor__logo--boots { --h: clamp(30px, 3vw, 40px);   --r: 1.887; --mark: url(/assets/logo-boots.e629e6b8.svg); }
+  /* Two lines under the pair: the principle a shade brighter than what she
+     does about it, so the eye lands on the claim and the method follows. */
   .hp-corridor__copy {
     margin: 0;
     max-width: 40ch;
-    font-size: clamp(19px, 1.75vw, 27px);
     line-height: 1.4;
     letter-spacing: -0.012em;
-    color: var(--ink);
     text-wrap: pretty;
   }
+  .hp-corridor__copy--lead { color: var(--ink-1); }
+  .hp-corridor__copy--then { color: var(--ink-2); }
   /* The close. Between the statement and the panel paragraphs in size, in
      the display face, so it reads as the hero's voice coming back for one
      line before the work begins. */
@@ -881,6 +938,50 @@
     flex-direction: column;
     gap: clamp(56px, 9vh, 96px);
     max-width: 720px;
+  }
+  /* The heading is one line in the strip, where the panel is wide enough
+     for it. In the column it wraps like any heading. */
+  .hp-corridor:not(.hp-corridor--story) .hp-corridor__title { white-space: normal; }
+  /* No art box in the column: on a phone a second column would leave the
+     heading 190px to wrap in, and an empty box above it is an unexplained
+     gap. Where the illustration goes on a phone is stage 3's to decide. */
+  .hp-corridor:not(.hp-corridor--story) .hp-corridor__panel--art { display: flex; }
+  .hp-corridor:not(.hp-corridor--story) .hp-corridor__art { display: none; }
+
+  /* ---------- CAREER (the compact row) ----------
+     Three stops side by side, body size, the place in ink and the rest at
+     reading grey. About a third of a screen tall. It follows the corridor
+     and precedes the mark, and is kept small enough that the corridor's
+     close still hands into the mark's arrival over the top of it. */
+  .hp-career {
+    position: relative;
+    background: var(--bg);
+    padding: clamp(48px, 7vh, 80px) var(--pad-x) clamp(56px, 8vh, 96px);
+  }
+  .hp-career__list {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: var(--shell);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(28px, 4vw, 64px);
+  }
+  .hp-career__item {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .hp-career__copy {
+    margin: 0;
+    max-width: 38ch;
+    font-size: clamp(15px, 1.1vw, 17px);
+    line-height: 1.5;
+    color: var(--ink-2);
+  }
+  .hp-career__copy strong { color: var(--ink); font-weight: 600; }
+  @media (max-width: 760px) {
+    .hp-career__list { grid-template-columns: 1fr; gap: 36px; }
   }
 
   /* ---------- WORDMARK (3 rows converge → scale down) ----------
@@ -2287,20 +2388,51 @@
     // The hp-hero__keep runs are the phrases that a normal wrap inside a block
     // still gets wrong: each sentence's closing pair, which must not be left
     // as a one-word last line in type this large.
+    // The last one carries the gag: `A to B` is what everyone says, and the
+    // B is struck through and `T.` written in after it, as the last thing the
+    // entrance does. The <s> is the source of that: splitWords turns it into
+    // the span the strike is drawn on, and stripTags drops it, so the
+    // accessible sentence is the one she means — `from A to T.` — with no B
+    // in it to be read aloud.
     statement: '<span class="hp-hero__sentence">I&rsquo;m happiest when the pixels get as much care as <span class="hp-hero__keep">the bigger picture.</span></span> ' +
       '<span class="hp-hero__sentence">I put as much into people as I do <span class="hp-hero__keep">the product.</span></span> ' +
-      '<span class="hp-hero__sentence">And I&rsquo;ll take an idea from <span class="hp-hero__keep">A to T.</span></span>'
+      '<span class="hp-hero__sentence">And I&rsquo;ll take an idea from <span class="hp-hero__keep">A to <s>B</s> T.</span></span>'
   };
 
-  // The corridor's copy: the career, told in three stops, and the line that
-  // hands over to the work. Each one is a paragraph a panel can hold at
-  // reading size; none of them is a headline.
+  // The corridor's copy: the three pairs behind `A to T`, one panel each,
+  // and the line that hands over to the work. Each pair is a heading — the
+  // two words, initials carrying the pattern — and two lines under it: the
+  // principle, then what she does about it. The career itself has moved out
+  // of the panels into the compact row after them (CAREER, below).
   var CORRIDOR = {
-    elixirr: 'Right now I lead design projects at Elixirr. I was the first designer there to ship front-end code alongside owning the design, on apps for British Cycling and Lloyds Bank. I&rsquo;m now working with leadership on what that means for how we deliver and the role design plays.',
-    pwc: 'Before that I was at PwC, designing for everyone from financial analysts, engineers and everyday shoppers, and won a Rising Star award.',
-    boots: 'In-house at Boots, I introduced same-day click and collect and transformed checkout and post-purchase.',
+    pairs: [
+      {
+        from: 'Abstract', to: 'Tangible',
+        lead: 'Strategy is a promise. Code is where it&rsquo;s kept.',
+        then: 'So I shape the direction, then prototype and build it myself, right through to production.'
+      },
+      {
+        from: 'Ambiguity', to: 'Traction',
+        lead: 'Ambiguity isn&rsquo;t the problem. Avoiding it is.',
+        then: 'So I surface what needs agreeing, and steer people towards the call.'
+      },
+      {
+        from: 'Assumption', to: 'Truth',
+        lead: 'Opinions are free. Being wrong isn&rsquo;t.',
+        then: 'So I test early, while changing course is still cheap.'
+      }
+    ],
     close: 'The messier the problem, the more I enjoy it. Here are a few I&rsquo;ve loved untangling.'
   };
+
+  // The career, compact: three stops in a row, the place in full ink and
+  // the rest at reading grey. A footnote to the corridor, not a chapter of
+  // its own, which is why it is body size and a third of a screen.
+  var CAREER = [
+    { when: 'Now', where: 'Elixirr.', what: 'Leading design projects, and the first designer there to ship front-end code alongside the design, on apps for British Cycling and Lloyds Bank.' },
+    { when: 'Before', where: 'PwC.', what: 'Six years designing for everyone from financial analysts to everyday shoppers. Rising Star award.' },
+    { when: 'In-house', where: 'Boots.', what: 'Introduced same-day click and collect; transformed checkout and post-purchase.' }
+  ];
 
   // In the order the cards are in, because that is the order a visitor who
   // scrolls on will meet them. The fibre provider is unnamed on its own card
@@ -2633,7 +2765,13 @@
   function stripTags(html) {
     var d = document.createElement('div');
     d.innerHTML = html;
-    return (d.textContent || '').replace(/"/g, '&quot;');
+    // Struck text is text she is not saying. It goes before the read, so
+    // the accessible sentence is the corrected one, not the one with the
+    // correction still in it.
+    Array.prototype.forEach.call(d.querySelectorAll('s, del'), function(s) {
+      s.parentNode.removeChild(s);
+    });
+    return (d.textContent || '').replace(/\s+/g, ' ').replace(/"/g, '&quot;');
   }
 
   // Wraps each word in a span, preserving the sentence blocks. The entrance
@@ -2646,6 +2784,12 @@
   // to a single word span with non-breaking spaces inside it. The span is
   // already nowrap, so this is the same guarantee with one fewer level of
   // nesting, and it is what keeps the per-sentence run flat.
+  //
+  // A keep run with an <s> in it is the one that carries the strike. The <s>
+  // becomes a .hp-hero__strike span, the line is drawn on, and the words
+  // after it become a .hp-hero__tail span, so the entrance can write them in
+  // after the strike has landed. Both live inside the one word span, so the
+  // line-finding and the nowrap guarantee are the same as for any keep run.
   function splitWords(text, wordClassName) {
     var container = document.createElement('span');
     container.innerHTML = text;
@@ -2658,13 +2802,42 @@
       span.textContent = str;
       return span;
     }
+    function nbsp(str) { return str.replace(/\s+/g, '\u00A0'); }
+
+    function keepSpan(keep) {
+      var kept = wordSpan('');
+      kept.classList.add('hp-hero__keep');
+      var struck = keep.querySelector('s, del');
+      if (!struck) {
+        kept.textContent = nbsp((keep.textContent || '').trim());
+        return kept;
+      }
+      var before = '', after = '';
+      var seen = false;
+      Array.prototype.forEach.call(keep.childNodes, function(n) {
+        if (n === struck) { seen = true; return; }
+        var t = n.textContent || '';
+        if (seen) after += t; else before += t;
+      });
+      kept.appendChild(document.createTextNode(nbsp(before.replace(/^\s+/, ''))));
+      var strike = document.createElement('span');
+      strike.className = 'hp-hero__strike';
+      strike.textContent = (struck.textContent || '').trim();
+      kept.appendChild(strike);
+      if (after.trim()) {
+        kept.appendChild(document.createTextNode('\u00A0'));
+        var tail = document.createElement('span');
+        tail.className = 'hp-hero__tail';
+        tail.textContent = nbsp(after.trim());
+        kept.appendChild(tail);
+      }
+      return kept;
+    }
 
     function walk(node) {
       Array.prototype.slice.call(node.childNodes).forEach(function(child) {
         if (child.nodeType === 1 && child.classList.contains('hp-hero__keep')) {
-          var kept = wordSpan((child.textContent || '').trim().replace(/\s+/g, '\u00A0'));
-          kept.classList.add('hp-hero__keep');
-          node.replaceChild(kept, child);
+          node.replaceChild(keepSpan(child), child);
           return;
         }
         if (child.nodeType === 3) {
@@ -2879,39 +3052,63 @@
       '</div>' +
       '</section>';
 
-    // The corridor: where she has worked, as a strip you move along sideways.
-    // Three panels and a close, each one an article so a reader walks them
-    // as four short pieces, in the order they are written: now, before,
-    // in-house, then the line that turns toward the work.
-    function corridorPanel(key, eyebrow, mark, copy) {
-      return '<article class="hp-corridor__panel hp-corridor__panel--' + key + '">' +
-          '<span class="hp-eyebrow hp-eyebrow--rule">' + eyebrow + '</span>' +
-          mark +
-          '<p class="hp-corridor__copy">' + copy + '</p>' +
+    // The corridor: the three pairs behind `A to T`, as a strip you move
+    // along sideways. Three panels and a close, each one an article so a
+    // reader walks them as four short pieces in the order they are written.
+    //
+    // Each pair's heading is the two words with an arrow between, the
+    // initials at the heavy weight and the rest of each word at the text
+    // weight, so the A and the T show without being pointed at. The
+    // accessible name is the plain words — `Abstract to Tangible` — because
+    // an arrow glyph read aloud is noise and the bold is a visual device.
+    function capWord(word) {
+      return '<b class="hp-corridor__cap">' + word.charAt(0) + '</b>' + word.slice(1);
+    }
+    function corridorPair(pair, i) {
+      // Panel one will carry the monogram sequence — pencil, wireframe, code
+      // — as its illustration in stage 3. The box for it is here now, at
+      // the size it will be, so the panel does not reflow when it arrives.
+      var art = i === 0 ? '<div class="hp-corridor__art" aria-hidden="true"></div>' : '';
+      return '<article class="hp-corridor__panel hp-corridor__panel--pair' + (art ? ' hp-corridor__panel--art' : '') + '">' +
+          art +
+          '<h2 class="hp-corridor__title" aria-label="' + pair.from + ' to ' + pair.to + '">' +
+            capWord(pair.from) +
+            '<span class="hp-corridor__arrow" aria-hidden="true">&thinsp;&rarr;&thinsp;</span>' +
+            capWord(pair.to) +
+          '</h2>' +
+          '<div class="hp-corridor__lines">' +
+            '<p class="hp-corridor__copy hp-corridor__copy--lead">' + pair.lead + '</p>' +
+            '<p class="hp-corridor__copy hp-corridor__copy--then">' + pair.then + '</p>' +
+          '</div>' +
         '</article>';
     }
-    function corridorLogo(key, name) {
-      return '<span class="hp-corridor__mark hp-corridor__logo hp-corridor__logo--' + key + '" role="img" aria-label="' + name + '"></span>';
-    }
     var corridorHtml = '' +
-      '<section class="hp-corridor" id="hp-corridor" aria-label="Where I have worked">' +
+      '<section class="hp-corridor" id="hp-corridor" aria-label="From A to T">' +
         '<div class="hp-corridor__stage">' +
           '<div class="hp-corridor__track">' +
-            corridorPanel('elixirr', 'Now',
-              // Set as a word for now. Elixirr's mark should replace this the
-              // same way PwC's and Boots' are drawn below, as a masked SVG at
-              // the same ink; the word is a stand-in at the weight a mark would
-              // have, not a decision to set it in type.
-              '<span class="hp-corridor__mark hp-corridor__mark--word">Elixirr</span>',
-              CORRIDOR.elixirr) +
-            corridorPanel('pwc', 'Before', corridorLogo('pwc', 'PwC'), CORRIDOR.pwc) +
-            corridorPanel('boots', 'In-house', corridorLogo('boots', 'Boots'), CORRIDOR.boots) +
-            // The close: no eyebrow, no mark. One line, at display size.
+            CORRIDOR.pairs.map(corridorPair).join('') +
+            // The close: no heading, no art. One line, at display size.
             '<article class="hp-corridor__panel hp-corridor__panel--close">' +
               '<p class="hp-corridor__close">' + CORRIDOR.close + '</p>' +
             '</article>' +
           '</div>' +
         '</div>' +
+      '</section>';
+
+    // The career, as a row. Where the corridor carries what she does, this
+    // carries where: three stops, side by side, body size. Quiet by design;
+    // it sits between the corridor letting go and the mark arriving, and
+    // must read as a footnote to one and not a chapter before the other.
+    var careerHtml = '' +
+      '<section class="hp-career" id="hp-career" aria-label="Where I have worked">' +
+        '<ul class="hp-career__list">' +
+          CAREER.map(function(c) {
+            return '<li class="hp-career__item">' +
+                '<span class="hp-eyebrow hp-eyebrow--rule">' + c.when + '</span>' +
+                '<p class="hp-career__copy"><strong>' + c.where + '</strong> ' + c.what + '</p>' +
+              '</li>';
+          }).join('') +
+        '</ul>' +
       '</section>';
 
     var wordmarkHtml = '' +
@@ -2972,7 +3169,7 @@
       '</footer>';
 
     var html = '<div class="hp-root" id="hp-root">' +
-      navHtml + heroHtml + corridorHtml + wordmarkHtml + casesHtml + footerHtml +
+      navHtml + heroHtml + corridorHtml + careerHtml + wordmarkHtml + casesHtml + footerHtml +
     '</div>';
 
     document.body.insertAdjacentHTML('afterbegin', html);
@@ -3267,12 +3464,26 @@
       return Promise.race([done, cap]);
     })();
 
+    // The strike, wound back: no line, the B in full ink, the T. invisible.
+    // Before first paint, with the rest of the hero, so the finished state
+    // the stylesheet describes is never seen before the gag has been played.
+    var strike = inner.querySelector('.hp-hero__strike');
+    var tail = inner.querySelector('.hp-hero__tail');
+    var ink3 = getComputedStyle(document.getElementById('hp-root')).getPropertyValue('--ink-3').trim() || 'rgba(255,255,255,0.4)';
+    if (strike) gsap.set(strike, { '--strike': 0, color: '#ffffff' });
+    if (tail) gsap.set(tail, { opacity: 0, y: '0.12em' });
+
     ready.then(function() {
       var movers = wrapLines(inner);
       // 140% of the line's own height, which clears the clip box and both of
       // its paddings with a little to spare.
       gsap.set(movers, { yPercent: 140 });
       gsap.set(inner, { opacity: 1 });
+
+      // The gag's cue. The last line is visibly in place about 0.8s into
+      // its 1.15s tween, so with the stagger this lands just after the
+      // statement reads as settled, and before the band's own rise is done.
+      var cue = 0.18 + 0.1 * (movers.length - 1) + 0.85;
 
       gsap.timeline({
         defaults: { ease: 'expo.out', force3D: true },
@@ -3304,7 +3515,15 @@
         // The band arrives under a statement that is still arriving. The marks
         // are already drifting inside it, so they come in with the line
         // rather than one at a time.
-        .to(below, { opacity: 1, y: 0, duration: 1.1 }, 0.7);
+        .to(below, { opacity: 1, y: 0, duration: 1.1 }, 0.7)
+        // The gag, last. The line draws across the B left to right; the B
+        // steps back to reading grey as the line finishes; then T. writes
+        // in beside it, a short rise and a fade, the way the lines above
+        // arrived. Nothing here moves a glyph that has landed: the T. has
+        // held its width from the start.
+        .to(strike || {}, { '--strike': 1, duration: 0.35, ease: 'expo.out' }, cue)
+        .to(strike || {}, { color: ink3, duration: 0.3, ease: 'power1.out' }, cue + 0.22)
+        .to(tail || {}, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, cue + 0.4);
     });
   }
 
