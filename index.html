@@ -4322,11 +4322,16 @@
             start: 'top top',
             end: 'bottom bottom',
             invalidateOnRefresh: true,
-            // No smoothing. Interpolation only made sense as compensation for
-            // a pin that was already lagging; with the pin off the main
-            // thread it just adds its own lag and lets the mark drift on
-            // after the scroll has stopped.
-            scrub: true
+            // Smoothed, like the build after it and for the same reason: the
+            // rows sliding in, converging and receding are a sequence with a
+            // pace of its own, and a flick through them was three beats in a
+            // blink. This used to be scrub: true on the grounds that smoothing
+            // had only ever been compensation for a lagging pin; the owner
+            // asked for the measured feel back once the pin was gone. Shorter
+            // than the build's 2.2s because there is less to see and the
+            // receded mark should not still be shrinking as the stage
+            // un-sticks and carries it off.
+            scrub: 1.2
           }
         })
           // 1 — rows slide in from alternating sides
@@ -4534,6 +4539,14 @@
       return layoutTop(buildEl) + buildEl.offsetHeight - root.clientHeight;
     }
 
+    // A little smoothing on the cards' growing and brightening, so a card
+    // that has just stopped under the pointer settles into full size over
+    // half a second rather than freezing mid-ramp. Well short of the
+    // wordmark's and the build's, because these follow the card's own
+    // position on screen: any more and the card visibly changes size after
+    // the page has stopped moving, which reads as drift.
+    var CARD_SCRUB = 0.6;
+
     cards.forEach(function(card, i) {
       var staged = !!(buildEl && buildEl.contains(card));
       if (staged) {
@@ -4551,7 +4564,7 @@
               start: function() { return releaseAt() + (root.clientHeight + card.offsetHeight) / 8; },
               end: function() { return releaseAt() + (root.clientHeight + card.offsetHeight) / 2; },
               invalidateOnRefresh: true,
-              scrub: true
+              scrub: CARD_SCRUB
             }
           });
         // It owns the count from the moment its stage is half-way up the
@@ -4570,7 +4583,7 @@
           start: 'top bottom',
           end: 'bottom top',
           invalidateOnRefresh: true,
-          scrub: true
+          scrub: CARD_SCRUB
         });
       }
       ScrollTrigger.create({
