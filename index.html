@@ -317,45 +317,6 @@
   }
   .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
-  /* The sound prompt. There is no switch in the nav: sound is opt-in, once
-     per visit, from one button that sits on the build's stage while the card
-     is being drawn — the only time anything on the site makes a noise — and
-     goes when it is pressed or when the drawing is done. It wears the index
-     pill's clothes, mirrored to the other corner, so the two read as the
-     stage's furniture. Inside the sticky stage rather than fixed, so it rides
-     up and off with the card instead of outliving it. */
-  .hp-build__sound {
-    position: absolute;
-    right: var(--pad-x);
-    bottom: clamp(18px, 3.5vh, 34px);
-    z-index: 5;
-    display: inline-flex;
-    align-items: center;
-    gap: 9px;
-    padding: 9px 14px 10px;
-    border-radius: 999px;
-    background: rgba(18,18,22,0.55);
-    border: 1px solid rgba(255,255,255,0.09);
-    backdrop-filter: blur(28px) saturate(1.6);
-    -webkit-backdrop-filter: blur(28px) saturate(1.6);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
-    color: var(--ink);
-    font-family: var(--ff-display);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    line-height: 1;
-    cursor: pointer;
-    -webkit-appearance: none;
-    appearance: none;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), border-color 0.25s ease;
-  }
-  .hp-build__sound.is-on { opacity: 1; pointer-events: auto; }
-  .hp-build__sound:hover { border-color: rgba(255,255,255,0.22); }
-  .hp-build__sound:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
-  .hp-build__sound svg { width: 12px; height: 12px; display: block; color: rgba(255,255,255,0.55); }
 
   /* ---------- HERO ----------
      All three pieces of copy are one block: the greeting reads into the
@@ -849,95 +810,6 @@
   /* Middle row sits above the outer two so they slide in behind it. */
   .hp-wordmark__row:nth-child(2) { z-index: 2; }
 
-  /* ---------- WHERE YOU ARE IN THE SET ----------
-     An index of the work, parked at the bottom left of the screen while the
-     cards move past it. It exists because the carousel says "there is a set
-     here" and then leaves you to guess how big the set is: three cards look the
-     same as thirty until you have scrolled to the end of them.
-
-     Numerals only, laid on one line — 01 02 03 04 05, the current one lit. It
-     carried the project names too, and they were the reason it could once have
-     a quarter of the page; but they were also the third place the same five
-     words appeared, after the card's own heading and the page each one opens.
-     What is left is the part the cards genuinely cannot say: how many there
-     are, and which one this is.
-
-     A floating pill at every width, where this was the phone's answer and a
-     sticky column down the right was the desktop's. The column had to be given
-     a grid track, and once it was numerals rather than names that track was
-     250px of card held back to set 24px of type — so the widest screens, the
-     ones with the most room to show the artwork off, were the ones where the
-     cards came furthest short of their cap and sat off the centre of the page
-     besides. Out of the flow entirely, the cards take the whole content width
-     and centre in it, and the readout costs nothing at any size.
-
-     It keeps the nav's treatment exactly — same fill, same hairline, same blur
-     — which is both what makes the two read as one family and what makes this
-     legible everywhere it has to be. The cards are full-bleed colour and the
-     lightest of them carries white at 2.6:1, so a bare numeral in the page's
-     ink would all but disappear over Sofa to Saddle for the whole time that
-     card is on screen. Bottom left, diagonally opposite the nav, so the two
-     pieces of floating furniture are never in the same corner of the eye.
-
-     aria-hidden, and it has to be. It changes as you scroll, and a live index
-     that announces itself every time a card passes the middle of the screen is
-     noise over the top of the headings that carry the same names properly. */
-  .hp-count {
-    position: fixed;
-    left: var(--pad-x);
-    bottom: clamp(18px, 3.5vh, 34px);
-    /* Under the nav's 100. They never meet, but if a short window brought them
-       close the nav is the one that owns the space. */
-    z-index: 90;
-    padding: 9px 14px 10px;
-    border-radius: 999px;
-    background: rgba(18,18,22,0.55);
-    border: 1px solid rgba(255,255,255,0.09);
-    backdrop-filter: blur(28px) saturate(1.6);
-    -webkit-backdrop-filter: blur(28px) saturate(1.6);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
-    /* Nothing here navigates. It reports where you are, and a pointer cursor
-       over it would promise a jump it does not make. */
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1);
-  }
-  .hp-count.is-on { opacity: 1; }
-
-  .hp-count__list {
-    display: flex;
-    gap: 9px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .hp-count__row {
-    line-height: 1;
-    color: var(--ink-3);
-    transition: color 0.5s cubic-bezier(0.16,1,0.3,1);
-  }
-  .hp-count__row.is-now { color: var(--ink); }
-
-  /* Brightness does all of it. The column this replaced grew its lit numeral as
-     well, because a bare number in the page margin had nothing behind it and
-     the light step alone was a difference you had to be looking for. In a pill
-     this tight there is no room for it: a numeral changing size would push its
-     neighbours along the row and change the width of the pill itself, which is
-     a readout rearranging itself to report that nothing about it has changed.
-     The dark fill is what buys the light step back — against it, lit and unlit
-     are far enough apart at one size. */
-  .hp-count__n {
-    display: block;
-    font-family: var(--ff-display);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    /* Tabular, so 01 and 11 are the same width and the row never reflows. */
-    font-variant-numeric: tabular-nums;
-    opacity: 0.6;
-    transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1);
-  }
-  .hp-count__row.is-now .hp-count__n { opacity: 1; }
 
   /* ---------- CASE STUDY CARDS ----------
      Each card is one image the owner supplied, with a sentence and an arrow laid
@@ -972,10 +844,10 @@
        inside one viewport; there is no stack, so that reason went. What replaced
        it is one card having to fit one viewport, which is not the same
        requirement and produces a different number. See --card-cap-h. */
-    /* One column, the cards, and nothing beside them. The index that counts
-       them floats over the page instead of taking a grid track, so the whole
-       content width is the card's to use and the card is centred in the page
-       rather than in what was left after the rail.
+    /* One column, the cards, and nothing beside them. (An index of the set
+       once took a grid track down the right; it floated, and then it went.)
+       The whole content width is the card's to use and the card is centred
+       in the page rather than in what was left after the rail.
 
        Named here because two separate things need the same arithmetic — the
        card's own width cap and the corner radius — and a card that disagreed
@@ -1069,7 +941,7 @@
      structural, and the only way card 02 can sit one --card-gap below card 01
      is for this section to start that far up inside the stage's last screen.
      The band it overlaps is empty black, and the stage holds no pointer
-     targets there, so nothing is covered. The pill-clearing top padding goes
+     targets there, so nothing is covered. The nav-clearing top padding goes
      with it: the first card here is no longer the first card. */
   .hp-cases--build {
     margin-top: calc(var(--card-w-px) * 0.8955 / 2 - 50vh);
@@ -1487,6 +1359,67 @@
   }
   .hp-build__code-line { display: block; opacity: 0; }
   .hp-build__code .t { color: rgba(252,249,245,0.45); }
+
+  /* ---------- SOUND ----------
+     The one control for sound, parked at the bottom right while the work is
+     on screen — the build is the only thing on the site that makes a noise,
+     and the cards after it are where you would still be hearing the last of
+     it. Off until pressed, because browsers will not start audio before a
+     gesture and a control that claimed otherwise would be lying; pressed, it
+     says so, and it stays, so it can be pressed again. The label is the state
+     — "Sound on" or "Sound off" — rather than the action, with the icon
+     agreeing: two arcs when on, a slash when off, and the whole thing dimmer
+     when off so the two states are told apart at a glance and not by reading.
+     It wears the nav's treatment, same fill, hairline and blur, so the two
+     pieces of floating furniture read as one family from opposite corners.
+     Nothing is stored between visits; a return visit needs the press anyway. */
+  .hp-sound {
+    position: fixed;
+    right: var(--pad-x);
+    bottom: clamp(18px, 3.5vh, 34px);
+    z-index: 90;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 14px 10px;
+    border-radius: 999px;
+    background: rgba(18,18,22,0.55);
+    border: 1px solid rgba(255,255,255,0.09);
+    backdrop-filter: blur(28px) saturate(1.6);
+    -webkit-backdrop-filter: blur(28px) saturate(1.6);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.07);
+    color: var(--ink-3);
+    font-family: var(--ff-display);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), color 0.25s ease, border-color 0.25s ease;
+  }
+  .hp-sound.is-on { opacity: 1; pointer-events: auto; }
+  .hp-sound:hover { border-color: rgba(255,255,255,0.22); }
+  .hp-sound:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
+  .hp-sound[aria-pressed="true"] { color: var(--ink); }
+  .hp-sound svg { width: 12px; height: 12px; display: block; color: currentColor; }
+  /* Both marks are in the file and aria-pressed picks one, so what the eye
+     sees and what a screen reader hears are one value. */
+  .hp-sound[aria-pressed="true"] .hp-sound__off,
+  .hp-sound[aria-pressed="false"] .hp-sound__on { display: none; }
+  .hp-sound[aria-pressed="true"] .hp-sound__label-off,
+  .hp-sound[aria-pressed="false"] .hp-sound__label-on { display: none; }
+  /* On a short screen the stage's card leaves little beneath it — under 70px
+     at the smallest size — and the coordinate at its bottom right corner sits
+     in the first 21 of those. The control tucks lower and a little tighter so
+     the two never touch; above this height the band is wide enough that the
+     clamp does the job alone. */
+  @media (max-height: 720px) {
+    .hp-sound { bottom: 12px; padding: 8px 13px 9px; }
+  }
 
   /* ---------- FOOTER ---------- */
   .hp-footer {
@@ -2126,18 +2059,6 @@
       row-gap: 18px;
     }
     .hp-hero__clients-list + .hp-hero__clients-list { display: none; }
-    /* The index is information, not decoration, so it stays — it just stops
-       arriving. Held on rather than left to the scroll trigger, because a pill
-       that fades itself in is doing the one thing this mode is asked not to,
-       and there is nothing gained by hiding an index until you reach it. */
-    .hp-count {
-      opacity: 1;
-      transition: none;
-    }
-    /* The lit numeral still lights. That is how the readout reads at all; it is
-       only the crossfade between one numeral and the next that goes. */
-    .hp-count__row,
-    .hp-count__n { transition: none; }
     .hp-case__link,
     .hp-case__link:hover { transform: none; }
     .hp-hero__client { transition: none; }
@@ -2289,8 +2210,8 @@
   //
   // Browsers will not start audio until the page has been touched, and a
   // wheel is not a touch they count, so sound here is opt-in: off until the
-  // prompt on the build's stage is pressed, and that press is the gesture the
-  // context is created from. Nothing is stored between visits — a return
+  // control at the bottom right is pressed, and that press is the gesture the
+  // context is created from. It can be pressed again to turn it off. Nothing is stored between visits — a return
   // visit would need the click anyway, so a remembered preference could only
   // ever promise sound it cannot start. Nothing plays while the tab is hidden
   // and nothing plays under reduced motion, where the build is off.
@@ -2393,7 +2314,7 @@
       if (ctx.state === 'suspended') ctx.resume().catch(function() {});
       try { VOICES[name](ctx, ctx.currentTime + 0.001); } catch (e) {}
     }
-    // Called from the prompt's click, which is the gesture the context
+    // Called from the control's click, which is the gesture the context
     // needs, so switching on is also what starts it.
     function enable() {
       if (enabled) return;
@@ -2402,13 +2323,17 @@
       play('on');
     }
 
-    return { play: play, enabled: isOn, enable: enable };
+    function disable() { enabled = false; }
+
+    return { play: play, enabled: isOn, enable: enable, disable: disable };
   })();
 
-  // The prompt's mark: two arcs, the usual sign for sound.
-  var SOUND_ICON = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
-    '<path d="M10 8.5a5 5 0 0 1 0 7"/>' +
-    '<path d="M14 4.8a10 10 0 0 1 0 14.4"/>' +
+  // The control's mark: two arcs for on, one slash for off. Both are in the
+  // file and aria-pressed picks one, see .hp-sound.
+  var SOUND_ICON = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+    '<path class="hp-sound__on" d="M10 8.5a5 5 0 0 1 0 7"/>' +
+    '<path class="hp-sound__on" d="M14 4.8a10 10 0 0 1 0 14.4"/>' +
+    '<path class="hp-sound__off" d="M6.5 17.5l11-11"/>' +
     '</svg>';
 
   var ARROW_NE = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -3018,8 +2943,10 @@
     var c3 = (CR - CL - 2 * GUT) / 3;
     var c2 = (SR - SL - GUT) / 2;
     var cols = '';
-    for (var i = 0; i < 3; i++) cols += rect(CL + i * (c3 + GUT), WT, CL + i * (c3 + GUT) + c3, BOT, 'hb-col');
-    for (var j = 0; j < 2; j++) cols += rect(SL + j * (c2 + GUT), WT, SL + j * (c2 + GUT) + c2, BOT, 'hb-col');
+    // Columns run from the page's top, under the chrome, not from the
+    // window's: the grid belongs to the design and the chrome is the browser.
+    for (var i = 0; i < 3; i++) cols += rect(CL + i * (c3 + GUT), CHR, CL + i * (c3 + GUT) + c3, BOT, 'hb-col');
+    for (var j = 0; j < 2; j++) cols += rect(SL + j * (c2 + GUT), CHR, SL + j * (c2 + GUT) + c2, BOT, 'hb-col');
 
     var grid = '<g class="hb-layer" data-layer="cols">' + cols + '</g>' +
       '<g class="hb-layer" data-layer="outlines">' +
@@ -3309,29 +3236,9 @@
         '</div>' +
       '</section>';
 
-    // Built from the same array the cards are, so the index cannot disagree
-    // with how many case studies there are, and row three is card three because
-    // both are walking one list. Adding a sixth is an edit to PROJECTS and
-    // nothing else.
-    //
-    // aria-hidden, and it has to be. It changes as you scroll, and a live
-    // readout announcing "two of five, British Cycling app" every time a card
-    // passes the middle of the screen is noise over the top of the headings
-    // that carry the same information properly.
-    var countHtml = '<div class="hp-count" id="hp-count" aria-hidden="true">' +
-        '<ol class="hp-count__list">' +
-          PROJECTS.map(function(p, i) {
-            return '<li class="hp-count__row' + (i ? '' : ' is-now') + '">' +
-                '<span class="hp-count__n">' + pad(i + 1) + '</span>' +
-              '</li>';
-          }).join('') +
-        '</ol>' +
-      '</div>';
-
     // Every card is built from the one list either way. With the build on,
     // the first is lifted into the stage after the wordmark and the carousel
-    // opens on the second; the index pill still counts all five, because it
-    // counts .hp-case wherever it stands, and the stage card is one.
+    // opens on the second.
     var cardsHtml = PROJECTS.map(buildCase);
     var buildHtml = '';
     if (BUILD_ON) {
@@ -3339,17 +3246,22 @@
         '<div class="hp-build__stage">' +
           buildGuidesSvg() +
           cardsHtml.shift() +
-          // The one way to turn sound on. Shown by the timeline while the
-          // card is being drawn; see .hp-build__sound and initSoundPrompt.
-          '<button type="button" class="hp-build__sound" data-sound>' +
-            SOUND_ICON + '<span>Sound on</span>' +
-          '</button>' +
         '</div>' +
       '</section>';
     }
 
+    // The sound control, only where there is a build to hear. Fixed, so it is
+    // at the root and not in the stage; a fixed box inside the stage would be
+    // laid out against the stage the moment anything gave it a transform.
+    var soundHtml = BUILD_ON
+      ? '<button type="button" class="hp-sound" id="hp-sound" aria-pressed="false">' +
+          SOUND_ICON +
+          '<span class="hp-sound__label-off">Sound off</span>' +
+          '<span class="hp-sound__label-on">Sound on</span>' +
+        '</button>'
+      : '';
+
     var casesHtml = '<section class="hp-cases' + (BUILD_ON ? ' hp-cases--build' : '') + '" id="hp-cases" aria-label="Selected work">' +
-      countHtml +
       '<div class="hp-cases__list">' +
         cardsHtml.join('') +
       '</div>' +
@@ -3376,17 +3288,11 @@
       '</footer>';
 
     var html = '<div class="hp-root" id="hp-root">' +
-      navHtml + heroHtml + wordmarkHtml + buildHtml + casesHtml + footerHtml +
+      navHtml + heroHtml + wordmarkHtml + buildHtml + casesHtml + footerHtml + soundHtml +
     '</div>';
 
     document.body.insertAdjacentHTML('afterbegin', html);
     console.log('HP ' + VERSION + ' mounted');
-  }
-
-  // Two digits, because a count that runs 9 then 10 changes width mid-scroll
-  // and shifts the slash along with it.
-  function pad(n) {
-    return (n < 10 ? '0' : '') + n;
   }
 
   function revealNav() {
@@ -3397,18 +3303,17 @@
     setTimeout(function() { nav.classList.add('is-live'); }, 1000);
   }
 
-  // The prompt is shown and hidden by the build's timeline (see
-  // initBuildScene); this only handles the press. One press: the sound comes
-  // on with its own small note, the prompt fades, and once it has faded it is
-  // taken out of the tab order for good.
-  function initSoundPrompt() {
-    var btn = document.querySelector('[data-sound]');
+  // The control is shown and hidden by a trigger over the work (see
+  // initScrollScenes); this only handles the press. On: the context is made
+  // from this gesture and the small confirming note plays. Off: nothing more
+  // plays. aria-pressed is the one state, and the CSS reads it for the label
+  // and the mark.
+  function initSoundToggle() {
+    var btn = document.getElementById('hp-sound');
     if (!btn) return;
     btn.addEventListener('click', function() {
-      SOUND.enable();
-      btn.classList.remove('is-on');
-      btn.setAttribute('data-done', '');
-      setTimeout(function() { btn.hidden = true; }, 750);
+      if (SOUND.enabled()) SOUND.disable(); else SOUND.enable();
+      btn.setAttribute('aria-pressed', SOUND.enabled() ? 'true' : 'false');
     });
   }
 
@@ -4038,16 +3943,20 @@
       var cs = getComputedStyle(card);
       var w = parseFloat(cs.width), h = parseFloat(cs.height);
       var l = (vw - w) / 2, t = (vh - h) / 2;
-      var yWin = t + h * (989 / 2708);     // the browser window's top edge
+      // The top guide is the Boots page's top edge — the bottom of the
+      // browser chrome, where the white header begins — and not the window's
+      // top edge above it. The chrome is Safari's, not hers; the line that
+      // says "the design starts here" has to sit where the design starts.
+      var yPage = t + h * (1081 / 2708);   // the chrome's bottom, the header's top
       var yHead = t + h * (1279 / 2708);   // the checkout header's baseline
       var xGut = l + w * 0.566;            // the gutter between its two columns
       // d, length, gap before the kept span, kept span
       var defs = [
-        ['M0 ' + yWin + 'H' + vw, vw, l, w],
+        ['M0 ' + yPage + 'H' + vw, vw, l, w],
         ['M' + l + ' 0V' + vh, vh, t, h],
         ['M' + (l + w) + ' ' + vh + 'V0', vh, vh - (t + h), h],
         ['M' + vw + ' ' + yHead + 'H0', vw, vw - (l + w), w],
-        ['M' + xGut + ' 0V' + vh, vh, yWin, t + h - yWin]
+        ['M' + xGut + ' 0V' + vh, vh, yPage, t + h - yPage]
       ];
       lines.forEach(function(ln, i) {
         ln.setAttribute('d', defs[i][0]);
@@ -4115,20 +4024,8 @@
     // on screen. With the scrub smoothed (below) the trigger's progress runs
     // ahead of the drawing by up to the catch-up time, and a tick for a line
     // that has not been drawn yet is just a wrong noise.
-    var countEl = document.getElementById('hp-count');
-    var prompt = stage.querySelector('.hp-build__sound');
     function onUpdate() {
       var p = tl.progress();
-      // The index pill's own trigger brings it on at 0.72 of the scroll; this
-      // keeps it to 0.72 of the drawing, which on a fast scroll is later. Both
-      // write the same class with the same rule, so whichever ran last agrees
-      // with the other once the timeline has caught up.
-      if (countEl) countEl.classList.toggle('is-on', p >= 0.72);
-      // The sound prompt is offered while there is something to hear: from
-      // the first line to the navy, and not once it has been pressed.
-      if (prompt && !prompt.hasAttribute('data-done')) {
-        prompt.classList.toggle('is-on', p > 0.015 && p < 0.72);
-      }
       var s = 1;
       for (var i = 1; i < STATES.length; i++) if (p >= STATES[i]) s = i + 1;
       if (s !== state) {
@@ -4324,8 +4221,8 @@
           // 3 — the collapsed mark recedes in place. It stays centred and
           // legible as it shrinks, and the stage un-sticking at the end of the
           // scrub is what carries it up and off. (A version that flew it into
-          // the index pill was tried and dropped: moving sideways while
-          // shrinking made the words unreadable for the whole of the travel.)
+          // a corner was tried and dropped: moving sideways while shrinking
+          // made the words unreadable for the whole of the travel.)
           .to(inner, {
             scale: function() { return window.innerWidth <= 900 ? 0.34 : 0.2; },
             duration: 1.2,
@@ -4392,72 +4289,38 @@
     // starting to go the pixel after.
     var fx = { inEase: 'power2.out', outEase: 'power2.in', s: scaleMin, o: dimMin, hold: 0.25 };
 
-    // ---------- WHERE YOU ARE IN THE SET ----------
-    // Shown while the cards are what is on screen and taken away either side of
-    // them, so it never floats over the hero or the footer, where there is
-    // nothing for it to be counting.
-    //
-    // This runs under reduced motion as well. It is a readout, not an effect —
-    // the only thing the preference takes off it is the way the digit changes.
-    var counter = document.getElementById('hp-count');
-    var rows = counter ? counter.querySelectorAll('.hp-count__row') : [];
-    var shown = 1;
+    // ---------- THE SOUND CONTROL ----------
+    // Shown while the work is what is on screen and taken away either side of
+    // it, so it never floats over the hero or the footer, where there is
+    // nothing it could be switching. Only present when the build is.
+    var soundBtn = document.getElementById('hp-sound');
 
-    // Moving the lit one is a class swap and the CSS crossfades the two
-    // against each other.
-    function setCount(n) {
-      if (n === shown || !rows.length) return;
-      shown = n;
-      for (var i = 0; i < rows.length; i++) {
-        rows[i].classList.toggle('is-now', i === n - 1);
-      }
+    // How far the top of the control sits above the bottom of the screen.
+    // Measured rather than restated: the inset is a clamp on vh and the height
+    // comes from the type inside it, and both move between one window and the
+    // next. Only opacity ever hides it, so it has a box to measure either way.
+    function soundInset() {
+      return Math.round(root.clientHeight - soundBtn.getBoundingClientRect().top);
     }
 
-    // How far the top of the pill sits above the bottom of the screen. Measured
-    // rather than restated, because there is no constant here that stays true:
-    // the inset is a clamp on vh, the height comes from the type inside it, and
-    // both move between one window and the next. Only opacity ever hides the
-    // pill, so it has a box to measure whether it is showing or not.
-    function countPillInset() {
-      return Math.round(root.clientHeight - counter.getBoundingClientRect().top);
-    }
-
-    if (counter && casesEl) {
+    if (soundBtn && buildEl && casesEl) {
       ScrollTrigger.create({
-        // With the build on, the first card is the one in the stage.
-        trigger: buildEl || casesEl,
-        // The pill comes on once the first card is properly on screen, after
-        // the receded wordmark has left the top of it, so the two are never
-        // showing at once.
-        //
-        // With the build on, "properly on screen" is later than that: the
-        // lines, the grid, the wire and the code are a drawing of the card,
-        // not the card, and a pill counting them as 01 was the owner's call to
-        // take off. It comes on as the navy fades up round the window — 0.72
-        // of the stage's travel, the same fraction the build timeline uses —
-        // so the readout and the finished card arrive as one thing. A scroll
-        // position rather than a 'top N%' string, because the moment is a
-        // fraction of the travel and not of the viewport.
-        start: buildEl
-          ? function() { return layoutTop(buildEl) + 0.72 * (buildEl.offsetHeight - root.clientHeight); }
-          : 'top 72%',
-        // A function, so it is re-read on the refresh that follows a resize or
-        // a rotation, both of which move the clamped inset the pill sits on.
-        //
-        // The pill's own top edge is the far end: the count goes as the last
-        // thing it could be counting passes out from behind it, instead of
-        // riding down into the footer first. A symmetrical 'bottom 28%' would
-        // be right for a readout centred on the screen, which this is not — it
-        // would leave five numerals lit over the footer with nothing left to
-        // count for the better part of a screen.
-        // As a scroll position rather than 'bottom bottom-=' of the trigger,
-        // because the trigger is the stage when the build is on and the far
-        // end is still the last card's; the arithmetic is the same.
+        trigger: buildEl,
+        // On once the stage is properly on screen, after the receded wordmark
+        // has left the top of it, so the two are never showing at once: a
+        // quarter of the way up the stage's own travel, the mark above it is
+        // gone and the first lines are about to draw — which is when a visitor
+        // would want to have been offered the sound.
+        start: 'top 25%',
+        // The control's own top edge is the far end: it goes as the last card
+        // passes out from behind it, instead of riding down into the footer.
+        // A scroll position rather than 'bottom bottom-=' of the trigger,
+        // because the trigger is the stage and the far end is the last card's.
         end: function() {
-          return layoutTop(casesEl) + casesEl.offsetHeight - root.clientHeight + countPillInset();
+          return layoutTop(casesEl) + casesEl.offsetHeight - root.clientHeight + soundInset();
         },
         onToggle: function(self) {
-          counter.classList.toggle('is-on', self.isActive);
+          soundBtn.classList.toggle('is-on', self.isActive);
         }
       });
     }
@@ -4502,7 +4365,7 @@
     // measures as a box smaller than the card and about 60px further down the
     // page than the card occupies, so a trigger built from it fires late by
     // roughly that much. Card three had the middle of the screen while the
-    // index still said two.
+    // readout this was first built for still said two.
     //
     // offsetTop and offsetHeight are the layout box, which no transform
     // touches, so the edges come from those and are handed over as scroll
@@ -4548,14 +4411,6 @@
               scrub: CARD_SCRUB
             }
           });
-        // It owns the count from the moment its stage is half-way up the
-        // screen, through the whole build, to its bottom passing the middle.
-        ScrollTrigger.create({
-          start: function() { return layoutTop(card) - root.clientHeight / 2; },
-          end: function() { return releaseAt() + card.offsetHeight / 2; },
-          onEnter: function() { setCount(i + 1); },
-          onEnterBack: function() { setCount(i + 1); }
-        });
         return;
       }
       if (!REDUCED) {
@@ -4567,15 +4422,6 @@
           scrub: CARD_SCRUB
         });
       }
-      ScrollTrigger.create({
-        trigger: card,
-        start: function() { return layoutTop(card) - window.innerHeight / 2; },
-        end: function() {
-          return layoutTop(card) + card.offsetHeight - window.innerHeight / 2;
-        },
-        onEnter: function() { setCount(i + 1); },
-        onEnterBack: function() { setCount(i + 1); }
-      });
     });
 
     // ---------- FOOTER ----------
@@ -4853,7 +4699,7 @@
       BUILD_ON = decideBuild();
       build();
       revealNav();
-      initSoundPrompt();
+      initSoundToggle();
       initNavHide();
       initBackToTop();
       initWorkAnchor();
