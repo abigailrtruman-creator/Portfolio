@@ -4411,15 +4411,23 @@
 
     if (counter && casesEl) {
       ScrollTrigger.create({
-        // With the build on, the first card is the one in the stage, and the
-        // pill has to be counting it from the moment its lines start.
+        // With the build on, the first card is the one in the stage.
         trigger: buildEl || casesEl,
         // The pill comes on once the first card is properly on screen, after
         // the receded wordmark has left the top of it, so the two are never
-        // showing at once. The stage is a full screen with the card in the
-        // middle of it, so for the stage that moment is earlier in its own
-        // travel: a quarter of the way up, the mark above it is gone.
-        start: buildEl ? 'top 25%' : 'top 72%',
+        // showing at once.
+        //
+        // With the build on, "properly on screen" is later than that: the
+        // lines, the grid, the wire and the code are a drawing of the card,
+        // not the card, and a pill counting them as 01 was the owner's call to
+        // take off. It comes on as the navy fades up round the window — 0.72
+        // of the stage's travel, the same fraction the build timeline uses —
+        // so the readout and the finished card arrive as one thing. A scroll
+        // position rather than a 'top N%' string, because the moment is a
+        // fraction of the travel and not of the viewport.
+        start: buildEl
+          ? function() { return layoutTop(buildEl) + 0.72 * (buildEl.offsetHeight - root.clientHeight); }
+          : 'top 72%',
         // A function, so it is re-read on the refresh that follows a resize or
         // a rotation, both of which move the clamped inset the pill sits on.
         //
