@@ -1356,7 +1356,13 @@
      built the timeline and adds is-live, so a page with no GSAP, or a
      timeline that throws, shows card 01 and never a half-built one. */
   .hp-build {
-    --build-travel: 320vh;
+    /* 360vh, up from 320vh, once the scrub was smoothed. The timeline runs up
+       to two seconds behind the scroll, so the finished card needs a
+       hold at the end long enough that someone who has scrolled straight
+       through still has the stage in front of them while it closes. The
+       extra 40vh stretches the whole sequence by an eighth, which is also the
+       pace the owner asked for. */
+    --build-travel: 360vh;
     position: relative;
     width: 100%;
     height: calc(100vh + var(--build-travel));
@@ -3972,7 +3978,7 @@
   // ---------- THE BUILD ----------
   // Card 01 assembled in front of the reader: lines, a grid, the wireframe,
   // some of its code, the screenshot, the card. One timeline, scrubbed over
-  // the 320vh the section is taller than its stage, and the same two rules as
+  // the 360vh the section is taller than its stage, and the same two rules as
   // the carousel: nothing is pinned by script — the stage is position:sticky —
   // and no scroll frame writes anything that lays out. What is written is
   // transform and opacity, plus stroke-dasharray on the SVG lines (how a line
@@ -4127,8 +4133,18 @@
     var prev = -1;
     var FOUND_AT = 0.63;
 
-    function onUpdate(self) {
-      var p = self.progress;
+    // Called from the timeline, not the trigger, so the beats follow what is
+    // on screen. With the scrub smoothed (below) the trigger's progress runs
+    // ahead of the drawing by up to the catch-up time, and a tick for a line
+    // that has not been drawn yet is just a wrong noise.
+    var countEl = document.getElementById('hp-count');
+    function onUpdate() {
+      var p = tl.progress();
+      // The index pill's own trigger brings it on at 0.72 of the scroll; this
+      // keeps it to 0.72 of the drawing, which on a fast scroll is later. Both
+      // write the same class with the same rule, so whichever ran last agrees
+      // with the other once the timeline has caught up.
+      if (countEl) countEl.classList.toggle('is-on', p >= 0.72);
       var s = 1;
       for (var i = 1; i < STATES.length; i++) if (p >= STATES[i]) s = i + 1;
       if (s !== state) {
@@ -4146,15 +4162,26 @@
       prev = p;
     }
 
+    // Smoothed, and this is the one scrub on the page that is. Everywhere else
+    // the timeline is the scroll position, frame for frame, because what is
+    // moving is the page itself. Here what is moving is a drawing, and a
+    // drawing has a pace: flicked through in a single gesture it is five
+    // states in a quarter of a second and reads as a glitch. With a catch-up
+    // time the trigger still reads the scroll on every frame but the timeline
+    // follows it over that long, so the fastest the build can play is the
+    // whole sequence in about two seconds, in front of you, with the
+    // stage still stuck where you are looking. Scrolling slowly, the lag is
+    // never seen. The scroll itself is untouched: nothing here listens to the
+    // wheel or writes scrollTop.
     var tl = gsap.timeline({
       defaults: { ease: 'none', force3D: true, immediateRender: false },
+      onUpdate: onUpdate,
       scrollTrigger: {
         trigger: section,
         start: 'top top',
         end: 'bottom bottom',
-        scrub: true,
-        invalidateOnRefresh: true,
-        onUpdate: onUpdate
+        scrub: 2.2,
+        invalidateOnRefresh: true
       }
     });
 
