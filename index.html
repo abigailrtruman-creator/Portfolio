@@ -10,12 +10,11 @@
      code injection cannot own the page's title, description, canonical or
      icons, because Squarespace emits its own. It belongs to this document.
 
-     The description is 157 characters, drafted down from the hero's own copy so
-     the words in a search result are hers. It is the statement's two opening
-     sentences verbatim plus a shortened close; the full statement is 184
-     characters, which would be truncated in a snippet.
+     The description is 143 characters, drafted from the hero's own copy so
+     the words in a search result are hers: the name and role, the three pairs
+     the name rolls through, and the close verbatim.
      Both the title and the description are pending the owner's approval. -->
-<meta name="description" content="Seven years in, from consultancy pace to in-house depth. I design, I lead, and I invest in the people.">
+<meta name="description" content="Abbie Truman, Product Design Leader in the UK. Abstract to tangible, ambiguity to traction, assumption to truth: I take ideas from A to T.">
 <link rel="canonical" href="https://abbietruman.vercel.app/">
 
 <!-- Open Graph and Twitter, so a link she sends a hiring manager unfurls as her
@@ -35,12 +34,12 @@
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Abbie Truman's homepage: her photograph and name above her opening statement, white on near-black.">
+<meta property="og:image:alt" content="Abbie Truman's homepage: her name set large as a wordmark, two lines, above her role, white on near-black.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Abbie Truman — Product Design Leader in the UK">
 <meta name="twitter:description" content="Seven years in, from consultancy pace to in-house depth. I design, I lead, and I invest in the people.">
 <meta name="twitter:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.86f41f1d.png">
-<meta name="twitter:image:alt" content="Abbie Truman's homepage: her photograph and name above her opening statement, white on near-black.">
+<meta name="twitter:image:alt" content="Abbie Truman's homepage: her name set large as a wordmark, two lines, above her role, white on near-black.">
 
 <!-- The circular AT monogram, built by build-favicon-at.py (prefix 'atc').
      The PNGs are content-hashed because vercel.json serves /assets/*
@@ -111,15 +110,13 @@
        this page:
 
          DISPLAY  → Manrope. Every headline and every word set above ~28px:
-                    the hero statement, the wordmark, case titles, section
-                    ledes, the footer line. 800 for short headlines, 700 for
-                    multi-line statements so long runs don't go blobby.
-                    The hero statement is the exception and takes 500: it is
-                    the longest run of display type on the page, and at four
-                    sentences the weight that stops a headline going blobby is
-                    itself the thing making it a wall. Nothing else varies
-                    inside it — one weight, one size, one colour — because the
-                    blank line at hp-hero__sentence does the separating.
+                    the hero name, the wordmark, case titles, section ledes,
+                    the footer line. 800 for short headlines — the name and
+                    the wordmark are the same 800 at the same tracking, one
+                    voice two screens apart — 700 for multi-line statements
+                    so long runs don't go blobby, and 500 for the pair
+                    headings under the name, where only the initials take
+                    the 800.
          BODY/UI  → Inter. Every sentence you actually read, plus all labels,
                     eyebrows, nav and buttons. Where a sentence needs a
                     word lifted out of it, that is Inter 500 in full white.
@@ -319,22 +316,19 @@
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
 
   /* ---------- HERO ----------
-     All three pieces of copy are one block: the greeting reads into the
-     statement, the statement is the largest thing on the page, and the support
-     paragraph reads back out of it. The intervals inside that block are much
-     smaller than the intervals around it, which is what makes it read as one
-     thought rather than three stacked elements.
-     The rule used to sit between the statement and the support paragraph,
-     which cut the copy in half. It now sits below all of it and separates only
-     the scroll cue, so it still gives the composition a second horizontal edge
-     to close on — the cue is too small to hold the bottom of a full-height
-     section by itself — without splitting anything anyone reads. */
-  /* ---------- THE STORY ----------
-     After the entrance the hero holds for a screen of scroll, and the three
-     sentences of the statement take their turn: the first stays forward while
-     the other two step back into the dark, then the second comes forward and
-     the first steps back, then the third. The sentence that is forward is
-     the one being said. Then the hero lets go and leaves as it always did.
+     The name is the hero. Set at the size, weight and tracking of the
+     wordmark that titles the work further down (.hp-wordmark__row), so the
+     two read as one system: the name opens the page the way `Selected work`
+     opens the set. Two lines, left-aligned, so the A and the T stack on the
+     left edge — and those two letters are the method, which is what the
+     roll below plays out. Under the name, one line of body type: what she
+     does, in ink, and where, in grey. At the foot, the clients. */
+  /* ---------- THE ROLL ----------
+     After the entrance the hero holds for a screen of scroll, and then the
+     tails of the name roll through the three pairs the initials stand for —
+     Abstract → Tangible, Ambiguity → Traction, Assumption → Truth — and come
+     home to Abbie Truman, with each pair's two lines said beside it as it
+     is shown. Then the hero lets go and leaves as it always did.
 
      The track is the distance that takes: one screen for the hero to sit on,
      plus --hero-story of travel. The hero sticks inside it. Sticky, not a
@@ -342,44 +336,27 @@
      the main thread to hold an element still against a compositor scroll
      jitters, and sticky is the compositor doing the holding.
 
-     Desktop and laptop only. On a phone or a short window the story is off,
-     the track is as tall as the hero, and the statement sits as it always
-     has, all three sentences in full ink. The script decides once, at build,
-     and writes the modifier. */
+     Desktop and laptop only. On a phone or a short window the roll is off,
+     the track is as tall as the hero, and the pairs are a list under the
+     name instead, in full ink. The script decides once, at build, and
+     writes the modifier. */
   .hp-hero-track {
-    --hero-story: 110vh;
+    --hero-story: 220vh;
     position: relative;
   }
   .hp-hero-track--story { height: calc(100vh + var(--hero-story)); }
-  /* With the story on, the hero is exactly one screen and sticks. */
+  /* With the roll on, the hero is exactly one screen and sticks. */
   .hp-hero-track--story .hp-hero {
     position: sticky;
     top: 0;
     height: 100vh;
     min-height: 0;
   }
-  /* The sentences step back along z, so the statement is a stage with depth.
-     The perspective is on the inner so every sentence shares one vanishing
-     point; a step back reads as a step back, not a shrink. Only with the
-     story on: a perspective on a flat statement costs a compositing layer
-     for nothing. */
-  .hp-hero-track--story .hp-hero__statement-inner {
-    perspective: 1200px;
-    transform-style: preserve-3d;
-  }
-  .hp-hero-track--story .hp-hero__sentence {
-    will-change: transform, opacity;
-    backface-visibility: hidden;
-  }
   .hp-hero {
-    /* The hero's body size. The greeting and the scroll cue are the only two
-       pieces of non-display type left in here, and the owner's instruction is
-       that they read as one size — so it is declared once and they both take it,
-       rather than each carrying a curve of its own that has to be kept in step
-       by hand. That is what had gone wrong: the cue ran clamp(12px, 0.85vw,
-       14px) against copy at clamp(16px, 1.3vw, 21px), which measured 12.24px
-       against 18.72px at 1440.
-       The curve is the greeting's own, unchanged. */
+    /* The hero's body size. The role line and, with the roll off, the pairs'
+       lines are the non-display type in here, and they read as one size — so
+       it is declared once and they all take it, rather than each carrying a
+       curve of its own that has to be kept in step by hand. */
     --hero-body: clamp(17px, 1.5vw, 24px);
     position: relative;
     min-height: 100vh;
@@ -504,20 +481,139 @@
     backface-visibility: hidden;
   }
 
-  /* The copy block. `gap` is the greeting-to-statement interval, deliberately
-     the tightest one in the hero so the greeting reads as a lead-in rather than
-     a separate line of text. */
+  /* The copy block: the name with, when the roll is on, the pair said beside
+     it; the role under the name; and, when the roll is off, the pairs as a
+     list under that. Left-aligned on the hero's own left edge where the
+     wordmark rows are centred: a signature, not a title card. `gap` is the
+     name-to-role interval, the tightest in the hero, so the role reads as
+     the name's caption rather than as a separate line of text. */
   .hp-hero__main {
     grid-row: 2;
     position: relative;
     display: flex;
     flex-direction: column;
-    /* On the centre line, with the nav above it and the marks below. */
-    align-items: center;
-    text-align: center;
-    gap: clamp(18px, 2.2vh, 28px);
+    align-items: flex-start;
+    text-align: left;
+    gap: clamp(20px, 3vh, 36px);
+    min-width: 0;
   }
-  .hp-hero__greeting {
+  /* The name and its side copy, on one row, the copy centred against the
+     two lines of the name. The gap is generous on purpose: the copy is a
+     remark beside the name, not a column of the composition. (The name's
+     box is as wide as `Assumption`, so beside the shorter stops the visual
+     gap is wider still; the gap here is what is left at the widest.) */
+  .hp-hero__stage {
+    display: flex;
+    align-items: center;
+    gap: clamp(40px, 4.5vw, 96px);
+    width: 100%;
+    min-width: 0;
+    will-change: transform, opacity;
+  }
+
+  /* The name. Face, weight and tracking are the wordmark's, so this and
+     `Selected work` are one voice two screens apart. 10vw fills the shell
+     at laptop widths and still leaves the side copy a column it can set
+     two short sentences in without an orphan; the px ceiling is where it
+     stops growing on a wide monitor, and the floor is the phone's. Tight
+     leading, because two lines of 800 at this size need to sit as one
+     block and not as two headlines. */
+  .hp-name {
+    margin: 0;
+    flex: 0 0 auto;
+    font-family: var(--ff-display);
+    font-weight: 800;
+    font-size: clamp(64px, 10vw, 152px);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  /* Flex column, not block: during the entrance each line carries padding
+     and a negative margin that cancels it (below), and block siblings would
+     collapse those margins, opening the leading for the entrance and
+     snapping it shut after. Flex items do not collapse. */
+  .hp-name__lines {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hp-name__line { display: block; }
+  /* The entrance: each line is a box exactly one line tall that clips, and
+     the line rises into it. At a line-height of 0.9 the ascenders stand
+     outside the line box, so the box is given room both ways and the stack
+     takes it back. Only while entering: afterwards the box is open, so the
+     letters of the roll can turn in front of it without being cut. */
+  .hp-hero__main.is-entering .hp-name__line {
+    overflow: hidden;
+    padding: 0.12em 0 0.14em;
+    margin: -0.12em 0 -0.14em;
+  }
+  .hp-name__in {
+    display: flex;
+    align-items: baseline;
+    will-change: transform;
+  }
+  /* The initial never moves. */
+  .hp-name__cap { flex: 0 0 auto; }
+  /* The tail: a grid with every variant in the one cell. The box is as wide
+     as the widest of them — `ssumption` on the first line, `angible` on the
+     second — so nothing reflows as they roll and the T stays exactly under
+     the A at every stop. Only the name's own variant is shown unless the
+     roll is on; with it on, all of them are in the cell and the script
+     decides which is up. */
+  .hp-name__tail { display: inline-grid; }
+  .hp-name__v {
+    grid-area: 1 / 1;
+    display: none;
+    white-space: nowrap;
+  }
+  .hp-name__v--home { display: block; }
+  .hp-hero-track--story .hp-name__v {
+    display: block;
+    /* Each variant is the stage its own letters turn on. Deep enough that a
+       letter turning toward the viewer does not balloon on the way out —
+       at 700px the outgoing letters grew to half again their size — and
+       shallow enough that a letter at 60° still reads as a flap. */
+    perspective: 1100px;
+  }
+  .hp-name__ch { display: inline-block; }
+  .hp-hero-track--story .hp-name__ch {
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+  }
+
+  /* The side copy: the pair being shown, said in two lines beside the name.
+     All four — three pairs and the home line — share one grid cell and the
+     script fades one in as the roll reaches it. Hidden from the tree: the
+     same words are read once, in order, from .hp-hero__method. Off without
+     the roll, where the list carries them visibly. */
+  .hp-hero__side { display: none; }
+  .hp-hero-track--story .hp-hero__side {
+    display: grid;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 34ch;
+    font-size: clamp(16px, 1.15vw, 19px);
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+    /* Short paragraphs in a narrow column; let the browser balance the
+       last line rather than leave one word on it. */
+    text-wrap: pretty;
+  }
+  .hp-hero__side-pair {
+    grid-area: 1 / 1;
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  .hp-hero__side-pair p { margin: 0; }
+  .hp-hero__side-lead { color: var(--ink-1); }
+  .hp-hero__side-pair .hp-hero__side-then { margin-top: 0.55em; color: var(--ink-2); }
+  .hp-hero__side-close { color: var(--ink); }
+
+  /* The role, under the name: the one sentence of body type in the hero's
+     copy block. The role itself in ink, the setting in grey. */
+  .hp-hero__role {
     margin: 0;
     font-size: var(--hero-body);
     line-height: 1.3;
@@ -525,157 +621,71 @@
     font-weight: 500;
     color: var(--ink-2);
   }
-  .hp-hero__greeting strong { color: var(--ink); font-weight: 500; }
+  .hp-hero__role strong { color: var(--ink); font-weight: 500; }
 
-  .hp-hero__statement {
-    margin: 0;
-    max-width: 26ch;
-    font-family: var(--ff-display);
-    /* 500, against 700-800 everywhere else the display face is used. Three
-       sentences at 700 set a slab with no air in it — the weight that keeps a
-       one-line headline from going blobby is what makes a six-line one heavy.
-       At 500 the same copy reads as something said rather than announced, which
-       is the register the sentences are written in. */
-    font-weight: 500;
-    /* One curve from phone to desktop. A pure-vw size needed a separate mobile
-       override, and that override capped higher than the desktop curve between
-       ~750px and ~1150px, so the statement got *smaller* as the viewport grew
-       past 900px, so this interpolates a single line between the two ends.
-       Both ends came down ~12% when the statement lost the support paragraph and
-       grew to three sentences: 74px was set when this was one sentence of ~100
-       characters, and the same size across 184 characters is six lines of
-       display type filling the hero rather than a headline sitting in it.
-
-       The 6.5vh term is a ceiling, not a second curve. Sized on width alone, a
-       short wide window — 1280x720, a part-height browser on a 1080p monitor —
-       got desktop-sized type with no room under it, and six lines plus a blank
-       line pushed the scroll cue below the fold. min() takes whichever of the
-       two is smaller, so height only ever binds when it is the scarce dimension:
-       at 6.5vh a 1080-tall viewport asks for 70px and gets the 65px cap, while a
-       720-tall one asks for 47px and gets it. On phones the width term is always
-       the smaller of the two by a wide margin, so this never engages there and
-       the type cannot jump when mobile browser chrome collapses and vh changes
-       under it. */
-    font-size: clamp(26px, min(21.7px + 2.25vw, 6.5vh), 65px);
-    line-height: 1.03;
-    letter-spacing: -0.038em;
-    color: var(--ink);
-  }
-  /* Words stay in nowrap wrappers so a multi-line heading breaks between
-     words, not between letters, once every glyph is its own inline-block. */
-  .hp-hero__word { display: inline-block; white-space: nowrap; }
-  /* Same mechanism one level up: a run of words that must not be split from
-     each other, so the statement can never end on a single word. */
-  .hp-hero__keep { white-space: nowrap; }
-  /* The strike. `A to B` is the phrase everyone reaches for; the B is
-     struck and `T.` written in after it. What the stylesheet describes is
-     the finished state — line drawn, B at reading grey, T. present — so a
-     visitor without the entrance (reduced motion, no script) gets the joke
-     as a still, and the story and exit timelines that follow the entrance
-     never have to hold a state the stylesheet disagrees with. The entrance
-     winds these back before first paint and plays them forward last.
-     The line is a pseudo-element scaled along x from the left; --strike is
-     the scale, so the script has one number to animate. Positioned a touch
-     above the mathematical middle, where a cap-height strike reads as
-     crossing the letter rather than underlining its top half. */
-  .hp-hero__strike {
-    --strike: 1;
-    position: relative;
-    display: inline-block;
-    color: var(--ink-3);
-  }
-  .hp-hero__strike::after {
-    content: '';
-    position: absolute;
-    left: -0.02em;
-    right: -0.02em;
-    top: 0.5em;
-    height: 0.075em;
-    background: currentColor;
-    transform: scaleX(var(--strike));
-    transform-origin: 0 50%;
-    border-radius: 1px;
-  }
-  /* The words that arrive after the strike. In layout from the start, at
-     their full width, so writing them in moves nothing; the entrance has
-     only their ink and a few pixels of rise to play with. */
-  .hp-hero__tail { display: inline-block; }
-
-  /* The entrance works a line at a time rather than a letter at a time. After
-     the webfont has landed the words are measured, grouped by the line they
-     fell on, and each group is wrapped in one of these: a box exactly one line
-     tall that clips, with the words inside it starting below the box and rising
-     into it. The sentence is uncovered rather than assembled, which is how a
-     sentence should arrive. The wrappers are removed again once the entrance
-     has played, so the statement wraps normally on resize afterwards.
-     The padding and negative margins are the allowance for the glyphs: at a
-     line-height of 1.03 the ascenders and descenders both stand outside the
-     line box, so a box clipped to it takes the top off d and h and the tail
-     off g and p. The box is given room both ways and the stack takes it back,
-     so the leading is what it was. The script starts each line far enough
-     down to clear the whole box, padding included. */
-  .hp-hero__line {
-    display: block;
-    overflow: hidden;
-    white-space: nowrap;
-    padding: 0.12em 0 0.16em;
-    margin: -0.12em 0 -0.16em;
-  }
-  .hp-hero__line-in { display: block; will-change: transform; }
-
-  /* One sentence per block, which is the only way the four-beat structure of the
-     statement survives the width sweep. Left to flow as one paragraph the
-     sentence breaks land wherever the measure runs out: at 1920 and 1152 they
-     happened to fall at line ends and the statement read as two stanzas, while
-     at 1280-1680 the same copy set as `except the problems. I design, I lead,
-     and I` — a new sentence starting three words from the end of a line, which
-     is the one place a full stop cannot be seen. The copy is written as four
-     escalating beats, so a visitor who never sees them has been served
-     different writing to the one that was approved.
-     Blocks, not <br>: a forced break is a decision about where a line ends,
-     which is width-dependent and would need a value per breakpoint. This is a
-     decision about where a sentence ends, which is width-independent, so it
-     needs stating once. Within each block the text still wraps normally, and
-     hp-hero__keep handles the phrases that must not come apart when it does. */
-  .hp-hero__statement-inner,
-  .hp-hero__sentence { display: block; }
-  /* While the entrance has each line in its own clip box, those boxes are flex
-     items. Their padding and the negative margin that cancels it would
-     otherwise collapse between lines, so the leading opens up for the
-     entrance and snaps shut when the boxes are removed. Flex items do not
-     collapse, so the gap on screen is the gap the type settles at. */
-  .hp-hero__sentence:has(.hp-hero__line) {
+  /* The method, as a list: the three pairs with their two lines, and the
+     line they add up to. This is the copy's one accessible home — the roll
+     and the side copy are hidden from the tree — so it is always in the
+     document. With the roll on it is visually hidden, in the usual way;
+     with it off it is the block under the role, in full ink. */
+  .hp-hero__method {
     display: flex;
     flex-direction: column;
-    /* Each line box is as wide as its own words, so the boxes have to be
-       centred as items or the statement arrives ragged-left and snaps to the
-       centre when the boxes come off. */
-    align-items: center;
+    gap: clamp(24px, 3.5vh, 40px);
+    margin-top: clamp(8px, 1.5vh, 20px);
+    max-width: 640px;
   }
-  /* The seam between sentences. A third of a line, the same between all
-     three, so they read as three beats of one statement and not three
-     paragraphs: a full blank line was right for two blocks that were a setup
-     and a point, and is too much air for three that are equals. One colour,
-     one weight, one size — the gap is the only device marking the seam.
-     `lh` is exactly one line at any line-height, which matters because the
-     phone override sets 1.06 against the desktop's 1.03; the em value above
-     it is the fallback that gets within a pixel where `lh` is unsupported. */
-  .hp-hero__sentence + .hp-hero__sentence {
-    margin-top: 0.37em;
-    margin-top: 0.35lh;
+  .hp-hero-track--story .hp-hero__method {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
-  /* Balanced within each block, because a block per sentence fixes where the
-     full stops land but not how the words inside them distribute. Greedy
-     wrapping fills each line to the measure and hands the remainder to the last
-     one, which is how a full line ends up sitting above a stub; balancing evens
-     them instead.
-     Safe here specifically because these blocks are short: the algorithm is
-     capped at six lines per block in Chromium, and these set as two lines each
-     at every width above the phone band and three on a phone, so it never
-     silently stops applying. Where it is unsupported the hp-hero__keep
-     runs still hold the phrases that must not come apart, which is the floor
-     this is an improvement on rather than a dependency. */
-  .hp-hero__sentence { text-wrap: balance; }
+  .hp-hero__pairs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(24px, 3.5vh, 40px);
+  }
+  /* The pair as a heading: the two words with an arrow between, the initials
+     at the name's weight and the rest at the text weight, so the A and the T
+     show without being pointed at. The accessible name is the plain words. */
+  .hp-hero__pairs-title {
+    margin: 0 0 0.45em;
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: clamp(24px, 2.6vw, 32px);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+  }
+  .hp-hero__cap { font-weight: 800; }
+  .hp-hero__pairs-arrow { color: var(--ink-2); }
+  .hp-hero__pairs p {
+    margin: 0;
+    font-size: var(--hero-body);
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+  .hp-hero__pairs-lead { color: var(--ink-1); }
+  .hp-hero__pairs-then { color: var(--ink-2); margin-top: 0.4em; }
+  .hp-hero__pairs-close {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: clamp(24px, 2.6vw, 32px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
 
   /* The closing band: the clients drifting along the foot of the first
      screen. There is no rule above them. A hairline here sat in the middle
@@ -781,208 +791,6 @@
   .hp-hero__logo--amundi  { --h: 25px; --r: 2.547; --oy: 8%; --mark: url(/assets/logo-amundi.92ce4aa1.png); }
   .hp-hero__logo--imi     { --h: 24px; --r: 2.043; --mark: url(/assets/logo-imi.64e95895.png); }
 
-
-  /* ---------- CORRIDOR (the career, sideways) ----------
-     Three stops and a close, laid out in a strip that moves left as the page
-     scrolls down, so the career is walked past rather than read down. The
-     same sticky-stage mechanism as the wordmark below: a tall section, a
-     stage stuck to the top of the window, and a scrub that only ever writes
-     a transform to the track and to the panels. Nothing is pinned by script,
-     for the reason the wordmark gives.
-
-     The stage is a room with depth. A perspective on it, with its vanishing
-     point a little left of centre, and the panels turn as they pass the
-     middle — the one in front of you flat and in full ink, the one arriving
-     from the right turned toward you and dimmer, the one leaving to the left
-     turned away. The turn is on the panel, never the text alone: a paragraph
-     that skews without the eyebrow and mark above it skewing reads as a bug.
-
-     Story mode only (the same decision the hero makes, written as a
-     modifier). Otherwise it is a column: the four pieces one under the
-     other at the page's own padding, full ink, no stage, no turn. */
-  .hp-corridor {
-    position: relative;
-    width: 100%;
-    background: var(--bg);
-    color: var(--ink);
-    /* The gap between panels in the strip. Generous, so one panel is in
-       front of you at a time and its neighbours are context at the edges. */
-    --corridor-gap: clamp(140px, 16vw, 260px);
-    /* The panel is the measure: the paragraph fills it, so the panel is only
-       as wide as a paragraph should be at this size. Wider than that and
-       the copy sat in the left half of a mostly empty box. */
-    --corridor-panel: clamp(560px, 46vw, 760px);
-    --corridor-travel: 260vh;
-  }
-  .hp-corridor--story { height: calc(100vh + var(--corridor-travel)); }
-  .hp-corridor--story .hp-corridor__stage {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    /* On the stage, not the section, for the reason the wordmark gives. */
-    overflow: hidden;
-    perspective: 1400px;
-    /* A little left of centre, so a panel leaving to the left is seen more
-       side-on than one arriving from the right: the eye is looking slightly
-       back at what has been passed, and forward at what is coming. */
-    perspective-origin: 42% 50%;
-  }
-  .hp-corridor--story .hp-corridor__track {
-    display: flex;
-    /* From the top, not the middle: the panels are different heights, and
-       centred each would put its heading at a different line, so the
-       headings would step up and down as the strip went by. From the top
-       they sit on one line; the stage centres the track as a whole. */
-    align-items: flex-start;
-    gap: var(--corridor-gap);
-    /* The first panel starts in the middle of the stage, and every panel
-       after it is reached by the track moving left. The padding is what
-       puts the first panel's centre on the stage's centre at x = 0; the
-       script moves the track from there. */
-    padding-left: calc(50vw - var(--corridor-panel) / 2);
-    /* Children keep their own z, so their turns are in the stage's
-       perspective and not flattened into the track's own plane. */
-    transform-style: preserve-3d;
-    will-change: transform;
-  }
-  .hp-corridor--story .hp-corridor__panel {
-    flex: 0 0 auto;
-    width: var(--corridor-panel);
-    will-change: transform, opacity;
-    backface-visibility: hidden;
-    transform-origin: 50% 50%;
-  }
-  .hp-corridor__panel {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: clamp(18px, 2.4vh, 28px);
-  }
-  /* The illustration's box, on panel one. Empty until stage 3 draws the
-     monogram sequence in it; sized now so that arrival moves nothing. To
-     the right of the heading rather than above it, so the three headings
-     sit level as the strip goes by: a box above would drop panel one's by
-     its own height and read as a mistake in the row. The panel becomes a
-     two-column grid for it, text left, art right, both from the top. */
-  .hp-corridor__panel--art {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-rows: auto auto;
-    column-gap: clamp(20px, 2.4vw, 36px);
-    align-items: start;
-  }
-  .hp-corridor__panel--art .hp-corridor__title { grid-column: 1; grid-row: 1; }
-  .hp-corridor__panel--art .hp-corridor__lines { grid-column: 1; grid-row: 2; }
-  .hp-corridor__art {
-    grid-column: 2;
-    grid-row: 1 / 3;
-    width: clamp(120px, 11vw, 168px);
-    height: clamp(104px, 9.5vw, 144px);
-  }
-  /* The pair. Display face at a mark's size, one line. The initials carry
-     the weight: 800 against the word's 500, which is the whole pattern
-     shown and none of it explained. */
-  .hp-corridor__title {
-    margin: 0;
-    font-family: var(--ff-display);
-    font-weight: 500;
-    font-size: clamp(32px, 3.4vw, 50px);
-    line-height: 1.05;
-    letter-spacing: -0.035em;
-    color: var(--ink);
-    white-space: nowrap;
-  }
-  .hp-corridor__cap { font-weight: 800; }
-  /* The arrow is Manrope's own glyph, so its stroke is the type's stroke.
-     A shade back from the words: it is the hinge, not a third word. */
-  .hp-corridor__arrow { color: var(--ink-2); font-weight: 500; }
-  .hp-corridor__lines {
-    display: flex;
-    flex-direction: column;
-    gap: 0.45em;
-    font-size: clamp(19px, 1.75vw, 27px);
-  }
-  /* Two lines under the pair: the principle a shade brighter than what she
-     does about it, so the eye lands on the claim and the method follows. */
-  .hp-corridor__copy {
-    margin: 0;
-    max-width: 40ch;
-    line-height: 1.4;
-    letter-spacing: -0.012em;
-    text-wrap: pretty;
-  }
-  .hp-corridor__copy--lead { color: var(--ink-1); }
-  .hp-corridor__copy--then { color: var(--ink-2); }
-  /* The close. Between the statement and the panel paragraphs in size, in
-     the display face, so it reads as the hero's voice coming back for one
-     line before the work begins. */
-  .hp-corridor__close {
-    margin: 0;
-    max-width: 22ch;
-    font-family: var(--ff-display);
-    font-weight: 500;
-    font-size: clamp(28px, 3.3vw, 50px);
-    line-height: 1.12;
-    letter-spacing: -0.03em;
-    color: var(--ink);
-    text-wrap: balance;
-  }
-  /* Without the story: a column at the page's padding. */
-  .hp-corridor:not(.hp-corridor--story) .hp-corridor__stage {
-    padding: clamp(72px, 10vh, 120px) var(--pad-x);
-  }
-  .hp-corridor:not(.hp-corridor--story) .hp-corridor__track {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(56px, 9vh, 96px);
-    max-width: 720px;
-  }
-  /* The heading is one line in the strip, where the panel is wide enough
-     for it. In the column it wraps like any heading. */
-  .hp-corridor:not(.hp-corridor--story) .hp-corridor__title { white-space: normal; }
-  /* No art box in the column: on a phone a second column would leave the
-     heading 190px to wrap in, and an empty box above it is an unexplained
-     gap. Where the illustration goes on a phone is stage 3's to decide. */
-  .hp-corridor:not(.hp-corridor--story) .hp-corridor__panel--art { display: flex; }
-  .hp-corridor:not(.hp-corridor--story) .hp-corridor__art { display: none; }
-
-  /* ---------- CAREER (the compact row) ----------
-     Three stops side by side, body size, the place in ink and the rest at
-     reading grey. About a third of a screen tall. It follows the corridor
-     and precedes the mark, and is kept small enough that the corridor's
-     close still hands into the mark's arrival over the top of it. */
-  .hp-career {
-    position: relative;
-    background: var(--bg);
-    padding: clamp(48px, 7vh, 80px) var(--pad-x) clamp(56px, 8vh, 96px);
-  }
-  .hp-career__list {
-    list-style: none;
-    margin: 0 auto;
-    padding: 0;
-    max-width: var(--shell);
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(28px, 4vw, 64px);
-  }
-  .hp-career__item {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
-  .hp-career__copy {
-    margin: 0;
-    max-width: 38ch;
-    font-size: clamp(15px, 1.1vw, 17px);
-    line-height: 1.5;
-    color: var(--ink-2);
-  }
-  .hp-career__copy strong { color: var(--ink); font-weight: 600; }
-  @media (max-width: 760px) {
-    .hp-career__list { grid-template-columns: 1fr; gap: 36px; }
-  }
 
   /* ---------- WORDMARK (3 rows converge → scale down) ----------
      Motion, scale values and scroll cost are locked; only the mechanism has
@@ -1756,7 +1564,7 @@
      as a 390px phone: phone gutters, phone type, a single-column approach grid
      and two of the four device shots. It is now its own band.
 
-     Anything that can be one continuous curve — the hero statement, the
+     Anything that can be one continuous curve — the hero name, the
      wordmark, the device row — is handled with clamp()/min() in the base rules
      rather than restated per band, so there are no size jumps at the seams. */
   /* Shared by tablet and phone. */
@@ -1780,7 +1588,6 @@
     .hp-nav__arrow svg { width: 14px; height: 14px; }
 
     .hp-hero { padding: clamp(112px, 14vh, 164px) var(--pad-x) clamp(32px, 4.5vh, 52px); }
-    .hp-hero__statement { max-width: 26ch; }
 
     /* The nav pill is shallower here, so the cards can start higher. */
     .hp-cases { padding-top: clamp(64px, 10vh, 104px); }
@@ -1839,36 +1646,16 @@
        close to content-height already, and a generous minimum open field is
        what pushes the cue off the bottom of a small screen. */
     .hp-hero {
-      /* The greeting's phone size, moved onto the property both it and the cue
-         read. It was on .hp-hero__greeting, where it sized only the greeting and
-         left the cue on its own 12px floor.
-
-         Capped against the viewport as well, because the greeting has to hold
-         one line on a phone and at a flat 15px it did not. It needs 353px and
-         a 390px phone gives it 346, so it wrapped at every width from 320px to
-         390px — every phone in common use — and only came together at 402px.
-         Two lines is the wrong shape for it: it is one sentence naming who she
-         is, and split with `in the UK.` alone underneath it reads as a stray
-         fragment below the statement rather than as a line of its own.
-
-         3.5vw is what the measurement asks for, not a guess. 15px still governs
-         from 429px up, and below that the type comes down only as far as the
-         line needs — 13.65px on a 390px phone, 11.2px at 320px — keeping about
-         13px of slack at the narrowest width so a font fallback with wider
-         metrics cannot tip it back onto two lines. The cue comes down with it,
-         which is the whole point of the shared property: they remain one size,
-         as the owner asked. */
+      /* The body size on a phone, on the property the role line and the
+         pairs' lines all read, so they remain one size. Capped against the
+         viewport as well as at 15px: it was sized for a greeting that had to
+         hold one line on a 390px phone, and the role line under the name is
+         shorter than that was, so the cap now has slack to spare. */
       --hero-body: min(15px, 3.5vw);
       padding: 94px 22px 30px;
       grid-template-rows: 1fr auto minmax(56px, 1fr) auto;
     }
     .hp-hero__main { gap: 14px; }
-    /* Size comes from the base clamp; this only tightens the setting. */
-    .hp-hero__statement {
-      max-width: none;
-      line-height: 1.06;
-      letter-spacing: -0.032em;
-    }
     /* The marks come down a little, so six of them still read as one line
        rather than as the heaviest thing on a phone. */
     .hp-hero__logo { height: calc(var(--h) * 0.82); width: calc(var(--h) * 0.82 * var(--r)); }
@@ -2023,14 +1810,10 @@
   }
 
   /* Landscape phones. Height is the scarce dimension and width is the
-     plentiful one, so the statement comes off the desktop curve and spends the
-     extra width instead of the extra height.
-     Even then there is no room to stack a closing band under the copy — the
-     copy block is most of a 390px-tall viewport on its own, and the cue would
-     land below the fold, which is the one thing it must never do. So there is
-     no void here to anchor and nothing for a rule to close: the copy IS the
-     composition, and the cue becomes a corner marker in the space to the right
-     of the statement that the short measure leaves empty anyway. */
+     plentiful one, so the name comes off the desktop curve and the hero
+     stops insisting on a full screen. There is no room for a closing band
+     under the copy either: the name, role and pairs are most of a 390px-tall
+     viewport on their own. */
   @media (max-height: 560px) and (min-width: 601px) {
     /* The pill comes down with everything else, because at these heights it is
        spending the scarce dimension. Its own height plus its offset was taking 118
@@ -2053,13 +1836,10 @@
       grid-template-rows: 0fr auto minmax(20px, 1fr) auto;
     }
     .hp-hero__main { gap: 10px; }
-    /* Down ~12% with the main curve, so a landscape phone stays in proportion
-       to every other width rather than becoming the one place the statement is
-       still set at its old size. */
-    .hp-hero__statement { font-size: clamp(26px, 3.8vw, 40px); max-width: 62ch; }
-    /* The seam used to tighten to a third of a line here. It is a third of a
-       line everywhere now (see .hp-hero__sentence + .hp-hero__sentence), so
-       there is nothing to override. */
+    /* The name comes down with the height: the roll is off here, so the
+       pairs are listed under it, and at the base size the name alone would
+       be most of the screen. */
+    .hp-name { font-size: clamp(48px, 7vw, 88px); }
     /* No height for a line under the copy. The marquee would land below the
        fold, which is the thing this breakpoint exists to prevent, so the
        band goes rather than becoming a corner marker. */
@@ -2363,48 +2143,15 @@
   var LINKEDIN = 'https://www.linkedin.com/in/abigail-truman/';
 
   var HERO = {
-    // Two stops rather than one em dash, so the greeting is built the way the
-    // statement under it is: short declaratives, no connective tissue.
-    //
-    // Two things lift to white: the name and the role. They are the two answers
-    // the line exists to give, and leaving the role grey made the sentence look
-    // like it was introducing her and then trailing off. `A` and `in the UK.`
-    // stay grey — they are the setting, not the substance, and holding them back
-    // is what lets the two white phrases read as a pair rather than as one long
-    // highlighted stretch. The stops sit outside the <strong>s as well:
-    // punctuation belongs to the sentence, not to the phrase it follows.
-    greeting: 'Hey, I&rsquo;m <strong>Abbie</strong>. A <strong>Product Design Leader</strong> in the UK.',
-    // The largest type on the page has to be the thing that gets her hired, and
-    // here it is the only copy in the hero. Three beats, each a sentence, each
-    // a pair: pixels and picture, people and product, A and T. They are what
-    // the scroll story below plays through one at a time, so each one has to
-    // stand on its own as well as read as a third of the whole.
-    // Uniform Manrope, no accent: the serif italic that used to close this
-    // sentence was dropped on the owner's instruction.
-    // One span per sentence, each one a block, so every full stop lands at the
-    // end of a line at every width. The spaces between the spans are what keeps
-    // the aria-label a readable sentence; between block boxes they render as
-    // nothing.
-    // The hp-hero__keep runs are the phrases that a normal wrap inside a block
-    // still gets wrong: each sentence's closing pair, which must not be left
-    // as a one-word last line in type this large.
-    // The last one carries the gag: `A to B` is what everyone says, and the
-    // B is struck through and `T.` written in after it, as the last thing the
-    // entrance does. The <s> is the source of that: splitWords turns it into
-    // the span the strike is drawn on, and stripTags drops it, so the
-    // accessible sentence is the one she means — `from A to T.` — with no B
-    // in it to be read aloud.
-    statement: '<span class="hp-hero__sentence">I&rsquo;m happiest when the pixels get as much care as <span class="hp-hero__keep">the bigger picture.</span></span> ' +
-      '<span class="hp-hero__sentence">I put as much into people as I do <span class="hp-hero__keep">the product.</span></span> ' +
-      '<span class="hp-hero__sentence">And I&rsquo;ll take an idea from <span class="hp-hero__keep">A to <s>B</s> T.</span></span>'
-  };
-
-  // The corridor's copy: the three pairs behind `A to T`, one panel each,
-  // and the line that hands over to the work. Each pair is a heading — the
-  // two words, initials carrying the pattern — and two lines under it: the
-  // principle, then what she does about it. The career itself has moved out
-  // of the panels into the compact row after them (CAREER, below).
-  var CORRIDOR = {
+    // The role, under the name. The name is the greeting now — set at the
+    // size of the wordmark, it is the page's opening line — so this is the
+    // one sentence under it: what she does, in ink, and where, in grey.
+    role: '<strong>Product Design Leader</strong> in the UK.',
+    // The method, hidden in the name. A and T are her initials, and each
+    // pair is a word beginning with each: on scroll the tails of the name
+    // roll through them and come home. `from` and `to` are the two words;
+    // `lead` and `then` the two lines said beside each — the principle, then
+    // what she does about it.
     pairs: [
       {
         from: 'Abstract', to: 'Tangible',
@@ -2422,17 +2169,9 @@
         then: 'So I test early, while changing course is still cheap.'
       }
     ],
-    close: 'The messier the problem, the more I enjoy it. Here are a few I&rsquo;ve loved untangling.'
+    // What the pairs add up to, said once the name is itself again.
+    close: 'I take ideas from A to T.'
   };
-
-  // The career, compact: three stops in a row, the place in full ink and
-  // the rest at reading grey. A footnote to the corridor, not a chapter of
-  // its own, which is why it is body size and a third of a screen.
-  var CAREER = [
-    { when: 'Now', where: 'Elixirr.', what: 'Leading design projects, and the first designer there to ship front-end code alongside the design, on apps for British Cycling and Lloyds Bank.' },
-    { when: 'Before', where: 'PwC.', what: 'Six years designing for everyone from financial analysts to everyday shoppers. Rising Star award.' },
-    { when: 'In-house', where: 'Boots.', what: 'Introduced same-day click and collect; transformed checkout and post-purchase.' }
-  ];
 
   // In the order the cards are in, because that is the order a visitor who
   // scrolls on will meet them. The fibre provider is unnamed on its own card
@@ -2762,100 +2501,6 @@
     lede: '<strong>Open to new opportunities</strong> \u2014 product design leadership, in-house or consultancy. If you&rsquo;re hiring, building a team, or just want a second opinion, my inbox is open.'
   };
 
-  function stripTags(html) {
-    var d = document.createElement('div');
-    d.innerHTML = html;
-    // Struck text is text she is not saying. It goes before the read, so
-    // the accessible sentence is the corrected one, not the one with the
-    // correction still in it.
-    Array.prototype.forEach.call(d.querySelectorAll('s, del'), function(s) {
-      s.parentNode.removeChild(s);
-    });
-    return (d.textContent || '').replace(/\s+/g, ' ').replace(/"/g, '&quot;');
-  }
-
-  // Wraps each word in a span, preserving the sentence blocks. The entrance
-  // used to be a letter at a time and this split every glyph; it is a line at
-  // a time now, and lines are found by measuring where the words fell, so the
-  // words are the unit. Each sentence comes out as a flat run of word spans
-  // and real spaces, which is what lets the line grouping below walk it.
-  //
-  // An hp-hero__keep run — the phrases that must not come apart — collapses
-  // to a single word span with non-breaking spaces inside it. The span is
-  // already nowrap, so this is the same guarantee with one fewer level of
-  // nesting, and it is what keeps the per-sentence run flat.
-  //
-  // A keep run with an <s> in it is the one that carries the strike. The <s>
-  // becomes a .hp-hero__strike span, the line is drawn on, and the words
-  // after it become a .hp-hero__tail span, so the entrance can write them in
-  // after the strike has landed. Both live inside the one word span, so the
-  // line-finding and the nowrap guarantee are the same as for any keep run.
-  function splitWords(text, wordClassName) {
-    var container = document.createElement('span');
-    container.innerHTML = text;
-    walk(container);
-    return container.innerHTML;
-
-    function wordSpan(str) {
-      var span = document.createElement('span');
-      span.className = wordClassName;
-      span.textContent = str;
-      return span;
-    }
-    function nbsp(str) { return str.replace(/\s+/g, '\u00A0'); }
-
-    function keepSpan(keep) {
-      var kept = wordSpan('');
-      kept.classList.add('hp-hero__keep');
-      var struck = keep.querySelector('s, del');
-      if (!struck) {
-        kept.textContent = nbsp((keep.textContent || '').trim());
-        return kept;
-      }
-      var before = '', after = '';
-      var seen = false;
-      Array.prototype.forEach.call(keep.childNodes, function(n) {
-        if (n === struck) { seen = true; return; }
-        var t = n.textContent || '';
-        if (seen) after += t; else before += t;
-      });
-      kept.appendChild(document.createTextNode(nbsp(before.replace(/^\s+/, ''))));
-      var strike = document.createElement('span');
-      strike.className = 'hp-hero__strike';
-      strike.textContent = (struck.textContent || '').trim();
-      kept.appendChild(strike);
-      if (after.trim()) {
-        kept.appendChild(document.createTextNode('\u00A0'));
-        var tail = document.createElement('span');
-        tail.className = 'hp-hero__tail';
-        tail.textContent = nbsp(after.trim());
-        kept.appendChild(tail);
-      }
-      return kept;
-    }
-
-    function walk(node) {
-      Array.prototype.slice.call(node.childNodes).forEach(function(child) {
-        if (child.nodeType === 1 && child.classList.contains('hp-hero__keep')) {
-          node.replaceChild(keepSpan(child), child);
-          return;
-        }
-        if (child.nodeType === 3) {
-          var frag = document.createDocumentFragment();
-          child.nodeValue.split(/(\s+)/).forEach(function(part) {
-            if (!part) return;
-            // A real space keeps the line-breaking opportunity intact.
-            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
-            frag.appendChild(wordSpan(part));
-          });
-          node.replaceChild(frag, child);
-        } else if (child.nodeType === 1) {
-          walk(child);
-        }
-      });
-    }
-  }
-
   // The ink as an "r g b" triple, so the stylesheet can put an alpha on it with
   // rgb(var(--card-ink-rgb) / 0.38) for the chip's hairline. The percentage is a
   // design value and stays in the CSS; this is only the colour, which is data.
@@ -3013,8 +2658,75 @@
         '</div>' +
       '</nav>';
 
+    // The name, a line at a time. Each line is the initial, which never
+    // moves, and the tail, which is a stack of four variants in one grid
+    // cell — the name's own and the three pairs' — so the line is as wide
+    // as its widest variant and nothing reflows as they roll. Each variant
+    // is split to letters, because the roll is a flap per letter. The stack
+    // is hidden from the tree: the heading's name is on the heading, and
+    // the pairs are read once from the list below the role.
+    function nameLine(cap, tails) {
+      var variants = tails.map(function(t, i) {
+        var letters = t.split('').map(function(ch) {
+          return '<span class="hp-name__ch">' + ch + '</span>';
+        }).join('');
+        return '<span class="hp-name__v' + (i === 0 ? ' hp-name__v--home' : '') + '">' + letters + '</span>';
+      }).join('');
+      return '<span class="hp-name__line">' +
+          '<span class="hp-name__in">' +
+            '<span class="hp-name__cap">' + cap + '</span>' +
+            '<span class="hp-name__tail">' + variants + '</span>' +
+          '</span>' +
+        '</span>';
+    }
+    // The tails, in the order they are shown: the name, then the pairs.
+    function tailsOf(index) {
+      return [index === 0 ? 'bbie' : 'ruman'].concat(HERO.pairs.map(function(p) {
+        return (index === 0 ? p.from : p.to).slice(1);
+      }));
+    }
+    // A pair's two words with the initials lifted to the name's weight.
+    function capWord(word) {
+      return '<b class="hp-hero__cap">' + word.charAt(0) + '</b>' + word.slice(1);
+    }
+
+    // The side copy: one block per pair and one for the home line, all in
+    // one grid cell, faded in and out by the roll. Hidden from the tree.
+    var sideHtml = '<div class="hp-hero__side" aria-hidden="true">' +
+        HERO.pairs.map(function(p) {
+          return '<div class="hp-hero__side-pair">' +
+              '<p class="hp-hero__side-lead">' + p.lead + '</p>' +
+              '<p class="hp-hero__side-then">' + p.then + '</p>' +
+            '</div>';
+        }).join('') +
+        '<div class="hp-hero__side-pair hp-hero__side-pair--home">' +
+          '<p class="hp-hero__side-close">' + HERO.close + '</p>' +
+        '</div>' +
+      '</div>';
+
+    // The method as a list: the copy's accessible home, and the visible
+    // block under the role when the roll is off. The heading's accessible
+    // name is the plain words — an arrow glyph read aloud is noise and the
+    // bold is a visual device.
+    var methodHtml = '<div class="hp-hero__method">' +
+        '<ol class="hp-hero__pairs" aria-label="From A to T">' +
+          HERO.pairs.map(function(p) {
+            return '<li class="hp-hero__pairs-item">' +
+                '<h2 class="hp-hero__pairs-title" aria-label="' + p.from + ' to ' + p.to + '">' +
+                  capWord(p.from) +
+                  '<span class="hp-hero__pairs-arrow" aria-hidden="true">&thinsp;&rarr;&thinsp;</span>' +
+                  capWord(p.to) +
+                '</h2>' +
+                '<p class="hp-hero__pairs-lead">' + p.lead + '</p>' +
+                '<p class="hp-hero__pairs-then">' + p.then + '</p>' +
+              '</li>';
+          }).join('') +
+        '</ol>' +
+        '<p class="hp-hero__pairs-close">' + HERO.close + '</p>' +
+      '</div>';
+
     var heroHtml = '' +
-      // The track is the scroll distance the story takes; the hero inside it
+      // The track is the scroll distance the roll takes; the hero inside it
       // sticks to the top of the window while the track scrolls past, the
       // way the wordmark's stage does. Nothing is pinned by script.
       '<section class="hp-hero-track" id="hp-hero-track">' +
@@ -3028,13 +2740,20 @@
           '<div class="hp-hero__lamp"><div class="hp-hero__glow-b"></div></div>' +
         '</div>' +
         '<div class="hp-hero__main">' +
-          '<p class="hp-hero__greeting">' + HERO.greeting + '</p>' +
-          // The inner span is taken apart into words and then into measured
-          // lines, so the heading's accessible name is carried whole on the
-          // element itself and the pieces are hidden from the tree.
-          '<h1 class="hp-hero__statement" aria-label="' + stripTags(HERO.statement) + '">' +
-            '<span class="hp-hero__statement-inner" aria-hidden="true">' + splitWords(HERO.statement, 'hp-hero__word') + '</span>' +
-          '</h1>' +
+          '<div class="hp-hero__stage">' +
+            // The heading's accessible name is carried whole on the element,
+            // and the lines — split to letters, rolling — are hidden from
+            // the tree, so it is `Abbie Truman` at every stop.
+            '<h1 class="hp-name" aria-label="Abbie Truman">' +
+              '<span class="hp-name__lines" aria-hidden="true">' +
+                nameLine('A', tailsOf(0)) +
+                nameLine('T', tailsOf(1)) +
+              '</span>' +
+            '</h1>' +
+            sideHtml +
+          '</div>' +
+          '<p class="hp-hero__role">' + HERO.role + '</p>' +
+          methodHtml +
         '</div>' +
         '<div class="hp-hero__lower">' +
           // Drawn twice. The second copy is what makes the loop seamless, and
@@ -3050,65 +2769,6 @@
           '</div>' +
         '</div>' +
       '</div>' +
-      '</section>';
-
-    // The corridor: the three pairs behind `A to T`, as a strip you move
-    // along sideways. Three panels and a close, each one an article so a
-    // reader walks them as four short pieces in the order they are written.
-    //
-    // Each pair's heading is the two words with an arrow between, the
-    // initials at the heavy weight and the rest of each word at the text
-    // weight, so the A and the T show without being pointed at. The
-    // accessible name is the plain words — `Abstract to Tangible` — because
-    // an arrow glyph read aloud is noise and the bold is a visual device.
-    function capWord(word) {
-      return '<b class="hp-corridor__cap">' + word.charAt(0) + '</b>' + word.slice(1);
-    }
-    function corridorPair(pair, i) {
-      // Panel one will carry the monogram sequence — pencil, wireframe, code
-      // — as its illustration in stage 3. The box for it is here now, at
-      // the size it will be, so the panel does not reflow when it arrives.
-      var art = i === 0 ? '<div class="hp-corridor__art" aria-hidden="true"></div>' : '';
-      return '<article class="hp-corridor__panel hp-corridor__panel--pair' + (art ? ' hp-corridor__panel--art' : '') + '">' +
-          art +
-          '<h2 class="hp-corridor__title" aria-label="' + pair.from + ' to ' + pair.to + '">' +
-            capWord(pair.from) +
-            '<span class="hp-corridor__arrow" aria-hidden="true">&thinsp;&rarr;&thinsp;</span>' +
-            capWord(pair.to) +
-          '</h2>' +
-          '<div class="hp-corridor__lines">' +
-            '<p class="hp-corridor__copy hp-corridor__copy--lead">' + pair.lead + '</p>' +
-            '<p class="hp-corridor__copy hp-corridor__copy--then">' + pair.then + '</p>' +
-          '</div>' +
-        '</article>';
-    }
-    var corridorHtml = '' +
-      '<section class="hp-corridor" id="hp-corridor" aria-label="From A to T">' +
-        '<div class="hp-corridor__stage">' +
-          '<div class="hp-corridor__track">' +
-            CORRIDOR.pairs.map(corridorPair).join('') +
-            // The close: no heading, no art. One line, at display size.
-            '<article class="hp-corridor__panel hp-corridor__panel--close">' +
-              '<p class="hp-corridor__close">' + CORRIDOR.close + '</p>' +
-            '</article>' +
-          '</div>' +
-        '</div>' +
-      '</section>';
-
-    // The career, as a row. Where the corridor carries what she does, this
-    // carries where: three stops, side by side, body size. Quiet by design;
-    // it sits between the corridor letting go and the mark arriving, and
-    // must read as a footnote to one and not a chapter before the other.
-    var careerHtml = '' +
-      '<section class="hp-career" id="hp-career" aria-label="Where I have worked">' +
-        '<ul class="hp-career__list">' +
-          CAREER.map(function(c) {
-            return '<li class="hp-career__item">' +
-                '<span class="hp-eyebrow hp-eyebrow--rule">' + c.when + '</span>' +
-                '<p class="hp-career__copy"><strong>' + c.where + '</strong> ' + c.what + '</p>' +
-              '</li>';
-          }).join('') +
-        '</ul>' +
       '</section>';
 
     var wordmarkHtml = '' +
@@ -3169,7 +2829,7 @@
       '</footer>';
 
     var html = '<div class="hp-root" id="hp-root">' +
-      navHtml + heroHtml + corridorHtml + careerHtml + wordmarkHtml + casesHtml + footerHtml +
+      navHtml + heroHtml + wordmarkHtml + casesHtml + footerHtml +
     '</div>';
 
     document.body.insertAdjacentHTML('afterbegin', html);
@@ -3340,82 +3000,11 @@
     });
   }
 
-  // ---------- THE STATEMENT, A LINE AT A TIME ----------
-  // The words of each sentence block are already separate spans. This measures
-  // where each one fell, groups the ones that share a top edge into a line,
-  // and wraps each line in a clipping box with a moving box inside it. It
-  // returns the moving boxes, which are what the entrance animates.
-  //
-  // Measured after the webfont has landed, because lines found against the
-  // fallback face are not the lines the reader sees, and a box that is nowrap
-  // around the wrong words would clip when the real face arrived. Undone by
-  // unwrapLines once the entrance has played, so resize and balance work on
-  // the statement as written.
-  function wrapLines(inner) {
-    var movers = [];
-    var blocks = Array.prototype.slice.call(inner.querySelectorAll('.hp-hero__sentence'));
-    // Every position is read before anything is moved. Each wrapper is a
-    // block, so the moment the first one is inserted every word after it
-    // reflows underneath, and a measurement taken then is of a layout the
-    // reader never sees.
-    var tops = new Map();
-    blocks.forEach(function(block) {
-      Array.prototype.forEach.call(block.querySelectorAll('.hp-hero__word'), function(w) {
-        tops.set(w, w.offsetTop);
-      });
-    });
-    blocks.forEach(function(block) {
-      var nodes = Array.prototype.slice.call(block.childNodes);
-      var line = null, mover = null, top = null;
-      nodes.forEach(function(n) {
-        var isWord = n.nodeType === 1 && n.classList.contains('hp-hero__word');
-        if (isWord) {
-          var t = tops.get(n);
-          if (line === null || Math.abs(t - top) > 2) {
-            line = document.createElement('span');
-            line.className = 'hp-hero__line';
-            mover = document.createElement('span');
-            mover.className = 'hp-hero__line-in';
-            line.appendChild(mover);
-            block.insertBefore(line, n);
-            movers.push(mover);
-            top = t;
-          }
-          mover.appendChild(n);
-        } else if (mover) {
-          // The spaces between words travel with the line they are in.
-          mover.appendChild(n);
-        } else {
-          block.removeChild(n);
-        }
-      });
-    });
-    return movers;
-  }
-  function unwrapLines(inner) {
-    Array.prototype.forEach.call(inner.querySelectorAll('.hp-hero__line'), function(line) {
-      var mover = line.firstChild;
-      var parent = line.parentNode;
-      // The spaces travelled with their lines, so nothing is missing once the
-      // words are back in one run.
-      while (mover.firstChild) parent.insertBefore(mover.firstChild, line);
-      parent.removeChild(line);
-    });
-  }
-
-  // The hero is the opening moment — no splash gate in front of it.
-  //
-  // Three things arrive: the greeting, the statement's lines, and the closing
-  // band, marks already drifting inside it. The statement is uncovered a line at
-  // a time, each line rising into a box clipped to its own height, so what the
-  // reader watches is a sentence appearing rather than a hundred letters
-  // settling. Nothing in here lifts toward the pointer afterwards: that effect
-  // has gone, because it was a novelty on the one sentence the page exists to
-  // have read.
-  // Whether the hero is told as a scroll story (see .hp-hero-track in the
-  // stylesheet). Decided once, before anything is measured, and written to the
-  // track so the stylesheet and the hero scripts all read one answer. Off on
-  // phones, short windows, and under reduced motion.
+  // ---------- THE NAME ----------
+  // Whether the hero rolls (see .hp-hero-track in the stylesheet). Decided
+  // once, before anything is measured, and written to the track so the
+  // stylesheet and the hero scripts all read one answer. Off on phones,
+  // short windows, and under reduced motion.
   var HERO_STORY = false;
   function decideHeroStory() {
     var track = document.getElementById('hp-hero-track');
@@ -3423,35 +3012,64 @@
     HERO_STORY = !REDUCED && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' &&
       window.matchMedia('(min-width: 901px) and (min-height: 561px)').matches;
     track.classList.toggle('hp-hero-track--story', HERO_STORY);
-    // The corridor is the same decision: one story, or none.
-    var corridor = document.getElementById('hp-corridor');
-    if (corridor) corridor.classList.toggle('hp-corridor--story', HERO_STORY);
   }
 
+  // The roll's rest state: the name's own letters up, every other variant's
+  // letters turned away and out. Written before first paint, so the stack's
+  // first frame is the name and nothing else, and written by the script
+  // rather than the stylesheet so GSAP owns these transforms outright and
+  // never has to parse a rotation back out of a matrix.
+  function primeRoll(name) {
+    if (!HERO_STORY) return;
+    Array.prototype.forEach.call(name.querySelectorAll('.hp-name__tail'), function(tail) {
+      var vs = tail.querySelectorAll('.hp-name__v');
+      Array.prototype.forEach.call(vs, function(v, i) {
+        var letters = v.querySelectorAll('.hp-name__ch');
+        if (i === 0) gsap.set(letters, { rotationX: 0, opacity: 1, transformOrigin: '50% 100%' });
+        else gsap.set(letters, { rotationX: 90, opacity: 0, transformOrigin: '50% 0%' });
+      });
+    });
+  }
+
+  // The hero is the opening moment — no splash gate in front of it.
+  //
+  // Three things arrive: the two lines of the name, the role under it, and
+  // the closing band, marks already drifting inside it. The name is
+  // uncovered a line at a time, each line rising into a box clipped to its
+  // own height, so what the reader watches is a name appearing rather than
+  // letters settling. Nothing in here lifts toward the pointer afterwards.
   function initHero() {
     if (typeof gsap === 'undefined') return;
     if (REDUCED) return;
 
-    var inner = document.querySelector('.hp-hero__statement-inner');
-    var greeting = document.querySelector('.hp-hero__greeting');
+    var main = document.querySelector('.hp-hero__main');
+    var name = document.querySelector('.hp-name');
+    var role = document.querySelector('.hp-hero__role');
+    var method = document.querySelector('.hp-hero__method');
     var below = document.querySelectorAll('.hp-hero__lower');
-    if (!inner) return;
+    if (!main || !name) return;
+    var movers = name.querySelectorAll('.hp-name__in');
+    if (!movers.length) return;
 
-    // Hidden before first paint. The entrance cannot start until the lines are
-    // measured, and that waits on the font; nothing may show in between.
-    gsap.set(inner, { opacity: 0 });
-    gsap.set([greeting], { opacity: 0, y: 16 });
+    // Hidden before first paint. The entrance cannot start until the font is
+    // in — the tail boxes are as wide as their widest variant, and that is
+    // a measurement of the face — and nothing may show in between.
+    main.classList.add('is-entering');
+    gsap.set(name, { opacity: 0 });
+    gsap.set(movers, { yPercent: 125 });
+    gsap.set(role, { opacity: 0, y: 14 });
+    // The list only enters when it is visible, which is when the roll is off.
+    if (method && !HERO_STORY) gsap.set(method, { opacity: 0, y: 18 });
     gsap.set(below, { opacity: 0, y: 22 });
+    primeRoll(name);
 
     // The display face, or 700ms, whichever is first. A face that never
     // arrives must not mean a hero that never does. fonts.ready can resolve
-    // a frame before Manrope is the face actually used for layout, and
-    // measuring the lines against the fallback makes the word spacing jump
-    // when the real face lands. Two frames after the check gives that layout
-    // time to settle before anything is measured or shown.
+    // a frame before Manrope is the face actually used for layout, so two
+    // frames after the check gives that layout time to settle.
     var ready = (function() {
       if (!document.fonts) return Promise.resolve();
-      var spec = '500 40px Manrope';
+      var spec = '800 40px Manrope';
       var done = document.fonts.ready.then(function() {
         if (document.fonts.check(spec)) return;
         return document.fonts.load(spec);
@@ -3464,98 +3082,84 @@
       return Promise.race([done, cap]);
     })();
 
-    // The strike, wound back: no line, the B in full ink, the T. invisible.
-    // Before first paint, with the rest of the hero, so the finished state
-    // the stylesheet describes is never seen before the gag has been played.
-    var strike = inner.querySelector('.hp-hero__strike');
-    var tail = inner.querySelector('.hp-hero__tail');
-    var ink3 = getComputedStyle(document.getElementById('hp-root')).getPropertyValue('--ink-3').trim() || 'rgba(255,255,255,0.4)';
-    if (strike) gsap.set(strike, { '--strike': 0, color: '#ffffff' });
-    if (tail) gsap.set(tail, { opacity: 0, y: '0.12em' });
-
     ready.then(function() {
-      var movers = wrapLines(inner);
-      // 140% of the line's own height, which clears the clip box and both of
-      // its paddings with a little to spare.
-      gsap.set(movers, { yPercent: 140 });
-      gsap.set(inner, { opacity: 1 });
+      gsap.set(name, { opacity: 1 });
 
-      // The gag's cue. The last line is visibly in place about 0.8s into
-      // its 1.15s tween, so with the stagger this lands just after the
-      // statement reads as settled, and before the band's own rise is done.
-      var cue = 0.18 + 0.1 * (movers.length - 1) + 0.85;
-
-      gsap.timeline({
+      var tl = gsap.timeline({
         defaults: { ease: 'expo.out', force3D: true },
         onComplete: function() {
-          unwrapLines(inner);
-          // Built here, not in initScrollScenes, and the entrance finishing is
-          // the reason. The exit writes opacity and y to the greeting and the
+          // The clip comes off, so the roll's letters can turn in front of
+          // the line box without being cut.
+          main.classList.remove('is-entering');
+          // Built here, not in initScrollScenes, and the entrance finishing
+          // is the reason. The exit writes opacity and y to the role and the
           // closing band, which are the two things the entrance is still
-          // writing to; created any earlier, a visitor who scrolls immediately
-          // has two timelines setting the same properties on the same elements
-          // on the same frame. Waiting for onComplete makes that impossible
-          // rather than unlikely. Nothing is lost by arriving late: a scrub
-          // trigger reads the scroll position when it is created.
-          // The story is built here for the same reason and one more: it
-          // transforms the sentence blocks, and until this moment those are
-          // flex boxes holding the entrance's clip boxes. Its first frame is
-          // the rest state, so a visitor already scrolling sees the sentences
-          // step to where the scroll says, not jump.
+          // writing to; created any earlier, a visitor who scrolls at once
+          // has two timelines setting the same properties on the same
+          // elements on the same frame. Nothing is lost by arriving late: a
+          // scrub trigger reads the scroll position when it is created.
+          // The roll is built here too: its first frame is the rest state
+          // primeRoll wrote, so a visitor already scrolling sees the tails
+          // turn to where the scroll says, not jump.
           initHeroStory();
           initHeroExit();
         }
-      })
-        .to([greeting], { opacity: 1, y: 0, duration: 1 }, 0)
-        // Four lines at desktop widths, six on a phone. 0.1s between them, so
-        // the statement is fully uncovered by about 1.4s and reads as settled
-        // at 1.0 — the expo ease has a line visibly in place well before its
-        // duration is up.
-        .to(movers, { yPercent: 0, duration: 1.15, stagger: 0.1 }, 0.18)
-        // The band arrives under a statement that is still arriving. The marks
-        // are already drifting inside it, so they come in with the line
-        // rather than one at a time.
-        .to(below, { opacity: 1, y: 0, duration: 1.1 }, 0.7)
-        // The gag, last. The line draws across the B left to right; the B
-        // steps back to reading grey as the line finishes; then T. writes
-        // in beside it, a short rise and a fade, the way the lines above
-        // arrived. Nothing here moves a glyph that has landed: the T. has
-        // held its width from the start.
-        .to(strike || {}, { '--strike': 1, duration: 0.35, ease: 'expo.out' }, cue)
-        .to(strike || {}, { color: ink3, duration: 0.3, ease: 'power1.out' }, cue + 0.22)
-        .to(tail || {}, { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, cue + 0.4);
+      });
+      tl
+        // Two lines, 0.14s apart, so the name is up by about 1.2s and reads
+        // as settled at 1.0 — the expo ease has a line visibly in place well
+        // before its duration is up.
+        .to(movers, { yPercent: 0, duration: 1.25, stagger: 0.14 }, 0)
+        .to(role, { opacity: 1, y: 0, duration: 1 }, 0.6);
+      if (method && !HERO_STORY) tl.to(method, { opacity: 1, y: 0, duration: 1 }, 0.75);
+      // The band arrives under a name that is still arriving. The marks are
+      // already drifting inside it, so they come in with the line.
+      tl.to(below, { opacity: 1, y: 0, duration: 1.1 }, 0.8);
     });
   }
 
-  // ---------- THE STORY ----------
-  // Scrubbed to the scroll across the track. Three sentences, three turns.
-  // At rest all three are forward, in full ink, as the entrance left them.
-  // The first beat is the other two stepping back — 120px along z and down
-  // to a third of their ink — so the first sentence is the one being said.
-  // Then a hand-over: the first steps back as the second comes forward; then
-  // the second back as the third comes forward. The third holds forward for
-  // the last stretch, and the hero lets go.
+  // ---------- THE ROLL ----------
+  // Scrubbed to the scroll across the track. The name holds, then its tails
+  // roll through the three pairs and home: four rolls, each a tenth of the
+  // track, with a hold between.
   //
-  // Each step is translateZ and opacity, nothing else: the perspective on the
-  // inner makes a step back read as a step back, and both are composited.
-  // The exit timeline that follows writes y and opacity to the same blocks,
-  // but over a range that begins exactly where this one ends, and this one
-  // leaves every block at a definite state (z −120 / 0.38 or z 0 / 1) so the
-  // exit's recorded starts are those values and not a half-step.
+  //   hold        0.00 – 0.08   Abbie Truman
+  //   roll 1      0.08 – 0.18   → Abstract Tangible,   hold to 0.30
+  //   roll 2      0.30 – 0.40   → Ambiguity Traction,  hold to 0.52
+  //   roll 3      0.52 – 0.62   → Assumption Truth,    hold to 0.74
+  //   roll home   0.74 – 0.84   → Abbie Truman,        hold to 1.00
   //
-  // Built from the entrance's onComplete, once the clip boxes are gone and
-  // the sentence blocks are plain blocks again.
-  var STORY_Z = -120;
-  var STORY_DIM = 0.38;
+  // Then the sticky releases and the exit runs.
+  //
+  // A roll is a flap per letter, split-flap fashion: the outgoing letter
+  // turns down about its bottom edge and the incoming one turns down into
+  // place about its top edge, each a little after the one to its left, so a
+  // word turns over from the initial outward. Transforms and opacity only;
+  // the perspective is on the variant, so a half-turned letter reads as a
+  // flap and not as a squashed glyph.
+  //
+  // Beside the name, the pair's two lines arrive a little ahead of its roll
+  // and leave a little ahead of the next, so the words are there as the
+  // name lands on them.
+  //
+  // Every tween states both ends, so a refresh part-way through — fonts
+  // landing, a window resize — re-records the same ends and not whatever a
+  // letter was holding at that moment; and none renders at build, because
+  // the rest state is primeRoll's. The exit that follows writes to the
+  // stage and the role, which nothing here touches: one owner per property.
+  var ROLL_AT = [0.08, 0.30, 0.52, 0.74];
+  var ROLL_FLAP = 0.055;     // one letter's turn, in track
+  var ROLL_STAGGER = 0.006;  // the next letter starts this much later
   function initHeroStory() {
     if (!HERO_STORY) return;
     var track = document.getElementById('hp-hero-track');
-    var blocks = track ? Array.prototype.slice.call(track.querySelectorAll('.hp-hero__sentence')) : [];
-    if (blocks.length < 2) return;
+    var tails = Array.prototype.slice.call(document.querySelectorAll('.hp-name__tail'));
+    var sides = Array.prototype.slice.call(document.querySelectorAll('.hp-hero__side-pair'));
+    if (!track || !tails.length) return;
 
     gsap.registerPlugin(ScrollTrigger);
     var tl = gsap.timeline({
-      defaults: { ease: 'power1.inOut', force3D: true },
+      defaults: { ease: 'none', force3D: true },
       scrollTrigger: {
         trigger: track,
         // Named because this may run before initScrollScenes sets the default
@@ -3569,125 +3173,53 @@
       }
     });
 
-    // The schedule, in fractions of the track. The first beat has a little
-    // dead scroll before it so the hold reads as a hold before anything
-    // moves; each hand-over is a short cross-move; the last sentence holds
-    // for the final 15%.
-    // Every tween states both ends, so a refresh part-way through — fonts
-    // landing, a window resize — re-records the same ends and not whatever
-    // the block was holding at that moment.
-    var n = blocks.length;
-    var step = 0.22;                       // one hand-over's length
-    var first = 0.06;                      // the first recede starts here
-    var BACK = { z: STORY_Z, opacity: STORY_DIM };
-    var FWD  = { z: 0, opacity: 1 };
-    function stepTo(el, from, to, at) {
-      // Not rendered at build: the rest state is the stylesheet's, and a
-      // from-state written early would put a block at the back before the
-      // scroll asked for it.
-      tl.fromTo(el, from, { z: to.z, opacity: to.opacity, duration: step, immediateRender: false }, at);
+    function letters(v) { return Array.prototype.slice.call(v.querySelectorAll('.hp-name__ch')); }
+    function flipOut(v, at) {
+      letters(v).forEach(function(ch, i) {
+        tl.fromTo(ch,
+          { rotationX: 0, opacity: 1, transformOrigin: '50% 100%' },
+          { rotationX: -90, opacity: 0, duration: ROLL_FLAP, ease: 'power1.in', immediateRender: false },
+          at + i * ROLL_STAGGER);
+      });
     }
-
-    // Beat one: everything but the first steps back.
-    blocks.slice(1).forEach(function(el) { stepTo(el, FWD, BACK, first); });
-    // Then the hand-overs, one per remaining sentence.
-    for (var i = 1; i < n; i++) {
-      var at = first + step + 0.04 + (i - 1) * (step + 0.06);
-      stepTo(blocks[i - 1], FWD, BACK, at);
-      stepTo(blocks[i], BACK, FWD, at);
-    }
-    // The hold to the end: a no-op that pads the timeline so the last
-    // hand-over does not land on the release.
-    tl.to({}, { duration: 0.01 }, 1 - 0.01);
-  }
-
-  // ---------- THE CORRIDOR ----------
-  // The strip moves left as the page scrolls down, from the first panel in
-  // the middle of the stage to the close in the middle of the stage, over
-  // the section's travel. Independent of the hero: its own trigger on its
-  // own section, and the hero's exit has finished before this begins to
-  // move, because the hero track ends where this section starts and the
-  // stage is stuck for the exit's whole range.
-  //
-  // The turn is a function of where a panel is, not of time. Each scrub
-  // update places every panel from the track's x: distance from the stage's
-  // centre in panel-widths, and from that a rotation about y, an opacity
-  // and a scale. In the middle: flat, full ink, full size. One panel-width
-  // to the right: turned 14° toward the viewer, a little over half ink,
-  // 94%. Mirrored on the left. Beyond a panel-width the turn and the shrink
-  // keep going, gently, so the far neighbours read as further away rather
-  // than stopping at the same angle as the near ones.
-  //
-  // Transform and opacity only, as with everything else on a scroll frame.
-  // Panel positions are measured on refresh, not per update; the per-update
-  // work is arithmetic and five transform writes.
-  function initCorridor() {
-    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-    var corridor = document.getElementById('hp-corridor');
-    if (!corridor || !HERO_STORY) return;
-    var stage = corridor.querySelector('.hp-corridor__stage');
-    var track = corridor.querySelector('.hp-corridor__track');
-    var panels = Array.prototype.slice.call(corridor.querySelectorAll('.hp-corridor__panel'));
-    if (!stage || !track || panels.length < 2) return;
-
-    gsap.registerPlugin(ScrollTrigger);
-
-    // Measured on refresh: each panel's centre in track coordinates, the
-    // panel width, the stage centre, and how far the track has to go for
-    // the last panel's centre to reach the stage's.
-    var centres = [], panelW = 1, stageMid = 0, travel = 0;
-    function measure() {
-      panelW = panels[0].offsetWidth || 1;
-      stageMid = stage.clientWidth / 2;
-      centres = panels.map(function(p) { return p.offsetLeft + p.offsetWidth / 2; });
-      travel = centres[centres.length - 1] - centres[0];
-    }
-    measure();
-
-    var TURN = 14, DIM = 0.45, SHRINK = 0.06;
-    function place(x) {
-      panels.forEach(function(p, i) {
-        var d = (centres[i] + x - stageMid) / panelW;   // panel-widths from centre
-        var a = Math.abs(d);
-        var sign = d < 0 ? -1 : 1;
-        var near = Math.min(a, 1);                       // the first panel-width
-        var far = Math.max(a - 1, 0);                    // and beyond it
-        gsap.set(p, {
-          // Right of centre turns negative (toward the viewer from the
-          // right), left turns positive; capped at 1.6 panel-widths.
-          rotationY: -TURN * sign * Math.min(a, 1.6),
-          opacity: Math.max(1 - DIM * near - 0.15 * far, 0.25),
-          scale: 1 - SHRINK * near - 0.03 * Math.min(far, 1),
-          force3D: true
-        });
+    function flipIn(v, at) {
+      letters(v).forEach(function(ch, i) {
+        tl.fromTo(ch,
+          { rotationX: 90, opacity: 0, transformOrigin: '50% 0%' },
+          { rotationX: 0, opacity: 1, duration: ROLL_FLAP, ease: 'power1.out', immediateRender: false },
+          at + i * ROLL_STAGGER);
       });
     }
 
-    var proxy = { x: 0 };
-    gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: {
-        trigger: corridor,
-        scroller: document.getElementById('hp-root'),
-        start: 'top top',
-        end: 'bottom bottom',
-        invalidateOnRefresh: true,
-        scrub: true,
-        onRefreshInit: measure,
-        onRefresh: function() { place(proxy.x); }
-      }
-    })
-      .to(proxy, {
-        x: function() { return -travel; },
-        duration: 1,
-        onUpdate: function() {
-          gsap.set(track, { x: proxy.x, force3D: true });
-          place(proxy.x);
-        }
-      }, 0);
+    tails.forEach(function(tail) {
+      var vs = Array.prototype.slice.call(tail.querySelectorAll('.hp-name__v'));
+      ROLL_AT.forEach(function(at, r) {
+        // Roll r takes variant r out and variant r+1 in; the last roll takes
+        // the third pair out and the name back in.
+        flipOut(vs[r % vs.length], at);
+        // The incoming letter starts a little after the outgoing one, so
+        // the two are not both edge-on at the same moment.
+        flipIn(vs[(r + 1) % vs.length], at + ROLL_FLAP * 0.45);
+      });
+    });
 
-    // First frame at rest, so nothing turns on first paint.
-    place(0);
+    // The side copy. Pair i is shown by roll i and leaves ahead of roll i+1;
+    // the home line is shown by the last roll and stays until the release.
+    sides.forEach(function(pair, i) {
+      var at = ROLL_AT[i];
+      var next = ROLL_AT[i + 1];
+      if (at == null) return;
+      tl.fromTo(pair, { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.07, ease: 'power2.out', immediateRender: false }, at - 0.01);
+      if (next != null) {
+        tl.fromTo(pair, { opacity: 1, y: 0 },
+          { opacity: 0, y: -8, duration: 0.05, ease: 'power2.in', immediateRender: false }, next - 0.035);
+      }
+    });
+
+    // The hold to the end: a no-op that pads the timeline so the last roll
+    // does not land on the release.
+    tl.to({}, { duration: 0.01 }, 1 - 0.01);
   }
 
   // The ambient light. Two motions on the second light and nothing at all on the
@@ -3759,150 +3291,111 @@
   }
 
   // ---------- THE HERO'S EXIT ----------
-  // The hero used to have no relationship to scroll at all: it played its
-  // entrance, ran the cursor field, and then slid off the top like any static
-  // block on the way to the wordmark. So the one screen every visitor is
-  // guaranteed to see was the one screen with nothing authored about leaving it,
-  // and the page's only piece of scroll-driven motion started after it.
-  //
-  // This puts the first screen of scroll on a scrubbed timeline, and the span it
-  // is scrubbed over is exactly the hero's own height — 'top top' to
-  // 'bottom top' — which is the same span the visitor spends getting rid of it.
-  // That number is not chosen, it is inherited: the wordmark's own timeline
-  // starts at its 'top top', which is the scroll position at which the hero's
-  // bottom edge reaches the top of the screen, so the last frame of this is the
-  // first frame of that and there is no seam to cover.
-  //
-  // What it does NOT do is touch the wordmark. Its motion, its scale values and
-  // its 420vh of scroll cost are locked, and a handoff built by starting its rows
-  // earlier would have spent that lock to save a join that closes on its own.
-  // Everything here is on the hero's side of the join.
+  // The first screen of scroll after the hero lets go is on a scrubbed
+  // timeline, and the span it is scrubbed over is exactly one screen — the
+  // same span the visitor spends getting rid of it. With the roll on, that
+  // screen begins when the track's bottom reaches the bottom of the window,
+  // which is the moment the stuck hero starts to move; without it, the hero
+  // is the track and this is the hero leaving from the top of the page.
   //
   // Two ideas, and only two:
   //
-  //   The block comes apart.  Each piece of copy carries a little extra upward
-  //     travel on top of the scroll, and the higher up the composition it sits
-  //     the more it gets — 120px for the greeting against 46px for the last
-  //     sentence. The intervals the hero was so carefully composed with open up
-  //     as it leaves, which is the difference between a composition departing
-  //     and a screenshot sliding.
+  //   The block comes apart.  Each piece carries a little extra upward travel
+  //     on top of the scroll, and the higher up the composition it sits the
+  //     more it gets — 84px for the name against 48px for the role. The
+  //     intervals the hero was composed with open up as it leaves, which is
+  //     the difference between a composition departing and a screenshot
+  //     sliding.
   //   Everything dissolves rather than sliding away.  Each piece fades out on
-  //     its own window, in the same order, and is gone before it would have
-  //     reached the top of the screen — so the hero ends as light going out
-  //     rather than as a block of type being pushed off an edge.
-  //     Not tuned to clear the nav pill, which was the first thing tried and is
-  //     not available: the statement's top line reaches the pill after about 18%
-  //     of this scroll, and a fade that finished by then would take the largest
-  //     copy on the page away almost as soon as the wheel moved. It crosses at
-  //     partial opacity instead, behind 28px of backdrop blur, which is the
-  //     thing that blur is there for.
+  //     its own window and is gone before it would have reached the top of
+  //     the screen — so the hero ends as light going out rather than as a
+  //     block of type being pushed off an edge. It crosses the nav pill at
+  //     partial opacity, behind 28px of backdrop blur, which is the thing
+  //     that blur is there for.
   //
   // Transforms and opacity only, nothing that triggers layout, for the reason
   // the wordmark states at length: this is a main-thread write racing a
   // compositor-thread scroll inside a custom scroller, and the only version of
   // that which does not shake is the one where every write is a composited
   // property.
+  //
+  // One owner per property: the roll writes to the letters and the side
+  // pairs, this writes to the stage that holds them, the role, the band and
+  // the light. Nothing is written twice.
   function initHeroExit() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
-    // No exit under reduced motion, and nothing to add for it either: with this
-    // off the hero simply scrolls, which is a correct way to leave a page and
-    // was the only way it left until now. Unreachable in practice — the
-    // entrance that calls this is itself behind the same check — and kept as the
-    // statement of intent for whoever calls it next.
+    // No exit under reduced motion, and nothing to add for it either: with
+    // this off the hero simply scrolls, which is a correct way to leave a
+    // page. Unreachable in practice — the entrance that calls this is itself
+    // behind the same check — and kept as the statement of intent.
     if (REDUCED) return;
 
     var hero = document.getElementById('hp-hero');
     if (!hero) return;
 
-    var greeting = hero.querySelector('.hp-hero__greeting');
-    var inner = hero.querySelector('.hp-hero__statement-inner');
+    var stage = hero.querySelector('.hp-hero__stage');
+    var role = hero.querySelector('.hp-hero__role');
     var lower = hero.querySelector('.hp-hero__lower');
     var glow = hero.querySelector('.hp-hero__glow');
-    var blocks = Array.prototype.slice.call(hero.querySelectorAll('.hp-hero__sentence'));
-    if (!greeting || !inner || !lower || !glow || !blocks.length) return;
+    if (!stage || !role || !lower || !glow) return;
 
     // Half travel below 900px, where the copy block is most of the screen and
     // the same displacement reads as the headline being yanked rather than
     // drifting. A function rather than a value read once, because
-    // invalidateOnRefresh re-evaluates function-based values on every refresh:
-    // dragging a window across the breakpoint, or a phone collapsing its browser
-    // chrome, re-derives the travel instead of keeping the figure it was built
-    // with.
+    // invalidateOnRefresh re-evaluates function-based values on every refresh.
     function travel(px) {
       return function() { return window.innerWidth <= 900 ? px * 0.55 : px; };
     }
 
-    // The statement recedes very slightly as it goes — 3.5%, which is not
-    // legible as a size change and is legible as depth. From its left edge, not
-    // its centre: every line in the hero is composed on one left axis, and a
-    // scale about the centre walks the statement off that axis on the way out.
-    // The blocks inside it carry their own y, which this scales along with
-    // everything else; 74px arrives as 71px and the ranking is what matters,
-    // not the figure.
-    gsap.set(inner, { transformOrigin: '0% 50%' });
+    // The name recedes very slightly as it goes — 3.5%, which is not legible
+    // as a size change and is legible as depth. From its left edge: every
+    // line in the hero is composed on one left axis, and a scale about the
+    // centre walks the name off that axis on the way out.
+    gsap.set(stage, { transformOrigin: '0% 50%' });
 
     var tl = gsap.timeline({
       // Linear for the travel. The extra displacement is a difference in rate
-      // against a scroll the visitor is metering themselves, and any ease on it
-      // is an opinion about how fast they are scrolling. The fades ease
-      // individually below, where an ease is about the copy and not the gesture.
+      // against a scroll the visitor is metering themselves, and any ease on
+      // it is an opinion about how fast they are scrolling. The fades ease
+      // individually below, where an ease is about the copy and not the
+      // gesture.
       defaults: { ease: 'none', force3D: true },
       scrollTrigger: {
-        // With the story on, the hero is stuck inside its track until the
-        // track's bottom reaches the bottom of the window, which is the moment
-        // it starts to move; the exit runs from there to the track leaving.
-        // Without the story the track is the hero and this is the hero
-        // leaving from the top of the page, as it always was.
         trigger: HERO_STORY ? document.getElementById('hp-hero-track') : hero,
         start: HERO_STORY ? 'bottom bottom' : 'top top',
         end: 'bottom top',
         invalidateOnRefresh: true,
-        // No smoothing, for the reason the wordmark gives: interpolation inside
-        // this scroller lets the thing drift on after the scroll has stopped.
+        // No smoothing, for the reason the wordmark gives: interpolation
+        // inside this scroller lets the thing drift on after the scroll has
+        // stopped.
         scrub: true
       }
     });
 
     tl
-      // The greeting: most travel, first out. It is the smallest line in the
-      // composition and the one whose job is finished soonest.
-      .to(greeting, { y: travel(-120), duration: 1 }, 0)
-      .to(greeting, { opacity: 0, duration: 0.44, ease: 'power1.in' }, 0)
-      .to(inner, { scale: 0.965, duration: 1 }, 0)
-      // The closing band is the rule, the word and the arrow. It used to be
-      // gone after the first fifth of this scroll, which read as the cue
-      // vanishing the moment the wheel moved, while the sentences above were
-      // still on their way out. It now fades on the same kind of run as the
-      // statement, so this edge leaves with the copy rather than ahead of it.
-      // Downward, against everything else: it is the bottom edge of the
-      // composition and it stays behind rather than joining the exit.
+      // The name and whatever is said beside it: most travel, and the fade
+      // that defines the exit.
+      .to(stage, { y: travel(-84), duration: 1 }, 0)
+      .to(stage, { scale: 0.965, duration: 1 }, 0)
+      .to(stage, { opacity: 0, duration: 0.56, ease: 'power1.in' }, 0)
+      // The role, under it: a little less travel, a little later gone.
+      .to(role, { y: travel(-48), duration: 1 }, 0)
+      .to(role, { opacity: 0, duration: 0.6, ease: 'power1.in' }, 0)
+      // The closing band. Downward, against everything else: it is the
+      // bottom edge of the composition and it stays behind rather than
+      // joining the exit.
       .to(lower, { y: travel(18), duration: 1 }, 0)
       .to(lower, { opacity: 0, duration: 0.58, ease: 'power1.in' }, 0)
-      // The lights going down. The glow contracts toward its own focal point and
-      // dims out over most of the range, so the page is already dark by the time
-      // the wordmark's first row arrives on it — the mark is a title card, and it
-      // lands better on black than on the back of the hero's own light.
+      // The lights going down. The glow contracts toward its own focal point
+      // and dims out over most of the range, so the page is already dark by
+      // the time the wordmark's first row arrives on it — the mark is a title
+      // card, and it lands better on black than on the back of the hero's
+      // own light.
       .to(glow, { scale: 0.8, duration: 1 }, 0)
       .to(glow, { opacity: 0, duration: 0.85, ease: 'power2.in' }, 0);
-
-    // Per sentence rather than per hard-coded first and second, so the ranking is
-    // a rule about position in the block and not a list that has to be rewritten
-    // the next time the statement gains or loses a sentence. The top block gets
-    // the most travel and the earliest fade, the last block the least and the
-    // latest, and everything between is interpolated — a one-sentence statement
-    // takes the top of both ranges and nothing has to change here.
-    blocks.forEach(function(el, i) {
-      var t = blocks.length > 1 ? i / (blocks.length - 1) : 0;
-      tl.to(el, { y: travel(-74 + 28 * t), duration: 1 }, 0);
-      // The blocks' ink belongs to the story when it is on: it leaves the
-      // first two at a third and the third at full, and a per-block fade here
-      // would record its start as whatever the block held when this was
-      // built, then snap it there as the exit began. So with the story on the
-      // statement fades as one, on the inner, and the blocks keep their
-      // standing as they go.
-      if (!HERO_STORY) tl.to(el, { opacity: 0, duration: 0.52 + 0.08 * t, ease: 'power1.in' }, 0);
-    });
-    if (HERO_STORY) tl.fromTo(inner, { opacity: 1 }, { opacity: 0, duration: 0.56, ease: 'power1.in' }, 0);
+    // The method list, visible only with the roll off, is left to scroll:
+    // on a phone the hero is taller than the screen, and a fade timed to the
+    // hero's height would take the pairs away while they were being read.
   }
 
   // One reveal recipe for every section below the fold.
@@ -3977,11 +3470,14 @@
           defaults: { force3D: true },
           scrollTrigger: {
             trigger: wordmark,
-            // With the story on, the rows start sliding while the section is
-            // still arriving under the corridor's stage, so the mark is
-            // already in motion as the corridor lets go, and the hand-over is
-            // one movement rather than a stop and a start. The same timeline
-            // over a screen more of scroll; the slide reads the same.
+            // With the roll on, the hero is a sticky stage and its exit runs
+            // over the screen of scroll in which this section arrives under
+            // it. Starting here, the rows slide in while the name is still
+            // receding, so the hand-over is one movement rather than a stop
+            // and a start; at `top top` the section would sit empty under
+            // the fading name for a whole screen before anything moved. The
+            // same timeline over a screen more of scroll; the slide reads
+            // the same.
             start: HERO_STORY ? 'top bottom' : 'top top',
             end: 'bottom bottom',
             invalidateOnRefresh: true,
@@ -4473,7 +3969,6 @@
       initClientLinks();
       initHeroLight();     // independent of the entrance: the room is lit first
       initScrollScenes();
-      initCorridor();      // after the scenes: its trigger is measured against theirs
       initCaseTransitions();
       initCursor();
 
