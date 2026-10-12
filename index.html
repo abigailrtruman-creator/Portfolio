@@ -3040,7 +3040,7 @@
       '</g>' +
       '<g class="hb-layer" data-layer="dims">' +
         dimH(WL, WR, 34.4, '2572') +
-        dimV(15.2, 49.30, 58.64, '252') +
+        dimV(15.2, 49.30, 58.64, '148') +
       '</g>';
 
     var ground = '<g class="hb-layer" data-layer="ground">' + rect(WL, HB, WR, BOT, 'hb-ground') + '</g>';
@@ -3123,8 +3123,11 @@
         row(63.10, 80.29, 93.10, LN) + row(63.10, 76.00, 94.61, LN));
 
     // The one measurement left on the wire once it is drawn: the height of a
-    // payment option, in the design's own pixels.
-    var dims2 = '<g class="hb-layer" data-layer="dims2">' + dimV(15.2, 83.83, 87.89, '52') + '</g>';
+    // payment option. This and the Contact box's 148 are the design's own
+    // numbers, supplied by the owner from the source file, not the heights
+    // measured off the export — the export is a scaled render and its pixel
+    // counts are nobody's spec.
+    var dims2 = '<g class="hb-layer" data-layer="dims2">' + dimV(15.2, 83.83, 87.89, '64') + '</g>';
 
     return '<svg class="hp-build__wire" viewBox="0 0 3024 2708" preserveAspectRatio="none" aria-hidden="true" focusable="false">' +
       grid + ground + els + dims2 + '</svg>';
