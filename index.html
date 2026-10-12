@@ -317,6 +317,37 @@
   }
   .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
+  /* The sound switch. A button wearing the link's exact clothes, so the three
+     read as one row; the only things reset are the ones a button brings of
+     its own. Its icon is a 12px mark in the arrow's grey: two arcs when the
+     sound is on, one slash when it is off, chosen by aria-pressed so the
+     state the screen reader hears and the state the eye sees are one value.
+     Hidden where the build cannot run: below 901px there is no stage and so
+     nothing this could ever switch, and a control that does nothing is worse
+     than none. Reduced motion keeps it — the preference is still hers to set
+     for the next visit on a machine where it does play. */
+  .hp-nav__sound {
+    background: none;
+    border: 0;
+    margin: 0;
+    cursor: pointer;
+    line-height: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .hp-nav__sound:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: -2px; }
+  .hp-nav__sound-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.55);
+    transition: color 0.25s ease;
+  }
+  .hp-nav__sound:hover .hp-nav__sound-icon { color: #fff; }
+  .hp-nav__sound-icon svg { width: 12px; height: 12px; display: block; }
+  .hp-nav__sound[aria-pressed="true"] .hp-nav__sound-off,
+  .hp-nav__sound[aria-pressed="false"] .hp-nav__sound-on { display: none; }
+  @media (max-width: 900px) { .hp-nav__sound { display: none; } }
 
   /* ---------- HERO ----------
      All three pieces of copy are one block: the greeting reads into the
@@ -920,7 +951,14 @@
      stationary inside this compositor-scrolled container, where a main-thread
      write races a compositor-thread scroll; on a stationary element that race
      is visible as jitter, on a scale it is not. */
-  .hp-cases {
+  /* The tokens are shared with .hp-build, which holds card 01 while it is
+     being built and has to size, round and space that card exactly as this
+     section sizes the other four — the build's last frame IS card 01 at rest,
+     and a token read here and restated there would be a seam waiting to open.
+     Only the tokens are shared; the section's own box follows in its own
+     rule, because the build is a full-width stage and not a column. */
+  .hp-cases,
+  .hp-build {
     /* The card is constrained from the height again, and by a different thing
        than it used to be. The old cap here existed so three cards could stack
        inside one viewport; there is no stack, so that reason went. What replaced
@@ -1007,13 +1045,27 @@
        source for the description's legibility floor. */
     --sp-desc-floor: 19px;
     --sp-desc-ratio: 0.03636;    /* 64 / 1760 */
-
+  }
+  .hp-cases {
     max-width: var(--shell);
     margin: 0 auto;
     /* Top padding clears the fixed nav pill, which is 106px deep at desktop, 82
        at tablet and 72 on a phone, so the first card does not arrive already
        underneath it. */
     padding: clamp(80px, 12vh, 132px) var(--pad-x) clamp(24px, 6vh, 80px);
+  }
+  /* With the build on, card 01 sits in the stage above and this section opens
+     on card 02, which has to arrive at the carousel's own interval below it.
+     The stage is a full screen with the card centred in it, so the band under
+     the card — half of what the screen has over the card's height — is
+     structural, and the only way card 02 can sit one --card-gap below card 01
+     is for this section to start that far up inside the stage's last screen.
+     The band it overlaps is empty black, and the stage holds no pointer
+     targets there, so nothing is covered. The pill-clearing top padding goes
+     with it: the first card here is no longer the first card. */
+  .hp-cases--build {
+    margin-top: calc(var(--card-w-px) * 0.8955 / 2 - 50vh);
+    padding-top: var(--card-gap);
   }
   .hp-cases__list { min-width: 0; }
 
@@ -1280,6 +1332,144 @@
     text-align: center;
     white-space: nowrap;
   }
+
+  /* ---------- THE BUILD: card 01, from lines to UI ----------
+     After "Selected work", the Boots card does not arrive — it is built.
+     Hairlines across the screen, the layout's own grid, the checkout's panels
+     as wireframe, a few lines of its markup, then the screenshot resolves
+     through the wire and the navy card closes round it. The last frame IS
+     card 01: the real article, its real image from its own srcset, its chips
+     and sentence, which then scrolls on into the carousel as any card does.
+     Same mechanism as the wordmark: a tall section, a sticky stage inside
+     it, GSAP mapping scroll onto a timeline and writing transform, opacity,
+     dash and clip and nothing that lays out.
+
+     One coordinate system. Every wire rect lives in an SVG whose viewBox is
+     the artwork's own pixel grid, laid over the card's own image at the same
+     box, so the wire of a panel is the panel to the pixel and there is no
+     alignment to keep. Only the opening hairlines sit outside that box; they
+     run the width of the screen and are measured off the card's rect by the
+     script on every refresh.
+
+     The default state of everything here is the finished card. The wires,
+     the guides and the code are hidden until the script has
+     built the timeline and adds is-live, so a page with no GSAP, or a
+     timeline that throws, shows card 01 and never a half-built one. */
+  .hp-build {
+    --build-travel: 320vh;
+    position: relative;
+    width: 100%;
+    height: calc(100vh + var(--build-travel));
+    background: #0a0a0c;
+  }
+  .hp-build__stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    /* The card is the only child the stage lays out; the guides and the
+       wire are absolute over it. Paint containment keeps
+       the per-frame SVG repaints inside this box. */
+    contain: paint;
+  }
+  .hp-build .hp-case {
+    width: var(--card-w-px);
+    margin: 0;
+  }
+  /* The image is what the whole sequence resolves into. Only opacity is
+     ever animated on it; a clip to its window is set once and dropped once. */
+  .hp-build .hp-case__art { will-change: opacity; }
+  /* The card's navy, as a layer the size of the card behind the image. The
+     window resolves first with the image clipped to it; then this fades up
+     across the whole frame, one even fade, so the card closes round the
+     window rather than rising out of it. Once it is in, the image's clip is
+     dropped in one frame — the image carries the same navy — and the
+     finished card is the image alone, as on every other card. */
+  .hp-build__navy {
+    position: absolute;
+    inset: 0;
+    background: var(--card-bg);
+    border-radius: var(--card-r);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .hp-build__guides,
+  .hp-build__wire {
+    position: absolute;
+    pointer-events: none;
+    overflow: visible;
+    visibility: hidden;
+  }
+  .hp-build__guides { inset: 0; width: 100%; height: 100%; }
+  .hp-build__wire { inset: 0; width: 100%; height: 100%; }
+  .hp-build.is-live .hp-build__guides,
+  .hp-build.is-live .hp-build__wire { visibility: visible; }
+  /* Hairlines are one device pixel whatever the viewBox scale, and snapped
+     rather than anti-aliased. Circles and the chevron keep their curves. */
+  .hp-build__wire *,
+  .hp-build__guides * { vector-effect: non-scaling-stroke; }
+  .hb-wire, .hb-ol, .hb-dash, .hb-dim, .hb-guide, .hb-tick, .hb-accent {
+    fill: none;
+    stroke: rgba(252,249,245,0.55);
+    stroke-width: 1;
+    stroke-linecap: butt;
+    shape-rendering: crispEdges;
+  }
+  .hb-guide { stroke: rgba(252,249,245,0.28); }
+  .hb-ol, .hb-dash { stroke: rgba(252,249,245,0.35); }
+  .hb-dash { stroke-dasharray: 16 12; }
+  .hb-dim, .hb-tick { stroke: rgba(252,249,245,0.45); }
+  .hb-accent { stroke: rgba(252,249,245,0.9); stroke-width: 2; }
+  .hb-bar { fill: rgba(252,249,245,0.14); shape-rendering: crispEdges; }
+  .hb-col { fill: rgba(252,249,245,0.06); shape-rendering: crispEdges; }
+  .hb-margin { fill: rgba(252,249,245,0.025); shape-rendering: crispEdges; }
+  .hb-ground, .hb-fill { fill: rgba(252,249,245,0.04); shape-rendering: crispEdges; }
+  .hb-round { shape-rendering: geometricPrecision; }
+  .hb-radio { fill: rgba(252,249,245,0.9); }
+  .hb-dot { fill: #fcf9f5; }
+  .hb-label {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    fill: rgba(252,249,245,0.55);
+    font-size: 11px;
+    letter-spacing: 0.02em;
+  }
+  /* In the wire's viewBox the type scales with the card: 46 units is 10.5px
+     on the 691px card a 1440x820 window lays out. */
+  .hp-build__wire .hb-label { font-size: 46px; }
+
+  /* The lines of markup, typed over the wire's left column. Mono, small,
+     cream at 70 with the tags held back to 45 so what reads first is the
+     words. A near-black backing with the card's own radius halved, because
+     the lines sit over a wireframe and would otherwise be competing with it.
+     The box and every line are opacity only; the width and the type are
+     fixed so no line ever wraps mid-build. */
+  .hp-build__code {
+    position: absolute;
+    left: 16.01%;
+    top: 49.3%;
+    width: 38.19%;
+    height: 42%;
+    padding: 1.8cqw 1.45cqw;
+    overflow: hidden;
+    border-radius: calc(var(--card-r) * 0.5);
+    border: 1px solid rgba(252,249,245,0.1);
+    background: rgba(10,10,12,0.93);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    /* 12px on the 691px card a 1440x820 window lays out, 13px from a 748px
+       card up, and no smaller than 10px on the narrowest window the build
+       runs on. The box is the panel, so the type has to follow the card for
+       a 33-character line to keep fitting. */
+    font-size: clamp(10px, 1.737cqw, 13px);
+    line-height: 1.55;
+    letter-spacing: -0.015em;
+    color: rgba(252,249,245,0.7);
+    white-space: pre;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .hp-build__code-line { display: block; opacity: 0; }
+  .hp-build__code .t { color: rgba(252,249,245,0.45); }
 
   /* ---------- FOOTER ---------- */
   .hp-footer {
@@ -2049,11 +2239,173 @@
 
 <script>
 (function() {
-  var VERSION = 'v63';
+  var VERSION = 'v68';
   console.log('HP ' + VERSION + ' loading...');
   document.documentElement.classList.add('hp-active');
 
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Whether card 01 is built in front of the reader or simply shown. Decided
+  // once, in init(), the way the wordmark decides: a pointer-sized screen with
+  // room for a card and a stage around it, motion allowed, GSAP present. It
+  // is read before the markup is built because it changes the markup — card
+  // 01 either lives in the stage or at the top of the carousel — and a page
+  // that re-decided on resize would have to move a card between sections.
+  var BUILD_ON = false;
+  function decideBuild() {
+    return !REDUCED &&
+      typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' &&
+      window.matchMedia('(min-width: 901px) and (min-height: 561px)').matches;
+  }
+
+  // ---------- SOUND ----------
+  // No audio files. Every sound is synthesised at the moment it is needed from
+  // two voices: a burst of filtered white noise eight to twenty milliseconds
+  // long, and a sine blip that slides down in pitch over twenty to sixty. A
+  // tick is one of each; a chapter change is a lower pair; the UI resolving is
+  // two clean notes, E6 then B6. That is the character of metic.studio's build,
+  // which the owner asked for by name, and it is reproduced here from how
+  // theirs works rather than by recording it: master at 0.55, each voice at
+  // 0.03–0.2, the pitch jittered a few percent so two ticks are never the
+  // same tick, and each sound throttled so a fast scroll thins them instead
+  // of stacking them.
+  //
+  // Browsers will not start audio until the page has been touched, so the
+  // context is created, or resumed, only from a gesture: the first pointerdown
+  // or keydown on the document, or the switch in the nav. Nothing plays while
+  // the tab is hidden, nothing plays under reduced motion, and the preference
+  // is kept in localStorage under at-sound, on by default.
+  var SOUND = (function() {
+    var KEY = 'at-sound';
+    var ctx = null, master = null, noiseBuf = null, enabled = null;
+    var last = {};
+    var THROTTLE = { tick: 45, chapter: 300, found: 600, on: 200 };
+
+    function isOn() {
+      if (enabled === null) {
+        try { enabled = window.localStorage.getItem(KEY) !== '0'; }
+        catch (e) { enabled = true; }
+      }
+      return enabled;
+    }
+    function context() {
+      if (!ctx) {
+        var AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        ctx = new AC();
+        master = ctx.createGain();
+        master.gain.value = 0.55;
+        master.connect(ctx.destination);
+      }
+      if (ctx.state === 'suspended') ctx.resume().catch(function() {});
+      return ctx;
+    }
+    // A sine (or the type given) at f, sliding to `to` if set, with a fast
+    // exponential attack and an exponential decay to silence over dur.
+    function tone(c, t, o) {
+      var at = t + (o.at || 0);
+      var osc = c.createOscillator();
+      osc.type = o.type || 'sine';
+      osc.frequency.setValueAtTime(o.f, at);
+      if (o.to) osc.frequency.exponentialRampToValueAtTime(o.to, at + o.dur);
+      var g = c.createGain();
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime(o.gain, at + (o.attack || 0.002));
+      g.gain.exponentialRampToValueAtTime(0.0001, at + o.dur);
+      osc.connect(g);
+      g.connect(master);
+      osc.start(at);
+      osc.stop(at + o.dur + 0.03);
+    }
+    // A slice of one second of white noise, read from a random offset so the
+    // grain differs each time, through a filter, with the same envelope.
+    function hiss(c, t, o) {
+      if (!noiseBuf) {
+        noiseBuf = c.createBuffer(1, c.sampleRate, c.sampleRate);
+        var d = noiseBuf.getChannelData(0);
+        for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      }
+      var at = t + (o.at || 0);
+      var src = c.createBufferSource();
+      src.buffer = noiseBuf;
+      var f = c.createBiquadFilter();
+      f.type = o.type || 'bandpass';
+      f.frequency.setValueAtTime(o.f || 2000, at);
+      if (o.to) f.frequency.exponentialRampToValueAtTime(o.to, at + o.dur);
+      f.Q.value = o.q || 1;
+      var g = c.createGain();
+      g.gain.setValueAtTime(0.0001, at);
+      g.gain.exponentialRampToValueAtTime(o.gain, at + (o.attack || 0.002));
+      g.gain.exponentialRampToValueAtTime(0.0001, at + o.dur);
+      src.connect(f);
+      f.connect(g);
+      g.connect(master);
+      src.start(at, Math.random() * 0.4);
+      src.stop(at + o.dur + 0.03);
+    }
+    function jitter() { return 1 + (Math.random() - 0.5) * 0.1; }
+
+    var VOICES = {
+      // A hairline landing, a column dropping, a wire rect unfolding.
+      tick: function(c, t) {
+        var r = jitter();
+        hiss(c, t, { dur: 0.012, gain: 0.06, type: 'highpass', f: 5000 });
+        tone(c, t, { f: 2600 * r, to: 1900 * r, dur: 0.022, gain: 0.03 });
+      },
+      // A state boundary crossed: the beat between two chapters.
+      chapter: function(c, t) {
+        var r = jitter();
+        tone(c, t, { f: 1400 * r, to: 1000 * r, dur: 0.03, gain: 0.04 });
+        hiss(c, t, { dur: 0.01, gain: 0.04, type: 'highpass', f: 3000 });
+      },
+      // The screenshot resolving through the wire: E6, then B6 over it.
+      found: function(c, t) {
+        tone(c, t, { f: 1318.5, dur: 0.22, gain: 0.07, attack: 0.005 });
+        tone(c, t, { type: 'triangle', f: 1318.5, dur: 0.22, gain: 0.025 });
+        tone(c, t, { at: 0.13, f: 1975.5, dur: 0.42, gain: 0.06, attack: 0.005 });
+        tone(c, t, { at: 0.13, type: 'triangle', f: 1975.5, dur: 0.42, gain: 0.02 });
+      },
+      // The switch going on: two rising notes, so it answers the hand.
+      on: function(c, t) {
+        tone(c, t, { f: 880, dur: 0.09, gain: 0.05 });
+        tone(c, t, { at: 0.09, f: 1320, dur: 0.16, gain: 0.05 });
+      }
+    };
+
+    function play(name) {
+      if (REDUCED || !isOn() || !ctx || document.hidden || !VOICES[name]) return;
+      var now = performance.now();
+      var gap = THROTTLE[name] || 30;
+      if (last[name] !== undefined && now - last[name] < gap) return;
+      last[name] = now;
+      if (ctx.state === 'suspended') ctx.resume().catch(function() {});
+      try { VOICES[name](ctx, ctx.currentTime + 0.001); } catch (e) {}
+    }
+    function set(on) {
+      if (isOn() === on) return;
+      enabled = on;
+      try { window.localStorage.setItem(KEY, on ? '1' : '0'); } catch (e) {}
+      // Called from the switch's click, which is the gesture the context
+      // needs, so switching on is also what unlocks it.
+      if (on) { context(); play('on'); }
+    }
+
+    return {
+      unlock: function() { if (isOn()) context(); },
+      play: play,
+      enabled: isOn,
+      set: set,
+      toggle: function() { set(!isOn()); }
+    };
+  })();
+
+  // The nav switch's mark: two arcs for on, a slash for off. Both are in the
+  // file and aria-pressed picks one, see .hp-nav__sound.
+  var SOUND_ICON = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path class="hp-nav__sound-on" d="M10 8.5a5 5 0 0 1 0 7"/>' +
+    '<path class="hp-nav__sound-on" d="M14 4.8a10 10 0 0 1 0 14.4"/>' +
+    '<path class="hp-nav__sound-off" d="M6.5 17.5l11-11"/>' +
+    '</svg>';
 
   var ARROW_NE = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   var ARROW_UP = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -2592,6 +2944,234 @@
     }).join(', ');
   }
 
+  // ---------- THE BUILD'S DRAWINGS ----------
+  // The wireframe of the Boots card, in the card image's own pixel grid: the
+  // viewBox is 3024 x 2708, the file's size, and every number below is a
+  // percentage of that file measured off it (window top at 36.52%, header
+  // baseline 47.23%, the Credit / Debit radio at 18.6% x 98.1% and so on).
+  // Authored in percentages and converted once, so a rect can be checked
+  // against the overlay the measurements were taken from without arithmetic.
+  //
+  // Groups carry data-el and unfold in the order they appear here, which is
+  // reading order; the grid and the dimension lines are separate layers so
+  // the timeline can fade them as a set. Nothing here is positioned by the
+  // script: a refresh changes the card's size and the viewBox follows.
+  function buildWireSvg() {
+    function X(p) { return Math.round(p * 30.24); }
+    function Y(p) { return Math.round(p * 27.08); }
+    function rect(x0, y0, x1, y1, cls, rx) {
+      return '<rect class="' + cls + '" x="' + X(x0) + '" y="' + Y(y0) +
+        '" width="' + (X(x1) - X(x0)) + '" height="' + (Y(y1) - Y(y0)) + '"' +
+        (rx ? ' rx="' + rx + '"' : '') + '/>';
+    }
+    function bar(x0, y0, x1, y1) { return rect(x0, y0, x1, y1, 'hb-bar', 12); }
+    function hline(x0, x1, y, cls) {
+      return '<path class="' + (cls || 'hb-wire') + '" d="M' + X(x0) + ' ' + Y(y) + 'H' + X(x1) + '"/>';
+    }
+    function vline(x, y0, y1, cls) {
+      return '<path class="' + (cls || 'hb-wire') + '" d="M' + X(x) + ' ' + Y(y0) + 'V' + Y(y1) + '"/>';
+    }
+    function circle(cx, cy, r, cls) {
+      return '<circle class="' + cls + '" cx="' + X(cx) + '" cy="' + Y(cy) + '" r="' + r + '"/>';
+    }
+    function label(x, y, text, anchor) {
+      return '<text class="hb-label" x="' + X(x) + '" y="' + Y(y) + '" text-anchor="' + (anchor || 'middle') + '">' + text + '</text>';
+    }
+    function group(name, inner, unfold) {
+      return '<g class="hb-el" data-el="' + name + '" data-unfold="' + (unfold || 'y') + '">' + inner + '</g>';
+    }
+    // A horizontal dimension: line, two end ticks, a number above it.
+    function dimH(x0, x1, y, text) {
+      return '<g class="hb-dimg">' + hline(x0, x1, y, 'hb-dim') +
+        vline(x0, y - 0.4, y + 0.4, 'hb-dim') + vline(x1, y - 0.4, y + 0.4, 'hb-dim') +
+        label((x0 + x1) / 2, y - 0.6, text) + '</g>';
+    }
+    function dimV(x, y0, y1, text) {
+      return '<g class="hb-dimg">' + vline(x, y0, y1, 'hb-dim') +
+        hline(x - 0.4, x + 0.4, y0, 'hb-dim') + hline(x - 0.4, x + 0.4, y1, 'hb-dim') +
+        label(x - 0.7, (y0 + y1) / 2 + 0.35, text, 'end') + '</g>';
+    }
+
+    // Every number below was read off case-boots-3024 with a pixel scan, in
+    // percentages of the file: the window runs 226 to 2798 of 3024, the two
+    // panels 484 to 1639 and 1783 to 2540, the panels' padding is 42px, and
+    // so on. 103 runs the rects off the bottom of the card, where the artwork
+    // is itself cut, so no bottom edge is ever drawn.
+    var WL = 7.47, WR = 92.53, WT = 36.52, BOT = 103;
+    var CHR = 39.92;                     // the browser chrome's bottom edge
+    var HB = 47.27;                      // the checkout header's baseline
+    var CL = 16.01, CR = 54.20;          // the checkout's left panel
+    var SL = 58.96, SR = 83.99;          // the summary panel
+    var GUT = SL - CR;                   // the gutter between them, 144px
+    var INS = 1.38;                      // a panel's padding, 42px
+    var TL = CL + INS, TR = CR - INS;    // where type starts and stops, left
+    var UL = SL + INS, UR = SR - INS;    // and in the summary
+    var OPT = 35.85;                     // Delivery's second inner column
+    var RAD = 19.22, LAB = 20.30;        // a radio's centre; its label's start
+
+    // The grid is built outward from the two panels, not laid over them: the
+    // gutter is the real gutter, the left panel is three columns parted by
+    // that gutter, the right panel two, and the strips either side are
+    // margins, not columns. The columns come out a shade apart in width,
+    // 9.56% and 10.14% of the card, which is not visible at this alpha; what
+    // is visible is that every panel edge is a column edge.
+    var c3 = (CR - CL - 2 * GUT) / 3;
+    var c2 = (SR - SL - GUT) / 2;
+    var cols = rect(WL, WT, CL, BOT, 'hb-margin');
+    for (var i = 0; i < 3; i++) cols += rect(CL + i * (c3 + GUT), WT, CL + i * (c3 + GUT) + c3, BOT, 'hb-col');
+    for (var j = 0; j < 2; j++) cols += rect(SL + j * (c2 + GUT), WT, SL + j * (c2 + GUT) + c2, BOT, 'hb-col');
+    cols += rect(SR, WT, WR, BOT, 'hb-margin');
+
+    var grid = '<g class="hb-layer" data-layer="cols">' + cols + '</g>' +
+      '<g class="hb-layer" data-layer="outlines">' +
+        '<path class="hb-ol" data-draw d="M' + X(CL) + ' ' + Y(BOT) + 'V' + Y(49.3) + 'H' + X(CR) + 'V' + Y(BOT) + '"/>' +
+        '<path class="hb-ol" data-draw d="M' + X(SL) + ' ' + Y(BOT) + 'V' + Y(49.3) + 'H' + X(SR) + 'V' + Y(BOT) + '"/>' +
+      '</g>' +
+      '<g class="hb-layer" data-layer="boxes">' +
+        rect(CL, 49.30, CR, 58.64, 'hb-dash') +
+        rect(CL, 60.16, CR, 75.96, 'hb-dash') +
+        rect(CL, 77.47, CR, BOT, 'hb-dash') +
+        rect(SL, 49.30, SR, 97.78, 'hb-dash') +
+      '</g>' +
+      '<g class="hb-layer" data-layer="dims">' +
+        dimH(WL, WR, 34.4, '2572') +
+        dimV(15.2, 49.30, 58.64, '252') +
+      '</g>';
+
+    var ground = '<g class="hb-layer" data-layer="ground">' + rect(WL, HB, WR, BOT, 'hb-ground') + '</g>';
+
+    // A row of placeholder type: one bar, at the measured left edge, as tall
+    // as the line it stands for. Headings are 1.5% of the card tall, body
+    // lines 1.05%, and every bar in a panel starts at the same inset.
+    function row(x0, x1, yc, h) { return bar(x0, yc - h / 2, x1, yc + h / 2); }
+    var HD = 1.5, LN = 1.05;
+
+    var els =
+      group('window',
+        rect(WL, WT, WR, BOT, 'hb-wire', 36) +
+        hline(WL, WR, CHR) +
+        circle(8.90, 38.20, 11, 'hb-wire hb-round') + circle(10.05, 38.20, 11, 'hb-wire hb-round') + circle(11.19, 38.20, 11, 'hb-wire hb-round')) +
+      group('url', rect(32.41, 37.33, 67.56, 39.03, 'hb-wire', 23)) +
+      group('header',
+        hline(WL, WR, HB) +
+        bar(10.09, 41.84, 15.87, 45.24) +
+        rect(17.39, 42.95, 18.25, 44.31, 'hb-wire', 4) +
+        row(18.98, 26.59, 43.59, 0.92)) +
+      group('contact',
+        rect(CL, 49.30, CR, 58.64, 'hb-wire', 8) +
+        hline(CL, CR, 54.02) +
+        row(TL, 23.05, 51.65, HD) +
+        row(TL, 27.22, 56.48, LN)) +
+      group('summary',
+        rect(SL, 49.30, SR, 97.78, 'hb-wire', 8) +
+        row(UL, 70.24, 51.83, HD) +
+        row(77.38, UR, 51.70, LN) +
+        hline(SL, SR, 54.02) + hline(SL, SR, 71.86) + hline(SL, SR, 81.44) + hline(SL, SR, 86.02)) +
+      group('products',
+        rect(60.58, 56.43, 64.68, 61.56, 'hb-wire', 6) +
+        row(65.74, 75.36, 56.87, LN) + row(65.74, 73.00, 58.49, LN) + row(65.74, 71.00, 60.99, LN) +
+        row(79.76, UR, 56.87, LN) + row(80.19, UR, 58.49, LN) +
+        rect(60.58, 64.84, 64.68, 69.97, 'hb-wire', 6) +
+        row(65.74, 74.44, 65.44, LN) + row(65.74, 73.00, 67.14, LN) + row(65.74, 71.00, 69.67, LN) +
+        row(79.76, UR, 65.44, LN) + row(80.19, UR, 67.14, LN)) +
+      group('delivery',
+        rect(CL, 60.16, CR, 75.96, 'hb-wire', 8) +
+        hline(CL, CR, 64.94) +
+        row(TL, 33.50, 62.67, HD) +
+        row(50.99, TR, 62.67, LN) +
+        row(TL, 25.33, 67.41, LN) + row(TL, 22.95, 69.24, LN) + row(TL, 25.66, 70.76, LN) + row(TL, 26.26, 72.20, LN) + row(TL, 23.05, 73.69, LN) +
+        row(OPT, 43.09, 67.41, LN) + row(OPT, 43.15, 69.24, LN) + row(OPT, 49.64, 70.76, LN) + row(OPT, 37.50, 72.20, LN)) +
+      group('totals',
+        row(UL, 63.82, 74.15, LN) + row(79.76, UR, 74.15, LN) +
+        row(UL, 63.76, 76.81, LN) + row(80.19, UR, 76.81, LN) +
+        row(UL, 67.72, 79.29, LN) + row(80.82, UR, 79.29, LN) +
+        row(UL, 70.01, 83.83, LN) + row(79.93, UR, 83.83, LN) +
+        row(UL, 62.96, 88.41, LN) + row(79.63, UR, 88.41, LN)) +
+      group('payment',
+        rect(CL, 77.47, CR, BOT, 'hb-wire', 8) +
+        hline(CL, CR, 82.26) +
+        row(TL, 23.78, 79.99, HD)) +
+      // The three options share one height, 110px of the file, one inset
+      // for the mark at the left and one for the label beside it. Gift Card
+      // sits above a rule; the two radios are 27px apart.
+      group('gift',
+        rect(TL, 83.83, TR, 87.89, 'hb-wire', 8) +
+        rect(18.40, 85.26, 19.58, 86.46, 'hb-wire', 4) +
+        row(LAB, 24.07, 85.86, LN) +
+        '<path class="hb-wire hb-round" d="M' + X(50.70) + ' ' + Y(85.55) + 'l' + (X(51.25) - X(50.70)) + ' ' + (Y(86.22) - Y(85.55)) + 'l' + (X(51.80) - X(51.25)) + ' ' + (Y(85.55) - Y(86.22)) + '"/>' +
+        hline(TL, TR, 89.44), 'x') +
+      group('apple',
+        rect(TL, 90.99, TR, 95.05, 'hb-wire', 8) +
+        circle(RAD, 93.02, 18, 'hb-wire hb-round') +
+        row(LAB, 24.64, 93.02, LN) +
+        rect(50.20, 92.39, 51.95, 93.65, 'hb-wire', 6)) +
+      group('card',
+        rect(TL, 96.05, TR, BOT, 'hb-accent', 8) +
+        circle(RAD, 98.10, 18, 'hb-wire hb-round') +
+        circle(RAD, 98.10, 9, 'hb-radio hb-round') +
+        row(LAB, 28.27, 98.10, LN) +
+        rect(46.23, 97.38, 47.98, 98.71, 'hb-wire', 4) + rect(48.18, 97.38, 49.90, 98.71, 'hb-wire', 4) + rect(50.03, 97.38, 51.88, 98.71, 'hb-wire', 4)) +
+      group('note',
+        rect(UL, 91.17, UR, 96.27, 'hb-fill', 8) +
+        rect(UL, 91.17, UR, 96.27, 'hb-wire', 8) +
+        rect(61.34, 92.43, 62.50, 93.46, 'hb-wire', 4) +
+        row(63.10, 80.29, 93.10, LN) + row(63.10, 76.00, 94.61, LN));
+
+    // The one measurement left on the wire once it is drawn: the height of a
+    // payment option, in the design's own pixels.
+    var dims2 = '<g class="hb-layer" data-layer="dims2">' + dimV(15.2, 83.83, 87.89, '52') + '</g>';
+
+    // The one point of full light in the sequence. It starts where the first
+    // hairline starts, at the window's top-left corner; moves to where a
+    // column edge crosses the header's baseline; and ends on the Credit /
+    // Debit radio as the real one appears under it. Its radius is set by the
+    // script so it is 6px on screen at every card size; its stops are in the
+    // card's grid, carried on the element, so a resize moves nothing.
+    var dot = '<circle class="hb-dot hb-round" cx="' + X(WL) + '" cy="' + Y(WT) + '" r="13"' +
+      ' data-stop-1="' + (X(CR) - X(WL)) + ' ' + (Y(HB) - Y(WT)) + '"' +
+      ' data-stop-2="' + (X(RAD) - X(WL)) + ' ' + (Y(98.10) - Y(WT)) + '"/>';
+
+    return '<svg class="hp-build__wire" viewBox="0 0 3024 2708" preserveAspectRatio="none" aria-hidden="true" focusable="false">' +
+      grid + ground + els + dims2 + dot + '</svg>';
+  }
+
+  // The lines of code, typed over the wire. Not the checkout's layout but
+  // what makes it usable with a screen reader or a keyboard: a labelled
+  // nav, labels tied to their inputs, a fieldset with a legend round the
+  // payment options, the total announced when it changes, a focus ring on
+  // the button. Each line is cut short enough that none wraps in the left
+  // panel at the smallest card the build runs on. Tags, attribute names and
+  // braces carry the quieter class; values and the words read first.
+  var CODE_LINES = [
+    '<span class="t">&lt;nav aria-label=</span>"Checkout steps"<span class="t">&gt;</span>',
+    '<span class="t">&lt;label for=</span>"email"<span class="t">&gt;</span>Email<span class="t">&lt;/label&gt;</span>',
+    '<span class="t">&lt;fieldset&gt;</span>',
+    '  <span class="t">&lt;legend&gt;</span>Payment method<span class="t">&lt;/legend&gt;</span>',
+    '  <span class="t">&lt;input type=</span>"radio"<span class="t"> id=</span>"card"<span class="t">&gt;</span>',
+    '  <span class="t">&lt;label for=</span>"card"<span class="t">&gt;</span>Card<span class="t">&lt;/label&gt;</span>',
+    '<span class="t">&lt;p aria-live=</span>"polite"<span class="t">&gt;</span>£59.98<span class="t">&lt;/p&gt;</span>',
+    '<span class="t">button:focus-visible {</span>',
+    '  <span class="t">outline:</span> 2px solid<span class="t">; }</span>',
+    '<span class="t">&lt;button type=</span>"submit"<span class="t">&gt;</span>Pay<span class="t">&lt;/button&gt;</span>'
+  ];
+  function buildCodeHtml() {
+    return '<div class="hp-build__code" aria-hidden="true">' +
+      CODE_LINES.map(function(l) { return '<span class="hp-build__code-line">' + (l || ' ') + '</span>'; }).join('') +
+      '</div>';
+  }
+
+  // The screen-wide hairlines and the registration marks. Their geometry is
+  // the card's rect in the stage, which only the script knows, so the paths
+  // are created empty here and given their d by layoutGuides on every refresh.
+  function buildGuidesSvg() {
+    var s = '<svg class="hp-build__guides" aria-hidden="true" focusable="false">';
+    for (var i = 0; i < 5; i++) s += '<path class="hb-guide" data-guide="' + i + '"/>';
+    for (var j = 0; j < 4; j++) {
+      s += '<g class="hb-reg" data-reg="' + j + '"><path class="hb-tick"/><text class="hb-label"></text></g>';
+    }
+    return s + '</svg>';
+  }
+
   // One component for all three cards. Everything that differs between them is
   // data: the artwork, the copy, the tags and the ink. Adding a fourth project
   // is a change to PROJECTS and nothing else.
@@ -2612,6 +3192,13 @@
 
   function buildCase(p, i) {
     var c = CARDS[p.card];
+    // Card 01 with the build on: its image is the sequence's final frame and
+    // is a screen and a half below the fold at load, so it is fetched now
+    // rather than lazily — at low priority, behind the hero's own files —
+    // and the wire and the lines of code are laid inside its link, over the
+    // image, in the same box. Inside the link rather than beside it so the
+    // hover lift carries them with the card they are drawing.
+    var built = BUILD_ON && i === 0;
     // Both as shares of the card's WIDTH, because every other measurement on
     // the card is in cqw and mixing in a height-relative number would make the
     // phone crop drift with each image's aspect.
@@ -2631,6 +3218,9 @@
       // name and then an instruction, which is what it has to be read aloud as.
       '<a class="hp-case__link" href="' + p.href + '" ' +
         'aria-label="' + p.title + ', read the case study">' +
+        // The build's navy layer first, so it paints under the head and the
+        // picture both; see .hp-build__navy.
+        (built ? '<div class="hp-build__navy" aria-hidden="true"></div>' : '') +
         // Head before the picture. On a wide card it is positioned into the
         // cleared band, so the order is not what places it; on a phone the two
         // are in flow and the sentence has to come first. The carousel scales
@@ -2651,9 +3241,12 @@
           '" sizes="' + ART_SIZES +
           '" srcset="' + artSrcset(p.art) +
           '" width="' + p.art.w + '" height="' + p.art.h +
-          '" alt="' + p.art.alt + '" loading="lazy" decoding="async">' +
+          '" alt="' + p.art.alt + '"' +
+          (built ? ' loading="eager" fetchpriority="low"' : ' loading="lazy"') +
+          ' decoding="async">' +
         '</div>' +
         '</div>' +
+        (built ? buildWireSvg() + buildCodeHtml() : '') +
       '</a>' +
     '</article>';
   }
@@ -2674,6 +3267,12 @@
             '<span>LinkedIn</span>' +
             '<span class="hp-nav__arrow" aria-hidden="true">' + ARROW_NE + '</span>' +
           '</a>' +
+          // The sound switch, after the two links. aria-pressed is the stored
+          // preference, so a return visit opens with the mark already right.
+          '<button type="button" class="hp-nav__link hp-nav__sound" data-sound aria-pressed="' + (SOUND.enabled() ? 'true' : 'false') + '">' +
+            '<span>Sound</span>' +
+            '<span class="hp-nav__sound-icon" aria-hidden="true">' + SOUND_ICON + '</span>' +
+          '</button>' +
         '</div>' +
       '</nav>';
 
@@ -2741,10 +3340,25 @@
         '</ol>' +
       '</div>';
 
-    var casesHtml = '<section class="hp-cases" id="hp-cases" aria-label="Selected work">' +
+    // Every card is built from the one list either way. With the build on,
+    // the first is lifted into the stage after the wordmark and the carousel
+    // opens on the second; the index pill still counts all five, because it
+    // counts .hp-case wherever it stands, and the stage card is one.
+    var cardsHtml = PROJECTS.map(buildCase);
+    var buildHtml = '';
+    if (BUILD_ON) {
+      buildHtml = '<section class="hp-build" id="hp-build">' +
+        '<div class="hp-build__stage">' +
+          buildGuidesSvg() +
+          cardsHtml.shift() +
+        '</div>' +
+      '</section>';
+    }
+
+    var casesHtml = '<section class="hp-cases' + (BUILD_ON ? ' hp-cases--build' : '') + '" id="hp-cases" aria-label="Selected work">' +
       countHtml +
       '<div class="hp-cases__list">' +
-        PROJECTS.map(buildCase).join('') +
+        cardsHtml.join('') +
       '</div>' +
     '</section>';
 
@@ -2769,7 +3383,7 @@
       '</footer>';
 
     var html = '<div class="hp-root" id="hp-root">' +
-      navHtml + heroHtml + wordmarkHtml + casesHtml + footerHtml +
+      navHtml + heroHtml + wordmarkHtml + buildHtml + casesHtml + footerHtml +
     '</div>';
 
     document.body.insertAdjacentHTML('afterbegin', html);
@@ -2788,6 +3402,46 @@
     nav.classList.add('is-ready');
     // After the 0.9s arrival, every toggle takes the shorter duration.
     setTimeout(function() { nav.classList.add('is-live'); }, 1000);
+  }
+
+  // The first touch of the page is what lets audio start, so it is caught once,
+  // in the capture phase, from either input, and the context is made then. A
+  // wheel is not a gesture the browser counts, so a visitor who only scrolls
+  // hears nothing until they click — the switch itself is one such click.
+  function initSoundToggle() {
+    var btn = document.querySelector('[data-sound]');
+    function unlock() {
+      SOUND.unlock();
+      document.removeEventListener('pointerdown', unlock, true);
+      document.removeEventListener('keydown', unlock, true);
+    }
+    document.addEventListener('pointerdown', unlock, true);
+    document.addEventListener('keydown', unlock, true);
+    if (!btn) return;
+    btn.addEventListener('click', function() {
+      SOUND.toggle();
+      btn.setAttribute('aria-pressed', SOUND.enabled() ? 'true' : 'false');
+    });
+  }
+
+  // Where a card is read to be: the scroll position that puts its centre on
+  // the middle of the screen. For the card in the build stage that is not its
+  // layout position, which is the top of a 420vh section with the card still
+  // in lines, but the point the stage releases at — the finished card, at rest.
+  function cardRestTop(root, card) {
+    var stage = card.closest('.hp-build');
+    if (stage) {
+      return Math.max(0, layoutTopOf(root, stage) + stage.offsetHeight - root.clientHeight);
+    }
+    var rootRect = root.getBoundingClientRect();
+    var cardRect = card.getBoundingClientRect();
+    var center = root.scrollTop + (cardRect.top - rootRect.top) + cardRect.height / 2;
+    return Math.max(0, center - root.clientHeight / 2);
+  }
+  function layoutTopOf(root, el) {
+    var y = 0;
+    for (var n = el; n && n !== root; n = n.offsetParent) y += n.offsetTop;
+    return y;
   }
 
   // The pill leaves while the reader is scrolling down and comes back the
@@ -2868,11 +3522,7 @@
         var card = document.querySelector('.hp-case--' + link.getAttribute('data-case'));
         if (!card) return;
         e.preventDefault();
-        var rootRect = root.getBoundingClientRect();
-        var cardRect = card.getBoundingClientRect();
-        var center = root.scrollTop + (cardRect.top - rootRect.top) + cardRect.height / 2;
-        var top = Math.max(0, center - root.clientHeight / 2);
-        root.scrollTo({ top: top, behavior: REDUCED ? 'auto' : 'smooth' });
+        root.scrollTo({ top: cardRestTop(root, card), behavior: REDUCED ? 'auto' : 'smooth' });
       });
     });
   }
@@ -2897,9 +3547,14 @@
 
     function go(smooth) {
       if (window.location.hash !== '#work') return;
-      var top = root.scrollTop
-        + cases.getBoundingClientRect().top
-        - root.getBoundingClientRect().top;
+      // With the build on, the work starts with card 01 at rest in its stage,
+      // not with card 02 at the top of this section.
+      var first = document.querySelector('.hp-build .hp-case');
+      var top = first
+        ? cardRestTop(root, first)
+        : root.scrollTop
+          + cases.getBoundingClientRect().top
+          - root.getBoundingClientRect().top;
       smooth = smooth && !REDUCED;
       root.scrollTo({ top: top, behavior: smooth ? 'smooth' : 'auto' });
       // Where it went, which is not always where it was sent: an instant scroll
@@ -3314,6 +3969,285 @@
     });
   }
 
+  // ---------- THE BUILD ----------
+  // Card 01 assembled in front of the reader: lines, a grid, the wireframe,
+  // some of its code, the screenshot, the card. One timeline, scrubbed over
+  // the 320vh the section is taller than its stage, and the same two rules as
+  // the carousel: nothing is pinned by script — the stage is position:sticky —
+  // and no scroll frame writes anything that lays out. What is written is
+  // transform and opacity, plus stroke-dasharray on the SVG lines (how a line
+  // is drawn). The one image is clipped to its window once and unclipped
+  // once; the clip is never tweened.
+  //
+  // Times below are fractions of the travel. Each state has a stretch where
+  // nothing new starts, and each hands over to the next across three to five
+  // hundredths, which is metic's rhythm and the reason it reads as building
+  // rather than as a slideshow:
+  //
+  //   1  Lines         0.00–0.11   five hairlines across the screen
+  //   2  A grid        0.11–0.24   the panels' columns and margins, their
+  //                                outlines, the section boxes; the
+  //                                hairlines trim
+  //   3  Components    0.24–0.46   the wire unfolds in reading order
+  //   4  Code          0.46–0.54   ten lines typed over the left panel
+  //   5  The checkout  0.54–0.72   the screenshot resolves through the wire
+  //   6  The card      0.72–0.93   the navy closes round the window, then
+  //                                the sentence arrives
+  //      hold          0.93–1.00   card 01 at rest, then the stage releases
+  //
+  // The states are not on the timeline and nothing on screen names them;
+  // onUpdate turns progress into a state only to mark the change with a
+  // sound. The ticks come from the same place: a list of the fractions at
+  // which things land, and each frame asks which of them the progress
+  // crossed since the last one, in either direction, never one per frame.
+  function initBuildScene(root) {
+    var section = document.getElementById('hp-build');
+    if (!section) return;
+    var stage = section.querySelector('.hp-build__stage');
+    var card = section.querySelector('.hp-case');
+    var img = card && card.querySelector('.hp-case__art');
+    var wire = card && card.querySelector('.hp-build__wire');
+    var code = card && card.querySelector('.hp-build__code');
+    var navy = card && card.querySelector('.hp-build__navy');
+    var guides = section.querySelector('.hp-build__guides');
+    if (!stage || !card || !img || !wire || !guides || !navy) return;
+
+    var lines = Array.prototype.slice.call(guides.querySelectorAll('.hb-guide'));
+    var regs = Array.prototype.slice.call(guides.querySelectorAll('.hb-reg'));
+    var dot = wire.querySelector('.hb-dot');
+    // The dot's two later stops, as offsets from where it is drawn.
+    function stop(n) {
+      var v = (dot.getAttribute('data-stop-' + n) || '0 0').split(' ');
+      return { x: parseFloat(v[0]), y: parseFloat(v[1]) };
+    }
+    var colsLayer = wire.querySelector('[data-layer="cols"]');
+    var cols = colsLayer.querySelectorAll('rect');
+    var outlines = Array.prototype.slice.call(wire.querySelectorAll('[data-layer="outlines"] path'));
+    var boxes = wire.querySelector('[data-layer="boxes"]');
+    var dims = wire.querySelector('[data-layer="dims"]');
+    var dims2 = wire.querySelector('[data-layer="dims2"]');
+    var ground = wire.querySelector('[data-layer="ground"]');
+    var els = Array.prototype.slice.call(wire.querySelectorAll('.hb-el'));
+    var bars = wire.querySelectorAll('.hb-el .hb-bar, .hb-el .hb-fill');
+    var strokes = wire.querySelectorAll('.hb-el .hb-wire, .hb-el .hb-accent, .hb-el .hb-radio');
+    var codeLines = code ? code.querySelectorAll('.hp-build__code-line') : [];
+    var head = [card.querySelector('.hp-case__tags')]
+      .concat(Array.prototype.slice.call(card.querySelectorAll('.hp-case__line')))
+      .filter(Boolean);
+
+    // ---- the five hairlines, measured off the card ----
+    // The card's box is read from its computed size and the stage's, not from
+    // getBoundingClientRect, because after the stage releases the card carries
+    // the carousel's scale and a rect would measure the scaled box. These are
+    // laid out on every refresh, before the triggers re-measure.
+    //
+    // Each line is a dash pattern "0 0 x 999999": a dash of x from the path's
+    // start and then nothing. Drawing is x growing from 0 to the length;
+    // trimming to the card is the pattern becoming "0 a b 999999", a gap to
+    // the card's edge and a dash across it; retracting is that dash closing
+    // on its own centre. Everything a line ever does is one property, and a
+    // line whose tween has not yet been reached is "0 0 0 999999" — nothing —
+    // whatever the window has done since.
+    var LEN = [0, 0, 0, 0, 0];
+    var TRIM = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
+    var FAR = 999999;
+    function layoutGuides() {
+      var vw = stage.clientWidth, vh = stage.clientHeight;
+      var cs = getComputedStyle(card);
+      var w = parseFloat(cs.width), h = parseFloat(cs.height);
+      var l = (vw - w) / 2, t = (vh - h) / 2;
+      var yWin = t + h * (989 / 2708);     // the browser window's top edge
+      var yHead = t + h * (1279 / 2708);   // the checkout header's baseline
+      var xGut = l + w * 0.566;            // the gutter between its two columns
+      // d, length, gap before the kept span, kept span
+      var defs = [
+        ['M0 ' + yWin + 'H' + vw, vw, l, w],
+        ['M' + l + ' 0V' + vh, vh, t, h],
+        ['M' + (l + w) + ' ' + vh + 'V0', vh, vh - (t + h), h],
+        ['M' + vw + ' ' + yHead + 'H0', vw, vw - (l + w), w],
+        ['M' + xGut + ' 0V' + vh, vh, yWin, t + h - yWin]
+      ];
+      lines.forEach(function(ln, i) {
+        ln.setAttribute('d', defs[i][0]);
+        LEN[i] = defs[i][1];
+        TRIM[i] = [defs[i][2], defs[i][3]];
+      });
+      // Registration marks at the four corners, coordinates in the file's px.
+      var corners = [
+        [l, t, 'end', -12, -8, 'x 0 · y 0'],
+        [l + w, t, 'start', 12, -8, 'x 3024 · y 0'],
+        [l, t + h, 'end', -12, 18, 'x 0 · y 2708'],
+        [l + w, t + h, 'start', 12, 18, 'x 3024 · y 2708']
+      ];
+      regs.forEach(function(g, i) {
+        var c = corners[i];
+        g.querySelector('.hb-tick').setAttribute('d', 'M' + (c[0] - 7) + ' ' + c[1] + 'H' + (c[0] + 7) + 'M' + c[0] + ' ' + (c[1] - 7) + 'V' + (c[1] + 7));
+        var tx = g.querySelector('.hb-label');
+        tx.setAttribute('x', c[0] + c[3]);
+        tx.setAttribute('y', c[1] + c[4]);
+        tx.setAttribute('text-anchor', c[2]);
+        tx.textContent = c[5];
+      });
+      // 6px on screen whatever the card's size.
+      if (dot) dot.setAttribute('r', (3 * 3024 / w).toFixed(2));
+    }
+    function dashNone() { return '0 0 0 ' + FAR; }
+    function dashFull(i) { return function() { return '0 0 ' + LEN[i] + ' ' + FAR; }; }
+    function dashTrim(i) { return function() { return '0 ' + TRIM[i][0] + ' ' + TRIM[i][1] + ' ' + FAR; }; }
+    function dashGone(i) { return function() { return '0 ' + (TRIM[i][0] + TRIM[i][1] / 2) + ' 0 ' + FAR; }; }
+
+    // ---- the state everything starts from ----
+    // Set here, not in the stylesheet, so that a page whose timeline never
+    // gets built shows the card. Everything hidden below is something the
+    // timeline is about to show.
+    layoutGuides();
+    gsap.set(lines, { strokeDasharray: dashNone() });
+    gsap.set(regs, { opacity: 0 });
+    gsap.set(cols, { scaleY: 0, transformOrigin: '50% 0%' });
+    gsap.set(outlines, { strokeDasharray: dashNone() });
+    gsap.set([boxes, dims, dims2, ground], { opacity: 0 });
+    els.forEach(function(el) {
+      if (el.getAttribute('data-unfold') === 'x') gsap.set(el, { scaleX: 0, transformOrigin: '0% 50%' });
+      else gsap.set(el, { scaleY: 0, transformOrigin: '50% 0%' });
+    });
+    // The image is clipped to its browser window — the navy above and either
+    // side of it cut away, the window's own top corners kept — for the whole
+    // build, and unclipped in one frame at the end; the clip is never tweened.
+    gsap.set(img, { opacity: 0, clipPath: 'inset(36.52% 7.47% 0% 7.47% round 1.19% 1.19% 0 0)' });
+    gsap.set(navy, { opacity: 0 });
+    gsap.set(head, { opacity: 0, y: 24 });
+    if (dot) gsap.set(dot, { x: 0, y: 0, transformOrigin: '50% 50%' });
+    section.classList.add('is-live');
+
+    // ---- the timeline ----
+    var landings = [];
+    function land(f) { landings.push(f); }
+    var STATES = [0, 0.11, 0.24, 0.46, 0.54, 0.72];
+    var state = 0;
+    var prev = -1;
+    var FOUND_AT = 0.63;
+
+    function onUpdate(self) {
+      var p = self.progress;
+      var s = 1;
+      for (var i = 1; i < STATES.length; i++) if (p >= STATES[i]) s = i + 1;
+      if (s !== state) {
+        var first = state === 0;
+        state = s;
+        if (!first) SOUND.play('chapter');
+      }
+      if (prev >= 0 && p !== prev) {
+        var lo = Math.min(prev, p), hi = Math.max(prev, p);
+        for (var j = 0; j < landings.length; j++) {
+          if (landings[j] > lo && landings[j] <= hi) { SOUND.play('tick'); break; }
+        }
+        if (prev < FOUND_AT && p >= FOUND_AT) SOUND.play('found');
+      }
+      prev = p;
+    }
+
+    var tl = gsap.timeline({
+      defaults: { ease: 'none', force3D: true, immediateRender: false },
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: true,
+        invalidateOnRefresh: true,
+        onUpdate: onUpdate
+      }
+    });
+
+    // 1 — Lines. Alternating directions, a hair apart.
+    lines.forEach(function(ln, i) {
+      tl.fromTo(ln, { strokeDasharray: dashNone() }, { strokeDasharray: dashFull(i), duration: 0.03 }, 0.012 * i);
+      land(0.03 + 0.012 * i);
+    });
+    tl.to(regs, { opacity: 1, duration: 0.03, stagger: 0.005 }, 0.07);
+
+    // 2 — A grid. The margin, five columns and the other margin drop from
+    // the top, left to right; the two panels' outlines draw; the section
+    // boxes and the measurements fade in; the hairlines give up the parts of
+    // themselves outside the card.
+    cols.forEach(function(c, i) {
+      tl.to(c, { scaleY: 1, duration: 0.025 }, 0.11 + 0.008 * i);
+      land(0.135 + 0.008 * i);
+    });
+    outlines.forEach(function(o, i) {
+      var L = o.getTotalLength();
+      tl.fromTo(o, { strokeDasharray: dashNone() }, { strokeDasharray: '0 0 ' + L + ' ' + FAR, duration: 0.04 }, 0.15 + 0.01 * i);
+      land(0.19 + 0.01 * i);
+    });
+    tl.to(boxes, { opacity: 1, duration: 0.04 }, 0.17);
+    land(0.21);
+    tl.to(dims, { opacity: 1, duration: 0.03 }, 0.19);
+    lines.forEach(function(ln, i) {
+      tl.fromTo(ln, { strokeDasharray: dashFull(i) }, { strokeDasharray: dashTrim(i), duration: 0.05 }, 0.18);
+    });
+    if (dot) tl.to(dot, { x: stop(1).x, y: stop(1).y, duration: 0.04, ease: 'power2.inOut' }, 0.12);
+
+    // 3 — Components. Each group unfolds from its top edge (the select from
+    // its left) in reading order; the dashed boxes hand over to the solid
+    // panels; the page ground fills; the columns fall back.
+    els.forEach(function(el, i) {
+      var at = 0.24 + 0.012 * i;
+      var to = el.getAttribute('data-unfold') === 'x' ? { scaleX: 1 } : { scaleY: 1 };
+      to.duration = 0.03;
+      to.ease = 'power1.out';
+      tl.to(el, to, at);
+      land(at + 0.03);
+    });
+    tl.to(boxes, { opacity: 0, duration: 0.06 }, 0.24);
+    tl.to(ground, { opacity: 1, duration: 0.06 }, 0.30);
+    tl.to(dims2, { opacity: 1, duration: 0.03 }, 0.37);
+    tl.to(colsLayer, { opacity: 0.33, duration: 0.06 }, 0.36);
+    if (dot) tl.to(dot, { x: stop(2).x, y: stop(2).y, duration: 0.04, ease: 'power2.inOut' }, 0.36);
+
+    // 4 — Code. The box, then the lines one at a time, then all of it goes as
+    // the screenshot starts to come through.
+    if (code) {
+      tl.to(code, { opacity: 1, duration: 0.015 }, 0.46);
+      codeLines.forEach(function(cl, i) {
+        tl.to(cl, { opacity: 1, duration: 0.004 }, 0.47 + 0.005 * i);
+        land(0.474 + 0.005 * i);
+      });
+      tl.to(code, { opacity: 0, duration: 0.03 }, 0.53);
+    }
+
+    // 5 — The Boots checkout. The image resolves through the wire — bars go
+    // first so the real type is not fighting grey blocks, strokes follow.
+    // The image is still masked to its window; the navy comes next.
+    tl.to(img, { opacity: 1, duration: 0.09, ease: 'power1.inOut' }, 0.54);
+    tl.to(bars, { opacity: 0, duration: 0.06 }, 0.54);
+    tl.to(strokes, { opacity: 0, duration: 0.08 }, 0.56);
+    tl.to([colsLayer, dims, dims2, ground], { opacity: 0, duration: 0.04 }, 0.54);
+    outlines.forEach(function(o) { tl.to(o, { opacity: 0, duration: 0.04 }, 0.54); });
+    if (dot) tl.to(dot, { scale: 0.5, opacity: 0, duration: 0.04 }, 0.66);
+
+    // 6 — The card. The navy fades up behind the window across the whole
+    // frame, one even fade, while the hairlines close and the registration
+    // marks go; once it is fully in, the chips and the three lines arrive
+    // the way every reveal on this page arrives. The image's clip is dropped
+    // at 0.90 in a single frame: the image is the same navy where the layer
+    // was showing, so nothing changes and the card at rest is the image
+    // alone, as every other card is.
+    tl.to(navy, { opacity: 1, duration: 0.08, ease: 'power1.inOut' }, 0.72);
+    lines.forEach(function(ln, i) {
+      tl.fromTo(ln, { strokeDasharray: dashTrim(i) }, { strokeDasharray: dashGone(i), duration: 0.06 }, 0.72);
+    });
+    tl.to(regs, { opacity: 0, duration: 0.03 }, 0.72);
+    tl.to(head, { opacity: 1, y: 0, duration: 0.06, stagger: 0.012, ease: 'power2.out' }, 0.85);
+    tl.set(img, { clipPath: 'none' }, 0.90);
+    // Holds the timeline's length at 1, so 0.93–1.00 is the rest.
+    tl.to({ v: 0 }, { v: 1, duration: 0.01 }, 0.99);
+
+    landings.sort(function(a, b) { return a - b; });
+
+    // The hairlines are measured off the card, so they are re-laid before
+    // every refresh re-measures the triggers.
+    ScrollTrigger.addEventListener('refreshInit', layoutGuides);
+  }
+
   function initScrollScenes() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
       console.warn('GSAP / ScrollTrigger unavailable — scenes static');
@@ -3386,6 +4320,11 @@
           }, 2.35);
       }
     }
+
+    // ---------- THE BUILD ----------
+    // Only present when BUILD_ON put the section in the page; see initBuildScene.
+    var buildEl = document.getElementById('hp-build');
+    if (buildEl) initBuildScene(root);
 
     // ---------- CASE CARDS: the carousel ----------
     // The card nearest the middle of the screen is at full size and the ones
@@ -3472,11 +4411,15 @@
 
     if (counter && casesEl) {
       ScrollTrigger.create({
-        trigger: casesEl,
+        // With the build on, the first card is the one in the stage, and the
+        // pill has to be counting it from the moment its lines start.
+        trigger: buildEl || casesEl,
         // The pill comes on once the first card is properly on screen, after
         // the receded wordmark has left the top of it, so the two are never
-        // showing at once.
-        start: 'top 72%',
+        // showing at once. The stage is a full screen with the card in the
+        // middle of it, so for the stage that moment is earlier in its own
+        // travel: a quarter of the way up, the mark above it is gone.
+        start: buildEl ? 'top 25%' : 'top 72%',
         // A function, so it is re-read on the refresh that follows a resize or
         // a rotation, both of which move the clamped inset the pill sits on.
         //
@@ -3486,8 +4429,11 @@
         // be right for a readout centred on the screen, which this is not — it
         // would leave five numerals lit over the footer with nothing left to
         // count for the better part of a screen.
+        // As a scroll position rather than 'bottom bottom-=' of the trigger,
+        // because the trigger is the stage when the build is on and the far
+        // end is still the last card's; the arithmetic is the same.
         end: function() {
-          return 'bottom bottom-=' + countPillInset();
+          return layoutTop(casesEl) + casesEl.offsetHeight - root.clientHeight + countPillInset();
         },
         onToggle: function(self) {
           counter.classList.toggle('is-on', self.isActive);
@@ -3547,7 +4493,42 @@
       return y;
     }
 
+    // The scroll position at which the build's stage lets go: its section's
+    // bottom at the bottom of the screen, the card centred and finished.
+    function releaseAt() {
+      return layoutTop(buildEl) + buildEl.offsetHeight - root.clientHeight;
+    }
+
     cards.forEach(function(card, i) {
+      var staged = !!(buildEl && buildEl.contains(card));
+      if (staged) {
+        // The card in the stage is held at full size and full light by its
+        // own timeline for the whole of the build, so it only takes the
+        // carousel's leaving half: from the release, after the same quarter
+        // of a half-travel the other cards rest for past the middle, to its
+        // bottom crossing the top. Same ease, same ends, so card 02 arriving
+        // under it at 0.85 is the arrival the other four get.
+        gsap.fromTo(card,
+          { scale: 1, opacity: 1 },
+          {
+            scale: fx.s, opacity: fx.o, ease: fx.outEase, immediateRender: false, force3D: true,
+            scrollTrigger: {
+              start: function() { return releaseAt() + (root.clientHeight + card.offsetHeight) / 8; },
+              end: function() { return releaseAt() + (root.clientHeight + card.offsetHeight) / 2; },
+              invalidateOnRefresh: true,
+              scrub: true
+            }
+          });
+        // It owns the count from the moment its stage is half-way up the
+        // screen, through the whole build, to its bottom passing the middle.
+        ScrollTrigger.create({
+          start: function() { return layoutTop(card) - root.clientHeight / 2; },
+          end: function() { return releaseAt() + card.offsetHeight / 2; },
+          onEnter: function() { setCount(i + 1); },
+          onEnterBack: function() { setCount(i + 1); }
+        });
+        return;
+      }
       if (!REDUCED) {
         carousel(card, {
           trigger: card,
@@ -3838,8 +4819,12 @@
 
   function init() {
     try {
+      // Before build(): it decides where card 01 is rendered. The deferred
+      // GSAP files have run by DOMContentLoaded, so their presence is known.
+      BUILD_ON = decideBuild();
       build();
       revealNav();
+      initSoundToggle();
       initNavHide();
       initBackToTop();
       initWorkAnchor();
