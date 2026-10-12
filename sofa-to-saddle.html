@@ -111,7 +111,7 @@
   @property --nav-ink  { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
   @property --nav-dim  { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.55); }
   @property --nav-wash { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.06); }
-  @property --cta-bg   { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+  @property --cta-bg   { syntax: "<color>"; inherits: true; initial-value: #fcf9f5; }
   @property --cta-ink  { syntax: "<color>"; inherits: true; initial-value: #0a0a0c; }
   @property --nav-hi   { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.07); }
   @property --nav-sh-1 { syntax: "<color>"; inherits: true; initial-value: rgba(0,0,0,0.55); }
@@ -136,7 +136,10 @@
        fades into the arriving white and the new black writing appears from it. */
     --turn: 0;
     --ink-turn: 0;
-    --bg:    color-mix(in srgb, #ffffff calc(var(--turn) * 100%), #0a0a0c);
+    /* The light sheet is a warm off-white, not pure white: #fcf9f5, the
+       paper tone Designary's pages sit on. Every light surface on the site
+       (this close, the next-study card, the filled buttons) shares it. */
+    --bg:    color-mix(in srgb, #fcf9f5 calc(var(--turn) * 100%), #0a0a0c);
     --ink:   color-mix(in srgb, #0a0a0c calc(var(--ink-turn) * 100%), #ffffff);
     --ink-1: color-mix(in srgb, rgba(10,10,12,0.78) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.74));
     --ink-2: color-mix(in srgb, rgba(10,10,12,0.66) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.52));
@@ -159,7 +162,7 @@
     --nav-hi: rgba(255,255,255,0.07);
     --nav-sh-1: rgba(0,0,0,0.55);
     --nav-sh-2: rgba(0,0,0,0.28);
-    --cta-bg:  color-mix(in srgb, #0a0a0c calc(var(--ink-turn) * 100%), #ffffff);
+    --cta-bg:  color-mix(in srgb, #0a0a0c calc(var(--ink-turn) * 100%), #fcf9f5);
     --cta-ink: color-mix(in srgb, #ffffff calc(var(--ink-turn) * 100%), #0a0a0c);
 
     /* Half a second, with the same property and curve as Dilara Cumhur's
@@ -1870,13 +1873,13 @@
        a state, and the selected step is the one thing in this row that has to
        be unmistakable. */
     .cs-seq__step.is-active {
-      background: #fff;
-      border-color: #fff;
+      background: #fcf9f5;
+      border-color: #fcf9f5;
       color: #0a0a0c;
     }
     .cs-seq__step.is-active .cs-seq__step-no { color: rgba(10,10,12,0.5); }
     .cs-seq__step:hover { background: rgba(255,255,255,0.06); }
-    .cs-seq__step.is-active:hover { background: #fff; color: #0a0a0c; }
+    .cs-seq__step.is-active:hover { background: #fcf9f5; color: #0a0a0c; }
   }
 
   /* ---------- Reflection ---------- */
@@ -2015,7 +2018,7 @@
      proportions from a phone to a wide screen. As wide as the reading
      column, so it shares its edges with the impact section above. */
   .cs-next {
-    --next-bg: #ffffff;
+    --next-bg: #fcf9f5;
     --next-ink: #0a0a0c;
     display: block;
     width: min(var(--measure), calc(100% - 2 * var(--pad-x)));
@@ -2208,7 +2211,7 @@
     --rule: rgba(255,255,255,0.10);
     --rule-2: rgba(255,255,255,0.30);
     --wash: rgba(255,255,255,0.04);
-    --cta-bg: #ffffff;
+    --cta-bg: #fcf9f5;
     --cta-ink: #0a0a0c;
     margin-top: var(--section);
     padding: clamp(64px, 10vh, 130px) var(--foot-x) clamp(32px, 4vh, 52px);
