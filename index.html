@@ -1423,7 +1423,7 @@
      rather than anti-aliased. Circles and the chevron keep their curves. */
   .hp-build__wire *,
   .hp-build__guides * { vector-effect: non-scaling-stroke; }
-  .hb-wire, .hb-ol, .hb-dash, .hb-dim, .hb-guide, .hb-tick, .hb-accent {
+  .hb-wire, .hb-ol, .hb-sec, .hb-dim, .hb-guide, .hb-tick, .hb-accent {
     fill: none;
     stroke: rgba(252,249,245,0.55);
     stroke-width: 1;
@@ -1431,13 +1431,16 @@
     shape-rendering: crispEdges;
   }
   .hb-guide { stroke: rgba(252,249,245,0.28); }
-  .hb-ol, .hb-dash { stroke: rgba(252,249,245,0.35); }
-  .hb-dash { stroke-dasharray: 16 12; }
+  .hb-ol { stroke: rgba(252,249,245,0.35); }
+  /* The section boxes inside a panel. Solid, a step quieter than the panel
+     they subdivide; they were dashed, which read as clutter rather than
+     hierarchy — on a 1px hairline the dashes are the only texture on the
+     screen and the eye goes to them. */
+  .hb-sec { stroke: rgba(252,249,245,0.2); }
   .hb-dim, .hb-tick { stroke: rgba(252,249,245,0.45); }
   .hb-accent { stroke: rgba(252,249,245,0.9); stroke-width: 2; }
   .hb-bar { fill: rgba(252,249,245,0.14); shape-rendering: crispEdges; }
   .hb-col { fill: rgba(252,249,245,0.06); shape-rendering: crispEdges; }
-  .hb-margin { fill: rgba(252,249,245,0.025); shape-rendering: crispEdges; }
   .hb-ground, .hb-fill { fill: rgba(252,249,245,0.04); shape-rendering: crispEdges; }
   .hb-round { shape-rendering: geometricPrecision; }
   .hb-radio { fill: rgba(252,249,245,0.9); }
@@ -2980,12 +2983,6 @@
     function group(name, inner, unfold) {
       return '<g class="hb-el" data-el="' + name + '" data-unfold="' + (unfold || 'y') + '">' + inner + '</g>';
     }
-    // A horizontal dimension: line, two end ticks, a number above it.
-    function dimH(x0, x1, y, text) {
-      return '<g class="hb-dimg">' + hline(x0, x1, y, 'hb-dim') +
-        vline(x0, y - 0.4, y + 0.4, 'hb-dim') + vline(x1, y - 0.4, y + 0.4, 'hb-dim') +
-        label((x0 + x1) / 2, y - 0.6, text) + '</g>';
-    }
     function dimV(x, y0, y1, text) {
       return '<g class="hb-dimg">' + vline(x, y0, y1, 'hb-dim') +
         hline(x - 0.4, x + 0.4, y0, 'hb-dim') + hline(x - 0.4, x + 0.4, y1, 'hb-dim') +
@@ -3012,15 +3009,16 @@
     // The grid is built outward from the two panels, not laid over them: the
     // gutter is the real gutter, the left panel is three columns parted by
     // that gutter, the right panel two, and the strips either side are
-    // margins, not columns. The columns come out a shade apart in width,
-    // 9.56% and 10.14% of the card, which is not visible at this alpha; what
-    // is visible is that every panel edge is a column edge.
+    // margins, which are left empty: a margin drawn as a paler column read
+    // as a sixth and seventh column that did not line up with anything. The
+    // columns come out a shade apart in width, 9.56% and 10.14% of the card,
+    // which is not visible at this alpha; what is visible is that every
+    // panel edge is a column edge.
     var c3 = (CR - CL - 2 * GUT) / 3;
     var c2 = (SR - SL - GUT) / 2;
-    var cols = rect(WL, WT, CL, BOT, 'hb-margin');
+    var cols = '';
     for (var i = 0; i < 3; i++) cols += rect(CL + i * (c3 + GUT), WT, CL + i * (c3 + GUT) + c3, BOT, 'hb-col');
     for (var j = 0; j < 2; j++) cols += rect(SL + j * (c2 + GUT), WT, SL + j * (c2 + GUT) + c2, BOT, 'hb-col');
-    cols += rect(SR, WT, WR, BOT, 'hb-margin');
 
     var grid = '<g class="hb-layer" data-layer="cols">' + cols + '</g>' +
       '<g class="hb-layer" data-layer="outlines">' +
@@ -3028,13 +3026,15 @@
         '<path class="hb-ol" data-draw d="M' + X(SL) + ' ' + Y(BOT) + 'V' + Y(49.3) + 'H' + X(SR) + 'V' + Y(BOT) + '"/>' +
       '</g>' +
       '<g class="hb-layer" data-layer="boxes">' +
-        rect(CL, 49.30, CR, 58.64, 'hb-dash') +
-        rect(CL, 60.16, CR, 75.96, 'hb-dash') +
-        rect(CL, 77.47, CR, BOT, 'hb-dash') +
-        rect(SL, 49.30, SR, 97.78, 'hb-dash') +
+        rect(CL, 49.30, CR, 58.64, 'hb-sec') +
+        rect(CL, 60.16, CR, 75.96, 'hb-sec') +
+        rect(CL, 77.47, CR, BOT, 'hb-sec') +
+        rect(SL, 49.30, SR, 97.78, 'hb-sec') +
       '</g>' +
+      // Only the two numbers the owner supplied from the source file. The
+      // window's width used to be measured across the top too, but in the
+      // export's pixels, which are not a number anyone designed to.
       '<g class="hb-layer" data-layer="dims">' +
-        dimH(WL, WR, 34.4, '2572') +
         dimV(15.2, 49.30, 58.64, '148') +
       '</g>';
 
@@ -3160,7 +3160,7 @@
     var s = '<svg class="hp-build__guides" aria-hidden="true" focusable="false">';
     for (var i = 0; i < 5; i++) s += '<path class="hb-guide" data-guide="' + i + '"/>';
     for (var j = 0; j < 4; j++) {
-      s += '<g class="hb-reg" data-reg="' + j + '"><path class="hb-tick"/><text class="hb-label"></text></g>';
+      s += '<g class="hb-reg" data-reg="' + j + '"><path class="hb-tick"/></g>';
     }
     return s + '</svg>';
   }
@@ -4053,21 +4053,13 @@
         LEN[i] = defs[i][1];
         TRIM[i] = [defs[i][2], defs[i][3]];
       });
-      // Registration marks at the four corners, coordinates in the file's px.
-      var corners = [
-        [l, t, 'end', -12, -8, 'x 0 · y 0'],
-        [l + w, t, 'start', 12, -8, 'x 3024 · y 0'],
-        [l, t + h, 'end', -12, 18, 'x 0 · y 2708'],
-        [l + w, t + h, 'start', 12, 18, 'x 3024 · y 2708']
-      ];
+      // Registration marks at the four corners: a cross each, no coordinates.
+      // They carried `x 3024 · y 2708` and the like, which were the export's
+      // pixel counts and read as numbers only because they were set in mono.
+      var corners = [[l, t], [l + w, t], [l, t + h], [l + w, t + h]];
       regs.forEach(function(g, i) {
         var c = corners[i];
         g.querySelector('.hb-tick').setAttribute('d', 'M' + (c[0] - 7) + ' ' + c[1] + 'H' + (c[0] + 7) + 'M' + c[0] + ' ' + (c[1] - 7) + 'V' + (c[1] + 7));
-        var tx = g.querySelector('.hb-label');
-        tx.setAttribute('x', c[0] + c[3]);
-        tx.setAttribute('y', c[1] + c[4]);
-        tx.setAttribute('text-anchor', c[2]);
-        tx.textContent = c[5];
       });
     }
     function dashNone() { return '0 0 0 ' + FAR; }
