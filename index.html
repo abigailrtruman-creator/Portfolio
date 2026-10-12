@@ -1433,7 +1433,6 @@
   .hb-ground, .hb-fill { fill: rgba(252,249,245,0.04); shape-rendering: crispEdges; }
   .hb-round { shape-rendering: geometricPrecision; }
   .hb-radio { fill: rgba(252,249,245,0.9); }
-  .hb-dot { fill: #fcf9f5; }
   .hb-label {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
     fill: rgba(252,249,245,0.55);
@@ -3127,18 +3126,8 @@
     // payment option, in the design's own pixels.
     var dims2 = '<g class="hb-layer" data-layer="dims2">' + dimV(15.2, 83.83, 87.89, '52') + '</g>';
 
-    // The one point of full light in the sequence. It starts where the first
-    // hairline starts, at the window's top-left corner; moves to where a
-    // column edge crosses the header's baseline; and ends on the Credit /
-    // Debit radio as the real one appears under it. Its radius is set by the
-    // script so it is 6px on screen at every card size; its stops are in the
-    // card's grid, carried on the element, so a resize moves nothing.
-    var dot = '<circle class="hb-dot hb-round" cx="' + X(WL) + '" cy="' + Y(WT) + '" r="13"' +
-      ' data-stop-1="' + (X(CR) - X(WL)) + ' ' + (Y(HB) - Y(WT)) + '"' +
-      ' data-stop-2="' + (X(RAD) - X(WL)) + ' ' + (Y(98.10) - Y(WT)) + '"/>';
-
     return '<svg class="hp-build__wire" viewBox="0 0 3024 2708" preserveAspectRatio="none" aria-hidden="true" focusable="false">' +
-      grid + ground + els + dims2 + dot + '</svg>';
+      grid + ground + els + dims2 + '</svg>';
   }
 
   // The lines of code, typed over the wire. Not the checkout's layout but
@@ -4020,12 +4009,6 @@
 
     var lines = Array.prototype.slice.call(guides.querySelectorAll('.hb-guide'));
     var regs = Array.prototype.slice.call(guides.querySelectorAll('.hb-reg'));
-    var dot = wire.querySelector('.hb-dot');
-    // The dot's two later stops, as offsets from where it is drawn.
-    function stop(n) {
-      var v = (dot.getAttribute('data-stop-' + n) || '0 0').split(' ');
-      return { x: parseFloat(v[0]), y: parseFloat(v[1]) };
-    }
     var colsLayer = wire.querySelector('[data-layer="cols"]');
     var cols = colsLayer.querySelectorAll('rect');
     var outlines = Array.prototype.slice.call(wire.querySelectorAll('[data-layer="outlines"] path'));
@@ -4094,8 +4077,6 @@
         tx.setAttribute('text-anchor', c[2]);
         tx.textContent = c[5];
       });
-      // 6px on screen whatever the card's size.
-      if (dot) dot.setAttribute('r', (3 * 3024 / w).toFixed(2));
     }
     function dashNone() { return '0 0 0 ' + FAR; }
     function dashFull(i) { return function() { return '0 0 ' + LEN[i] + ' ' + FAR; }; }
@@ -4122,7 +4103,6 @@
     gsap.set(img, { opacity: 0, clipPath: 'inset(36.52% 7.47% 0% 7.47% round 1.19% 1.19% 0 0)' });
     gsap.set(navy, { opacity: 0 });
     gsap.set(head, { opacity: 0, y: 24 });
-    if (dot) gsap.set(dot, { x: 0, y: 0, transformOrigin: '50% 50%' });
     section.classList.add('is-live');
 
     // ---- the timeline ----
@@ -4211,7 +4191,6 @@
     lines.forEach(function(ln, i) {
       tl.fromTo(ln, { strokeDasharray: dashFull(i) }, { strokeDasharray: dashTrim(i), duration: 0.05 }, 0.18);
     });
-    if (dot) tl.to(dot, { x: stop(1).x, y: stop(1).y, duration: 0.04, ease: 'power2.inOut' }, 0.12);
 
     // 3 — Components. Each group unfolds from its top edge (the select from
     // its left) in reading order; the dashed boxes hand over to the solid
@@ -4228,7 +4207,6 @@
     tl.to(ground, { opacity: 1, duration: 0.06 }, 0.30);
     tl.to(dims2, { opacity: 1, duration: 0.03 }, 0.37);
     tl.to(colsLayer, { opacity: 0.33, duration: 0.06 }, 0.36);
-    if (dot) tl.to(dot, { x: stop(2).x, y: stop(2).y, duration: 0.04, ease: 'power2.inOut' }, 0.36);
 
     // 4 — Code. The box, then the lines one at a time, then all of it goes as
     // the screenshot starts to come through.
@@ -4249,7 +4227,6 @@
     tl.to(strokes, { opacity: 0, duration: 0.08 }, 0.56);
     tl.to([colsLayer, dims, dims2, ground], { opacity: 0, duration: 0.04 }, 0.54);
     outlines.forEach(function(o) { tl.to(o, { opacity: 0, duration: 0.04 }, 0.54); });
-    if (dot) tl.to(dot, { scale: 0.5, opacity: 0, duration: 0.04 }, 0.66);
 
     // 6 — The card. The navy fades up behind the window across the whole
     // frame, one even fade, while the hairlines close and the registration
