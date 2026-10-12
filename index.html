@@ -749,6 +749,140 @@
   .hp-hero__logo--imi     { --h: 24px; --r: 2.043; --mark: url(/assets/logo-imi.64e95895.png); }
 
 
+  /* ---------- CORRIDOR (the career, sideways) ----------
+     Three stops and a close, laid out in a strip that moves left as the page
+     scrolls down, so the career is walked past rather than read down. The
+     same sticky-stage mechanism as the wordmark below: a tall section, a
+     stage stuck to the top of the window, and a scrub that only ever writes
+     a transform to the track and to the panels. Nothing is pinned by script,
+     for the reason the wordmark gives.
+
+     The stage is a room with depth. A perspective on it, with its vanishing
+     point a little left of centre, and the panels turn as they pass the
+     middle — the one in front of you flat and in full ink, the one arriving
+     from the right turned toward you and dimmer, the one leaving to the left
+     turned away. The turn is on the panel, never the text alone: a paragraph
+     that skews without the eyebrow and mark above it skewing reads as a bug.
+
+     Story mode only (the same decision the hero makes, written as a
+     modifier). Otherwise it is a column: the four pieces one under the
+     other at the page's own padding, full ink, no stage, no turn. */
+  .hp-corridor {
+    position: relative;
+    width: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    /* The gap between panels in the strip. Generous, so one panel is in
+       front of you at a time and its neighbours are context at the edges. */
+    --corridor-gap: clamp(140px, 16vw, 260px);
+    /* The panel is the measure: the paragraph fills it, so the panel is only
+       as wide as a paragraph should be at this size. Wider than that and
+       the copy sat in the left half of a mostly empty box. */
+    --corridor-panel: clamp(560px, 46vw, 760px);
+    --corridor-travel: 260vh;
+  }
+  .hp-corridor--story { height: calc(100vh + var(--corridor-travel)); }
+  .hp-corridor--story .hp-corridor__stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    /* On the stage, not the section, for the reason the wordmark gives. */
+    overflow: hidden;
+    perspective: 1400px;
+    /* A little left of centre, so a panel leaving to the left is seen more
+       side-on than one arriving from the right: the eye is looking slightly
+       back at what has been passed, and forward at what is coming. */
+    perspective-origin: 42% 50%;
+  }
+  .hp-corridor--story .hp-corridor__track {
+    display: flex;
+    align-items: center;
+    gap: var(--corridor-gap);
+    /* The first panel starts in the middle of the stage, and every panel
+       after it is reached by the track moving left. The padding is what
+       puts the first panel's centre on the stage's centre at x = 0; the
+       script moves the track from there. */
+    padding-left: calc(50vw - var(--corridor-panel) / 2);
+    /* Children keep their own z, so their turns are in the stage's
+       perspective and not flattened into the track's own plane. */
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .hp-corridor--story .hp-corridor__panel {
+    flex: 0 0 auto;
+    width: var(--corridor-panel);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    transform-origin: 50% 50%;
+  }
+  .hp-corridor__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(18px, 2.4vh, 28px);
+  }
+  .hp-corridor__mark {
+    display: block;
+    margin-top: 6px;
+  }
+  /* Elixirr, as a word for now: see the build for why. The weight and size
+     are a mark's, so the three panels sit level when it is replaced. */
+  .hp-corridor__mark--word {
+    font-family: var(--ff-display);
+    font-weight: 800;
+    font-size: clamp(30px, 3.2vw, 44px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  /* The marks: the same masked-SVG drawing as the client band in the hero,
+     at full ink and a reading size rather than a strip size. --h is the
+     frame and --r its aspect, as there. */
+  .hp-corridor__logo {
+    height: var(--h);
+    width: calc(var(--h) * var(--r));
+    -webkit-mask: var(--mark) center / contain no-repeat;
+    mask: var(--mark) center / contain no-repeat;
+    background-color: var(--ink);
+  }
+  .hp-corridor__logo--pwc   { --h: clamp(34px, 3.4vw, 46px); --r: 1.936; --mark: url(/assets/logo-pwc.2065f915.svg); }
+  .hp-corridor__logo--boots { --h: clamp(30px, 3vw, 40px);   --r: 1.887; --mark: url(/assets/logo-boots.e629e6b8.svg); }
+  .hp-corridor__copy {
+    margin: 0;
+    max-width: 40ch;
+    font-size: clamp(19px, 1.75vw, 27px);
+    line-height: 1.4;
+    letter-spacing: -0.012em;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+  /* The close. Between the statement and the panel paragraphs in size, in
+     the display face, so it reads as the hero's voice coming back for one
+     line before the work begins. */
+  .hp-corridor__close {
+    margin: 0;
+    max-width: 22ch;
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: clamp(28px, 3.3vw, 50px);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  /* Without the story: a column at the page's padding. */
+  .hp-corridor:not(.hp-corridor--story) .hp-corridor__stage {
+    padding: clamp(72px, 10vh, 120px) var(--pad-x);
+  }
+  .hp-corridor:not(.hp-corridor--story) .hp-corridor__track {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(56px, 9vh, 96px);
+    max-width: 720px;
+  }
+
   /* ---------- WORDMARK (3 rows converge → scale down) ----------
      Motion, scale values and scroll cost are locked; only the mechanism has
      changed. The section used to be 100vh and was held in place by GSAP
@@ -2158,6 +2292,16 @@
       '<span class="hp-hero__sentence">And I&rsquo;ll take an idea from <span class="hp-hero__keep">A to T.</span></span>'
   };
 
+  // The corridor's copy: the career, told in three stops, and the line that
+  // hands over to the work. Each one is a paragraph a panel can hold at
+  // reading size; none of them is a headline.
+  var CORRIDOR = {
+    elixirr: 'Right now I lead design projects at Elixirr. I was the first designer there to ship front-end code alongside owning the design, on apps for British Cycling and Lloyds Bank. I&rsquo;m now working with leadership on what that means for how we deliver and the role design plays.',
+    pwc: 'Before that I was at PwC, designing for everyone from financial analysts, engineers and everyday shoppers, and won a Rising Star award.',
+    boots: 'In-house at Boots, I introduced same-day click and collect and transformed checkout and post-purchase.',
+    close: 'The messier the problem, the more I enjoy it. Here are a few I&rsquo;ve loved untangling.'
+  };
+
   // In the order the cards are in, because that is the order a visitor who
   // scrolls on will meet them. The fibre provider is unnamed on its own card
   // and stays unnamed here. Lloyds is on the British Cycling app card as the
@@ -2735,6 +2879,41 @@
       '</div>' +
       '</section>';
 
+    // The corridor: where she has worked, as a strip you move along sideways.
+    // Three panels and a close, each one an article so a reader walks them
+    // as four short pieces, in the order they are written: now, before,
+    // in-house, then the line that turns toward the work.
+    function corridorPanel(key, eyebrow, mark, copy) {
+      return '<article class="hp-corridor__panel hp-corridor__panel--' + key + '">' +
+          '<span class="hp-eyebrow hp-eyebrow--rule">' + eyebrow + '</span>' +
+          mark +
+          '<p class="hp-corridor__copy">' + copy + '</p>' +
+        '</article>';
+    }
+    function corridorLogo(key, name) {
+      return '<span class="hp-corridor__mark hp-corridor__logo hp-corridor__logo--' + key + '" role="img" aria-label="' + name + '"></span>';
+    }
+    var corridorHtml = '' +
+      '<section class="hp-corridor" id="hp-corridor" aria-label="Where I have worked">' +
+        '<div class="hp-corridor__stage">' +
+          '<div class="hp-corridor__track">' +
+            corridorPanel('elixirr', 'Now',
+              // Set as a word for now. Elixirr's mark should replace this the
+              // same way PwC's and Boots' are drawn below, as a masked SVG at
+              // the same ink; the word is a stand-in at the weight a mark would
+              // have, not a decision to set it in type.
+              '<span class="hp-corridor__mark hp-corridor__mark--word">Elixirr</span>',
+              CORRIDOR.elixirr) +
+            corridorPanel('pwc', 'Before', corridorLogo('pwc', 'PwC'), CORRIDOR.pwc) +
+            corridorPanel('boots', 'In-house', corridorLogo('boots', 'Boots'), CORRIDOR.boots) +
+            // The close: no eyebrow, no mark. One line, at display size.
+            '<article class="hp-corridor__panel hp-corridor__panel--close">' +
+              '<p class="hp-corridor__close">' + CORRIDOR.close + '</p>' +
+            '</article>' +
+          '</div>' +
+        '</div>' +
+      '</section>';
+
     var wordmarkHtml = '' +
       '<section class="hp-wordmark" id="hp-wordmark">' +
         '<div class="hp-wordmark__stage">' +
@@ -2793,7 +2972,7 @@
       '</footer>';
 
     var html = '<div class="hp-root" id="hp-root">' +
-      navHtml + heroHtml + wordmarkHtml + casesHtml + footerHtml +
+      navHtml + heroHtml + corridorHtml + wordmarkHtml + casesHtml + footerHtml +
     '</div>';
 
     document.body.insertAdjacentHTML('afterbegin', html);
@@ -3047,6 +3226,9 @@
     HERO_STORY = !REDUCED && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' &&
       window.matchMedia('(min-width: 901px) and (min-height: 561px)').matches;
     track.classList.toggle('hp-hero-track--story', HERO_STORY);
+    // The corridor is the same decision: one story, or none.
+    var corridor = document.getElementById('hp-corridor');
+    if (corridor) corridor.classList.toggle('hp-corridor--story', HERO_STORY);
   }
 
   function initHero() {
@@ -3198,6 +3380,95 @@
     // The hold to the end: a no-op that pads the timeline so the last
     // hand-over does not land on the release.
     tl.to({}, { duration: 0.01 }, 1 - 0.01);
+  }
+
+  // ---------- THE CORRIDOR ----------
+  // The strip moves left as the page scrolls down, from the first panel in
+  // the middle of the stage to the close in the middle of the stage, over
+  // the section's travel. Independent of the hero: its own trigger on its
+  // own section, and the hero's exit has finished before this begins to
+  // move, because the hero track ends where this section starts and the
+  // stage is stuck for the exit's whole range.
+  //
+  // The turn is a function of where a panel is, not of time. Each scrub
+  // update places every panel from the track's x: distance from the stage's
+  // centre in panel-widths, and from that a rotation about y, an opacity
+  // and a scale. In the middle: flat, full ink, full size. One panel-width
+  // to the right: turned 14° toward the viewer, a little over half ink,
+  // 94%. Mirrored on the left. Beyond a panel-width the turn and the shrink
+  // keep going, gently, so the far neighbours read as further away rather
+  // than stopping at the same angle as the near ones.
+  //
+  // Transform and opacity only, as with everything else on a scroll frame.
+  // Panel positions are measured on refresh, not per update; the per-update
+  // work is arithmetic and five transform writes.
+  function initCorridor() {
+    if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+    var corridor = document.getElementById('hp-corridor');
+    if (!corridor || !HERO_STORY) return;
+    var stage = corridor.querySelector('.hp-corridor__stage');
+    var track = corridor.querySelector('.hp-corridor__track');
+    var panels = Array.prototype.slice.call(corridor.querySelectorAll('.hp-corridor__panel'));
+    if (!stage || !track || panels.length < 2) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Measured on refresh: each panel's centre in track coordinates, the
+    // panel width, the stage centre, and how far the track has to go for
+    // the last panel's centre to reach the stage's.
+    var centres = [], panelW = 1, stageMid = 0, travel = 0;
+    function measure() {
+      panelW = panels[0].offsetWidth || 1;
+      stageMid = stage.clientWidth / 2;
+      centres = panels.map(function(p) { return p.offsetLeft + p.offsetWidth / 2; });
+      travel = centres[centres.length - 1] - centres[0];
+    }
+    measure();
+
+    var TURN = 14, DIM = 0.45, SHRINK = 0.06;
+    function place(x) {
+      panels.forEach(function(p, i) {
+        var d = (centres[i] + x - stageMid) / panelW;   // panel-widths from centre
+        var a = Math.abs(d);
+        var sign = d < 0 ? -1 : 1;
+        var near = Math.min(a, 1);                       // the first panel-width
+        var far = Math.max(a - 1, 0);                    // and beyond it
+        gsap.set(p, {
+          // Right of centre turns negative (toward the viewer from the
+          // right), left turns positive; capped at 1.6 panel-widths.
+          rotationY: -TURN * sign * Math.min(a, 1.6),
+          opacity: Math.max(1 - DIM * near - 0.15 * far, 0.25),
+          scale: 1 - SHRINK * near - 0.03 * Math.min(far, 1),
+          force3D: true
+        });
+      });
+    }
+
+    var proxy = { x: 0 };
+    gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: corridor,
+        scroller: document.getElementById('hp-root'),
+        start: 'top top',
+        end: 'bottom bottom',
+        invalidateOnRefresh: true,
+        scrub: true,
+        onRefreshInit: measure,
+        onRefresh: function() { place(proxy.x); }
+      }
+    })
+      .to(proxy, {
+        x: function() { return -travel; },
+        duration: 1,
+        onUpdate: function() {
+          gsap.set(track, { x: proxy.x, force3D: true });
+          place(proxy.x);
+        }
+      }, 0);
+
+    // First frame at rest, so nothing turns on first paint.
+    place(0);
   }
 
   // The ambient light. Two motions on the second light and nothing at all on the
@@ -3487,7 +3758,12 @@
           defaults: { force3D: true },
           scrollTrigger: {
             trigger: wordmark,
-            start: 'top top',
+            // With the story on, the rows start sliding while the section is
+            // still arriving under the corridor's stage, so the mark is
+            // already in motion as the corridor lets go, and the hand-over is
+            // one movement rather than a stop and a start. The same timeline
+            // over a screen more of scroll; the slide reads the same.
+            start: HERO_STORY ? 'top bottom' : 'top top',
             end: 'bottom bottom',
             invalidateOnRefresh: true,
             // No smoothing. Interpolation only made sense as compensation for
@@ -3978,6 +4254,7 @@
       initClientLinks();
       initHeroLight();     // independent of the entrance: the room is lit first
       initScrollScenes();
+      initCorridor();      // after the scenes: its trigger is measured against theirs
       initCaseTransitions();
       initCursor();
 
