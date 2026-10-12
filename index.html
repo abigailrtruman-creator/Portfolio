@@ -329,6 +329,48 @@
      the scroll cue, so it still gives the composition a second horizontal edge
      to close on — the cue is too small to hold the bottom of a full-height
      section by itself — without splitting anything anyone reads. */
+  /* ---------- THE STORY ----------
+     After the entrance the hero holds for a screen of scroll, and the three
+     sentences of the statement take their turn: the first stays forward while
+     the other two step back into the dark, then the second comes forward and
+     the first steps back, then the third. The sentence that is forward is
+     the one being said. Then the hero lets go and leaves as it always did.
+
+     The track is the distance that takes: one screen for the hero to sit on,
+     plus --hero-story of travel. The hero sticks inside it. Sticky, not a
+     script pin, for the reason the carousel gives: a transform written on
+     the main thread to hold an element still against a compositor scroll
+     jitters, and sticky is the compositor doing the holding.
+
+     Desktop and laptop only. On a phone or a short window the story is off,
+     the track is as tall as the hero, and the statement sits as it always
+     has, all three sentences in full ink. The script decides once, at build,
+     and writes the modifier. */
+  .hp-hero-track {
+    --hero-story: 110vh;
+    position: relative;
+  }
+  .hp-hero-track--story { height: calc(100vh + var(--hero-story)); }
+  /* With the story on, the hero is exactly one screen and sticks. */
+  .hp-hero-track--story .hp-hero {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 0;
+  }
+  /* The sentences step back along z, so the statement is a stage with depth.
+     The perspective is on the inner so every sentence shares one vanishing
+     point; a step back reads as a step back, not a shrink. Only with the
+     story on: a perspective on a flat statement costs a compositing layer
+     for nothing. */
+  .hp-hero-track--story .hp-hero__statement-inner {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+  }
+  .hp-hero-track--story .hp-hero__sentence {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+  }
   .hp-hero {
     /* The hero's body size. The greeting and the scroll cue are the only two
        pieces of non-display type left in here, and the owner's instruction is
@@ -577,22 +619,17 @@
        centre when the boxes come off. */
     align-items: center;
   }
-  /* The blank line is the only device marking the seam, and it is enough. The
-     setup was briefly set at --ink-1 against the last sentence's full white, and
-     the objection to it is not that it was hard to see: it is that a true,
-     specific sentence about where she has worked does not need apologising for
-     by being dimmed. One colour, one weight, one size — the space says
-     everything the contrast step was saying.
-     It also leaves the statement with exactly one tone, which is what makes the
-     greeting above it legible as a different kind of line. */
-  .hp-hero__sentence:last-child {
-    /* A full blank line, so the setup and the point read as two blocks rather
-       than as one block with a wider gap in it. `lh` is exactly one line at any
-       line-height, which matters because the phone override sets 1.06 against
-       the desktop's 1.03; the em value above it is the fallback that gets within
-       a pixel or two where `lh` is unsupported. */
-    margin-top: 1.05em;
-    margin-top: 1lh;
+  /* The seam between sentences. A third of a line, the same between all
+     three, so they read as three beats of one statement and not three
+     paragraphs: a full blank line was right for two blocks that were a setup
+     and a point, and is too much air for three that are equals. One colour,
+     one weight, one size — the gap is the only device marking the seam.
+     `lh` is exactly one line at any line-height, which matters because the
+     phone override sets 1.06 against the desktop's 1.03; the em value above
+     it is the fallback that gets within a pixel where `lh` is unsupported. */
+  .hp-hero__sentence + .hp-hero__sentence {
+    margin-top: 0.37em;
+    margin-top: 0.35lh;
   }
   /* Balanced within each block, because a block per sentence fixes where the
      full stops land but not how the words inside them distribute. Greedy
@@ -1785,21 +1822,9 @@
        to every other width rather than becoming the one place the statement is
        still set at its old size. */
     .hp-hero__statement { font-size: clamp(26px, 3.8vw, 40px); max-width: 62ch; }
-    /* A third of a line rather than a whole one. This was sized against a
-       three-sentence statement, which set six lines here and left the closing
-       band without the 33px a full seam costs: at 1lh the cue landed 9px under
-       the fold on a 390px-tall viewport, which is the one thing this breakpoint
-       exists to prevent.
-       With the middle sentence gone the statement is two blocks of two lines,
-       and the cue now clears the fold at 1lh across this whole band — 17px to
-       spare at its tightest, 601x320. So the tightened seam is no longer forced
-       and is kept as a proportion: a full blank line between two blocks is a
-       third of the hero at these heights. It still reads as the seam, being the
-       only gap in the block and the only device marking it at any width. */
-    .hp-hero__sentence:last-child {
-      margin-top: 0.35em;
-      margin-top: 0.35lh;
-    }
+    /* The seam used to tighten to a third of a line here. It is a third of a
+       line everywhere now (see .hp-hero__sentence + .hp-hero__sentence), so
+       there is nothing to override. */
     /* No height for a line under the copy. The marquee would land below the
        fold, which is the thing this breakpoint exists to prevent, so the
        band goes rather than becoming a corner marker. */
@@ -1816,9 +1841,10 @@
      Nothing here touches type size. At these heights every vertical clamp in the
      hero is already sitting on its floor, and the largest of those floors is the
      112px top padding, which is there to clear the nav pill — and the pill ends
-     around 76px, so roughly 30px of it is dead space. Spending that, plus the
-     same 0.35lh seam the landscape breakpoint uses, covers the band with room to
-     spare and leaves the statement at the size it is at every other height.
+     around 76px, so roughly 30px of it is dead space. Spending that covers the
+     band with room to spare and leaves the statement at the size it is at every
+     other height. (The seam is a third of a line at every width now, so the
+     tightened seam this used to add is the base.)
      Raising the breakpoint ceiling instead was the obvious move and the wrong
      one: that treatment sets min-height 0 for a viewport the copy fills on its
      own, so at 1440 wide the hero stopped filling the screen, the next section
@@ -1827,10 +1853,6 @@
      including the 1440x800 laptop the hero is composed for. */
   @media (min-width: 601px) and (min-height: 561px) and (max-height: 670px) {
     .hp-hero { padding-top: 88px; }
-    .hp-hero__sentence:last-child {
-      margin-top: 0.35em;
-      margin-top: 0.35lh;
-    }
   }
 
   /* ---------- Short viewports ----------
@@ -2116,27 +2138,24 @@
     // is what lets the two white phrases read as a pair rather than as one long
     // highlighted stretch. The stops sit outside the <strong>s as well:
     // punctuation belongs to the sentence, not to the phrase it follows.
-    greeting: 'Hey I&rsquo;m <strong>Abbie</strong>. A <strong>Product Design Leader</strong> in the UK.',
+    greeting: 'Hey, I&rsquo;m <strong>Abbie</strong>. A <strong>Product Design Leader</strong> in the UK.',
     // The largest type on the page has to be the thing that gets her hired, and
-    // here it is the only copy in the hero, carrying what a support paragraph
-    // used to carry. Two beats, the second twice the length of the first — 9
-    // words then 18 — so it ramps into its payoff rather than opening on a
-    // fragment and then repaying that fragment with two long sentences.
+    // here it is the only copy in the hero. Three beats, each a sentence, each
+    // a pair: pixels and picture, people and product, A and T. They are what
+    // the scroll story below plays through one at a time, so each one has to
+    // stand on its own as well as read as a third of the whole.
     // Uniform Manrope, no accent: the serif italic that used to close this
     // sentence was dropped on the owner's instruction.
-    // The closing words are tied together because a one-word last line in type
-    // this large reads as a mistake rather than a pause, and `I design, I lead,`
-    // is tied because a break inside it severs the triad at its hinge.
     // One span per sentence, each one a block, so every full stop lands at the
     // end of a line at every width. The spaces between the spans are what keeps
     // the aria-label a readable sentence; between block boxes they render as
     // nothing.
-    // The three hp-hero__keep runs are the phrases that a normal wrap inside a
-    // block still gets wrong: `in-house depth.` breaks after the hyphen and
-    // strands `depth.` on the 26ch measure, `the product.` ends up alone on a
-    // last line, and `I design, I lead,` splits at the triad's hinge.
-    statement: '<span class="hp-hero__sentence">Seven years in, from consultancy pace to <span class="hp-hero__keep">in-house depth.</span></span> ' +
-      '<span class="hp-hero__sentence"><span class="hp-hero__keep">I design, I lead,</span> and I put as much into people as I do <span class="hp-hero__keep">the product.</span></span>'
+    // The hp-hero__keep runs are the phrases that a normal wrap inside a block
+    // still gets wrong: each sentence's closing pair, which must not be left
+    // as a one-word last line in type this large.
+    statement: '<span class="hp-hero__sentence">I&rsquo;m happiest when the pixels get as much care as <span class="hp-hero__keep">the bigger picture.</span></span> ' +
+      '<span class="hp-hero__sentence">I put as much into people as I do <span class="hp-hero__keep">the product.</span></span> ' +
+      '<span class="hp-hero__sentence">And I&rsquo;ll take an idea from <span class="hp-hero__keep">A to T.</span></span>'
   };
 
   // In the order the cards are in, because that is the order a visitor who
@@ -2678,7 +2697,11 @@
       '</nav>';
 
     var heroHtml = '' +
-      '<section class="hp-hero" id="hp-hero">' +
+      // The track is the scroll distance the story takes; the hero inside it
+      // sticks to the top of the window while the track scrolls past, the
+      // way the wordmark's stage does. Nothing is pinned by script.
+      '<section class="hp-hero-track" id="hp-hero-track">' +
+      '<div class="hp-hero" id="hp-hero">' +
         // Lightsets, all of it, and the only reason any of it is in the document
         // is that the exit and the pointer have to be able to transform it. Three
         // boxes: the key light, and the pointer's layer with the second light
@@ -2709,6 +2732,7 @@
             '</div>' +
           '</div>' +
         '</div>' +
+      '</div>' +
       '</section>';
 
     var wordmarkHtml = '' +
@@ -3012,6 +3036,19 @@
   // settling. Nothing in here lifts toward the pointer afterwards: that effect
   // has gone, because it was a novelty on the one sentence the page exists to
   // have read.
+  // Whether the hero is told as a scroll story (see .hp-hero-track in the
+  // stylesheet). Decided once, before anything is measured, and written to the
+  // track so the stylesheet and the hero scripts all read one answer. Off on
+  // phones, short windows, and under reduced motion.
+  var HERO_STORY = false;
+  function decideHeroStory() {
+    var track = document.getElementById('hp-hero-track');
+    if (!track) return;
+    HERO_STORY = !REDUCED && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' &&
+      window.matchMedia('(min-width: 901px) and (min-height: 561px)').matches;
+    track.classList.toggle('hp-hero-track--story', HERO_STORY);
+  }
+
   function initHero() {
     if (typeof gsap === 'undefined') return;
     if (REDUCED) return;
@@ -3067,6 +3104,12 @@
           // on the same frame. Waiting for onComplete makes that impossible
           // rather than unlikely. Nothing is lost by arriving late: a scrub
           // trigger reads the scroll position when it is created.
+          // The story is built here for the same reason and one more: it
+          // transforms the sentence blocks, and until this moment those are
+          // flex boxes holding the entrance's clip boxes. Its first frame is
+          // the rest state, so a visitor already scrolling sees the sentences
+          // step to where the scroll says, not jump.
+          initHeroStory();
           initHeroExit();
         }
       })
@@ -3081,6 +3124,80 @@
         // rather than one at a time.
         .to(below, { opacity: 1, y: 0, duration: 1.1 }, 0.7);
     });
+  }
+
+  // ---------- THE STORY ----------
+  // Scrubbed to the scroll across the track. Three sentences, three turns.
+  // At rest all three are forward, in full ink, as the entrance left them.
+  // The first beat is the other two stepping back — 120px along z and down
+  // to a third of their ink — so the first sentence is the one being said.
+  // Then a hand-over: the first steps back as the second comes forward; then
+  // the second back as the third comes forward. The third holds forward for
+  // the last stretch, and the hero lets go.
+  //
+  // Each step is translateZ and opacity, nothing else: the perspective on the
+  // inner makes a step back read as a step back, and both are composited.
+  // The exit timeline that follows writes y and opacity to the same blocks,
+  // but over a range that begins exactly where this one ends, and this one
+  // leaves every block at a definite state (z −120 / 0.38 or z 0 / 1) so the
+  // exit's recorded starts are those values and not a half-step.
+  //
+  // Built from the entrance's onComplete, once the clip boxes are gone and
+  // the sentence blocks are plain blocks again.
+  var STORY_Z = -120;
+  var STORY_DIM = 0.38;
+  function initHeroStory() {
+    if (!HERO_STORY) return;
+    var track = document.getElementById('hp-hero-track');
+    var blocks = track ? Array.prototype.slice.call(track.querySelectorAll('.hp-hero__sentence')) : [];
+    if (blocks.length < 2) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+    var tl = gsap.timeline({
+      defaults: { ease: 'power1.inOut', force3D: true },
+      scrollTrigger: {
+        trigger: track,
+        // Named because this may run before initScrollScenes sets the default
+        // scroller, and a trigger built against the window would never fire:
+        // the window does not scroll on this page.
+        scroller: document.getElementById('hp-root'),
+        start: 'top top',
+        end: 'bottom bottom',
+        invalidateOnRefresh: true,
+        scrub: true
+      }
+    });
+
+    // The schedule, in fractions of the track. The first beat has a little
+    // dead scroll before it so the hold reads as a hold before anything
+    // moves; each hand-over is a short cross-move; the last sentence holds
+    // for the final 15%.
+    // Every tween states both ends, so a refresh part-way through — fonts
+    // landing, a window resize — re-records the same ends and not whatever
+    // the block was holding at that moment.
+    var n = blocks.length;
+    var step = 0.22;                       // one hand-over's length
+    var first = 0.06;                      // the first recede starts here
+    var BACK = { z: STORY_Z, opacity: STORY_DIM };
+    var FWD  = { z: 0, opacity: 1 };
+    function stepTo(el, from, to, at) {
+      // Not rendered at build: the rest state is the stylesheet's, and a
+      // from-state written early would put a block at the back before the
+      // scroll asked for it.
+      tl.fromTo(el, from, { z: to.z, opacity: to.opacity, duration: step, immediateRender: false }, at);
+    }
+
+    // Beat one: everything but the first steps back.
+    blocks.slice(1).forEach(function(el) { stepTo(el, FWD, BACK, first); });
+    // Then the hand-overs, one per remaining sentence.
+    for (var i = 1; i < n; i++) {
+      var at = first + step + 0.04 + (i - 1) * (step + 0.06);
+      stepTo(blocks[i - 1], FWD, BACK, at);
+      stepTo(blocks[i], BACK, FWD, at);
+    }
+    // The hold to the end: a no-op that pads the timeline so the last
+    // hand-over does not land on the release.
+    tl.to({}, { duration: 0.01 }, 1 - 0.01);
   }
 
   // The ambient light. Two motions on the second light and nothing at all on the
@@ -3241,8 +3358,13 @@
       // individually below, where an ease is about the copy and not the gesture.
       defaults: { ease: 'none', force3D: true },
       scrollTrigger: {
-        trigger: hero,
-        start: 'top top',
+        // With the story on, the hero is stuck inside its track until the
+        // track's bottom reaches the bottom of the window, which is the moment
+        // it starts to move; the exit runs from there to the track leaving.
+        // Without the story the track is the hero and this is the hero
+        // leaving from the top of the page, as it always was.
+        trigger: HERO_STORY ? document.getElementById('hp-hero-track') : hero,
+        start: HERO_STORY ? 'bottom bottom' : 'top top',
         end: 'bottom top',
         invalidateOnRefresh: true,
         // No smoothing, for the reason the wordmark gives: interpolation inside
@@ -3281,9 +3403,16 @@
     // takes the top of both ranges and nothing has to change here.
     blocks.forEach(function(el, i) {
       var t = blocks.length > 1 ? i / (blocks.length - 1) : 0;
-      tl.to(el, { y: travel(-74 + 28 * t), duration: 1 }, 0)
-        .to(el, { opacity: 0, duration: 0.52 + 0.08 * t, ease: 'power1.in' }, 0);
+      tl.to(el, { y: travel(-74 + 28 * t), duration: 1 }, 0);
+      // The blocks' ink belongs to the story when it is on: it leaves the
+      // first two at a third and the third at full, and a per-block fade here
+      // would record its start as whatever the block held when this was
+      // built, then snap it there as the exit began. So with the story on the
+      // statement fades as one, on the inner, and the blocks keep their
+      // standing as they go.
+      if (!HERO_STORY) tl.to(el, { opacity: 0, duration: 0.52 + 0.08 * t, ease: 'power1.in' }, 0);
     });
+    if (HERO_STORY) tl.fromTo(inner, { opacity: 1 }, { opacity: 0, duration: 0.56, ease: 'power1.in' }, 0);
   }
 
   // One reveal recipe for every section below the fold.
@@ -3843,7 +3972,8 @@
       initNavHide();
       initBackToTop();
       initWorkAnchor();
-      initHero();          // the closing line and the exit start once it lands
+      decideHeroStory();   // before anything in the hero is measured
+      initHero();          // the story and the exit start once it lands
       initClientMarquee();
       initClientLinks();
       initHeroLight();     // independent of the entrance: the room is lit first
