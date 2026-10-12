@@ -3161,7 +3161,7 @@
     var s = '<svg class="hp-build__guides" aria-hidden="true" focusable="false">';
     for (var i = 0; i < 5; i++) s += '<path class="hb-guide" data-guide="' + i + '"/>';
     for (var j = 0; j < 4; j++) {
-      s += '<g class="hb-reg" data-reg="' + j + '"><path class="hb-tick"/></g>';
+      s += '<g class="hb-reg" data-reg="' + j + '"><path class="hb-tick"/><text class="hb-label"></text></g>';
     }
     return s + '</svg>';
   }
@@ -4054,13 +4054,26 @@
         LEN[i] = defs[i][1];
         TRIM[i] = [defs[i][2], defs[i][3]];
       });
-      // Registration marks at the four corners: a cross each, no coordinates.
-      // They carried `x 3024 · y 2708` and the like, which were the export's
-      // pixel counts and read as numbers only because they were set in mono.
-      var corners = [[l, t], [l + w, t], [l, t + h], [l + w, t + h]];
+      // Registration marks at the four corners, each with its coordinate.
+      // The numbers are the artwork's own pixel size, 3024 by 2708 — the one
+      // set of numbers that is true of the file being drawn; the two
+      // dimensions on the wire are in the design's units because the owner
+      // supplied them. These went for a while as noise and came back at her
+      // asking: a frame with its corners labelled is what reads as a frame.
+      var corners = [
+        [l, t, 'end', -12, -8, 'x 0 · y 0'],
+        [l + w, t, 'start', 12, -8, 'x 3024 · y 0'],
+        [l, t + h, 'end', -12, 18, 'x 0 · y 2708'],
+        [l + w, t + h, 'start', 12, 18, 'x 3024 · y 2708']
+      ];
       regs.forEach(function(g, i) {
         var c = corners[i];
         g.querySelector('.hb-tick').setAttribute('d', 'M' + (c[0] - 7) + ' ' + c[1] + 'H' + (c[0] + 7) + 'M' + c[0] + ' ' + (c[1] - 7) + 'V' + (c[1] + 7));
+        var tx = g.querySelector('.hb-label');
+        tx.setAttribute('x', c[0] + c[3]);
+        tx.setAttribute('y', c[1] + c[4]);
+        tx.setAttribute('text-anchor', c[2]);
+        tx.textContent = c[5];
       });
     }
     function dashNone() { return '0 0 0 ' + FAR; }
