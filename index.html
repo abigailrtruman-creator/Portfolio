@@ -10,12 +10,12 @@
      code injection cannot own the page's title, description, canonical or
      icons, because Squarespace emits its own. It belongs to this document.
 
-     The description is 157 characters, drafted down from the hero's own copy so
-     the words in a search result are hers. It is the statement's two opening
-     sentences verbatim plus a shortened close; the full statement is 184
-     characters, which would be truncated in a snippet.
+     The description is the statement verbatim, 159 characters, so the words in
+     a search result are hers. The aside under it is left out: a snippet should
+     carry the pitch, and with the aside the line runs to 200 characters and
+     would be cut mid-joke.
      Both the title and the description are pending the owner's approval. -->
-<meta name="description" content="Seven years in, from consultancy pace to in-house depth. I design, I lead, and I invest in the people.">
+<meta name="description" content="I'm as close to the pixels as I am to the bigger picture, taking ideas from pencil to production at pace. And I always invest in people as much as the product.">
 <link rel="canonical" href="https://abbietruman.vercel.app/">
 
 <!-- Open Graph and Twitter, so a link she sends a hiring manager unfurls as her
@@ -30,7 +30,7 @@
 <meta property="og:site_name" content="Abbie Truman">
 <meta property="og:url" content="https://abbietruman.vercel.app/">
 <meta property="og:title" content="Abbie Truman — Product Design Leader in the UK">
-<meta property="og:description" content="Seven years in, from consultancy pace to in-house depth. I design, I lead, and I invest in the people.">
+<meta property="og:description" content="I'm as close to the pixels as I am to the bigger picture, taking ideas from pencil to production at pace. And I always invest in people as much as the product.">
 <meta property="og:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.86f41f1d.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
@@ -38,7 +38,7 @@
 <meta property="og:image:alt" content="Abbie Truman's homepage: her photograph and name above her opening statement, white on near-black.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Abbie Truman — Product Design Leader in the UK">
-<meta name="twitter:description" content="Seven years in, from consultancy pace to in-house depth. I design, I lead, and I invest in the people.">
+<meta name="twitter:description" content="I'm as close to the pixels as I am to the bigger picture, taking ideas from pencil to production at pace. And I always invest in people as much as the product.">
 <meta name="twitter:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.86f41f1d.png">
 <meta name="twitter:image:alt" content="Abbie Truman's homepage: her photograph and name above her opening statement, white on near-black.">
 
@@ -330,9 +330,12 @@
      to close on — the cue is too small to hold the bottom of a full-height
      section by itself — without splitting anything anyone reads. */
   .hp-hero {
-    /* The hero's body size. The greeting and the scroll cue are the only two
-       pieces of non-display type left in here, and the owner's instruction is
-       that they read as one size — so it is declared once and they both take it,
+    /* The hero's body size. The greeting, the aside and the scroll cue are the
+       non-display type in here, and the owner's instruction is that the greeting
+       and the cue read as one size — the aside takes the same size, because it
+       is the same voice stepping back in. Declared once, rather than each
+       carrying a curve of its own that has to be kept in step by hand. The
+       greeting and the cue both take it,
        rather than each carrying a curve of its own that has to be kept in step
        by hand. That is what had gone wrong: the cue ran clamp(12px, 0.85vw,
        14px) against copy at clamp(16px, 1.3vw, 21px), which measured 12.24px
@@ -485,9 +488,31 @@
   }
   .hp-hero__greeting strong { color: var(--ink); font-weight: 500; }
 
+  /* The wink. Same face, size and colour as the greeting, so the two grey lines
+     bracket the statement: she introduces herself, says the thing, then admits
+     the letter P. It is not display type. Set at the statement's size the joke
+     would be the loudest line on the page, and the page's largest type has to
+     stay the thing that gets her hired. Parentheses do the rest of the work —
+     they are why this can sit in the copy block without a rule or a size step
+     inside the statement. */
+  .hp-hero__aside {
+    margin: 0;
+    max-width: 36em;
+    font-size: var(--hero-body);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+    color: var(--ink-2);
+  }
+
   .hp-hero__statement {
     margin: 0;
-    max-width: 26ch;
+    /* Wide enough that the first sentence sets in two lines and the second in
+       one, from the tablet band up. 26ch was the measure when the first
+       sentence was nine words; at that width this one runs to four lines and
+       the hero stops being a headline sitting in the screen. The phone band
+       clears the cap, because there the viewport is already the measure. */
+    max-width: 46ch;
     font-family: var(--ff-display);
     /* 500, against 700-800 everywhere else the display face is used. Three
        sentences at 700 set a slab with no air in it — the weight that keeps a
@@ -1702,7 +1727,7 @@
     .hp-nav__arrow svg { width: 14px; height: 14px; }
 
     .hp-hero { padding: clamp(112px, 14vh, 164px) var(--pad-x) clamp(32px, 4.5vh, 52px); }
-    .hp-hero__statement { max-width: 26ch; }
+    .hp-hero__statement { max-width: 46ch; }
 
     /* The nav pill is shallower here, so the cards can start higher. */
     .hp-cases { padding-top: clamp(64px, 10vh, 104px); }
@@ -2438,37 +2463,32 @@
   var LINKEDIN = 'https://www.linkedin.com/in/abigail-truman/';
 
   var HERO = {
-    // Two stops rather than one em dash, so the greeting is built the way the
-    // statement under it is: short declaratives, no connective tissue.
-    //
-    // Two things lift to white: the name and the role. They are the two answers
-    // the line exists to give, and leaving the role grey made the sentence look
-    // like it was introducing her and then trailing off. `A` and `in the UK.`
-    // stay grey — they are the setting, not the substance, and holding them back
-    // is what lets the two white phrases read as a pair rather than as one long
-    // highlighted stretch. The stops sit outside the <strong>s as well:
-    // punctuation belongs to the sentence, not to the phrase it follows.
-    greeting: 'Hey I&rsquo;m <strong>Abbie</strong>. A <strong>Product Design Leader</strong> in the UK.',
-    // The largest type on the page has to be the thing that gets her hired, and
-    // here it is the only copy in the hero, carrying what a support paragraph
-    // used to carry. Two beats, the second twice the length of the first — 9
-    // words then 18 — so it ramps into its payoff rather than opening on a
-    // fragment and then repaying that fragment with two long sentences.
+    // One sentence. The comma after her name is hers: the line introduces her
+    // and names the role in the same breath, rather than as two short
+    // declaratives. Two things still lift to white — the name and the role —
+    // because they are the two answers the line exists to give. `Hey,` `a` and
+    // `in the UK.` stay grey. They are the setting, not the substance, and
+    // holding them back is what lets the two white phrases read as a pair.
+    // The commas sit outside the <strong>s: punctuation belongs to the
+    // sentence, not to the phrase it follows.
+    greeting: 'Hey, I&rsquo;m <strong>Abbie</strong>, a <strong>Product Design Leader</strong> in the UK.',
+    // The largest type on the page has to be the thing that gets her hired.
+    // Two beats. The first is the range — pixels and the bigger picture, pencil
+    // to production — and the second is the point: people, held equal with the
+    // product. The wink about the letter P sits under them, in the greeting's
+    // type, so the joke never outranks the point.
     // Uniform Manrope, no accent: the serif italic that used to close this
-    // sentence was dropped on the owner's instruction.
-    // The closing words are tied together because a one-word last line in type
-    // this large reads as a mistake rather than a pause, and `I design, I lead,`
-    // is tied because a break inside it severs the triad at its hinge.
+    // block was dropped on the owner's instruction.
     // One span per sentence, each one a block, so every full stop lands at the
     // end of a line at every width. The spaces between the spans are what keeps
     // the aria-label a readable sentence; between block boxes they render as
     // nothing.
-    // The three hp-hero__keep runs are the phrases that a normal wrap inside a
-    // block still gets wrong: `in-house depth.` breaks after the hyphen and
-    // strands `depth.` on the 26ch measure, `the product.` ends up alone on a
-    // last line, and `I design, I lead,` splits at the triad's hinge.
-    statement: '<span class="hp-hero__sentence">Seven years in, from consultancy pace to <span class="hp-hero__keep">in-house depth.</span></span> ' +
-      '<span class="hp-hero__sentence"><span class="hp-hero__keep">I design, I lead,</span> and I put as much into people as I do <span class="hp-hero__keep">the product.</span></span>'
+    // `bigger picture,` is tied so the comma phrase cannot split, and `at pace.`
+    // and `the product.` are tied because a one-word last line in type this
+    // large reads as a mistake rather than a pause.
+    statement: '<span class="hp-hero__sentence">I&rsquo;m as close to the pixels as I am to the <span class="hp-hero__keep">bigger picture,</span> taking ideas from pencil to production <span class="hp-hero__keep">at pace.</span></span> ' +
+      '<span class="hp-hero__sentence">And I always invest in people as much as <span class="hp-hero__keep">the product.</span></span>',
+    aside: '(Yes, I know. That&rsquo;s a lot of letter P&rsquo;s.)'
   };
 
   // In the order the cards are in, because that is the order a visitor who
@@ -3279,6 +3299,7 @@
           '<h1 class="hp-hero__statement" aria-label="' + stripTags(HERO.statement) + '">' +
             '<span class="hp-hero__statement-inner" aria-hidden="true">' + splitWords(HERO.statement, 'hp-hero__word') + '</span>' +
           '</h1>' +
+          '<p class="hp-hero__aside">' + HERO.aside + '</p>' +
         '</div>' +
         '<div class="hp-hero__lower">' +
           // Drawn twice. The second copy is what makes the loop seamless, and
@@ -3670,13 +3691,14 @@
 
     var inner = document.querySelector('.hp-hero__statement-inner');
     var greeting = document.querySelector('.hp-hero__greeting');
+    var aside = document.querySelector('.hp-hero__aside');
     var below = document.querySelectorAll('.hp-hero__lower');
     if (!inner) return;
 
     // Hidden before first paint. The entrance cannot start until the lines are
     // measured, and that waits on the font; nothing may show in between.
     gsap.set(inner, { opacity: 0 });
-    gsap.set([greeting], { opacity: 0, y: 16 });
+    gsap.set([greeting, aside], { opacity: 0, y: 16 });
     gsap.set(below, { opacity: 0, y: 22 });
 
     // The display face, or 700ms, whichever is first. A face that never
@@ -4043,9 +4065,12 @@
     var TRIM = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
     var FAR = 999999;
     // A group wiped on from the left: shut is everything cut away from the
-    // right edge inward, open is nothing cut. The 0.5% is kept rather than
-    // 0 so the tween's two ends have the same shape of value.
-    var WIPE_SHUT = 'inset(-0.5% 100% -0.5% -0.5%)';
+    // right edge inward, open is nothing cut. The half-percent of air on the
+    // open side is for the hairlines, which sit half outside the box they
+    // outline; shut goes past 100% on the right for the same reason, so the
+    // left edge's half-hairline is under the cut too and not left showing as
+    // a dash. Both ends have the same shape of value, which the tween needs.
+    var WIPE_SHUT = 'inset(-0.5% 101% -0.5% -0.5%)';
     var WIPE_OPEN = 'inset(-0.5% -0.5% -0.5% -0.5%)';
     function layoutGuides() {
       var vw = stage.clientWidth, vh = stage.clientHeight;
