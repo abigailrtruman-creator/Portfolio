@@ -19,6 +19,7 @@ sofa-reel-motion.png
 __pycache__/
 *.py[cod]
 phone-preview.html
+hero-ideas.html
 
 # Squarespace injection build, obsolete now the site is hosted directly
 squarespace-injection.html

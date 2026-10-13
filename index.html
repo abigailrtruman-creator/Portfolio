@@ -10,12 +10,11 @@
      code injection cannot own the page's title, description, canonical or
      icons, because Squarespace emits its own. It belongs to this document.
 
-     The description is the statement verbatim, 159 characters, so the words in
+     The description is the statement verbatim, 156 characters, so the words in
      a search result are hers. The aside under it is left out: a snippet should
-     carry the pitch, and with the aside the line runs to 200 characters and
-     would be cut mid-joke.
-     Both the title and the description are pending the owner's approval. -->
-<meta name="description" content="I'm as close to the pixels as I am to the bigger picture, taking ideas from pencil to production at pace. And I always invest in people as much as the product.">
+     carry the pitch, and with the aside the line runs past 200 characters and
+     would be cut mid-joke. -->
+<meta name="description" content="I perfect the pixels, piece together the bigger picture and take ideas from pencil to production. Through it all, I invest in people as much as the product.">
 <link rel="canonical" href="https://abbietruman.vercel.app/">
 
 <!-- Open Graph and Twitter, so a link she sends a hiring manager unfurls as her
@@ -30,16 +29,16 @@
 <meta property="og:site_name" content="Abbie Truman">
 <meta property="og:url" content="https://abbietruman.vercel.app/">
 <meta property="og:title" content="Abbie Truman — Product Design Leader in the UK">
-<meta property="og:description" content="I'm as close to the pixels as I am to the bigger picture, taking ideas from pencil to production at pace. And I always invest in people as much as the product.">
-<meta property="og:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.86f41f1d.png">
+<meta property="og:description" content="I perfect the pixels, piece together the bigger picture and take ideas from pencil to production. Through it all, I invest in people as much as the product.">
+<meta property="og:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.fcd93442.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Abbie Truman's homepage: her photograph and name above her opening statement, white on near-black.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Abbie Truman — Product Design Leader in the UK">
-<meta name="twitter:description" content="I'm as close to the pixels as I am to the bigger picture, taking ideas from pencil to production at pace. And I always invest in people as much as the product.">
-<meta name="twitter:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.86f41f1d.png">
+<meta name="twitter:description" content="I perfect the pixels, piece together the bigger picture and take ideas from pencil to production. Through it all, I invest in people as much as the product.">
+<meta name="twitter:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.fcd93442.png">
 <meta name="twitter:image:alt" content="Abbie Truman's homepage: her photograph and name above her opening statement, white on near-black.">
 
 <!-- The circular AT monogram, built by build-favicon-at.py (prefix 'atc').
@@ -60,7 +59,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
 <!-- GSAP, hers, in her own repo — the same argument as the avatar and the CV, and
      with more riding on it than either. These two files were hot-linked from
      jsdelivr, which made the homepage's opening depend on a third party being
@@ -111,15 +110,11 @@
        this page:
 
          DISPLAY  → Manrope. Every headline and every word set above ~28px:
-                    the hero statement, the wordmark, case titles, section
-                    ledes, the footer line. 800 for short headlines, 700 for
-                    multi-line statements so long runs don't go blobby.
-                    The hero statement is the exception and takes 500: it is
-                    the longest run of display type on the page, and at four
-                    sentences the weight that stops a headline going blobby is
-                    itself the thing making it a wall. Nothing else varies
-                    inside it — one weight, one size, one colour — because the
-                    blank line at hp-hero__sentence does the separating.
+                    the wordmark, case titles, section ledes, the footer line.
+                    800 for short headlines, 700 for multi-line statements so
+                    long runs don't go blobby. The hero statement is not among
+                    them. It is the same face as the greeting, at paragraph
+                    size, so the block does not change form halfway down.
          BODY/UI  → Inter. Every sentence you actually read, plus all labels,
                     eyebrows, nav and buttons. Where a sentence needs a
                     word lifted out of it, that is Inter 500 in full white.
@@ -150,7 +145,14 @@
     background: var(--bg);
     z-index: 999999;
     font-family: var(--ff-body);
+
+    /* The pill's underside at desktop, 28 of offset plus 78 of pill, with a
+       little air under it. While the pill is on screen the cards park no
+       higher than this; while it is away, --deck-clear drops to nothing and
+       the cards sit on the centred line. See .hp-cases__list. */
+    --deck-clear: 124px;
   }
+  .hp-root.is-nav-away { --deck-clear: 0px; }
   .hp-root * { font-family: inherit; box-sizing: border-box; }
 
   /* ---------- Shared primitives ---------- */
@@ -330,18 +332,12 @@
      to close on — the cue is too small to hold the bottom of a full-height
      section by itself — without splitting anything anyone reads. */
   .hp-hero {
-    /* The hero's body size. The greeting, the aside and the scroll cue are the
-       non-display type in here, and the owner's instruction is that the greeting
-       and the cue read as one size — the aside takes the same size, because it
-       is the same voice stepping back in. Declared once, rather than each
-       carrying a curve of its own that has to be kept in step by hand. The
-       greeting and the cue both take it,
-       rather than each carrying a curve of its own that has to be kept in step
-       by hand. That is what had gone wrong: the cue ran clamp(12px, 0.85vw,
-       14px) against copy at clamp(16px, 1.3vw, 21px), which measured 12.24px
-       against 18.72px at 1440.
-       The curve is the greeting's own, unchanged. */
-    --hero-body: clamp(17px, 1.5vw, 24px);
+    /* The hero's body size. The greeting and the scroll cue share it. The
+       aside used to as well, and the joke then read as a second greeting.
+       It has its own smaller curve, so it is the quietest line in the stack.
+       The greeting stays a step under the statement, which is the large type. */
+    --hero-body: clamp(15px, 1.6vw, 24px);
+    --hero-aside: clamp(15px, 1.6vw, 24px);
     position: relative;
     min-height: 100vh;
     max-width: var(--shell);
@@ -355,15 +351,22 @@
     grid-template-columns: minmax(0, 1fr);
     /* Four tracks, two of them empty, so spare height is *divided* rather
        than pooled. Rows 1 and 3 are the clearance above the copy block and the
-       open field below it. The slack splits 1 : 1.3, so the copy sits a
-       little above the centre of the space between the top of the hero and
-       the marks. True centre read as low: the marks' band adds weight at the
-       bottom, and a block of this size wants to be placed rather than sunk.
+       open field below it. The slack splits 1 : 1.15. 1.8 was the ratio for
+       the longer paragraph, and with this one it left the block high: 184px
+       under the pill and 311px above the marks at 1440x900, the words 64px
+       above the centre of that field. 1 : 1 puts the block a few pixels below
+       centre. 1.15 leaves it a hair above — 11px at 1440x900, 11px at
+       1280x800, 5px at 1920x1080, 10px at 1024x768 — with the two gaps within
+       about 20px of each other. The nav clearance at that ratio is 180px at
+       1024x768, the tightest desktop measured, and the marks still clear the
+       fold.
        The minmax() floor on row 3 is the smallest gap the
        marks may ever have from the copy: they are pinned to the foot of the
        first screen, and they must never read as part of the paragraph. Both
-       spacer tracks collapse on short viewports where there is no slack. */
-    grid-template-rows: 1fr auto minmax(clamp(96px, 14vh, 180px), 1.3fr) auto;
+       spacer tracks collapse on short viewports where there is no slack.
+       Landscape phones do not use this ratio: that breakpoint sets the top
+       track to 0fr and hides the marks. */
+    grid-template-rows: 1fr auto minmax(clamp(96px, 14vh, 180px), 1.15fr) auto;
     gap: 0;
   }
   /* Ambient glow. The copy is capped at --shell, but light in a room is not,
@@ -473,76 +476,60 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    /* On the centre line, with the nav above it and the marks below. */
-    align-items: center;
+    /* The statement's column from the frame: 1271px at 1504 wide, centred.
+       The gap is a step under the statement's line: close enough that the
+       greeting reads as its lead-in, open enough to be a separate line. */
+    justify-self: center;
+    width: min(100%, 1271px);
+    align-items: stretch;
     text-align: center;
-    gap: clamp(18px, 2.2vh, 28px);
+    gap: clamp(12px, 1.5vw, 22px);
   }
   .hp-hero__greeting {
     margin: 0;
+    font-family: var(--ff-display);
     font-size: var(--hero-body);
-    line-height: 1.3;
-    letter-spacing: -0.01em;
+    line-height: 1.375;
+    letter-spacing: 0;
     font-weight: 500;
-    color: var(--ink-2);
+    color: #fff;
   }
   .hp-hero__greeting strong { color: var(--ink); font-weight: 500; }
 
-  /* The wink. Same face, size and colour as the greeting, so the two grey lines
-     bracket the statement: she introduces herself, says the thing, then admits
-     the letter P. It is not display type. Set at the statement's size the joke
-     would be the loudest line on the page, and the page's largest type has to
-     stay the thing that gets her hired. Parentheses do the rest of the work —
-     they are why this can sit in the copy block without a rule or a size step
-     inside the statement. */
+  /* The wink. Same face and colour as the greeting, a size down from it, so
+     the joke is the quietest line in the stack rather than a second greeting.
+     It is not display type. Set at the statement's size the joke would be the
+     loudest line on the page, and the page's largest type has to stay the
+     thing that gets her hired.
+     The flex gap above is the same interval as the greeting, which held the
+     wink against the statement. The extra margin is hers: a little more air,
+     so the aside reads as a step down rather than as the next line. It is not
+     applied on a landscape phone, where that air is the difference between the
+     line and the fold. */
   .hp-hero__aside {
-    margin: 0;
-    max-width: 36em;
-    font-size: var(--hero-body);
-    line-height: 1.3;
-    letter-spacing: -0.01em;
+    /* A little more than the greeting's gap, so the wink reads as a step
+       down from the statement rather than as its next line. */
+    margin: clamp(4px, 0.6vw, 10px) auto 0;
+    max-width: none;
+    font-family: var(--ff-display);
+    font-size: var(--hero-aside);
+    line-height: 1.375;
+    letter-spacing: 0;
     font-weight: 500;
-    color: var(--ink-2);
+    color: #919191;
   }
 
   .hp-hero__statement {
     margin: 0;
-    /* Wide enough that the first sentence sets in two lines and the second in
-       one, from the tablet band up. 26ch was the measure when the first
-       sentence was nine words; at that width this one runs to four lines and
-       the hero stops being a headline sitting in the screen. The phone band
-       clears the cap, because there the viewport is already the measure. */
-    max-width: 46ch;
+    /* Manrope 48 / 66 on the 1504 frame, the same face as the greeting.
+       The size comes down with the viewport; 66/48 is the line-height. */
+    max-width: none;
     font-family: var(--ff-display);
-    /* 500, against 700-800 everywhere else the display face is used. Three
-       sentences at 700 set a slab with no air in it — the weight that keeps a
-       one-line headline from going blobby is what makes a six-line one heavy.
-       At 500 the same copy reads as something said rather than announced, which
-       is the register the sentences are written in. */
     font-weight: 500;
-    /* One curve from phone to desktop. A pure-vw size needed a separate mobile
-       override, and that override capped higher than the desktop curve between
-       ~750px and ~1150px, so the statement got *smaller* as the viewport grew
-       past 900px, so this interpolates a single line between the two ends.
-       Both ends came down ~12% when the statement lost the support paragraph and
-       grew to three sentences: 74px was set when this was one sentence of ~100
-       characters, and the same size across 184 characters is six lines of
-       display type filling the hero rather than a headline sitting in it.
-
-       The 6.5vh term is a ceiling, not a second curve. Sized on width alone, a
-       short wide window — 1280x720, a part-height browser on a 1080p monitor —
-       got desktop-sized type with no room under it, and six lines plus a blank
-       line pushed the scroll cue below the fold. min() takes whichever of the
-       two is smaller, so height only ever binds when it is the scarce dimension:
-       at 6.5vh a 1080-tall viewport asks for 70px and gets the 65px cap, while a
-       720-tall one asks for 47px and gets it. On phones the width term is always
-       the smaller of the two by a wide margin, so this never engages there and
-       the type cannot jump when mobile browser chrome collapses and vh changes
-       under it. */
-    font-size: clamp(26px, min(21.7px + 2.25vw, 6.5vh), 65px);
-    line-height: 1.03;
-    letter-spacing: -0.038em;
-    color: var(--ink);
+    font-size: clamp(22px, 3.19vw, 48px);
+    line-height: 1.375;
+    letter-spacing: 0;
+    color: #fff;
   }
   /* Words stay in nowrap wrappers so a multi-line heading breaks between
      words, not between letters, once every glyph is its own inline-block. */
@@ -585,8 +572,9 @@
      Blocks, not <br>: a forced break is a decision about where a line ends,
      which is width-dependent and would need a value per breakpoint. This is a
      decision about where a sentence ends, which is width-independent, so it
-     needs stating once. Within each block the text still wraps normally, and
-     hp-hero__keep handles the phrases that must not come apart when it does. */
+      needs stating once. The statement is one paragraph now, so it is one
+     block: the three sentences flow, and a full stop can land mid-line, which
+     is what a paragraph does. Within the block the text wraps normally. */
   .hp-hero__statement-inner,
   .hp-hero__sentence { display: block; }
   /* While the entrance has each line in its own clip box, those boxes are flex
@@ -597,27 +585,19 @@
   .hp-hero__sentence:has(.hp-hero__line) {
     display: flex;
     flex-direction: column;
-    /* Each line box is as wide as its own words, so the boxes have to be
-       centred as items or the statement arrives ragged-left and snaps to the
-       centre when the boxes come off. */
+    /* Each line box is as wide as its own words, and centred, so the
+       entrance plays as the centred stack the paragraph settles into.
+       Starting them on the left snapped the block sideways when the boxes
+       came off. */
     align-items: center;
   }
-  /* The blank line is the only device marking the seam, and it is enough. The
-     setup was briefly set at --ink-1 against the last sentence's full white, and
-     the objection to it is not that it was hard to see: it is that a true,
-     specific sentence about where she has worked does not need apologising for
-     by being dimmed. One colour, one weight, one size — the space says
-     everything the contrast step was saying.
-     It also leaves the statement with exactly one tone, which is what makes the
-     greeting above it legible as a different kind of line. */
-  .hp-hero__sentence:last-child {
-    /* A full blank line, so the setup and the point read as two blocks rather
-       than as one block with a wider gap in it. `lh` is exactly one line at any
-       line-height, which matters because the phone override sets 1.06 against
-       the desktop's 1.03; the em value above it is the fallback that gets within
-       a pixel or two where `lh` is unsupported. */
-    margin-top: 1.05em;
-    margin-top: 1lh;
+  /* Most of a line between the sentences. They are three beats, and without
+     the air they read as one paragraph set large. A full blank line is the
+     next step and it spends the fold. `lh` is one line at any line-height;
+     the em value is the fallback where `lh` is unsupported. */
+  .hp-hero__sentence + .hp-hero__sentence {
+    margin-top: 0.75em;
+    margin-top: 0.75lh;
   }
   /* Balanced within each block, because a block per sentence fixes where the
      full stops land but not how the words inside them distribute. Greedy
@@ -625,12 +605,19 @@
      one, which is how a full line ends up sitting above a stub; balancing evens
      them instead.
      Safe here specifically because these blocks are short: the algorithm is
-     capped at six lines per block in Chromium, and these set as two lines each
-     at every width above the phone band and three on a phone, so it never
-     silently stops applying. Where it is unsupported the hp-hero__keep
-     runs still hold the phrases that must not come apart, which is the floor
-     this is an improvement on rather than a dependency. */
+     capped at six lines per block in Chromium, and none of the three sentences
+     reaches that — about two lines from a laptop up, and at most four on a phone —
+     so it never silently stops applying. Where it is
+     unsupported the hp-hero__keep runs still hold the phrases that must not
+     come apart, which is the floor this is an improvement on rather than a
+     dependency. */
   .hp-hero__sentence { text-wrap: balance; }
+  /* "Through it all" is its own line. The second sentence is its own block,
+     so it starts a line, and the margin stays at nothing so that line sits
+     in the same leading as the two above it. */
+  .hp-hero__statement .hp-hero__sentence + .hp-hero__sentence {
+    margin-top: 0;
+  }
 
   /* The closing band: the clients drifting along the foot of the first
      screen. There is no rule above them. A hairline here sat in the middle
@@ -977,15 +964,20 @@
     align-items: center;
     gap: var(--card-gap);
     --deck-peek: clamp(12px, 2vh, 20px);
-    /* Where the first card parks. The tallest card's height is the one used
-       for all five so every parking line is the same calculation; see
-       --art-ar-max for why one height stands for the set. svh, because a
-       phone's toolbars come and go and the line must not move with them. */
+    /* Where the first card parks while the pill is away. The tallest card's
+       height is the one used for all five so every parking line is the same
+       calculation; see --art-ar-max for why one height stands for the set.
+       svh, because a phone's toolbars come and go and the line must not move
+       with them. On a laptop this line sits under the pill, so the card
+       actually parks at whichever of this and --deck-clear is lower. */
     --deck-top: calc((100svh - var(--card-w-px) * var(--art-ar-max)) / 2 - 2 * var(--deck-peek));
   }
   .hp-cases__list > .hp-case {
     position: sticky;
-    top: calc(var(--deck-top) + var(--i) * var(--deck-peek));
+    top: calc(max(var(--deck-clear), var(--deck-top)) + var(--i) * var(--deck-peek));
+    /* The same 0.45s and curve as the pill's return, so the card eases down
+       as the pill eases in. */
+    transition: top 0.45s cubic-bezier(0.32, 0.72, 0, 1);
     margin: 0;
     /* The pile leaves as one. A sticky box lets go when its own bottom
        meets the end of its container, so five cards of two heights on five
@@ -994,6 +986,10 @@
        bottom to the same place as the stage's, the bottom of the screen, so
        the end of the list reaches all five in the same frame. The padding
        is empty and under the card; nothing is drawn in it. */
+    /* Stays on the centred line, not the cleared one. The empty space is
+       what makes the pile let go together, and it must not grow and shrink
+       as the pill comes and goes or the page would change length under the
+       scroll. */
     padding-bottom: max(0px, calc(100vh - var(--deck-top) - var(--i) * var(--deck-peek) - var(--card-w-px) * var(--art-ar)));
     /* Drawn back about the top edge, so a covered card's sliver stays on its
        parking line and its sides come in — the one way a scale reads as
@@ -1317,7 +1313,10 @@
     position: sticky;
     top: 0;
     width: 100%;
-    height: 100vh;
+    /* svh, not vh. On a phone the large viewport is taller than the screen
+       while the browser chrome is up, and a stage of that height loses its
+       bottom behind the chrome. The deck already parks on svh. */
+    height: 100svh;
     background: #0a0a0c;
   }
   .hp-build__travel {
@@ -1339,7 +1338,8 @@
     align-items: start;
     /* The card sits on the deck's first parking line, not at the centre, so
        card 02 covers it exactly as 03 will cover 02. */
-    padding-top: var(--deck-top);
+    padding-top: max(var(--deck-clear), var(--deck-top));
+    transition: padding-top 0.45s cubic-bezier(0.32, 0.72, 0, 1);
     /* The card is the only child the stage lays out; the guides and the
        wire are absolute over it. Paint containment keeps
        the per-frame SVG repaints inside this box. */
@@ -1367,6 +1367,17 @@
     opacity: 0;
     pointer-events: none;
   }
+  /* On a phone every card's link is painted its own colour, so the sentence
+     and the cropped picture read as one card. That paint is the navy, and
+     on this card it would be there from the first line of the drawing.
+     The layer above is the navy, and it fades in when the card closes
+     round the window — the same moment as on a desktop, where the link
+     was never painted. Until then the drawing sits on the stage. */
+  #hp-build .hp-case__link { background: transparent; }
+  /* On a phone this card uses the same head and the same crop as the other
+     four. Holding the sentence in the artwork's own band left the last line
+     on the checkout — about 8px of air, where the wholesale card has the
+     spec's gap. The fade is unchanged; only the place it lands is. */
   .hp-build__guides,
   .hp-build__wire {
     position: absolute;
@@ -1413,30 +1424,37 @@
      on the 691px card a 1440x820 window lays out. */
   .hp-build__wire .hb-label { font-size: 46px; }
 
-  /* The lines of markup, typed over the wire's left column. Mono, small,
-     cream at 70 with the tags held back to 45 so what reads first is the
-     words. A near-black backing with the card's own radius halved, because
-     the lines sit over a wireframe and would otherwise be competing with it.
-     The box and every line are opacity only; the width and the type are
-     fixed so no line ever wraps mid-build. */
+  /* One component, sat on the component. The left is the gift card
+     button, the right is the first product tile, and each box is only as
+     tall as that markup. It then dissolves into the screenshot, so the
+     thing being typed is that control, not the whole panel. A box the
+     height of the panel, typed with one short snippet, read as the panel
+     having stopped early. Mono, small, cream at 70 with the tags held
+     back to 45 so what reads first is the words. The box and every line
+     are opacity only; the width and the type are fixed so no line ever
+     wraps mid-build. */
   .hp-build__code {
     position: absolute;
-    left: 16.01%;
-    top: 49.3%;
-    width: 38.19%;
-    height: 42%;
-    padding: 1.8cqw 1.45cqw;
+    /* Shares of the picture. The script rewrites these when the picture is
+       cropped — on a phone the file's top band is not in the box, so a
+       percentage of the file is not that percentage of the box. */
+    top: var(--code-y, 79.6%);
+    left: var(--code-x, 17.51%);
+    width: var(--code-w, 38.19%);
+    padding: 1.2cqw 1.2cqw;
     overflow: hidden;
-    border-radius: calc(var(--card-r) * 0.5);
-    border: 1px solid rgba(252,249,245,0.1);
-    background: rgba(10,10,12,0.93);
+    border-radius: 0.7cqw;
+    /* The fill stays the black it was. The edge is one grey all the way
+       round, and the shadow is what lifts the card off the wire. */
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: #0c0c0f;
+    box-shadow: 0 22px 40px -16px rgba(0, 0, 0, 0.9), 0 4px 12px -6px rgba(0, 0, 0, 0.65);
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    /* 12px on the 691px card a 1440x820 window lays out, 13px from a 748px
-       card up, and no smaller than 9px on the smallest card the build runs
-       on (a 901x561 window lays out a 473px card). The box is the panel, so
-       the type has to follow the card for the longest line, 31 characters
-       with its one-space indent, to keep fitting without being clipped. */
-    font-size: clamp(9px, 1.737cqw, 13px);
+    /* 12px from a 774px card up. The product tile is the narrow one, so
+       the size is what fits an 18-character line in it; the button's lines
+       are longer and the payment panel is wider, so they fit with room. The
+       5px floor is the phone, where a higher one overflows that tile. */
+    font-size: clamp(5px, 1.55cqw, 12px);
     line-height: 1.55;
     letter-spacing: -0.015em;
     color: rgba(252,249,245,0.7);
@@ -1444,6 +1462,7 @@
     pointer-events: none;
     opacity: 0;
   }
+  .hp-build__code--sum { --code-x: 60.46%; --code-y: 56.43%; --code-w: 25.03%; }
   .hp-build__code-line { display: block; opacity: 0; }
   .hp-build__code .t { color: rgba(252,249,245,0.45); }
 
@@ -1455,8 +1474,9 @@
      gesture and a control that claimed otherwise would be lying; pressed, it
      says so, and it stays, so it can be pressed again. The label is the state
      — "Sound on" or "Sound off" — rather than the action, with the icon
-     agreeing: two arcs when on, a slash when off, and the whole thing dimmer
-     when off so the two states are told apart at a glance and not by reading.
+     agreeing: the same two arcs either way, a line through them when off,
+     and the whole thing dimmer when off so the two states are told apart
+     at a glance and not by reading.
      It wears the nav's treatment, same fill, hairline and blur, so the two
      pieces of floating furniture read as one family from opposite corners.
      Nothing is stored between visits; a return visit needs the press anyway. */
@@ -1493,10 +1513,9 @@
   .hp-sound:focus-visible { outline: 2px solid rgba(255,255,255,0.7); outline-offset: 2px; }
   .hp-sound[aria-pressed="true"] { color: var(--ink); }
   .hp-sound svg { width: 12px; height: 12px; display: block; color: currentColor; }
-  /* Both marks are in the file and aria-pressed picks one, so what the eye
-     sees and what a screen reader hears are one value. */
-  .hp-sound[aria-pressed="true"] .hp-sound__off,
-  .hp-sound[aria-pressed="false"] .hp-sound__on { display: none; }
+  /* The arcs stay. The line is the off state, so aria-pressed hides it
+     when the sound is on. The label swaps with the same value. */
+  .hp-sound[aria-pressed="true"] .hp-sound__off { display: none; }
   .hp-sound[aria-pressed="true"] .hp-sound__label-off,
   .hp-sound[aria-pressed="false"] .hp-sound__label-on { display: none; }
   /* On a short screen the stage's card leaves little beneath it — under 70px
@@ -1735,7 +1754,7 @@
     .hp-nav__arrow svg { width: 14px; height: 14px; }
 
     .hp-hero { padding: clamp(112px, 14vh, 164px) var(--pad-x) clamp(32px, 4.5vh, 52px); }
-    .hp-hero__statement { max-width: 46ch; }
+    .hp-hero__statement { max-width: none; }
 
     /* The nav pill is shallower here, so the cards can start higher. */
     .hp-cases { padding-top: clamp(64px, 10vh, 104px); }
@@ -1806,29 +1825,44 @@
          is, and split with `in the UK.` alone underneath it reads as a stray
          fragment below the statement rather than as a line of its own.
 
-         3.5vw is what the measurement asks for, not a guess. 15px still governs
-         from 429px up, and below that the type comes down only as far as the
-         line needs — 13.65px on a 390px phone, 11.2px at 320px — keeping about
-         13px of slack at the narrowest width so a font fallback with wider
+         3.3vw keeps the greeting a step under the statement, which is 15px on
+         a 390 phone. 13px governs from about 394px up, and below that the type
+         comes down only as far as the line needs — 12.9px on a 390px phone,
+         10.6px at 320px — keeping slack at the narrowest width so a font fallback with wider
          metrics cannot tip it back onto two lines. The cue comes down with it,
          which is the whole point of the shared property: they remain one size,
          as the owner asked. */
-      --hero-body: min(15px, 3.5vw);
-      padding: 94px 22px 30px;
-      grid-template-rows: 1fr auto minmax(56px, 1fr) auto;
+      --hero-body: min(13px, 3.3vw);
+      /* A step under the greeting at every phone width, including 320 where
+         the greeting itself is already down at 11px. */
+      --hero-aside: min(12px, 3vw);
+      padding: 94px 20px 30px;
+      /* The same 1 : 1.15 as the desktop. 1.4 was the lift for the longer
+         paragraph, and with this one it left 226px under the pill and 285px
+         above the marks at 390x844, the words 30px above the centre of that
+         field. 1.15 brings it to 249 and 261, 6px above centre. The marks
+         still clear the fold. */
+      grid-template-rows: 1fr auto minmax(56px, 1.15fr) auto;
     }
-    .hp-hero__main { gap: 14px; }
-    /* Size comes from the base clamp; this only tightens the setting. */
+    .hp-hero__main { gap: 12px; }
+    .hp-hero__aside { margin-top: 6px; }
+    /* Four lines on a phone: two for each sentence. The longer half of the
+       first sentence, 'picture and take ideas from pencil to production.',
+       is 339px at 15px, which fits the 350px column on a 390 phone. Above
+       that the size climbs with the width, so a wider phone does not get
+       smaller type than it needs. */
     .hp-hero__statement {
       max-width: none;
-      line-height: 1.06;
-      letter-spacing: -0.032em;
+      font-size: clamp(13.5px, 3.85vw, 18px);
+      line-height: 1.4;
+      letter-spacing: 0;
     }
     /* The marks come down a little, so six of them still read as one line
        rather than as the heaviest thing on a phone. */
     .hp-hero__logo { height: calc(var(--h) * 0.82); width: calc(var(--h) * 0.82 * var(--r)); }
 
-    .hp-cases {
+    .hp-cases,
+    .hp-build {
       /* The height cap comes off here, and here rather than at 900px, because
          this is where the crop starts. Below 601px the artwork loses its cleared
          band to object-fit and the head moves into the flow, so the card's height
@@ -1848,6 +1882,10 @@
          the ratio is already the larger of the two and this stops applying, so
          the curve runs continuously into the band above rather than stepping at
          the breakpoint. */
+      /* Shared with the build. Its sentence is this same one, and the
+         19px floor is the desktop card's. Left on a phone-width card it
+         sets the type at 19px, which is neither the other cards nor the
+         band the artwork cleared. */
       --sp-desc-floor: 11px;
       /* A phone card is nearly the full width of the screen, so the same 0.9
          that reads clearly on a desktop is barely a change here — there is no
@@ -1855,6 +1893,8 @@
          gives the carousel something to say at this size. */
       --card-scale-min: 0.82;
       --card-dim-min: 0.55;
+    }
+    .hp-cases {
       padding-top: clamp(56px, 9vh, 92px);
       padding-bottom: 64px;
     }
@@ -1896,6 +1936,21 @@
       position: static;
       padding: var(--sp-pad) var(--sp-pad) 0;
     }
+    /* The build's sentence rises the last 24px, which crosses onto the
+       picture. The picture is a later sibling with its own layer, so a
+       static head would finish that rise underneath it. relative keeps this
+       head in the same place in the flow and paints the words above the
+       picture; the shade stays above both, so a covered card still dims the
+       sentence. top, left and right belong to the absolute head — left set,
+       they would shift this one by a second padding. */
+    #hp-build .hp-case__head {
+      position: relative;
+      z-index: 2;
+      top: auto;
+      right: auto;
+      left: auto;
+    }
+    #hp-build .hp-case__shade { z-index: 3; }
     /* object-fit rather than a negative margin. A negative margin does not crop
        an image, it moves the whole thing up — including the part that is
        supposed to be gone — and since that part is opaque flat colour it lands
@@ -2001,6 +2056,10 @@
       top: 12px;
       padding: 8px 10px 8px 8px;
     }
+    /* The pill ends at 74px here, not 106, so the desktop clearance of 124
+       pushed the card off the bottom of a landscape phone. 86 clears this
+       shorter pill and still leaves the card on the screen. */
+    .hp-root { --deck-clear: 86px; }
     .hp-hero {
       min-height: 0;
       padding-top: 92px;
@@ -2008,24 +2067,13 @@
       grid-template-rows: 0fr auto minmax(20px, 1fr) auto;
     }
     .hp-hero__main { gap: 10px; }
-    /* Down ~12% with the main curve, so a landscape phone stays in proportion
-       to every other width rather than becoming the one place the statement is
-       still set at its old size. */
-    .hp-hero__statement { font-size: clamp(26px, 3.8vw, 40px); max-width: 62ch; }
-    /* A third of a line rather than a whole one. This was sized against a
-       three-sentence statement, which set six lines here and left the closing
-       band without the 33px a full seam costs: at 1lh the cue landed 9px under
-       the fold on a 390px-tall viewport, which is the one thing this breakpoint
-       exists to prevent.
-       With the middle sentence gone the statement is two blocks of two lines,
-       and the cue now clears the fold at 1lh across this whole band — 17px to
-       spare at its tightest, 601x320. So the tightened seam is no longer forced
-       and is kept as a proportion: a full blank line between two blocks is a
-       third of the hero at these heights. It still reads as the seam, being the
-       only gap in the block and the only device marking it at any width. */
-    .hp-hero__sentence:last-child {
-      margin-top: 0.35em;
-      margin-top: 0.35lh;
+    .hp-hero__aside { margin-top: 0; }
+    .hp-hero__statement { max-width: none; }
+    /* Tighter than the laptop. Two gaps at half a line are most of the spare
+       height here, and the aside would land on the fold. */
+    .hp-hero__sentence + .hp-hero__sentence {
+      margin-top: 0.28em;
+      margin-top: 0.28lh;
     }
     /* No height for a line under the copy. The marquee would land below the
        fold, which is the thing this breakpoint exists to prevent, so the
@@ -2044,8 +2092,10 @@
      hero is already sitting on its floor, and the largest of those floors is the
      112px top padding, which is there to clear the nav pill — and the pill ends
      around 76px, so roughly 30px of it is dead space. Spending that, plus the
-     same 0.35lh seam the landscape breakpoint uses, covers the band with room to
-     spare and leaves the statement at the size it is at every other height.
+     same tightened seam the landscape breakpoint uses, covers the band and
+     leaves the statement at the size it is at every other height. The statement
+     is a short paragraph now, so the band only has to keep the padding from
+     eating the fold.
      Raising the breakpoint ceiling instead was the obvious move and the wrong
      one: that treatment sets min-height 0 for a viewport the copy fills on its
      own, so at 1440 wide the hero stopped filling the screen, the next section
@@ -2054,9 +2104,9 @@
      including the 1440x800 laptop the hero is composed for. */
   @media (min-width: 601px) and (min-height: 561px) and (max-height: 670px) {
     .hp-hero { padding-top: 88px; }
-    .hp-hero__sentence:last-child {
-      margin-top: 0.35em;
-      margin-top: 0.35lh;
+    .hp-hero__sentence + .hp-hero__sentence {
+      margin-top: 0.28em;
+      margin-top: 0.28lh;
     }
   }
 
@@ -2123,6 +2173,8 @@
       will-change: auto;
       transition: none;
     }
+    .hp-cases__list > .hp-case,
+    .hp-build__stage { transition: none; }
     .hp-case__shade { opacity: 0; }
     /* The drift is ambient motion. It stops, the fade comes off so nothing
        is hidden for the sake of a loop that is not running, and the second
@@ -2151,8 +2203,11 @@
   /* ---------- POINTER ----------
      Homepage only. A fine pointer is a small white dot, drawn above the page
      and kept off the hit path so the cards still receive the click. Over a
-     case study the same dot springs out into a white circle with a black
-     arrow — one object changing size, not a second cursor swapped in.
+     finished case study the same dot springs out into a white circle with a
+     black arrow — one object changing size, not a second cursor swapped in.
+     Card 01 is not finished while it is being drawn. The arrow waits until
+     the build has become the card, the image alone, which is progress 0.90.
+     Before that the pointer is still the dot, on the wire as on the hero.
      Position stays 1:1 with the pointer. Only the size eases, and it takes
      about 480ms to go from dot to circle: a sine ease-in-out,
      so it swells gradually and settles without a snap or a sticky tail.
@@ -2261,23 +2316,25 @@
 
 <script>
 (function() {
-  var VERSION = 'v68';
+  var VERSION = 'v69';
   console.log('HP ' + VERSION + ' loading...');
   document.documentElement.classList.add('hp-active');
 
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Whether card 01 is built in front of the reader or simply shown. Decided
-  // once, in init(), the way the wordmark decides: a pointer-sized screen with
-  // room for a card and a stage around it, motion allowed, GSAP present. It
-  // is read before the markup is built because it changes the markup — card
-  // 01 either lives in the stage or at the top of the carousel — and a page
+  // once, in init(), the way the wordmark decides: motion allowed, GSAP
+  // present. It used to ask for a pointer-sized screen as well, which is why
+  // a phone and a portrait tablet showed the finished card and never the
+  // drawing. The wire is measured onto the picture's own box, so the same
+  // build holds where that box is a crop with the sentence above it. It is
+  // read before the markup is built because it changes the markup — card 01
+  // either lives in the stage or at the top of the carousel — and a page
   // that re-decided on resize would have to move a card between sections.
   var BUILD_ON = false;
   function decideBuild() {
     return !REDUCED &&
-      typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined' &&
-      window.matchMedia('(min-width: 901px) and (min-height: 561px)').matches;
+      typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
   }
 
   // ---------- SOUND ----------
@@ -2412,8 +2469,8 @@
     return { play: play, enabled: isOn, enable: enable, disable: disable };
   })();
 
-  // The control's mark: two arcs for on, one slash for off. Both are in the
-  // file and aria-pressed picks one, see .hp-sound.
+  // The control's mark: the same two arcs either way, and a line through
+  // them when the sound is off. aria-pressed hides the line, see .hp-sound.
   var SOUND_ICON = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
     '<path class="hp-sound__on" d="M10 8.5a5 5 0 0 1 0 7"/>' +
     '<path class="hp-sound__on" d="M14 4.8a10 10 0 0 1 0 14.4"/>' +
@@ -2472,31 +2529,16 @@
 
   var HERO = {
     // One sentence. The comma after her name is hers: the line introduces her
-    // and names the role in the same breath, rather than as two short
-    // declaratives. Two things still lift to white — the name and the role —
-    // because they are the two answers the line exists to give. `Hey,` `a` and
-    // `in the UK.` stay grey. They are the setting, not the substance, and
-    // holding them back is what lets the two white phrases read as a pair.
-    // The commas sit outside the <strong>s: punctuation belongs to the
-    // sentence, not to the phrase it follows.
-    greeting: 'Hey, I&rsquo;m <strong>Abbie</strong>, a <strong>Product Design Leader</strong> in the UK.',
-    // The largest type on the page has to be the thing that gets her hired.
-    // Two beats. The first is the range — pixels and the bigger picture, pencil
-    // to production — and the second is the point: people, held equal with the
-    // product. The wink about the letter P sits under them, in the greeting's
-    // type, so the joke never outranks the point.
-    // Uniform Manrope, no accent: the serif italic that used to close this
-    // block was dropped on the owner's instruction.
-    // One span per sentence, each one a block, so every full stop lands at the
-    // end of a line at every width. The spaces between the spans are what keeps
-    // the aria-label a readable sentence; between block boxes they render as
-    // nothing.
-    // `bigger picture,` is tied so the comma phrase cannot split, and `at pace.`
-    // and `the product.` are tied because a one-word last line in type this
-    // large reads as a mistake rather than a pause.
-    statement: '<span class="hp-hero__sentence">I&rsquo;m as close to the pixels as I am to the <span class="hp-hero__keep">bigger picture,</span> taking ideas from pencil to production <span class="hp-hero__keep">at pace.</span></span> ' +
-      '<span class="hp-hero__sentence">And I always invest in people as much as <span class="hp-hero__keep">the product.</span></span>',
-    aside: '(Yes, I know. That&rsquo;s a lot of letter P&rsquo;s.)'
+    // One line, Manrope 24, the same weight all the way across. The frame
+    // sets it in white above the 48px statement.
+    greeting: 'Hey, I&rsquo;m Abbie. A Product Design Leader in the UK.',
+    // One paragraph, in the body face. She picked that over three display
+    // sentences: it is the thing you read, not a poster. Two sentences now,
+    // the work and then the people, still the one block.
+    // The wink stays in brackets, a step smaller than the greeting, and the
+    // apostrophe in P's is typographic.
+    statement: '<span class="hp-hero__sentence">I perfect the pixels, piece together the bigger picture and take ideas from pencil to production.</span> <span class="hp-hero__sentence">Through it all, I invest in people as much as the product.</span>',
+    aside: '(All those P&rsquo;s are pure coincidence, I promise)'
   };
 
   // In the order the cards are in, because that is the order a visitor who
@@ -2664,16 +2706,17 @@
   // otherwise become a stretch of empty colour between the sentence and the
   // mockup.
   //
-  // The copy on the first three is read off her composite of those cards with
-  // their text on; the last two she gave directly. All five are hers — this
-  // said the last two were placeholder words of mine, which stopped being true
-  // once she supplied them and is corrected here so nobody trims them thinking
-  // they are nobody's.
+  // The copy on Boots, the cycling app and the full-fibre portals is read off
+  // her composite of those cards with their text on; PwC and the British
+  // Cycling website she gave directly. All five are hers — this said the last
+  // two were placeholder words of mine, which stopped being true once she
+  // supplied them and is corrected here so nobody trims them thinking they
+  // are nobody's.
   //
   // Every sentence lands on exactly three lines from 768px up, which is what
   // her artwork draws. That is a constraint on the copy, not on the CSS: the
   // measure is 20.4em, so three lines hold about 54em of sentence and a longer
-  // one silently takes a fourth. Cards 04 and 05 both did, and both were cut
+  // one silently takes a fourth. PwC and the British Cycling website both did, and both were cut
   // to fit rather than being set smaller or given a wider column, because the
   // type and the column are the spec's.
   //
@@ -2684,9 +2727,10 @@
   // changed and why the old version could not be kept as it was.
   //
   // The labels are hers, given directly, and in her order. AI Development on
-  // card 02 is title case, and is now the only label here running to more than
-  // one word: card 04 was Content Strategy and is Content at her request, which
-  // also puts it in step with card 03, which has been Content all along.
+  // the British Cycling app is title case, and is the only label here running
+  // to more than one word. The British Cycling website was Content Strategy
+  // and is Content at her request, in step with the full-fibre card, which
+  // has been Content all along.
   var PROJECTS = [
     {
       title: 'Boots website',
@@ -2734,6 +2778,25 @@
         alt: 'Three Sofa to Saddle app screens: the home feed, a training plan and a ride timer'
       }
     },
+    // The homepage sentence and the case study heading are the same words.
+    // PwC is the lifted name, the way Boots.com is on the first card. Third
+    // in the stack, after the British Cycling app.
+    {
+      title: 'PwC client portal',
+      slug: 'pwc',
+      card: 'pwc',
+      desc: '<span class="hp-case__line">Shaping the next evolution of <strong>PwC&rsquo;s</strong> <span class="hp-case__lockup">real-time</span></span>' +
+        '<span class="hp-case__line">Deals collaboration platform for practitioners</span>' +
+        '<span class="hp-case__line">and clients worldwide.</span>',
+      tags: ['UX & UI', 'Research', 'Strategy'],
+      href: '/pwc-client-portal',
+      art: {
+        base: 'assets/case-pwc', tag: '776fde20',
+        w: 3024, h: 2798,
+        clear: 0.409,
+        alt: 'Three PwC app screens: setting up a new project, a key focus areas feed with a chart synced from a workbook, and a quality of earnings summary with its adjustments table'
+      }
+    },
     // Revised sentence. The client stays the lifted phrase, same as the other
     // cards. It still has to land in three lines: a fourth crosses into the mockup.
     //
@@ -2772,24 +2835,6 @@
         w: 3024, h: 2708,
         clear: 0.365,
         alt: 'A developer portal in a browser window: reference documentation for a Get Appointment endpoint, its parameters and response codes beside a console for testing the request'
-      }
-    },
-    // The homepage sentence and the case study heading are the same words.
-    // PwC is the lifted name, the way Boots.com is on the first card.
-    {
-      title: 'PwC client portal',
-      slug: 'pwc',
-      card: 'pwc',
-      desc: '<span class="hp-case__line">Shaping the next evolution of <strong>PwC&rsquo;s</strong> <span class="hp-case__lockup">real-time</span></span>' +
-        '<span class="hp-case__line">Deals collaboration platform for practitioners</span>' +
-        '<span class="hp-case__line">and clients worldwide.</span>',
-      tags: ['UX & UI', 'Research', 'Strategy'],
-      href: '/pwc-client-portal',
-      art: {
-        base: 'assets/case-pwc', tag: '776fde20',
-        w: 3024, h: 2798,
-        clear: 0.409,
-        alt: 'Three PwC app screens: setting up a new project, a key focus areas feed with a chart synced from a workbook, and a quality of earnings summary with its adjustments table'
       }
     },
     {
@@ -2956,7 +3001,7 @@
   // The wireframe of the Boots card, in the card image's own pixel grid: the
   // viewBox is 3024 x 2708, the file's size, and every number below is a
   // percentage of that file measured off it (window top at 36.52%, header
-  // baseline 47.23%, the Credit / Debit radio at 18.6% x 98.1% and so on).
+  // baseline 47.27%, the Credit / Debit radio at 18.6% x 98.1% and so on).
   // Authored in percentages and converted once, so a rect can be checked
   // against the overlay the measurements were taken from without arithmetic.
   //
@@ -2985,16 +3030,17 @@
     function label(x, y, text, anchor) {
       return '<text class="hb-label" x="' + X(x) + '" y="' + Y(y) + '" text-anchor="' + (anchor || 'middle') + '">' + text + '</text>';
     }
-    // How a group opens. The browser skeleton — window, address bar, header
-    // — unrolls from its top edge, the way the window came down. Everything
-    // inside the page is wiped on from its left edge: panels, product rows,
-    // text. Those are horizontal shapes, and a horizontal shape opened from
-    // the top starts as a squashed hairline and stretches to height, which
-    // the owner read as a stutter. A wipe rather than a sideways scale for
-    // the same reason: a scale squashes the text bars and lets them out,
-    // where a wipe uncovers them whole, like a line being drawn — which is
-    // the whole conceit. The wipe is a clip-path, which the build already
-    // uses on the image; see the note at the components beat.
+    // How a group opens. The browser chrome — the window, the traffic lights
+    // and the address bar — fades in whole. It used to unroll from its top
+    // edge, and a frame that tall, scaled down from a hairline, read as the
+    // window scrolling itself into place. Everything else is wiped on from
+    // its left edge. Those are horizontal shapes, and a horizontal shape
+    // opened from the top starts as a squashed hairline and stretches to
+    // height. The header did exactly that — the logo, the little mark and
+    // the short bar inflated into place — which read as the skeleton jumping.
+    // A wipe uncovers them whole, like a line being drawn, which is the
+    // whole conceit. The wipe is a clip-path, which the build already uses
+    // on the image; see the note at the components beat.
     function group(name, inner, unfold) {
       return '<g class="hb-el" data-el="' + name + '" data-unfold="' + (unfold || 'x') + '">' + inner + '</g>';
     }
@@ -3010,8 +3056,12 @@
     // so on. 103 runs the rects off the bottom of the card, where the artwork
     // is itself cut, so no bottom edge is ever drawn.
     var WL = 7.47, WR = 92.53, WT = 36.52, BOT = 103;
-    var CHR = 39.92;                     // the browser chrome's bottom edge
-    var HB = 47.27;                      // the checkout header's baseline
+    var CHR = 39.92;                     // where the white page starts, under the chrome
+    var URLB = 39.03;                    // the address bar's own bottom edge
+    // The heading block is the address bar's height, dropped so its top is the
+    // underside of the URL. It was sat on the white page, which left the top
+    // rule a few pixels under the address bar.
+    var HB = 47.27 - (CHR - URLB);
     var CL = 16.01, CR = 54.20;          // the checkout's left panel
     var SL = 58.96, SR = 83.99;          // the summary panel
     var GUT = SL - CR;                   // the gutter between them, 144px
@@ -3034,8 +3084,8 @@
     var cols = '';
     // Columns run from the page's top, under the chrome, not from the
     // window's: the grid belongs to the design and the chrome is the browser.
-    for (var i = 0; i < 3; i++) cols += rect(CL + i * (c3 + GUT), CHR, CL + i * (c3 + GUT) + c3, BOT, 'hb-col');
-    for (var j = 0; j < 2; j++) cols += rect(SL + j * (c2 + GUT), CHR, SL + j * (c2 + GUT) + c2, BOT, 'hb-col');
+    for (var i = 0; i < 3; i++) cols += rect(CL + i * (c3 + GUT), URLB, CL + i * (c3 + GUT) + c3, BOT, 'hb-col');
+    for (var j = 0; j < 2; j++) cols += rect(SL + j * (c2 + GUT), URLB, SL + j * (c2 + GUT) + c2, BOT, 'hb-col');
 
     var grid = '<g class="hb-layer" data-layer="cols">' + cols + '</g>' +
       '<g class="hb-layer" data-layer="outlines">' +
@@ -3066,14 +3116,17 @@
     var els =
       group('window',
         rect(WL, WT, WR, BOT, 'hb-wire', 36) +
-        hline(WL, WR, CHR) +
-        circle(8.90, 38.20, 11, 'hb-wire hb-round') + circle(10.05, 38.20, 11, 'hb-wire hb-round') + circle(11.19, 38.20, 11, 'hb-wire hb-round'), 'y') +
-      group('url', rect(32.41, 37.33, 67.56, 39.03, 'hb-wire', 23), 'y') +
+        hline(WL, WR, URLB) +
+        circle(8.90, 38.20, 11, 'hb-wire hb-round') + circle(10.05, 38.20, 11, 'hb-wire hb-round') + circle(11.19, 38.20, 11, 'hb-wire hb-round') +
+        rect(32.41, 37.33, 67.56, 39.03, 'hb-wire', 23), 'fade') +
+      // One rule, on the bottom of the heading block. The top of that block
+      // is the line already drawn under the address bar. The mark, the lock
+      // and "Secure checkout" sit in the block, where they sit on the checkout.
       group('header',
         hline(WL, WR, HB) +
         bar(10.09, 41.84, 15.87, 45.24) +
         rect(17.39, 42.95, 18.25, 44.31, 'hb-wire', 4) +
-        row(18.98, 26.59, 43.59, 0.92), 'y') +
+        row(18.98, 26.59, 43.59, 0.92)) +
       group('contact',
         rect(CL, 49.30, CR, 58.64, 'hb-wire', 8) +
         hline(CL, CR, 54.02) +
@@ -3145,35 +3198,48 @@
       grid + ground + els + dims2 + '</svg>';
   }
 
-  // The lines of code, typed over the wire. Not the checkout's layout but
-  // what makes it usable with a screen reader or a keyboard: a labelled
-  // nav, labels tied to their inputs, a fieldset with a legend round the
-  // payment options, the total announced when it changes, a focus ring on
-  // the button. Each line is cut short enough that none wraps in the left
-  // panel at the smallest card the build runs on. Tags, attribute names and
-  // braces carry the quieter class; values and the words read first.
-  // The gift card row, as a disclosure: the one component on the wire that
-  // has a measurement on it, written the way it should be built. Plain HTML,
-  // not a framework's — the site is hand-written HTML and this is the one
-  // place code shows, so it shows the design's markup and not a library's.
-  // Every line is 31 characters or fewer, which is what fits the box on the
-  // narrowest card the build runs on; see .hp-build__code.
-  var CODE_LINES = [
+  // One snippet each, typed in parallel and then dissolved into the
+  // screenshot. Each is a single control, the one that sits where the box
+  // sits, with the decision that makes it careful.
+  // The gift card is a button, type=button so it cannot submit the order.
+  // aria-expanded is false because the row is closed, and aria-controls
+  // names the panel it opens. The label is "Gift Card", as the row is
+  // written. The night cream is the first product, not the whole summary,
+  // and the words are that tile's own: No7 Essential Moisture, Night Cream
+  // 50ml, £8.99, Saving £1.00, Quantity: 1. The photo's alt is empty
+  // because the name is the text beside it, so it is not read twice, and
+  // the saving is written out because the red is not the only way to see it.
+  // Plain HTML, not a framework's — the site is hand-written HTML and this
+  // is the one place code shows, so it shows the design's markup.
+  // Tags and attribute names carry the quieter class; the words read first.
+  // The button's lines stay within 30 characters and the tile's within 18,
+  // which is what fits each box on the narrowest card the build runs on.
+  var CODE_PAY = [
     '<span class="t">&lt;button type=</span>"button"',
     ' <span class="t">aria-expanded=</span>"false"',
     ' <span class="t">aria-controls=</span>"gift-card"<span class="t">&gt;</span>',
-    ' Gift card',
-    '<span class="t">&lt;/button&gt;</span>',
-    '<span class="t">&lt;div id=</span>"gift-card"<span class="t"> hidden&gt;</span>',
-    ' <span class="t">&lt;label for=</span>"gc"<span class="t">&gt;</span>Number<span class="t">&lt;/label&gt;</span>',
-    ' <span class="t">&lt;input id=</span>"gc"<span class="t"> type=</span>"text"<span class="t">&gt;</span>',
-    '<span class="t">&lt;/div&gt;</span>',
-    '<span class="t">&lt;p aria-live=</span>"polite"<span class="t">&gt;</span>£60<span class="t">&lt;/p&gt;</span>'
+    ' Gift Card',
+    '<span class="t">&lt;/button&gt;</span>'
   ];
-  function buildCodeHtml() {
-    return '<div class="hp-build__code" aria-hidden="true">' +
-      CODE_LINES.map(function(l) { return '<span class="hp-build__code-line">' + (l || ' ') + '</span>'; }).join('') +
+  var CODE_SUM = [
+    '<span class="t">&lt;article&gt;</span>',
+    ' <span class="t">&lt;img alt=</span>""<span class="t">&gt;</span>',
+    ' <span class="t">&lt;h3&gt;</span>No7 Essential',
+    '  Moisture',
+    '  Night Cream',
+    '  50ml<span class="t">&lt;/h3&gt;</span>',
+    ' <span class="t">&lt;p&gt;</span>£8.99<span class="t">&lt;/p&gt;</span>',
+    ' <span class="t">&lt;p&gt;</span>Saving £1.00<span class="t">&lt;/p&gt;</span>',
+    ' <span class="t">&lt;p&gt;</span>Quantity: 1<span class="t">&lt;/p&gt;</span>',
+    '<span class="t">&lt;/article&gt;</span>'
+  ];
+  function codeBox(kind, lines) {
+    return '<div class="hp-build__code hp-build__code--' + kind + '" aria-hidden="true">' +
+      lines.map(function(l) { return '<span class="hp-build__code-line">' + l + '</span>'; }).join('') +
       '</div>';
+  }
+  function buildCodeHtml() {
+    return codeBox('pay', CODE_PAY) + codeBox('sum', CODE_SUM);
   }
 
   // The screen-wide hairlines and the registration marks. Their geometry is
@@ -3261,8 +3327,13 @@
           (built ? ' loading="eager" fetchpriority="low"' : ' loading="lazy"') +
           ' decoding="async">' +
         '</div>' +
-        '</div>' +
+        // Inside the picture's box, not the card's. On a phone the sentence
+        // sits above the picture and the picture is a crop of the file, so a
+        // wire stretched over the whole card would draw the checkout across
+        // the type. The scaler is the picture. layoutGuides then points the
+        // viewBox at whichever part of the file that box is showing.
         (built ? buildWireSvg() + buildCodeHtml() : '') +
+        '</div>' +
         // Last in the link so it is over everything the card shows; the deck
         // brings it up as the card is covered. See .hp-case__shade.
         '<div class="hp-case__shade" aria-hidden="true"></div>' +
@@ -3492,6 +3563,9 @@
       if (h === hidden) return;
       hidden = h;
       nav.classList.toggle('is-hidden', h);
+      /* The cards park lower while the pill is over them. Same moment as
+         the pill, so the two move together. */
+      root.classList.toggle('is-nav-away', h);
     }
 
     root.addEventListener('scroll', function() {
@@ -3709,15 +3783,15 @@
     gsap.set([greeting, aside], { opacity: 0, y: 16 });
     gsap.set(below, { opacity: 0, y: 22 });
 
-    // The display face, or 700ms, whichever is first. A face that never
+    // The body face, or 700ms, whichever is first. A face that never
     // arrives must not mean a hero that never does. fonts.ready can resolve
-    // a frame before Manrope is the face actually used for layout, and
+    // a frame before Inter is the face actually used for the paragraph, and
     // measuring the lines against the fallback makes the word spacing jump
     // when the real face lands. Two frames after the check gives that layout
     // time to settle before anything is measured or shown.
     var ready = (function() {
       if (!document.fonts) return Promise.resolve();
-      var spec = '500 40px Manrope';
+      var spec = '500 48px Manrope';
       var done = document.fonts.ready.then(function() {
         if (document.fonts.check(spec)) return;
         return document.fonts.load(spec);
@@ -3753,11 +3827,13 @@
         }
       })
         .to([greeting], { opacity: 1, y: 0, duration: 1 }, 0)
-        // Four lines at desktop widths, six on a phone. 0.1s between them, so
-        // the statement is fully uncovered by about 1.4s and reads as settled
-        // at 1.0 — the expo ease has a line visibly in place well before its
-        // duration is up.
+        // A line at a time, 0.1s apart, so the statement reads as settled before
+        // the last line has finished moving — the expo ease has a line visibly
+        // in place well before its duration is up. The aside follows the
+        // statement rather than arriving with the greeting: it is the wink, and
+        // a wink that lands before the point has no point.
         .to(movers, { yPercent: 0, duration: 1.15, stagger: 0.1 }, 0.18)
+        .to(aside, { opacity: 1, y: 0, duration: 1 }, 0.62)
         // The band arrives under a statement that is still arriving. The marks
         // are already drifting inside it, so they come in with the line
         // rather than one at a time.
@@ -3890,11 +3966,12 @@
     if (!hero) return;
 
     var greeting = hero.querySelector('.hp-hero__greeting');
+    var aside = hero.querySelector('.hp-hero__aside');
     var inner = hero.querySelector('.hp-hero__statement-inner');
     var lower = hero.querySelector('.hp-hero__lower');
     var glow = hero.querySelector('.hp-hero__glow');
     var blocks = Array.prototype.slice.call(hero.querySelectorAll('.hp-hero__sentence'));
-    if (!greeting || !inner || !lower || !glow || !blocks.length) return;
+    if (!greeting || !aside || !inner || !lower || !glow || !blocks.length) return;
 
     // Half travel below 900px, where the copy block is most of the screen and
     // the same displacement reads as the headline being yanked rather than
@@ -3938,6 +4015,11 @@
       // composition and the one whose job is finished soonest.
       .to(greeting, { y: travel(-120), duration: 1 }, 0)
       .to(greeting, { opacity: 0, duration: 0.44, ease: 'power1.in' }, 0)
+      // Under the statement, so it leaves with the last sentence rather than
+      // with the greeting: less travel, and a fade that starts a fraction
+      // later, which is the same ranking the sentences already use.
+      .to(aside, { y: travel(-28), duration: 1 }, 0)
+      .to(aside, { opacity: 0, duration: 0.6, ease: 'power1.in' }, 0.06)
       .to(inner, { scale: 0.965, duration: 1 }, 0)
       // The closing band is the rule, the word and the arrow. It used to be
       // gone after the first fifth of this scroll, which read as the cue
@@ -3955,16 +4037,28 @@
       .to(glow, { scale: 0.8, duration: 1 }, 0)
       .to(glow, { opacity: 0, duration: 0.85, ease: 'power2.in' }, 0);
 
-    // Per sentence rather than per hard-coded first and second, so the ranking is
+    // Per group rather than per hard-coded first and second, so the ranking is
     // a rule about position in the block and not a list that has to be rewritten
-    // the next time the statement gains or loses a sentence. The top block gets
-    // the most travel and the earliest fade, the last block the least and the
+    // the next time the statement gains or loses a sentence. The top group gets
+    // the most travel and the earliest fade, the last group the least and the
     // latest, and everything between is interpolated — a one-sentence statement
     // takes the top of both ranges and nothing has to change here.
-    blocks.forEach(function(el, i) {
-      var t = blocks.length > 1 ? i / (blocks.length - 1) : 0;
-      tl.to(el, { y: travel(-74 + 28 * t), duration: 1 }, 0)
-        .to(el, { opacity: 0, duration: 0.52 + 0.08 * t, ease: 'power1.in' }, 0);
+    // A group is the blocks a seam separates. The first sentence is two blocks
+    // split at the comma, and only the last sentence carries the blank line, so
+    // the two clauses share a group and leave together. If they ranked
+    // separately the comma hinge would open up on the way out.
+    var groups = [];
+    blocks.forEach(function(el) {
+      var seam = parseFloat(getComputedStyle(el).marginTop) > 1;
+      if (seam || !groups.length) groups.push([el]);
+      else groups[groups.length - 1].push(el);
+    });
+    groups.forEach(function(group, i) {
+      var t = groups.length > 1 ? i / (groups.length - 1) : 0;
+      group.forEach(function(el) {
+        tl.to(el, { y: travel(-74 + 28 * t), duration: 1 }, 0)
+          .to(el, { opacity: 0, duration: 0.52 + 0.08 * t, ease: 'power1.in' }, 0);
+      });
     });
   }
 
@@ -4016,7 +4110,8 @@
   //                                outlines, the section boxes; the
   //                                hairlines trim
   //   3  Components    0.24–0.46   the wire unfolds in reading order
-  //   4  Code          0.46–0.54   ten lines typed over the left panel
+  //   4  Code          0.46–0.54   both panels fill, and a snippet
+  //                                types in each
   //   5  The checkout  0.54–0.72   the screenshot resolves through the wire
   //   6  The card      0.72–0.93   the navy closes round the window, then
   //                                the sentence arrives
@@ -4034,7 +4129,7 @@
     var card = section.querySelector('.hp-case');
     var img = card && card.querySelector('.hp-case__art');
     var wire = card && card.querySelector('.hp-build__wire');
-    var code = card && card.querySelector('.hp-build__code');
+    var codes = card ? card.querySelectorAll('.hp-build__code') : [];
     var navy = card && card.querySelector('.hp-build__navy');
     var guides = section.querySelector('.hp-build__guides');
     if (!stage || !card || !img || !wire || !guides || !navy) return;
@@ -4051,7 +4146,6 @@
     var els = Array.prototype.slice.call(wire.querySelectorAll('.hb-el'));
     var bars = wire.querySelectorAll('.hb-el .hb-bar, .hb-el .hb-fill');
     var strokes = wire.querySelectorAll('.hb-el .hb-wire, .hb-el .hb-accent, .hb-el .hb-radio');
-    var codeLines = code ? code.querySelectorAll('.hp-build__code-line') : [];
     var head = [card.querySelector('.hp-case__tags')]
       .concat(Array.prototype.slice.call(card.querySelectorAll('.hp-case__line')))
       .filter(Boolean);
@@ -4080,20 +4174,139 @@
     // a dash. Both ends have the same shape of value, which the tween needs.
     var WIPE_SHUT = 'inset(-0.5% 101% -0.5% -0.5%)';
     var WIPE_OPEN = 'inset(-0.5% -0.5% -0.5% -0.5%)';
+    // The picture's clip, in shares of the element. 36.52 / 7.47 is the
+    // browser window in the file, which is the whole element on a desktop.
+    // layoutGuides rewrites it when the element is a crop of the file.
+    var windowClip = 'inset(36.52% 7.47% 0% 7.47% round 1.19% 1.19% 0 0)';
+    // Which rectangle of the file the img is showing. object-fit: fill (the
+    // desktop) shows all of it. object-fit: cover pinned to the bottom — the
+    // phone — shows the lower part and cuts the flat band off the top, and
+    // every coordinate below is in the file, so it has to be read through
+    // that window or the wire, the code and the guides land on the band
+    // that is no longer there.
+    function sourceWindow(im) {
+      // The attributes, not naturalWidth. The wire is drawn on the file's
+      // 3024 by 2708 grid, and the img's natural size is whichever srcset
+      // rung loaded — a 1008px rendition would hand the viewBox a window
+      // the drawing does not live in. Every rung is the same picture, so
+      // the crop is a share of this grid.
+      var nw = +im.getAttribute('width') || 3024;
+      var nh = +im.getAttribute('height') || 2708;
+      var cw = im.clientWidth, ch = im.clientHeight;
+      var full = { x: 0, y: 0, w: nw, h: nh, nw: nw, nh: nh };
+      if (!cw || !ch || getComputedStyle(im).objectFit !== 'cover') return full;
+      var scale = Math.max(cw / nw, ch / nh);
+      var sw = cw / scale, sh = ch / scale;
+      var pos = (getComputedStyle(im).objectPosition || '50% 50%').split(/\s+/);
+      function align(token, edge) {
+        if (!token) return edge;
+        if (token === 'left' || token === 'top') return 0;
+        if (token === 'right' || token === 'bottom') return 1;
+        if (token === 'center') return 0.5;
+        if (token.indexOf('%') !== -1) return parseFloat(token) / 100;
+        return edge;
+      }
+      return {
+        x: (nw - sw) * align(pos[0], 0.5),
+        y: (nh - sh) * align(pos[1], 0.5),
+        w: sw, h: sh, nw: nw, nh: nh
+      };
+    }
+    // Layout position inside the stage. offsetTop, summed, because a rect
+    // would include the deck's scale once the stage has let go.
+    function inStage(el) {
+      var x = 0, y = 0, n = el;
+      while (n && n !== stage) {
+        x += n.offsetLeft;
+        y += n.offsetTop;
+        n = n.offsetParent;
+      }
+      return { x: x, y: y };
+    }
     function layoutGuides() {
       var vw = stage.clientWidth, vh = stage.clientHeight;
+      // Without a viewBox a percentage-sized SVG does not agree between
+      // browsers about where user-unit 0 sits, and the grid was landing a
+      // few pixels below the line it names. The viewBox is the stage, in
+      // its own pixels, so a coordinate is the place it is painted.
+      if (vw && vh) guides.setAttribute('viewBox', '0 0 ' + vw + ' ' + vh);
       var cs = getComputedStyle(card);
-      var w = parseFloat(cs.width), h = parseFloat(cs.height);
       // The card's own place in the stage, not the centre: it sits on the
-      // deck's first parking line (see .hp-build__stage). offsetTop is the
-      // layout position, which sticky does not move.
-      var l = card.offsetLeft, t = card.offsetTop;
-      // The top guide is the Boots page's top edge — the bottom of the
-      // browser chrome, where the white header begins — and not the window's
-      // top edge above it. The chrome is Safari's, not hers; the line that
-      // says "the design starts here" has to sit where the design starts.
-      var yPage = t + h * (1081 / 2708);   // the chrome's bottom, the header's top
-      var yHead = t + h * (1279 / 2708);   // the checkout header's baseline
+      // deck's first parking line (see .hp-build__stage). The painted box,
+      // not offsetTop. offsetTop is an integer and it ignores a transform, so
+      // a guide laid out from it sits a few pixels below the line it is
+      // naming once the card is on a fractional padding or a scaled layer.
+      // The guides SVG's own box is the coordinate space the paths are in.
+      var gr = guides.getBoundingClientRect();
+      var cr = card.getBoundingClientRect();
+      var ir = img.getBoundingClientRect();
+      var l, t, w, h, at;
+      if (gr.width > 1 && cr.width > 1 && ir.height > 1) {
+        l = cr.left - gr.left;
+        t = cr.top - gr.top;
+        w = cr.width;
+        h = cr.height;
+        at = { x: ir.left - gr.left, y: ir.top - gr.top };
+      } else {
+        w = parseFloat(cs.width);
+        h = parseFloat(cs.height);
+        l = card.offsetLeft;
+        t = card.offsetTop;
+        at = inStage(img);
+        ir = { height: img.offsetHeight };
+      }
+      var src = sourceWindow(img);
+      wire.setAttribute('viewBox', [src.x, src.y, src.w, src.h].map(function(v) {
+        return Math.round(v * 100) / 100;
+      }).join(' '));
+      if (codes.length && src.w && src.h) {
+        // The gift card button, then the first product tile, each set a
+        // little to the right of the control so the wire shows down its
+        // left edge. File percentages, read through the crop the way the
+        // wire's viewBox is.
+        [{ x: 17.51, y: 79.6, w: 38.19 }, { x: 60.46, y: 56.43, w: 25.03 }].forEach(function(p, i) {
+          var el = codes[i];
+          if (!el) return;
+          el.style.setProperty('--code-x', ((p.x / 100 * src.nw - src.x) / src.w * 100) + '%');
+          el.style.setProperty('--code-y', ((p.y / 100 * src.nh - src.y) / src.h * 100) + '%');
+          el.style.setProperty('--code-w', (p.w * src.nw / src.w) + '%');
+        });
+      }
+      var clipTop = (0.3652 * src.nh - src.y) / src.h * 100;
+      var clipLeft = (0.0747 * src.nw - src.x) / src.w * 100;
+      var clipRight = (src.x + src.w - 0.9253 * src.nw) / src.w * 100;
+      var clipBottom = (src.y + src.h - src.nh) / src.h * 100;
+      var clipRy = 1.19 * src.nh / src.h;
+      windowClip = 'inset(' + clipTop.toFixed(2) + '% ' + clipRight.toFixed(2) + '% ' +
+        clipBottom.toFixed(2) + '% ' + clipLeft.toFixed(2) + '% round 1.19% ' +
+        clipRy.toFixed(2) + '% 0 0)';
+      // Past 0.90 the clip has been dropped and the card is the picture.
+      // Putting it back would crop a finished card on a resize.
+      if (tl && tl.progress() < 0.9) gsap.set(img, { clipPath: windowClip });
+      // The two lines that run across the card are the heading block, shifted
+      // up so the top one is the underside of the address bar. 1057 and 1256
+      // are those edges in the file, the same pixels the wire draws. Read
+      // from the wire's own transform, so the guide is that rule and not a
+      // second line beside it.
+      function guideY(fileY) {
+        var wm = wire.getScreenCTM();
+        var gm = guides.getScreenCTM();
+        if (wm && gm) {
+          var pt = wire.createSVGPoint();
+          pt.x = 0;
+          pt.y = fileY;
+          var sp = pt.matrixTransform(wm);
+          var gp = guides.createSVGPoint();
+          gp.x = sp.x;
+          gp.y = sp.y;
+          return gp.matrixTransform(gm.inverse()).y;
+        }
+        var h = ir.height || img.offsetHeight;
+        return at.y + (fileY - src.y) / src.h * h;
+      }
+      var yPage = guideY(1057);
+      var yHead = guideY(1256);
+      var yChrome = yPage;
       var xGut = l + w * 0.566;            // the gutter between its two columns
       // d, length, gap before the kept span, kept span
       var defs = [
@@ -4101,7 +4314,7 @@
         ['M' + l + ' 0V' + vh, vh, t, h],
         ['M' + (l + w) + ' ' + vh + 'V0', vh, vh - (t + h), h],
         ['M' + vw + ' ' + yHead + 'H0', vw, vw - (l + w), w],
-        ['M' + xGut + ' 0V' + vh, vh, yPage, t + h - yPage]
+        ['M' + xGut + ' 0V' + vh, vh, yChrome, t + h - yChrome]
       ];
       lines.forEach(function(ln, i) {
         ln.setAttribute('d', defs[i][0]);
@@ -4147,13 +4360,13 @@
     gsap.set(outlines, { strokeDasharray: dashNone() });
     gsap.set([boxes, dims, dims2, ground], { opacity: 0 });
     els.forEach(function(el) {
-      if (el.getAttribute('data-unfold') === 'x') gsap.set(el, { clipPath: WIPE_SHUT });
-      else gsap.set(el, { scaleY: 0, transformOrigin: '50% 0%' });
+      if (el.getAttribute('data-unfold') === 'fade') gsap.set(el, { autoAlpha: 0 });
+      else gsap.set(el, { clipPath: WIPE_SHUT });
     });
     // The image is clipped to its browser window — the navy above and either
     // side of it cut away, the window's own top corners kept — for the whole
     // build, and unclipped in one frame at the end; the clip is never tweened.
-    gsap.set(img, { opacity: 0, clipPath: 'inset(36.52% 7.47% 0% 7.47% round 1.19% 1.19% 0 0)' });
+    gsap.set(img, { opacity: 0, clipPath: windowClip });
     gsap.set(navy, { opacity: 0 });
     gsap.set(head, { opacity: 0, y: 24 });
     section.classList.add('is-live');
@@ -4178,6 +4391,17 @@
         var first = state === 0;
         state = s;
         if (!first) SOUND.play('chapter');
+      }
+      // The cursor's arrow is the pointer for a finished card. 0.90 is the
+      // frame the image's clip drops and the card is the image alone, the
+      // same thing every other card already is. Before that the drawing is
+      // still a drawing, and the dot stays a dot. Flipped here, on the
+      // timeline rather than the scroll, because the scrub lags the wheel
+      // and the thing on screen is what the pointer should answer to.
+      var developed = p >= 0.90;
+      if (developed !== section.classList.contains('is-developed')) {
+        section.classList.toggle('is-developed', developed);
+        cursorRecheck();
       }
       if (prev >= 0 && p !== prev) {
         var lo = Math.min(prev, p), hi = Math.max(prev, p);
@@ -4243,10 +4467,10 @@
       tl.fromTo(ln, { strokeDasharray: dashFull(i) }, { strokeDasharray: dashTrim(i), duration: 0.05 }, 0.18);
     });
 
-    // 3 — Components. The skeleton unrolls from its top edge, the page's
-    // contents open from their left (see group()), in reading order; the
-    // section boxes hand over to the solid panels; the page ground fills;
-    // the columns fall back.
+    // 3 — Components. The browser chrome fades in, already the shape it is;
+    // the page's contents open from their left (see group()), in reading
+    // order; the section boxes hand over to the solid panels; the page
+    // ground fills; the columns fall back.
     //
     // The wipe is a clip-path, animated — a paint property, and the one
     // other place this build steps outside transform and opacity, with the
@@ -4267,11 +4491,14 @@
     var boxFor = { contact: secs[0], delivery: secs[1], payment: secs[2], summary: secs[3] };
     els.forEach(function(el, i) {
       var at = 0.24 + 0.012 * i;
-      var to = el.getAttribute('data-unfold') === 'x' ? { clipPath: WIPE_OPEN } : { scaleY: 1 };
-      to.duration = 0.03;
-      to.ease = 'power1.out';
+      var fade = el.getAttribute('data-unfold') === 'fade';
+      // The chrome fades. A layer here would rasterise the strokes, so the
+      // fade stays in opacity, the same way the code panels do.
+      var to = fade
+        ? { autoAlpha: 1, duration: 0.05, ease: 'power1.out', force3D: false }
+        : { clipPath: WIPE_OPEN, duration: 0.03, ease: 'power1.out' };
       tl.to(el, to, at);
-      land(at + 0.03);
+      land(at + (fade ? 0.05 : 0.03));
       var box = boxFor[el.getAttribute('data-el')];
       if (box) tl.to(box, { opacity: 0, duration: 0.03 }, at);
     });
@@ -4279,15 +4506,29 @@
     tl.to(dims2, { opacity: 1, duration: 0.03 }, 0.37);
     tl.to(colsLayer, { opacity: 0.33, duration: 0.06 }, 0.36);
 
-    // 4 — Code. The box, then the lines one at a time, then all of it goes as
-    // the screenshot starts to come through.
-    if (code) {
-      tl.to(code, { opacity: 1, duration: 0.015 }, 0.46);
-      codeLines.forEach(function(cl, i) {
-        tl.to(cl, { opacity: 1, duration: 0.004 }, 0.47 + 0.005 * i);
-        land(0.474 + 0.005 * i);
+    // 4 — Code. Both panels fill, the two snippets type together, and the
+    // fills dissolve as the screenshot comes through, so each panel becomes
+    // the one it was describing.
+    if (codes.length) {
+      // autoAlpha, not opacity. The lines were promoted onto their own
+      // layers, and a layer does not take its parent's opacity, so fading
+      // the box left the markup sitting on the checkout at full strength.
+      // autoAlpha also sets visibility, which takes the layer away when the
+      // fade ends rather than leaving a stale one painted.
+      tl.to(codes, { autoAlpha: 1, duration: 0.02, force3D: false }, 0.46);
+      var codeN = 0;
+      var codeLines = [];
+      Array.prototype.forEach.call(codes, function(box) {
+        var ls = box.querySelectorAll('.hp-build__code-line');
+        codeN = Math.max(codeN, ls.length);
+        Array.prototype.forEach.call(ls, function(cl, i) {
+          codeLines.push(cl);
+          tl.to(cl, { autoAlpha: 1, duration: 0.004, force3D: false }, 0.47 + 0.004 * i);
+        });
       });
-      tl.to(code, { opacity: 0, duration: 0.03 }, 0.53);
+      for (var ci = 0; ci < codeN; ci++) land(0.474 + 0.004 * ci);
+      tl.to(codeLines, { autoAlpha: 0, duration: 0.08, force3D: false }, 0.54);
+      tl.to(codes, { autoAlpha: 0, duration: 0.08, force3D: false }, 0.54);
     }
 
     // 5 — The Boots checkout. The image resolves through the wire — bars go
@@ -4318,9 +4559,17 @@
 
     landings.sort(function(a, b) { return a - b; });
 
-    // The hairlines are measured off the card, so they are re-laid before
-    // every refresh re-measures the triggers.
-    ScrollTrigger.addEventListener('refreshInit', layoutGuides);
+    // The hairlines are measured off the card. On refresh, after layout,
+    // rather than refreshInit: the positions are the painted box, and a
+    // rect read while layout is still the previous frame lands them short.
+    ScrollTrigger.addEventListener('refresh', layoutGuides);
+    /* The stage's padding is what parks card 01, and it changes when the
+       pill comes back. The hairlines are measured off the card, so they
+       are measured again once that padding has settled. */
+    var stage = document.querySelector('.hp-build__stage');
+    if (stage) stage.addEventListener('transitionend', function(e) {
+      if (e.propertyName === 'padding-top') layoutGuides();
+    });
   }
 
   function initScrollScenes() {
@@ -4471,12 +4720,12 @@
     // edge comes from that and is handed over as a scroll position.
     function layoutTop(el) { return layoutTopOf(root, el); }
 
-    // A little smoothing on the drawing-back, so a card that has just been
-    // covered settles into its place over half a second rather than freezing
-    // mid-ramp. Well short of the wordmark's and the build's, because this
-    // follows the cards' own positions on screen: any more and a card visibly
-    // changes size after the page has stopped moving, which reads as drift.
-    var CARD_SCRUB = 0.6;
+    // Short on purpose. The scale follows the cards' own position on screen,
+    // so a long catch-up keeps a card changing size after the wheel has
+    // stopped, which is the drift through the pile. The coverage is eased
+    // below, so the corner this used to take off — a card kicking as a cover
+    // starts, and again as it parks — is gone without the lag that did it.
+    var CARD_SCRUB = 0.35;
 
     // How far back each cover sends a card, and how much darker. metic's one
     // step is scale 0.94; this is a shade less per step because here there
@@ -4543,8 +4792,14 @@
           if (k > 0) {
             // Card k travels from its top at the bottom of the screen to its
             // top on its parking line; this is how far along that it is.
+            // Smoothed, so the step starts and ends at rest instead of at a
+            // corner: a linear ramp changes the scale at full speed on the
+            // frame a cover arrives and stops dead when it parks.
             var a = (s - (geo.y[k] - geo.vh)) / (geo.vh - geo.park[k]);
-            depth += a < 0 ? 0 : a > 1 ? 1 : a;
+            if (a < 0) a = 0;
+            else if (a > 1) a = 1;
+            else a = a * a * (3 - 2 * a);
+            depth += a;
           }
         }
       }
@@ -4609,6 +4864,11 @@
   // left creeping. A shorter trip (leaving halfway) takes the same pace over
   // the distance left, not a fresh 480ms and not a snap. Reduced motion sets
   // the size in one frame.
+  // Replaced by initCursor. The build calls it when card 01 crosses into
+  // the finished card, so a pointer that has not moved still changes: the
+  // scrub can finish the drawing after the wheel has stopped.
+  var cursorRecheck = function () {};
+
   function initCursor() {
     var fine = window.matchMedia('(pointer: fine)');
     var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -4698,7 +4958,12 @@
     }
 
     function overCard(el) {
-      return !!(el && el.closest && el.closest('.hp-case'));
+      var card = el && el.closest && el.closest('.hp-case');
+      if (!card) return false;
+      // Card 01 lives inside the build until the drawing is the card. The
+      // other four are cards the whole time.
+      var build = card.closest('.hp-build');
+      return !build || build.classList.contains('is-developed');
     }
 
     function place(clientX, clientY, el) {
@@ -4742,6 +5007,11 @@
       if (!shown || !node) return;
       setTarget(overCard(document.elementFromPoint(x, y)) ? 1 : minScale);
     }
+
+    cursorRecheck = function () {
+      if (!shown || !node) return;
+      setTarget(overCard(document.elementFromPoint(x, y)) ? 1 : minScale);
+    };
 
     function mount() {
       if (node || !fine.matches) return;
