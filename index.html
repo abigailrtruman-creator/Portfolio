@@ -4246,6 +4246,17 @@
     // small, the stage is paint-contained, and the alternative (a sideways
     // scale) squashes the contents on the way in, which is the thing being
     // fixed. inset() on an SVG group measures from the group's own box.
+    //
+    // Each section box goes as the panel that redraws it comes in — the same
+    // rectangle, handed from the faint layer to the solid one as the panel's
+    // wipe crosses it. The boxes used to go together, in one fade from 0.24,
+    // while the panels that replace them arrive in reading order up to
+    // 0.34: so the delivery and payment rectangles vanished and were then
+    // drawn again a beat later, which the owner saw as the wire glitching
+    // and re-revealing itself. Nothing was out of order; two things that
+    // should have been one hand-over were two separate events.
+    var secs = boxes.querySelectorAll('.hb-sec');
+    var boxFor = { contact: secs[0], delivery: secs[1], payment: secs[2], summary: secs[3] };
     els.forEach(function(el, i) {
       var at = 0.24 + 0.012 * i;
       var to = el.getAttribute('data-unfold') === 'x' ? { clipPath: WIPE_OPEN } : { scaleY: 1 };
@@ -4253,8 +4264,9 @@
       to.ease = 'power1.out';
       tl.to(el, to, at);
       land(at + 0.03);
+      var box = boxFor[el.getAttribute('data-el')];
+      if (box) tl.to(box, { opacity: 0, duration: 0.03 }, at);
     });
-    tl.to(boxes, { opacity: 0, duration: 0.06 }, 0.24);
     tl.to(ground, { opacity: 1, duration: 0.06 }, 0.30);
     tl.to(dims2, { opacity: 1, duration: 0.03 }, 0.37);
     tl.to(colsLayer, { opacity: 0.33, duration: 0.06 }, 0.36);
