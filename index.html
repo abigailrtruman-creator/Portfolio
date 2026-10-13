@@ -905,22 +905,6 @@
        roundest thing on the page at the width where the card is smallest. */
     --card-r: max(14px, calc(var(--card-w-px) * 0.034));
     --card-gap: clamp(26px, 6.5vh, 78px);
-    /* The two ends of the carousel, declared here so the value that ships and
-       the value the audit reads are the same one, and so a breakpoint can widen
-       the range without the script knowing which band it is in. The base was
-       only ever a fallback inside the script before, which meant the desktop
-       figure was the one number in this effect that could not be found by
-       looking at the stylesheet.
-
-       Both are further from 1 than they were: 0.9 and no dim at all was a
-       change you had to be told about before you could see it. A card arriving
-       at 0.85 and half lit reads as coming forward, and the one at the middle
-       of the screen reads as the one being looked at rather than merely the one
-       in the middle. The 0.85 is also what gives the set its air: the cards
-       either side of the one being read sit visibly smaller, so there is dark
-       around them. A tighter range was tried and the set felt cramped. */
-    --card-scale-min: 0.85;
-    --card-dim-min: 0.5;
     /* Overlay geometry, declared here so the card and its descendants share one
        source for the description's legibility floor. */
     --sp-desc-floor: 19px;
@@ -934,20 +918,73 @@
        underneath it. */
     padding: clamp(80px, 12vh, 132px) var(--pad-x) clamp(24px, 6vh, 80px);
   }
-  /* With the build on, card 01 sits in the stage above and this section opens
-     on card 02, which has to arrive at the carousel's own interval below it.
-     The stage is a full screen with the card centred in it, so the band under
-     the card — half of what the screen has over the card's height — is
-     structural, and the only way card 02 can sit one --card-gap below card 01
-     is for this section to start that far up inside the stage's last screen.
-     The band it overlaps is empty black, and the stage holds no pointer
-     targets there, so nothing is covered. The nav-clearing top padding goes
-     with it: the first card here is no longer the first card. */
-  .hp-cases--build {
-    margin-top: calc(var(--card-w-px) * 0.8955 / 2 - 50vh);
-    padding-top: var(--card-gap);
+  /* With the build on, the deck opens with the stage, which is a full screen
+     and clears the nav by itself. */
+  .hp-cases--build { padding-top: 0; }
+
+  /* ---------- THE DECK ----------
+     The cards do not scroll past; they stack. Each one is sticky at its own
+     parking line, a little lower than the one before it, so as you scroll the
+     next card rises over the one you were reading and parks on top of it,
+     leaving a sliver of the earlier card showing above. Every card stays
+     parked until the list runs out, and then the whole pile leaves together.
+     That is the whole mechanism, and it is the browser's: no script places a
+     card. What the script adds (see "the deck" in initScrollScenes) is that a
+     card being covered draws back as the cover arrives — it scales down about
+     its top edge and dims — so the pile reads as going into the page rather
+     than as paper on paper.
+
+     A flex column rather than a grid, because a sticky item is held inside
+     its containing block and a flex item's containing block is unambiguously
+     the container. The gap is the container's, not a margin on the card: a
+     margin on a sticky element is part of the box that has to stay inside the
+     container, and would let the card go a gap early at the end.
+
+     The five parking lines are spread about the middle of the screen as one
+     thing — the first two slivers above centre, the last two below — so the
+     deck is centred and not hanging off the top. The spread is small on
+     purpose: four slivers of flat colour are a depth cue, not a stack of
+     paper to be read, and anything wider started to eat the card beneath. */
+  .hp-cases__list {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--card-gap);
+    --deck-peek: clamp(12px, 2vh, 20px);
+    /* Where the first card parks. The tallest card's height is the one used
+       for all five so every parking line is the same calculation; see
+       --art-ar-max for why one height stands for the set. svh, because a
+       phone's toolbars come and go and the line must not move with them. */
+    --deck-top: calc((100svh - var(--card-w-px) * var(--art-ar-max)) / 2 - 2 * var(--deck-peek));
   }
-  .hp-cases__list { min-width: 0; }
+  .hp-cases__list > .hp-case {
+    position: sticky;
+    top: calc(var(--deck-top) + var(--i) * var(--deck-peek));
+    margin: 0;
+    /* Drawn back about the top edge, so a covered card's sliver stays on its
+       parking line and its sides come in — the one way a scale reads as
+       distance rather than as shrinking. */
+    transform-origin: 50% 0;
+  }
+  /* A card's shade. Black over the whole link, under nothing, at zero; the
+     deck brings it up as the card is covered. Opacity only, so it costs the
+     same as the scale it rides with. */
+  .hp-case__shade {
+    position: absolute;
+    inset: 0;
+    background: #000;
+    opacity: 0;
+    pointer-events: none;
+  }
+  /* The dwell on the last card. Sticky holds only while the container has
+     room beneath, so without this the fifth card would park and leave in the
+     same breath. */
+  .hp-cases__hold {
+    flex: none;
+    width: 100%;
+    height: clamp(120px, 30vh, 320px);
+  }
 
   .hp-case {
     /* The card is the containment context for its own contents, so every value
@@ -961,12 +998,11 @@
     position: relative;
     width: var(--card-w);
     margin: 0 auto var(--card-gap);
-    /* The carousel scales and dims the whole card, sentence included, so the
-       type grows and shrinks with the picture as a card comes into focus and
-       leaves it. Scaling only the artwork left the words full size on a
-       shrinking card.
+    /* The deck scales the whole card, sentence included, so the type goes
+       back with the picture as a card is covered. Scaling only the artwork
+       left the words full size on a shrinking card.
        The radius and the clip have moved down onto the link. GSAP owns this
-       element's transform for the carousel, so the hover lift cannot live here
+       element's transform for the deck, so the hover lift cannot live here
        — a CSS transition on the same property would be fighting a scroll-driven
        write every frame — and the link is the next box down, the same size. */
     transform-origin: center center;
@@ -1235,7 +1271,23 @@
      the guides and the code are hidden until the script has
      built the timeline and adds is-live, so a page with no GSAP, or a
      timeline that throws, shows card 01 and never a half-built one. */
+  /* The stage is the deck's first card: a full screen, sticky at the top of
+     the list like the cards after it are sticky at their lines, with card 01
+     drawn on the first card's parking line inside it. It stays parked for
+     the whole of the deck, so the finished Boots card is the one at the back
+     of the pile, and leaves with the rest. The scroll the build plays over
+     is a spacer after it — see .hp-build__travel — rather than a height on
+     this box or a margin on it, because a sticky box is held inside its
+     container by its margin box, and a margin here would let the stage go
+     that far before the end. */
   .hp-build {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background: #0a0a0c;
+  }
+  .hp-build__travel {
     /* 360vh, up from 320vh, once the scrub was smoothed. The timeline runs up
        to two seconds behind the scroll, so the finished card needs a
        hold at the end long enough that someone who has scrolled straight
@@ -1243,17 +1295,18 @@
        extra 40vh stretches the whole sequence by an eighth, which is also the
        pace the owner asked for. */
     --build-travel: 360vh;
-    position: relative;
+    flex: none;
     width: 100%;
-    height: calc(100vh + var(--build-travel));
-    background: #0a0a0c;
+    height: var(--build-travel);
   }
   .hp-build__stage {
-    position: sticky;
-    top: 0;
-    height: 100vh;
+    height: 100%;
     display: grid;
-    place-items: center;
+    justify-items: center;
+    align-items: start;
+    /* The card sits on the deck's first parking line, not at the centre, so
+       card 02 covers it exactly as 03 will cover 02. */
+    padding-top: var(--deck-top);
     /* The card is the only child the stage lays out; the guides and the
        wire are absolute over it. Paint containment keeps
        the per-frame SVG repaints inside this box. */
@@ -1262,6 +1315,7 @@
   .hp-build .hp-case {
     width: var(--card-w-px);
     margin: 0;
+    transform-origin: 50% 0;
   }
   /* The image is what the whole sequence resolves into. Only opacity is
      ever animated on it; a clip to its window is set once and dropped once. */
@@ -1295,7 +1349,7 @@
      rather than anti-aliased. Circles and the chevron keep their curves. */
   .hp-build__wire *,
   .hp-build__guides * { vector-effect: non-scaling-stroke; }
-  .hb-wire, .hb-ol, .hb-sec, .hb-dim, .hb-guide, .hb-tick, .hb-accent {
+  .hb-wire, .hb-ol, .hb-sec, .hb-dim, .hb-guide, .hb-accent {
     fill: none;
     stroke: rgba(252,249,245,0.55);
     stroke-width: 1;
@@ -1309,7 +1363,7 @@
      hierarchy — on a 1px hairline the dashes are the only texture on the
      screen and the eye goes to them. */
   .hb-sec { stroke: rgba(252,249,245,0.2); }
-  .hb-dim, .hb-tick { stroke: rgba(252,249,245,0.45); }
+  .hb-dim { stroke: rgba(252,249,245,0.45); }
   .hb-accent { stroke: rgba(252,249,245,0.9); stroke-width: 2; }
   .hb-bar { fill: rgba(252,249,245,0.14); shape-rendering: crispEdges; }
   .hb-col { fill: rgba(252,249,245,0.06); shape-rendering: crispEdges; }
@@ -1974,12 +2028,9 @@
   }
 
   /* ---------- Short viewports ----------
-     A landscape phone shows about a third of a card at a time, so a card at the
-     centre of the screen is most of what is on screen and the two either side
-     are barely in it. Scaling on top of that reads as the page breathing rather
-     than as a carousel, so the range comes right in and the gap closes up. */
+     A landscape phone has little room over the card, so the gap closes up. */
   @media (max-height: 500px) {
-    .hp-cases { --card-gap: 22px; --card-scale-min: 0.93; --card-dim-min: 0.7; }
+    .hp-cases { --card-gap: 22px; }
   }
 
   @media (max-width: 400px) {
@@ -2025,21 +2076,21 @@
     .hp-footer__cta,
     .hp-nav__arrow { transition-duration: 0.01ms; }
 
-    /* The carousel is scroll-coupled movement, so it is dropped rather than
-       merely slowed: every card sits at its natural size, with no scale written
-       to it by anything. The JS that drives it does not run at all under
-       reduced motion, and this is the belt to that pair of braces — it also
-       clears the translateZ(0) promotion, which is only there to give the scale
-       a compositing layer it no longer needs. */
+    /* The deck's drawing-back is scroll-coupled movement, so it is dropped
+       rather than merely slowed: every card sits at its natural size, with no
+       scale written to it by anything. The cards still park — that is the
+       browser's sticky positioning, not an animation — they just do not move
+       as they are covered. The JS that draws them back does not run at all
+       under reduced motion, and this is the belt to that pair of braces — it
+       also clears the translateZ(0) promotion, which is only there to give the
+       scale a compositing layer it no longer needs. */
     .hp-case {
       transform: none;
-      /* The dim goes with the scale. A card held at half light is not a
-         gentler version of the effect, it is the page rendering three of its
-         four case studies as though they were disabled. */
       opacity: 1;
       will-change: auto;
       transition: none;
     }
+    .hp-case__shade { opacity: 0; }
     /* The drift is ambient motion. It stops, the fade comes off so nothing
        is hidden for the sake of a loop that is not running, and the second
        copy goes so the list is not read twice. */
@@ -2906,8 +2957,18 @@
     function label(x, y, text, anchor) {
       return '<text class="hb-label" x="' + X(x) + '" y="' + Y(y) + '" text-anchor="' + (anchor || 'middle') + '">' + text + '</text>';
     }
+    // How a group opens. The browser skeleton — window, address bar, header
+    // — unrolls from its top edge, the way the window came down. Everything
+    // inside the page is wiped on from its left edge: panels, product rows,
+    // text. Those are horizontal shapes, and a horizontal shape opened from
+    // the top starts as a squashed hairline and stretches to height, which
+    // the owner read as a stutter. A wipe rather than a sideways scale for
+    // the same reason: a scale squashes the text bars and lets them out,
+    // where a wipe uncovers them whole, like a line being drawn — which is
+    // the whole conceit. The wipe is a clip-path, which the build already
+    // uses on the image; see the note at the components beat.
     function group(name, inner, unfold) {
-      return '<g class="hb-el" data-el="' + name + '" data-unfold="' + (unfold || 'y') + '">' + inner + '</g>';
+      return '<g class="hb-el" data-el="' + name + '" data-unfold="' + (unfold || 'x') + '">' + inner + '</g>';
     }
     function dimV(x, y0, y1, text) {
       return '<g class="hb-dimg">' + vline(x, y0, y1, 'hb-dim') +
@@ -2978,13 +3039,13 @@
       group('window',
         rect(WL, WT, WR, BOT, 'hb-wire', 36) +
         hline(WL, WR, CHR) +
-        circle(8.90, 38.20, 11, 'hb-wire hb-round') + circle(10.05, 38.20, 11, 'hb-wire hb-round') + circle(11.19, 38.20, 11, 'hb-wire hb-round')) +
-      group('url', rect(32.41, 37.33, 67.56, 39.03, 'hb-wire', 23)) +
+        circle(8.90, 38.20, 11, 'hb-wire hb-round') + circle(10.05, 38.20, 11, 'hb-wire hb-round') + circle(11.19, 38.20, 11, 'hb-wire hb-round'), 'y') +
+      group('url', rect(32.41, 37.33, 67.56, 39.03, 'hb-wire', 23), 'y') +
       group('header',
         hline(WL, WR, HB) +
         bar(10.09, 41.84, 15.87, 45.24) +
         rect(17.39, 42.95, 18.25, 44.31, 'hb-wire', 4) +
-        row(18.98, 26.59, 43.59, 0.92)) +
+        row(18.98, 26.59, 43.59, 0.92), 'y') +
       group('contact',
         rect(CL, 49.30, CR, 58.64, 'hb-wire', 8) +
         hline(CL, CR, 54.02) +
@@ -3027,7 +3088,7 @@
         rect(18.40, 85.26, 19.58, 86.46, 'hb-wire', 4) +
         row(LAB, 24.07, 85.86, LN) +
         '<path class="hb-wire hb-round" d="M' + X(50.70) + ' ' + Y(85.55) + 'l' + (X(51.25) - X(50.70)) + ' ' + (Y(86.22) - Y(85.55)) + 'l' + (X(51.80) - X(51.25)) + ' ' + (Y(85.55) - Y(86.22)) + '"/>' +
-        hline(TL, TR, 89.44), 'x') +
+        hline(TL, TR, 89.44)) +
       group('apple',
         rect(TL, 90.99, TR, 95.05, 'hb-wire', 8) +
         circle(RAD, 93.02, 18, 'hb-wire hb-round') +
@@ -3063,17 +3124,23 @@
   // the button. Each line is cut short enough that none wraps in the left
   // panel at the smallest card the build runs on. Tags, attribute names and
   // braces carry the quieter class; values and the words read first.
+  // The gift card row, as a disclosure: the one component on the wire that
+  // has a measurement on it, written the way it should be built. Plain HTML,
+  // not a framework's — the site is hand-written HTML and this is the one
+  // place code shows, so it shows the design's markup and not a library's.
+  // Every line is 31 characters or fewer, which is what fits the box on the
+  // narrowest card the build runs on; see .hp-build__code.
   var CODE_LINES = [
-    '<span class="t">&lt;nav aria-label=</span>"Checkout"<span class="t">&gt;</span>',
-    '<span class="t">&lt;label for=</span>"mail"<span class="t">&gt;</span>Email<span class="t">&lt;/label&gt;</span>',
-    '<span class="t">&lt;fieldset&gt;</span>',
-    ' <span class="t">&lt;legend&gt;</span>Payment<span class="t">&lt;/legend&gt;</span>',
-    ' <span class="t">&lt;input type=</span>"radio"<span class="t"> id=</span>"card"<span class="t">&gt;</span>',
-    ' <span class="t">&lt;label for=</span>"card"<span class="t">&gt;</span>Card<span class="t">&lt;/label&gt;</span>',
-    '<span class="t">&lt;p aria-live=</span>"polite"<span class="t">&gt;</span>£60<span class="t">&lt;/p&gt;</span>',
-    '<span class="t">button:focus-visible {</span>',
-    ' <span class="t">outline:</span> 2px solid<span class="t">; }</span>',
-    '<span class="t">&lt;button&gt;</span>Pay securely<span class="t">&lt;/button&gt;</span>'
+    '<span class="t">&lt;button type=</span>"button"',
+    ' <span class="t">aria-expanded=</span>"false"',
+    ' <span class="t">aria-controls=</span>"gift-card"<span class="t">&gt;</span>',
+    ' Gift card',
+    '<span class="t">&lt;/button&gt;</span>',
+    '<span class="t">&lt;div id=</span>"gift-card"<span class="t"> hidden&gt;</span>',
+    ' <span class="t">&lt;label for=</span>"gc"<span class="t">&gt;</span>Number<span class="t">&lt;/label&gt;</span>',
+    ' <span class="t">&lt;input id=</span>"gc"<span class="t"> type=</span>"text"<span class="t">&gt;</span>',
+    '<span class="t">&lt;/div&gt;</span>',
+    '<span class="t">&lt;p aria-live=</span>"polite"<span class="t">&gt;</span>£60<span class="t">&lt;/p&gt;</span>'
   ];
   function buildCodeHtml() {
     return '<div class="hp-build__code" aria-hidden="true">' +
@@ -3088,7 +3155,7 @@
     var s = '<svg class="hp-build__guides" aria-hidden="true" focusable="false">';
     for (var i = 0; i < 5; i++) s += '<path class="hb-guide" data-guide="' + i + '"/>';
     for (var j = 0; j < 4; j++) {
-      s += '<g class="hb-reg" data-reg="' + j + '"><path class="hb-tick"/><text class="hb-label"></text></g>';
+      s += '<g class="hb-reg" data-reg="' + j + '"><text class="hb-label"></text></g>';
     }
     return s + '</svg>';
   }
@@ -3168,6 +3235,9 @@
         '</div>' +
         '</div>' +
         (built ? buildWireSvg() + buildCodeHtml() : '') +
+        // Last in the link so it is over everything the card shows; the deck
+        // brings it up as the card is covered. See .hp-case__shade.
+        '<div class="hp-case__shade" aria-hidden="true"></div>' +
       '</a>' +
     '</article>';
   }
@@ -3237,17 +3307,17 @@
       '</section>';
 
     // Every card is built from the one list either way. With the build on,
-    // the first is lifted into the stage after the wordmark and the carousel
-    // opens on the second.
+    // the first is drawn in the stage, and the stage is the first card of the
+    // deck; the spacer after it is the scroll the build plays over.
     var cardsHtml = PROJECTS.map(buildCase);
-    var buildHtml = '';
     if (BUILD_ON) {
-      buildHtml = '<section class="hp-build" id="hp-build">' +
+      cardsHtml[0] = '<div class="hp-build" id="hp-build">' +
         '<div class="hp-build__stage">' +
           buildGuidesSvg() +
-          cardsHtml.shift() +
+          cardsHtml[0] +
         '</div>' +
-      '</section>';
+      '</div>' +
+      '<div class="hp-build__travel" aria-hidden="true"></div>';
     }
 
     // The sound control, only where there is a build to hear. Fixed, so it is
@@ -3264,6 +3334,7 @@
     var casesHtml = '<section class="hp-cases' + (BUILD_ON ? ' hp-cases--build' : '') + '" id="hp-cases" aria-label="Selected work">' +
       '<div class="hp-cases__list">' +
         cardsHtml.join('') +
+        '<div class="hp-cases__hold" aria-hidden="true"></div>' +
       '</div>' +
     '</section>';
 
@@ -3288,7 +3359,7 @@
       '</footer>';
 
     var html = '<div class="hp-root" id="hp-root">' +
-      navHtml + heroHtml + wordmarkHtml + buildHtml + casesHtml + footerHtml + soundHtml +
+      navHtml + heroHtml + wordmarkHtml + casesHtml + footerHtml + soundHtml +
     '</div>';
 
     document.body.insertAdjacentHTML('afterbegin', html);
@@ -3317,23 +3388,56 @@
     });
   }
 
-  // Where a card is read to be: the scroll position that puts its centre on
-  // the middle of the screen. For the card in the build stage that is not its
-  // layout position, which is the top of a 420vh section with the card still
-  // in lines, but the point the stage releases at — the finished card, at rest.
+  // The scroll the build plays over: the height of the spacer after the
+  // stage. Read from the box rather than restated, so the stylesheet is the
+  // one place the figure lives.
+  function buildTravel(stage) {
+    var sp = stage.nextElementSibling;
+    return sp && sp.classList.contains('hp-build__travel') ? sp.offsetHeight : 0;
+  }
+
+  // Where a card is read to be: the scroll position that puts it on its
+  // parking line. For the card in the build stage that is not its layout
+  // position, which is the top of the deck with the card still in lines, but
+  // the point the build finishes at — the finished card, at rest.
   function cardRestTop(root, card) {
     var stage = card.closest('.hp-build');
     if (stage) {
-      return Math.max(0, layoutTopOf(root, stage) + stage.offsetHeight - root.clientHeight);
+      return Math.max(0, layoutTopOf(root, stage) + buildTravel(stage));
     }
     var rootRect = root.getBoundingClientRect();
     var cardRect = card.getBoundingClientRect();
     var center = root.scrollTop + (cardRect.top - rootRect.top) + cardRect.height / 2;
     return Math.max(0, center - root.clientHeight / 2);
   }
+  // An element's top in the page's layout — where it is in flow, not where
+  // it is on screen — as a scroll position in the root scroller.
+  //
+  // offsetTop would be that, except for sticky elements: Chrome's offsetTop
+  // on a stuck element includes the sticky shift, so a stage measured while
+  // the reader is half-way down the deck reads as being wherever the page
+  // is. For a sticky element the flow position is rebuilt instead from the
+  // siblings before it — their heights and the container's gap, which is
+  // exactly what laid it out — and the walk continues from its parent. The
+  // deck's sticky children have no margins (see .hp-cases__list > .hp-case),
+  // which is the one thing this sum relies on.
   function layoutTopOf(root, el) {
-    var y = 0;
-    for (var n = el; n && n !== root; n = n.offsetParent) y += n.offsetTop;
+    var y = 0, n = el;
+    while (n && n !== root) {
+      if (getComputedStyle(n).position === 'sticky') {
+        var p = n.parentElement, ps = getComputedStyle(p);
+        var t = (parseFloat(ps.borderTopWidth) || 0) + (parseFloat(ps.paddingTop) || 0);
+        var gap = parseFloat(ps.rowGap) || 0;
+        for (var sib = p.firstElementChild; sib && sib !== n; sib = sib.nextElementSibling) {
+          t += sib.offsetHeight + gap;
+        }
+        y += t;
+        n = p;
+        continue;
+      }
+      y += n.offsetTop;
+      n = n.offsetParent;
+    }
     return y;
   }
 
@@ -3938,11 +4042,19 @@
     var LEN = [0, 0, 0, 0, 0];
     var TRIM = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]];
     var FAR = 999999;
+    // A group wiped on from the left: shut is everything cut away from the
+    // right edge inward, open is nothing cut. The 0.5% is kept rather than
+    // 0 so the tween's two ends have the same shape of value.
+    var WIPE_SHUT = 'inset(-0.5% 100% -0.5% -0.5%)';
+    var WIPE_OPEN = 'inset(-0.5% -0.5% -0.5% -0.5%)';
     function layoutGuides() {
       var vw = stage.clientWidth, vh = stage.clientHeight;
       var cs = getComputedStyle(card);
       var w = parseFloat(cs.width), h = parseFloat(cs.height);
-      var l = (vw - w) / 2, t = (vh - h) / 2;
+      // The card's own place in the stage, not the centre: it sits on the
+      // deck's first parking line (see .hp-build__stage). offsetTop is the
+      // layout position, which sticky does not move.
+      var l = card.offsetLeft, t = card.offsetTop;
       // The top guide is the Boots page's top edge — the bottom of the
       // browser chrome, where the white header begins — and not the window's
       // top edge above it. The chrome is Safari's, not hers; the line that
@@ -3963,21 +4075,22 @@
         LEN[i] = defs[i][1];
         TRIM[i] = [defs[i][2], defs[i][3]];
       });
-      // Registration marks at the four corners, each with its coordinate.
-      // The numbers are the artwork's own pixel size, 3024 by 2708 — the one
-      // set of numbers that is true of the file being drawn; the two
-      // dimensions on the wire are in the design's units because the owner
-      // supplied them. These went for a while as noise and came back at her
-      // asking: a frame with its corners labelled is what reads as a frame.
+      // A coordinate at each of the four corners. The numbers are the
+      // artwork's own pixel size, 3024 by 2708 — the one set of numbers that
+      // is true of the file being drawn; the two dimensions on the wire are
+      // in the design's units because the owner supplied them. These went
+      // for a while as noise and came back at her asking: a frame with its
+      // corners labelled is what reads as a frame. They used to hang off a
+      // registration cross at the corner; the crosses went at her asking
+      // too, and the labels sit just off the corner the guides already draw.
       var corners = [
-        [l, t, 'end', -12, -8, 'x 0 · y 0'],
-        [l + w, t, 'start', 12, -8, 'x 3024 · y 0'],
-        [l, t + h, 'end', -12, 18, 'x 0 · y 2708'],
-        [l + w, t + h, 'start', 12, 18, 'x 3024 · y 2708']
+        [l, t, 'end', -8, -8, 'x 0 · y 0'],
+        [l + w, t, 'start', 8, -8, 'x 3024 · y 0'],
+        [l, t + h, 'end', -8, 16, 'x 0 · y 2708'],
+        [l + w, t + h, 'start', 8, 16, 'x 3024 · y 2708']
       ];
       regs.forEach(function(g, i) {
         var c = corners[i];
-        g.querySelector('.hb-tick').setAttribute('d', 'M' + (c[0] - 7) + ' ' + c[1] + 'H' + (c[0] + 7) + 'M' + c[0] + ' ' + (c[1] - 7) + 'V' + (c[1] + 7));
         var tx = g.querySelector('.hb-label');
         tx.setAttribute('x', c[0] + c[3]);
         tx.setAttribute('y', c[1] + c[4]);
@@ -4001,7 +4114,7 @@
     gsap.set(outlines, { strokeDasharray: dashNone() });
     gsap.set([boxes, dims, dims2, ground], { opacity: 0 });
     els.forEach(function(el) {
-      if (el.getAttribute('data-unfold') === 'x') gsap.set(el, { scaleX: 0, transformOrigin: '0% 50%' });
+      if (el.getAttribute('data-unfold') === 'x') gsap.set(el, { clipPath: WIPE_SHUT });
       else gsap.set(el, { scaleY: 0, transformOrigin: '50% 0%' });
     });
     // The image is clipped to its browser window — the navy above and either
@@ -4059,8 +4172,12 @@
       onUpdate: onUpdate,
       scrollTrigger: {
         trigger: section,
-        start: 'top top',
-        end: 'bottom bottom',
+        // Scroll positions from the layout box rather than 'top top' and
+        // 'bottom bottom': the stage is the sticky element itself now, and a
+        // trigger measured from a stuck box at refresh would be measured
+        // from wherever the page happened to be.
+        start: function() { return layoutTopOf(root, section); },
+        end: function() { return layoutTopOf(root, section) + buildTravel(section); },
         scrub: 2.2,
         invalidateOnRefresh: true
       }
@@ -4093,12 +4210,20 @@
       tl.fromTo(ln, { strokeDasharray: dashFull(i) }, { strokeDasharray: dashTrim(i), duration: 0.05 }, 0.18);
     });
 
-    // 3 — Components. Each group unfolds from its top edge (the select from
-    // its left) in reading order; the dashed boxes hand over to the solid
-    // panels; the page ground fills; the columns fall back.
+    // 3 — Components. The skeleton unrolls from its top edge, the page's
+    // contents open from their left (see group()), in reading order; the
+    // section boxes hand over to the solid panels; the page ground fills;
+    // the columns fall back.
+    //
+    // The wipe is a clip-path, animated — a paint property, and the one
+    // other place this build steps outside transform and opacity, with the
+    // image's clip. It is allowed here for the same reason: the groups are
+    // small, the stage is paint-contained, and the alternative (a sideways
+    // scale) squashes the contents on the way in, which is the thing being
+    // fixed. inset() on an SVG group measures from the group's own box.
     els.forEach(function(el, i) {
       var at = 0.24 + 0.012 * i;
-      var to = el.getAttribute('data-unfold') === 'x' ? { scaleX: 1 } : { scaleY: 1 };
+      var to = el.getAttribute('data-unfold') === 'x' ? { clipPath: WIPE_OPEN } : { scaleY: 1 };
       to.duration = 0.03;
       to.ease = 'power1.out';
       tl.to(el, to, at);
@@ -4236,58 +4361,25 @@
     var buildEl = document.getElementById('hp-build');
     if (buildEl) initBuildScene(root);
 
-    // ---------- CASE CARDS: the carousel ----------
-    // The card nearest the middle of the screen is at full size and the ones
-    // above and below it sit smaller, so scrolling the section reads as moving
-    // through a set rather than down a list.
+    // ---------- CASE CARDS: the deck ----------
+    // The cards park on top of one another (see .hp-cases__list), and the one
+    // being covered draws back as its cover arrives. Two rules govern how
+    // this is allowed to be built, and they come from the wordmark's
+    // long-standing shake:
     //
-    // Two rules govern how this is allowed to be built, and they come from the
-    // wordmark's long-standing shake:
-    //
-    //   1. Nothing is pinned. This scales a card that is scrolling normally.
-    //      The shake happened because a transform was being written on the main
-    //      thread to hold an element STILL against a compositor-thread scroll,
-    //      and any lag in that race shows up as jitter. A scale on a moving
-    //      element has no such reference to disagree with.
-    //   2. transform only. No width, no height, no top, no margin — nothing
-    //      that would put the card back through layout on a scroll frame.
-    //
-    // The timeline runs from the card entering the bottom of the viewport to it
-    // leaving the top, so its midpoint is exactly the moment the card's centre
-    // passes the viewport's centre. That is the "distance from centre" the
-    // effect is described by, expressed as scroll progress rather than measured
-    // per frame in JS.
+    //   1. Nothing is pinned by script. The parking is the browser's sticky
+    //      positioning; what is written here is a scale on a card that is
+    //      already where the browser put it. The shake happened because a
+    //      transform was being written on the main thread to hold an element
+    //      STILL against a compositor-thread scroll, and any lag in that race
+    //      shows up as jitter. A scale has no such reference to disagree with.
+    //   2. transform and opacity only. No width, no height, no top, no filter
+    //      — nothing that would put the card back through layout or paint on
+    //      a scroll frame. metic dims a covered card with a brightness
+    //      filter; here it is a black layer inside the link brought up by
+    //      opacity, which costs the same as the scale it rides with.
     var cards = Array.prototype.slice.call(document.querySelectorAll('.hp-case'));
     var casesEl = document.getElementById('hp-cases');
-    // Owned by the stylesheet, so the value that ships and the value that is
-    // audited are the same value, and so the phone band can widen the range
-    // without JS knowing which band it is in.
-    function token(name, fallback) {
-      var v = casesEl
-        ? parseFloat(getComputedStyle(casesEl).getPropertyValue(name))
-        : NaN;
-      return (v > 0 && v <= 1) ? v : fallback;
-    }
-    var scaleMin = token('--card-scale-min', 0.85);
-    var dimMin = token('--card-dim-min', 0.5);
-
-    // power2.out on the way in and power2.in on the way out: the card does its
-    // growing and brightening while it is still arriving at the bottom of the
-    // screen, is at full size and full light for the whole of the time it is
-    // the one being looked at, and only starts to go as it leaves at the top.
-    // The reverse (in/out) was tried, so the change would land in the middle
-    // of the screen where the eye is; it made the cards feel as if they went
-    // dark too soon and were never properly lit. A card you are reading should
-    // be at rest.
-    //
-    // `hold` is how much of the travel either side of the middle the card
-    // spends at rest, as a share of each half. At 0.25 the card is fully lit
-    // from the moment its centre is a quarter of the way up from the bottom
-    // of its travel until it is a quarter of the way down from the top — on a
-    // 900px screen, roughly the whole time the card is within 200px of the
-    // middle — rather than only touching full light at the exact centre and
-    // starting to go the pixel after.
-    var fx = { inEase: 'power2.out', outEase: 'power2.in', s: scaleMin, o: dimMin, hold: 0.25 };
 
     // ---------- THE SOUND CONTROL ----------
     // Shown while the work is what is on screen and taken away either side of
@@ -4311,7 +4403,7 @@
         // quarter of the way up the stage's own travel, the mark above it is
         // gone and the first lines are about to draw — which is when a visitor
         // would want to have been offered the sound.
-        start: 'top 25%',
+        start: function() { return layoutTop(buildEl) - 0.75 * root.clientHeight; },
         // The control's own top edge is the far end: it goes as the last card
         // passes out from behind it, instead of riding down into the footer.
         // A scroll position rather than 'bottom bottom-=' of the trigger,
@@ -4325,104 +4417,109 @@
       });
     }
 
-    // ---------- THE CARDS ----------
-    // Eased at both ends rather than linear, so the card is close to full size
-    // for the whole time it is the one you are looking at and does its growing
-    // while it is still arriving. A linear ramp makes the size change
-    // constantly under the cursor, which reads as drift.
-    //
-    // opacity rides along with the scale. It is the second compositor-only
-    // property there is — no width, no filter, nothing that returns the card to
-    // layout or to the paint step on a scroll frame — so rule 2 above still
-    // holds. Scale alone was carrying the whole effect and a 10% size change
-    // across a screen of travel is not much to carry it with; light is what the
-    // eye actually reads as depth.
-    function carousel(card, st) {
-      // The whole card scales, sentence included, so the type stays locked to
-      // the picture as the card grows into focus and shrinks back out of it.
-      // Two units of timeline over the travel: 0 is the card's top at the
-      // bottom of the screen, 1 is its centre on the middle, 2 is its bottom
-      // at the top. The in-tween ends `hold` short of the middle and the
-      // out-tween starts `hold` past it, and between the two nothing is
-      // written — the card is at rest.
-      gsap.timeline({ defaults: { force3D: true }, scrollTrigger: st })
-        .fromTo(card,
-          { scale: fx.s, opacity: fx.o },
-          { scale: 1, opacity: 1, duration: 1 - fx.hold, ease: fx.inEase }, 0)
-        .to(card, {
-          scale: fx.s, opacity: fx.o, duration: 1 - fx.hold, ease: fx.outEase
-        }, 1 + fx.hold);
-    }
+    // ---------- THE DECK ----------
+    // Layout positions rather than 'top center' strings. A keyword resolves
+    // against the element's bounding box, and every card here is either
+    // transformed or stuck: a stuck card measures wherever the page happens
+    // to be at refresh, and a drawn-back one measures as a smaller box. The
+    // flow position is what neither touches — see layoutTopOf — so every
+    // edge comes from that and is handed over as a scroll position.
+    function layoutTop(el) { return layoutTopOf(root, el); }
 
-    // A card owns the count from the moment its top passes the middle of the
-    // screen until its bottom does. Between two cards neither is over the
-    // middle and the last one there keeps it, which is the right answer: in the
-    // gap you are still leaving the card you just read.
-    //
-    // Both edges are computed rather than written as 'top center'. A keyword
-    // resolves against the element's bounding box, and the carousel has a
-    // transform on every one of these cards: one sitting at its resting 0.85
-    // measures as a box smaller than the card and about 60px further down the
-    // page than the card occupies, so a trigger built from it fires late by
-    // roughly that much. Card three had the middle of the screen while the
-    // readout this was first built for still said two.
-    //
-    // offsetTop and offsetHeight are the layout box, which no transform
-    // touches, so the edges come from those and are handed over as scroll
-    // positions. Functions, so a resize or the webfont swap re-measures them on
-    // the same refresh as everything else.
-    function layoutTop(el) {
-      var y = 0;
-      for (var n = el; n && n !== root; n = n.offsetParent) y += n.offsetTop;
-      return y;
-    }
-
-    // The scroll position at which the build's stage lets go: its section's
-    // bottom at the bottom of the screen, the card centred and finished.
-    function releaseAt() {
-      return layoutTop(buildEl) + buildEl.offsetHeight - root.clientHeight;
-    }
-
-    // A little smoothing on the cards' growing and brightening, so a card
-    // that has just stopped under the pointer settles into full size over
-    // half a second rather than freezing mid-ramp. Well short of the
-    // wordmark's and the build's, because these follow the card's own
-    // position on screen: any more and the card visibly changes size after
-    // the page has stopped moving, which reads as drift.
+    // A little smoothing on the drawing-back, so a card that has just been
+    // covered settles into its place over half a second rather than freezing
+    // mid-ramp. Well short of the wordmark's and the build's, because this
+    // follows the cards' own positions on screen: any more and a card visibly
+    // changes size after the page has stopped moving, which reads as drift.
     var CARD_SCRUB = 0.6;
 
-    cards.forEach(function(card, i) {
-      var staged = !!(buildEl && buildEl.contains(card));
-      if (staged) {
-        // The card in the stage is held at full size and full light by its
-        // own timeline for the whole of the build, so it only takes the
-        // carousel's leaving half: from the release, after the same quarter
-        // of a half-travel the other cards rest for past the middle, to its
-        // bottom crossing the top. Same ease, same ends, so card 02 arriving
-        // under it at 0.85 is the arrival the other four get.
-        gsap.fromTo(card,
-          { scale: 1, opacity: 1 },
-          {
-            scale: fx.s, opacity: fx.o, ease: fx.outEase, immediateRender: false, force3D: true,
-            scrollTrigger: {
-              start: function() { return releaseAt() + (root.clientHeight + card.offsetHeight) / 8; },
-              end: function() { return releaseAt() + (root.clientHeight + card.offsetHeight) / 2; },
-              invalidateOnRefresh: true,
-              scrub: CARD_SCRUB
-            }
-          });
-        return;
+    // How far back each cover sends a card, and how much darker. metic's one
+    // step is scale 0.94; this is a shade less per step because here there
+    // are four steps behind the front card, not one, and the card at the back
+    // of the pile is still legible as a card at 0.8. The shade is capped so
+    // the back of the pile is dim and not black.
+    var STEP = 0.05, SHADE = 0.18, SHADE_MAX = 0.6;
+
+    var list = casesEl && casesEl.querySelector('.hp-cases__list');
+    if (list && cards.length > 1 && !REDUCED) {
+      // One writer per property, for all five cards, driven from one scrub.
+      // Each card's position in the pile is worked out every frame from how
+      // far each card in front of it has travelled, so there is never a
+      // moment where two tweens on the same card disagree about its size —
+      // which there would be if each arrival were its own trigger: the
+      // smoothing on one would still be settling when the next began.
+      // The scale is written to the style directly. Nothing else on the page
+      // ever writes a transform to a card, so there is no cache to keep in
+      // step, and a direct write is the cheapest thing a frame can do. The
+      // translateZ(0) keeps the layer the stylesheet promised the card. Each
+      // value is remembered so a frame that changes nothing writes nothing.
+      var was = cards.map(function() { return -1; });
+      function setScale(k, v) {
+        v = Math.round(v * 10000) / 10000;
+        if (v === was[k]) return;
+        was[k] = v;
+        cards[k].style.transform = 'translateZ(0) scale(' + v + ')';
       }
-      if (!REDUCED) {
-        carousel(card, {
-          trigger: card,
-          start: 'top bottom',
-          end: 'bottom top',
-          invalidateOnRefresh: true,
-          scrub: CARD_SCRUB
+      var setShade = cards.map(function(c) {
+        var sh = c.querySelector('.hp-case__shade');
+        return sh ? gsap.quickSetter(sh, 'opacity') : null;
+      });
+      // Measured on every refresh: where the list starts, how far it scrolls,
+      // and for each card where it is in the list and where it parks.
+      var geo = { len: 1, vh: 1, y: [], park: [] };
+      function measure() {
+        var top = layoutTop(list);
+        geo.vh = root.clientHeight;
+        geo.len = Math.max(1, list.offsetHeight - geo.vh);
+        cards.forEach(function(c, i) {
+          var stage = c.closest('.hp-build');
+          // The staged card is in the stage, which parks at 0; the card
+          // itself sits at its padding, and the stage's layout top is the
+          // card's as far as the deck is concerned.
+          geo.y[i] = layoutTop(stage || c) - top;
+          geo.park[i] = stage ? c.offsetTop : (parseFloat(getComputedStyle(c).top) || 0);
         });
       }
-    });
+      function paint() {
+        // The deck's scroll, smoothed: the timeline's progress is the
+        // trigger's progress run through the scrub, and the trigger covers
+        // the list exactly, so progress times the list's travel is where the
+        // drawing has got to rather than where the page is.
+        if (!deck) return;   // the refresh that fires as the trigger is made
+        var s = deck.progress() * geo.len;
+        var depth = 0;
+        // From the front of the pile to the back. A card's depth is the sum
+        // of how far each card in front of it has come: a cover half-way up
+        // the screen has sent it half a step back, and a cover that is
+        // parked has sent it a whole one, and the next cover adds to that.
+        for (var k = cards.length - 1; k >= 0; k--) {
+          setScale(k, 1 - STEP * depth);
+          if (setShade[k]) setShade[k](Math.min(SHADE_MAX, SHADE * depth));
+          if (k > 0) {
+            // Card k travels from its top at the bottom of the screen to its
+            // top on its parking line; this is how far along that it is.
+            var a = (s - (geo.y[k] - geo.vh)) / (geo.vh - geo.park[k]);
+            depth += a < 0 ? 0 : a > 1 ? 1 : a;
+          }
+        }
+      }
+      measure();
+      // A one-second timeline with nothing in it. It exists to be scrubbed:
+      // the smoothing lives on the scrub, and paint reads the smoothed
+      // progress off it rather than the raw scroll. Scroll positions from the
+      // layout box for the same reason as everywhere else in this section.
+      var deck = gsap.timeline({
+        onUpdate: paint,
+        scrollTrigger: {
+          trigger: list,
+          start: function() { return layoutTop(list); },
+          end: function() { return layoutTop(list) + list.offsetHeight - root.clientHeight; },
+          scrub: CARD_SCRUB,
+          invalidateOnRefresh: true,
+          onRefresh: function() { measure(); paint(); }
+        }
+      }).to({}, { duration: 1 });
+    }
 
     // ---------- FOOTER ----------
     var footer = document.getElementById('hp-footer');
