@@ -987,6 +987,14 @@
     position: sticky;
     top: calc(var(--deck-top) + var(--i) * var(--deck-peek));
     margin: 0;
+    /* The pile leaves as one. A sticky box lets go when its own bottom
+       meets the end of its container, so five cards of two heights on five
+       parking lines would let go at five different moments — the stage
+       first, being a full screen tall. Padding under each card brings its
+       bottom to the same place as the stage's, the bottom of the screen, so
+       the end of the list reaches all five in the same frame. The padding
+       is empty and under the card; nothing is drawn in it. */
+    padding-bottom: max(0px, calc(100vh - var(--deck-top) - var(--i) * var(--deck-peek) - var(--card-w-px) * var(--art-ar)));
     /* Drawn back about the top edge, so a covered card's sliver stays on its
        parking line and its sides come in — the one way a scale reads as
        distance rather than as shrinking. */
