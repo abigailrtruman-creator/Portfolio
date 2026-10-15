@@ -1852,6 +1852,59 @@
     .hp-nav__arrow { display: inline-flex; }
     .hp-nav__arrow svg { width: 16px; height: 16px; }
   }
+
+  /* ---------- The homepage's footer, carried through ----------
+     The sign-off set like her name, the links in two short columns, one line
+     of small print. No rules. Kept in step with index.html by hand. */
+  .hp-footer::before, .hp-footer__base::before { display: none; }
+  .hp-footer.hp-footer { min-height: 0; padding-top: clamp(72px, 12vh, 140px); padding-bottom: clamp(24px, 3.5vh, 36px); }
+  .hp-footer .hp-footer__title {
+    max-width: none; margin: 0;
+    font-size: clamp(56px, 11vw, 196px); line-height: 0.9; letter-spacing: -0.055em;
+  }
+  .hp-footer__line { display: block; overflow: hidden; padding-bottom: 0.2em; margin-bottom: -0.2em; }
+  .hp-footer__line--r { text-align: right; }
+  .hp-footer__in { display: inline-block; white-space: nowrap; }
+  @keyframes lt-blink { 50% { opacity: 0; } }
+  .lt-pix { display: inline-block; width: 0.15em; height: 0.15em; margin-left: 0.04em; background: #fff; vertical-align: baseline; }
+  .lt-pix--name { animation: lt-blink 1.1s steps(1) infinite; }
+  .hp-footer__links {
+    display: grid; grid-template-columns: repeat(2, auto); justify-content: start;
+    gap: 28px clamp(48px, 8vw, 140px);
+    margin-top: clamp(48px, 8vh, 88px);
+  }
+  .hp-footer__col { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .hp-footer__a {
+    display: inline-flex; align-items: center; gap: 0.35em;
+    font-family: var(--ff-display); font-weight: 500;
+    font-size: clamp(18px, 1.75vw, 28px); line-height: 1.3; letter-spacing: -0.015em;
+    color: #fff; text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 0.35s cubic-bezier(.2,.7,.2,1);
+  }
+  .hp-footer__a:hover, .hp-footer__a:focus-visible { background-size: 100% 1px; }
+  .hp-footer__arrow { display: inline-flex; }
+  .hp-footer__arrow svg { width: 0.62em; height: 0.62em; display: block; transition: transform 0.3s ease; }
+  .hp-footer__a:hover .hp-footer__arrow svg { transform: translate(2px, -2px); }
+  .hp-footer .hp-footer__base {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    margin-top: clamp(48px, 8vh, 88px); padding-top: 0;
+    font: 500 clamp(13px, 1.05vw, 16px)/1.35 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.5);
+  }
+  .hp-footer__top {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
+    padding: 0; border: 0; background: none; cursor: pointer;
+    font: inherit; letter-spacing: inherit; color: rgba(255,255,255,0.5);
+    transition: color 0.25s ease;
+  }
+  .hp-footer__top:hover { color: #fff; }
+  .hp-footer__top .hp-footer__arrow svg { width: 14px; height: 14px; }
+  @media (max-width: 760px) {
+    .hp-footer__links { grid-template-columns: minmax(0, 1fr); }
+    .hp-footer .hp-footer__title { font-size: clamp(44px, 14vw, 80px); }
+  }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -2180,25 +2233,19 @@
 </main>
 
 <footer class="hp-footer">
-  <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Get in touch</span>
-  <h2 class="hp-footer__title" data-reveal>Let&rsquo;s talk.</h2>
-  <!-- Two ways to reach her and nothing else. The email is the filled button
-       because it is still the one most people will use; the number is written
-       the way it is dialled and linked in international form, so it works from
-       a phone abroad as well as a phone here. -->
-  <div class="hp-footer__ctas" data-reveal>
-    <a class="hp-footer__cta" href="mailto:abigail.r.truman@gmail.com">abigail.r.truman@gmail.com<span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-    <a class="hp-footer__cta is-ghost" href="tel:+447387382836">07387 382836<span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+  <!-- The homepage's footer, carried through: the sign-off, the four ways to
+       reach her, one line of small print. Kept in step with index.html. -->
+  <h2 class="hp-footer__title" aria-label="Ping me for projects." data-reveal>
+    <span class="hp-footer__line" aria-hidden="true"><span class="hp-footer__in">Ping me</span></span>
+    <span class="hp-footer__line hp-footer__line--r" aria-hidden="true"><span class="hp-footer__in">for projects<i class="lt-pix lt-pix--name"></i></span></span>
+  </h2>
+  <div class="hp-footer__links" data-reveal>
+    <div class="hp-footer__col"><a class="hp-footer__a" href="mailto:abigail.r.truman@gmail.com">abigail.r.truman@gmail.com<span class="hp-footer__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a class="hp-footer__a" href="tel:+447387382836">07387 382836<span class="hp-footer__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>
+    <div class="hp-footer__col"><a class="hp-footer__a" href="https://www.linkedin.com/in/abigail-truman/" target="_blank" rel="noopener">LinkedIn<span class="hp-footer__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a><a class="hp-footer__a" href="https://drive.google.com/file/d/1KcT6iBQz2vqAW1VKsEBWyHxMGAst7fnl/view?usp=drive_link" target="_blank" rel="noopener">CV<span class="hp-footer__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a></div>
   </div>
   <div class="hp-footer__base" data-reveal>
-    <!-- /#work rather than /, so it lands on the cards rather than the hero. The
-         homepage builds itself in JS and scrolls inside a fixed element, so the
-         browser cannot act on that fragment on its own; index.html reads it —
-         see initWorkAnchor there. -->
-    <a class="hp-footer__back" href="/#work">
-      <span class="hp-footer__cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to selected work
-    </a>
     <span>&copy; <span data-year>2026</span> Abbie Truman</span>
+    <button class="hp-footer__top" type="button" data-top>Back to top<span class="hp-footer__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M5 12l7-7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
   </div>
 </footer>
 
@@ -2941,7 +2988,7 @@
   // on a CDN, so its absence has to be survivable, and it is — the page scrolls
   // the way the browser scrolls it.
   if (typeof gsap === 'undefined' || typeof Lenis === 'undefined') return;
-  lenis = new Lenis({
+  lenis = window.__lenis = new Lenis({
     duration: 1.05,
     // Fast at the front so the first frame answers the wheel, long tail so it
     // settles rather than stops. An ease that is gentle at both ends reads as
@@ -3128,6 +3175,18 @@
       var link = document.querySelector('.hp-nav__link[data-key="' + k + '"]');
       if (link) link.classList.add('is-pressed');
       window.location.href = go[k];
+    });
+  })();
+</script>
+<script>
+  // Back to top, through the page's own smoothing where it is running.
+  (function() {
+    var b = document.querySelector('.hp-footer [data-top]');
+    if (!b) return;
+    b.addEventListener('click', function() {
+      var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (window.__lenis && !reduced) window.__lenis.scrollTo(0);
+      else window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
     });
   })();
 </script>
