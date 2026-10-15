@@ -4891,15 +4891,25 @@
     var held = null;
 
     function go(smooth) {
-      if (window.location.hash !== '#work') return;
+      var hash = window.location.hash;
+      if (hash !== '#work' && hash !== '#about') return;
+      var top;
+      if (hash === '#about') {
+        // About lands at the start of its held screen, everything grey and
+        // about to be read; arriving from a case study's About link.
+        var ab = document.querySelector('#hp-about .hp-about__pin') || document.getElementById('hp-about');
+        if (!ab) return;
+        top = root.scrollTop + ab.getBoundingClientRect().top - root.getBoundingClientRect().top;
+      } else {
       // With the build on, the work starts with card 01 at rest in its stage,
       // not with card 02 at the top of this section.
       var first = document.querySelector('.hp-build .hp-case');
-      var top = first
+      top = first
         ? cardRestTop(root, first)
         : root.scrollTop
           + cases.getBoundingClientRect().top
           - root.getBoundingClientRect().top;
+      }
       smooth = smooth && !REDUCED;
       freeHero();
       root.scrollTo({ top: top, behavior: smooth ? 'smooth' : 'auto' });
