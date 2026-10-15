@@ -14,32 +14,32 @@
      a search result are hers. The aside under it is left out: a snippet should
      carry the pitch, and with the aside the line runs past 200 characters and
      would be cut mid-joke. -->
-<meta name="description" content="I perfect the pixels, piece together the bigger picture and take ideas from pencil to production. Through it all, I invest in people as much as the product.">
+<meta name="description" content="Whether I&rsquo;m perfecting pixels, piecing together the bigger picture, or taking ideas from pencil to production, I always invest in people as much as the product.">
 <link rel="canonical" href="https://abbietruman.vercel.app/">
 
 <!-- Open Graph and Twitter, so a link she sends a hiring manager unfurls as her
      hero instead of as a bare URL. Absolute URLs throughout: scrapers do not
      resolve relative paths against the page they found them on.
      og:image is a static PNG and has to be. No scraper runs JavaScript, and
-     this page builds its hero in JS, so the card is a photograph of the hero
-     rather than the hero itself — see build-og-image.py, which takes it, hashes
-     it and rewrites the two URLs below. It has to be retaken whenever the hero
-     copy changes. -->
+     this page builds its hero in JS, so the card is a composed picture of the
+     hero's statement in its type and light: 1200x630, named by the first eight
+     characters of its SHA-1. It has to be remade whenever the hero copy
+     changes, and the two URLs below pointed at the new name. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Abbie Truman">
 <meta property="og:url" content="https://abbietruman.vercel.app/">
 <meta property="og:title" content="Abbie Truman — Product Design Leader in the UK">
-<meta property="og:description" content="I perfect the pixels, piece together the bigger picture and take ideas from pencil to production. Through it all, I invest in people as much as the product.">
-<meta property="og:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.fcd93442.png">
+<meta property="og:description" content="Whether I&rsquo;m perfecting pixels, piecing together the bigger picture, or taking ideas from pencil to production, I always invest in people as much as the product.">
+<meta property="og:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.3efce6c2.png">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Abbie Truman's homepage: her photograph and name above her opening statement, white on near-black.">
+<meta property="og:image:alt" content="Abbie Truman, Product Design Leader in the UK, above her statement: whether I'm perfecting pixels, piecing together the bigger picture, or taking ideas from pencil to production, I always invest in people as much as the product.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Abbie Truman — Product Design Leader in the UK">
-<meta name="twitter:description" content="I perfect the pixels, piece together the bigger picture and take ideas from pencil to production. Through it all, I invest in people as much as the product.">
-<meta name="twitter:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.fcd93442.png">
-<meta name="twitter:image:alt" content="Abbie Truman's homepage: her photograph and name above her opening statement, white on near-black.">
+<meta name="twitter:description" content="Whether I&rsquo;m perfecting pixels, piecing together the bigger picture, or taking ideas from pencil to production, I always invest in people as much as the product.">
+<meta name="twitter:image" content="https://abbietruman.vercel.app/assets/og-home-1200x630.3efce6c2.png">
+<meta name="twitter:image:alt" content="Abbie Truman, Product Design Leader in the UK, above her statement: whether I'm perfecting pixels, piecing together the bigger picture, or taking ideas from pencil to production, I always invest in people as much as the product.">
 
 <!-- The circular AT monogram, built by build-favicon-at.py (prefix 'atc').
      The PNGs are content-hashed because vercel.json serves /assets/*
@@ -7616,6 +7616,30 @@
     sync();
   }
 
+  // A card only opens from a deliberate click. The cards are links the size
+  // of the screen, so a tap on a trackpad or a phone while the page is still
+  // moving (momentum, a snap, the hero catching up) would otherwise land on
+  // whichever card was passing and open it. Clicks within a moment of the
+  // page moving are let go; a click on a settled card works as always.
+  function initCardClickGuard() {
+    var root = document.getElementById('hp-root');
+    if (!root) return;
+    var lastMove = -1e9, lastTop = root.scrollTop;
+    var moved = function() { lastMove = performance.now(); };
+    ['scroll', 'wheel', 'touchmove'].forEach(function(t) { root.addEventListener(t, moved, { passive: true }); });
+    // the page can also be moved without a scroll event reaching here yet
+    gsap.ticker.add(function() {
+      var t = root.scrollTop;
+      if (Math.abs(t - lastTop) > 0.5) lastMove = performance.now();
+      lastTop = t;
+    });
+    document.addEventListener('click', function(e) {
+      var a = e.target.closest && e.target.closest('.hp-case__link');
+      if (!a || e.detail === 0) return;   // keyboard activation is always deliberate
+      if (performance.now() - lastMove < 350) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
+  }
+
   function initCaseTransitions() {
     if (!('onpageswap' in window)) return;
     window.addEventListener('pageswap', function(e) {
@@ -7670,6 +7694,7 @@
       initFooter();
       SOUND.arm();
       initPong();
+      if (typeof gsap !== 'undefined') initCardClickGuard();
       initSoundToggle();
       initNavHide();
       initBackToTop();
