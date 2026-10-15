@@ -2866,6 +2866,41 @@
     .hp-footer__links { grid-template-columns: minmax(0, 1fr); }
     .hp-footer .hp-footer__title { font-size: clamp(44px, 14vw, 80px); }
   }
+
+  /* ---------- Editorial pass (Boots first, then the other four) ----------
+     Captions as the homepage's small print rather than boxes; the body set a
+     step larger; each chapter title lit word by word as it is reached; the
+     pictures opening out as they arrive; the hero drawn in with the build's
+     faint guides. */
+  .cs-figure figcaption,
+  .cs-story .cs-figure figcaption {
+    padding: 0; border: 0; border-radius: 0;
+    margin-top: 16px;
+    font: 500 clamp(12.5px, 0.95vw, 14px)/1.55 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.01em;
+    color: rgba(255,255,255,0.5);
+  }
+  .cs-chapter__body p, .cs-chapter__body dd {
+    font-size: clamp(16.5px, 1.18vw, 19px);
+    line-height: 1.62;
+  }
+  .cs-chapter__title { font-size: clamp(27px, 2.7vw, 40px); }
+  .cs-story .cs-chapter__title { font-size: clamp(24px, 2.2vw, 32px); }
+  .cs-ed-w { transition: color 0.35s ease; }
+  /* pictures open out as they arrive */
+  .cs-motion .cs-read .cs-figure[data-reveal] img {
+    clip-path: inset(7% 5% 7% 5% round 18px);
+    transform: scale(1.035);
+    transition: clip-path 1.2s cubic-bezier(.2,.7,.2,1), transform 1.5s cubic-bezier(.2,.7,.2,1);
+  }
+  .cs-motion .cs-read .cs-figure[data-reveal].is-in img { clip-path: inset(0 0 0 0 round 0); transform: none; }
+  /* the build's guides round the hero picture, drawn and then let go */
+  .cs-ed-guides { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+  .cs-ed-guides line { stroke: rgba(255,255,255,0.32); stroke-width: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    .cs-motion .cs-read .cs-figure[data-reveal] img { clip-path: none; transform: none; transition: none; }
+    .cs-ed-guides { display: none; }
+  }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -4504,6 +4539,75 @@
       if (window.__lenis && !reduced) window.__lenis.scrollTo(0);
       else window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
     });
+  })();
+</script>
+<script>
+  // Editorial pass: each chapter title lights word by word, grey to white, as
+  // it comes up the screen; the hero picture is drawn in with guides.
+  (function() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var titles = Array.prototype.slice.call(document.querySelectorAll('.cs-chapter__title'));
+    titles.forEach(function(t) {
+      var walk = function(node) {
+        Array.prototype.slice.call(node.childNodes).forEach(function(n) {
+          if (n.nodeType === 3) {
+            var frag = document.createDocumentFragment();
+            n.textContent.split(/(\s+)/).forEach(function(part) {
+              if (!part) return;
+              if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+              var w = document.createElement('span'); w.className = 'cs-ed-w'; w.textContent = part; frag.appendChild(w);
+            });
+            n.parentNode.replaceChild(frag, n);
+          } else if (n.nodeType === 1) walk(n);
+        });
+      };
+      walk(t);
+      t._w = t.querySelectorAll('.cs-ed-w');
+    });
+    var queued = false;
+    function light() {
+      queued = false;
+      var vh = window.innerHeight;
+      titles.forEach(function(t) {
+        var r = t.getBoundingClientRect();
+        // from when it is at 85% of the screen to when it reaches 45%
+        var p = Math.max(0, Math.min(1, (vh * 0.85 - r.top) / (vh * 0.4)));
+        var n = t._w.length, lit = p * n;
+        for (var i = 0; i < n; i++) {
+          var c = Math.max(0, Math.min(1, lit - i));
+          t._w[i].style.color = 'rgba(255,255,255,' + (0.22 + 0.78 * c).toFixed(3) + ')';
+        }
+      });
+    }
+    var onScroll = function() { if (!queued) { queued = true; requestAnimationFrame(light); } };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    light();
+
+    // guides round the hero picture
+    var fig = document.querySelector('.cs-hero .cs-figure');
+    var img = fig && fig.querySelector('img');
+    if (img) {
+      if (getComputedStyle(fig).position === 'static') fig.style.position = 'relative';
+      var NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('class', 'cs-ed-guides');
+      fig.appendChild(svg);
+      var draw = function() {
+        var fr = fig.getBoundingClientRect(), ir = img.getBoundingClientRect();
+        var l = ir.left - fr.left, t = ir.top - fr.top, w = ir.width, h = ir.height, X = 48;
+        svg.innerHTML = '';
+        [[l - X, t, l + w + X, t], [l - X, t + h, l + w + X, t + h], [l, t - X, l, t + h + X], [l + w, t - X, l + w, t + h + X]].forEach(function(c, i) {
+          var ln = document.createElementNS(NS, 'line');
+          ln.setAttribute('x1', c[0]); ln.setAttribute('y1', c[1]); ln.setAttribute('x2', c[2]); ln.setAttribute('y2', c[3]);
+          var len = Math.hypot(c[2] - c[0], c[3] - c[1]);
+          ln.style.strokeDasharray = len; ln.style.strokeDashoffset = len;
+          svg.appendChild(ln);
+          ln.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 900, delay: 250 + i * 120, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+        });
+        svg.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 900, delay: 1900, easing: 'ease-out', fill: 'forwards' });
+      };
+      if (img.complete) draw(); else img.addEventListener('load', draw, { once: true });
+    }
   })();
 </script>
 </body>
