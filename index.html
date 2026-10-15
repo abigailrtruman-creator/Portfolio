@@ -146,11 +146,12 @@
     z-index: 999999;
     font-family: var(--ff-body);
 
-    /* The pill's underside at desktop, 28 of offset plus 78 of pill, with a
-       little air under it. While the pill is on screen the cards park no
+    /* The pill's underside at desktop, 28 of offset plus 78 of pill, with
+       40px of air under it (18 was too tight: the first card read as touching
+       the nav when scrolling back up). While the pill is on screen the cards park no
        higher than this; while it is away, --deck-clear drops to nothing and
        the cards sit on the centred line. See .hp-cases__list. */
-    --deck-clear: 124px;
+    --deck-clear: 146px;
   }
   .hp-root.is-nav-away { --deck-clear: 0px; }
   .hp-root * { font-family: inherit; box-sizing: border-box; }
@@ -250,7 +251,7 @@
      take the shorter duration. Set here rather than on is-hidden alone because a
      transition reads its duration from the state it is going TO, and the return
      journey has to be as quick as the departure. */
-  .hp-nav.is-live { transition-duration: 0.45s, 0.45s; }
+  .hp-nav.is-live { transition-duration: 0.7s, 0.7s; transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
 
   .hp-nav__brand {
     display: flex;
@@ -310,6 +311,95 @@
     transition: background 0.25s ease, color 0.25s ease;
   }
   .hp-nav__link:hover { background: rgba(255,255,255,0.06); }
+  /* The second rule, between the site's pages and the links out of it. Its
+     distance is derived the same way as the brand's: the link padding and the
+     pill gap on one side, this padding and the link padding on the other. */
+  /* The rule between the site's pages and the links out of it: short, the
+     same 1px as the pill's own edge, centred on the row, with room either
+     side. A tick between two groups rather than a wall. */
+  .hp-nav__links--ext { position: relative; margin-left: 10px; padding-left: 30px; }
+  .hp-nav__links--ext::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 50%;
+    width: 1px; height: 18px;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.16);
+  }
+  .hp-nav__links--sound { margin-left: -6px; }
+  /* The pill hugs what is in it, centred, with the same short tick after her
+     name as between the pages and the links out. Name to tick is this
+     padding; tick to "Work" is the pill gap plus the link's own padding,
+     24 + 18, so the two match. */
+  .hp-nav { width: auto; max-width: calc(100% - 2 * var(--pad-x)); }
+  .hp-nav .hp-nav__brand { position: relative; border-right: 0; padding-right: var(--nav-brand-pad, 42px); }
+  /* The space after her name steps down with the pill, as it always did:
+     the pill gap plus the link's padding on the far side of the tick. */
+  @media (min-width: 601px) and (max-width: 900px) { .hp-nav { --nav-brand-pad: 30px; } }
+  /* Below 820 the name and both groups no longer fit the pill: the photo
+     stays as the mark, as it does on a phone, and her name is the first
+     thing the page itself says. */
+  @media (min-width: 601px) and (max-width: 820px) {
+    .hp-nav__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .hp-nav { --nav-brand-pad: 22px; }
+  }
+  .hp-nav .hp-nav__brand::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 50%;
+    width: 1px; height: 18px;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.16);
+  }
+  @media (max-width: 600px) {
+    .hp-nav .hp-nav__brand { padding-right: 16px; }
+    .hp-nav { gap: 8px; }
+  }
+  /* The sound control, at home in the pill: the same mark and the same two
+     states as the floating button it was, sized like a link. */
+  /* Just the mark: a 44px round target at the end of the pill, quiet until
+     it is on. Its label is for screen readers and the tooltip only. */
+  .hp-nav .hp-sound {
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    justify-content: center;
+    gap: 0;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-radius: 999px;
+    color: rgba(255,255,255,0.55);
+    font-family: var(--ff-body);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+  .hp-nav .hp-sound:hover { background: rgba(255,255,255,0.06); color: #fff; }
+  .hp-nav .hp-sound[aria-pressed="true"] { color: #fff; }
+  .hp-nav .hp-sound svg { width: 17px; height: 17px; }
+  .hp-nav .hp-sound span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .hp-nav__key {
+    display: inline-grid;
+    place-items: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-bottom-width: 2px;
+    border-radius: 6px;
+    font: 500 11px/1 ui-monospace, "SF Mono", Menlo, monospace;
+    color: rgba(255,255,255,0.6);
+    transition: color 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
+  }
+  .hp-nav__link:hover .hp-nav__key { color: #fff; border-color: rgba(255,255,255,0.36); }
+  .hp-nav__link.is-pressed .hp-nav__key { transform: translateY(1px); border-bottom-width: 1px; color: #fff; }
   .hp-nav__arrow {
     display: inline-flex;
     align-items: center;
@@ -724,6 +814,302 @@
   .hp-hero__logo--imi     { --h: 24px; --r: 2.043; --mark: url(/assets/logo-imi.64e95895.png); }
 
 
+
+  /* ---------- THE STORY ----------
+     The hero is one pinned stage in two parts. First her name, set like a
+     masthead. Then the sentence, whole and readable, lit a phrase at a time,
+     with every P-word doing what it says: the pixels resolve, the bigger
+     picture zooms out to the sitemap, pencil is drawn in graphite, production
+     compiles, people arrive, the product ships. A rail under the sentence
+     names each beat as it plays. */
+  .lt {
+    --line: rgba(252,249,245,0.55);
+    --line-2: rgba(252,249,245,0.20);
+    --skel: rgba(255,255,255,0.085);
+    --code-bg: rgba(12,12,15,0.95);
+    --ff-m: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    position: relative;
+    width: 100%;
+    height: 740vh;
+    background: #0a0a0c;
+  }
+  .lt-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: #0a0a0c;
+  }
+  .lt-world {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 50%;
+    will-change: transform;
+  }
+  .lt-home { position: absolute; inset: 0; border-radius: 1.6vw; }
+  .lt-home__t {
+    position: absolute; left: 0; bottom: calc(100% + 1.6vw);
+    font: 400 2.3vw/1 var(--ff-m);
+    color: #fff;
+    opacity: 0;
+  }
+
+  /* ---- the masthead ---- */
+  .lt-mast {
+    position: absolute;
+    left: var(--pad-x); right: var(--pad-x);
+    top: 50%;
+    transform: translateY(-46%);
+  }
+  .lt-hey {
+    margin: 0 0 clamp(10px, 1.4vw, 20px);
+    /* The page's small print, one style everywhere: the code face, sentence
+       case, a size under the body. The big type is Manrope; this is not. */
+    font: 500 clamp(13px, 1.05vw, 16px)/1.35 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.02em;
+    color: #fff;
+  }
+  .lt-rule { display: block; height: 1px; background: rgba(252,249,245,0.26); transform-origin: 0 50%; }
+  .lt-name {
+    margin: 0;
+    padding: clamp(10px, 1.6vw, 26px) 0 clamp(14px, 2vw, 32px);
+    font-family: var(--ff-display);
+    font-weight: 800;
+    font-size: clamp(72px, 15.5vw, 270px);
+    line-height: 0.86;
+    letter-spacing: -0.055em;
+    color: #fff;
+  }
+  .lt-line { display: block; overflow: hidden; padding-bottom: 0.2em; margin-bottom: -0.2em; }
+  .lt-line + .lt-line { text-align: right; }
+  .lt-in, .lt-3d__title .lt-line { white-space: nowrap; }
+  .lt-in { display: inline-block; will-change: transform; }
+  .lt-meta {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-top: clamp(12px, 1.4vw, 20px);
+    font: 500 clamp(13px, 1.05vw, 16px)/1.35 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.7);
+  }
+  .lt-cue { text-transform: none; letter-spacing: 0.02em; color: rgba(255,255,255,0.8); }
+  @keyframes lt-nudge { 0%, 100% { transform: translateY(-1px); } 50% { transform: translateY(3px); } }
+  @keyframes lt-blink { 50% { opacity: 0; } }
+
+  /* The full stop is a pixel. It ends her name, and it ends the sentence. */
+  .lt-pix {
+    display: inline-block;
+    width: 0.15em; height: 0.15em;
+    margin-left: 0.04em;
+    background: #fff;
+    vertical-align: baseline;
+  }
+  .lt-pix--name { animation: lt-blink 1.1s steps(1) infinite; }
+  .lt-pix--end { width: 0.17em; height: 0.17em; margin-left: 0.02em; }
+
+  /* ---- the story ---- */
+  /* Centred by flex, not by a transform: the effects are placed from the
+     words' offsets, and offsets do not see transforms. */
+  .lt-story {
+    position: absolute;
+    inset: 0;
+    padding: 0 var(--pad-x);
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(28px, 5vh, 56px);
+  }
+  .lt-sent {
+    margin: 0;
+    max-width: min(100%, 1180px);
+    text-align: center;
+    font-family: var(--ff-display);
+    font-weight: 500;
+    font-size: clamp(26px, 3.7vw, 58px);
+    line-height: 1.3;
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+  }
+  .lt-w { display: inline-block; position: relative; color: rgba(255,255,255,0.22); }
+  .lt-rail { position: relative; display: flex; gap: 6px; width: min(70%, 300px); height: 7px; align-items: center; }
+  /* room under the sentence for the two rows of people on a phone */
+  @media (max-width: 719px) { .lt-story { gap: 104px; } }
+  .lt-seg { position: relative; flex: 1; height: 1px; background: var(--line-2); }
+  .lt-seg b { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #fff; }
+  .lt-head { position: absolute; left: 0; top: 0; width: 7px; height: 7px; margin-left: -3.5px; background: #fff; }
+
+  /* ---- the sitemap ---- */
+  .lt-map { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+  .lt-fm { position: absolute; }
+  .lt-fm__t { position: absolute; left: 0; bottom: calc(100% + 1.6vw); font: 400 2.3vw/1 var(--ff-m); color: rgba(255,255,255,0.52); white-space: nowrap; }
+  .lt-fm__b {
+    position: absolute; inset: 0;
+    border: 2.5px solid var(--line-2); border-radius: 1.6vw;
+    padding: 3vw; display: flex; flex-direction: column; gap: 2vw;
+    overflow: hidden; background: #0a0a0c;
+  }
+  .lt-fm__bar { height: 2.2vw; border-radius: 99px; background: var(--skel); flex: none; }
+  .lt-fm__blk { flex: 1; border-radius: 1vw; background: var(--skel); }
+  .lt-fm__pl { align-self: center; width: 34%; height: 3.2vw; border-radius: 99px; border: 2px solid var(--line-2); flex: none; }
+  .lt-conn { position: absolute; border-color: var(--line-2); border-style: dashed; border-width: 0; }
+  .lt-conn--h { border-top-width: 2.5px; }
+  .lt-conn--v { border-left-width: 2.5px; }
+
+  /* ---- effects, drawn over the world at screen scale ---- */
+  .lt-ov { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+  .lt-ov__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .lt-graphite { fill: rgba(255,255,255,0); stroke: rgba(236,232,224,0.78); stroke-width: 0.9; stroke-dasharray: 260; stroke-dashoffset: 260; }
+  .lt-pxc { position: absolute; opacity: 0; }
+  .lt-code {
+    position: absolute;
+    padding: 5px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.26);
+    background: var(--code-bg);
+    box-shadow: 0 22px 40px -16px rgba(0,0,0,0.9);
+    font: 400 11.5px/1.3 var(--ff-m);
+    color: rgba(255,255,255,0.74);
+    white-space: pre;
+    opacity: 0;
+  }
+  .lt-cur { position: absolute; left: 0; top: 0; display: flex; align-items: flex-start; opacity: 0; will-change: transform; }
+  .lt-cur svg { width: 16px; height: 16px; flex: none; }
+  .lt-cur b {
+    margin: 12px 0 0 -2px; padding: 4px 8px;
+    border-radius: 3px 9px 9px 9px;
+    font: 500 12px/1 var(--ff-body);
+    color: #0a0a0c; background: var(--cc);
+    white-space: nowrap;
+  }
+  /* ---- her name, in depth ----
+     A perspective layer holding one camera group: her name rests at the
+     depth where the camera stops, and the first scroll carries the camera on
+     through it. */
+  .lt-3d {
+    --W: 1440px; --H: 900px;
+    position: absolute; inset: 0;
+    perspective: 900px;
+    perspective-origin: 50% 50%;
+    overflow: hidden;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .lt-3d__space {
+    position: absolute; left: 50%; top: 50%;
+    width: 0; height: 0;
+    transform-style: preserve-3d;
+  }
+  .lt-3d__cam { position: absolute; left: 0; top: 0; transform-style: preserve-3d; will-change: transform; }
+
+  /* ---- the way out ----
+     "Proudest projects", in the masthead's face and measure. It rises in
+     line by line, then swings off round the same curve the work sits on. */
+  .lt-pp {
+    position: absolute; inset: 0;
+    display: flex; align-items: center;
+    padding: 0 var(--pad-x);
+    perspective: 1800px;
+    visibility: hidden;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .lt-pp__swing { width: 100%; transform-style: preserve-3d; will-change: transform; }
+  .lt-pp__hey {
+    margin: 0 0 clamp(10px, 1.4vw, 20px);
+    /* The page's small print, one style everywhere: the code face, sentence
+       case, a size under the body. The big type is Manrope; this is not. */
+    font: 500 clamp(13px, 1.05vw, 16px)/1.35 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.02em;
+    color: #fff;
+    opacity: 0;
+  }
+  .lt-pp__t { margin: 0; font-size: clamp(56px, 13vw, 230px); }
+  .lt-pin { display: inline-block; white-space: nowrap; will-change: transform; }
+  .lt-pp__t .lt-line { overflow: visible; }
+  @media (max-width: 900px) { .lt-pp__t { font-size: 15vw; } }
+  .lt--static .lt-pp { display: none; }
+  .lt--static .lt-3d { display: none; }
+
+  /* Her name on the far wall: the masthead's face and measure, a wall's
+     width across, at the depth where the camera comes to rest. */
+  .lt-3d__name {
+    position: absolute;
+    width: calc(var(--W) - 2 * var(--pad-x));
+    left: calc(var(--W) / -2 + var(--pad-x));
+    top: 0;
+    transform: translateY(-50%) translateZ(-1000px);
+  }
+  .lt-3d__hey {
+    margin: 0 0 clamp(10px, 1.4vw, 20px);
+    /* The page's small print, one style everywhere: the code face, sentence
+       case, a size under the body. The big type is Manrope; this is not. */
+    font: 500 clamp(13px, 1.05vw, 16px)/1.35 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.02em;
+    color: #fff;
+  }
+  .lt-3d__big { position: relative; margin: 0; padding: 0; }
+  .lt-3d__big .lt-line { overflow: visible; white-space: nowrap; }
+  .lt-3d__pxc { position: absolute; left: 0; top: 0; pointer-events: none; }
+  .lt-sr {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+  /* The small print along the bottom, flat on the glass. */
+  .lt-hud {
+    position: absolute;
+    left: var(--pad-x); right: var(--pad-x);
+    bottom: clamp(24px, 5vh, 52px);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px 16px;
+    align-items: center;
+    /* The page's small print, one style everywhere: the code face, sentence
+       case, a size under the body. The big type is Manrope; this is not. */
+    font: 500 clamp(13px, 1.05vw, 16px)/1.35 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.7);
+    z-index: 3;
+    pointer-events: none;
+  }
+  .lt-hud .lt-cue { display: inline-flex; align-items: center; gap: 14px; color: #fff; }
+  /* A plain down arrow that hovers: it floats gently up and down. */
+  .lt-cue__ring { display: inline-flex; flex: none; }
+  .lt-cue__ring svg {
+    display: block; width: 18px; height: 18px;
+    animation: lt-cue-float 2.4s ease-in-out infinite;
+  }
+  @keyframes lt-cue-float {
+    0%, 100% { transform: translateY(-3px); }
+    50% { transform: translateY(4px); }
+  }
+  @media (prefers-reduced-motion: reduce) { .lt-cue__ring svg { animation: none; } }
+  .lt:not(.lt--static) .lt-mast { display: none; }
+  .lt--static .lt-hud { display: none; }
+
+  /* With a build after it, the hero overlaps it by the build's first 40vh:
+     the build's stage is pinned underneath while the title swings away, and
+     the hero's own ground clears to let it show. */
+  .lt--handoff { z-index: 2; background: transparent; margin-bottom: -140vh; }
+
+
+  @media (max-width: 900px) {
+    .lt-name { font-size: clamp(64px, 21vw, 200px); }
+    .lt-meta { row-gap: 10px; }
+    .lt-sent { font-size: clamp(22px, 6vw, 34px); }
+  }
+
+  /* Reduced motion: the name, then the sentence, both whole. */
+  .lt--static { height: auto; }
+  .lt--static .lt-stage { position: relative; height: auto; overflow: visible; }
+  .lt--static .lt-world { position: relative; }
+  .lt--static .lt-home { position: relative; }
+  .lt--static .lt-mast, .lt--static .lt-story { position: relative; transform: none; top: auto; left: auto; right: auto; padding: 0 var(--pad-x); }
+  .lt--static .lt-mast { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+  .lt--static .lt-story { padding-bottom: 20vh; }
+  .lt--static .lt-w { color: #fff; }
+  .lt--static .lt-map, .lt--static .lt-ov, .lt--static .lt-rail { display: none; }
+
   /* ---------- WORDMARK (3 rows converge → scale down) ----------
      Motion, scale values and scroll cost are locked; only the mechanism has
      changed. The section used to be 100vh and was held in place by GSAP
@@ -789,7 +1175,7 @@
        otherwise be taller than the section and get sliced top and bottom.
        There is deliberately no px floor — a fixed floor overflows narrow
        screens, which is what clipped the mark below ~470px. */
-    font-size: min(13.5vw, 28vh, 210px);
+    font-size: min(10.2vw, 28vh, 160px);
     /* Optically centred glyphs in a row box that is still exactly one em tall.
        Both halves of that matter.
        Manrope's ascent and descent do not straddle the em evenly, and "Selected
@@ -1350,6 +1736,52 @@
     margin: 0;
     transform-origin: 50% 0;
   }
+
+  /* ---------- THE RAIL ----------
+     After the build, the work moves sideways on a curve, as if set round the
+     inside of a drum: a card comes in from the right turned toward you and
+     brought forward, faces you square in the middle, and leaves to the left
+     the same way. The faster the scroll, the tighter the curve and the more
+     the cards lean, and they settle when it stops.
+     The stage stops clipping in this mode, because the curve's whole point
+     is cards past the page's margins, and it holds the cards in one 3D space
+     so the nearer card is always the one drawn on top. */
+  .hp-build__stage.has-rail {
+    contain: none;
+    perspective: 1800px;
+    perspective-origin: 50% 42%;
+    transform-style: preserve-3d;
+  }
+  .hp-build__stage.has-rail > .hp-case { will-change: transform; }
+  .hp-rail {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .hp-rail > .hp-case {
+    position: absolute;
+    left: 50%;
+    top: max(var(--deck-clear), var(--deck-top));
+    width: var(--card-w-px);
+    margin: 0 0 0 calc(var(--card-w-px) / -2);
+    pointer-events: auto;
+    will-change: transform;
+    transition: top 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .hp-rail > .hp-case.hp-case--slice { pointer-events: none; }
+  @media (hover: hover) {
+    .hp-case--slice.is-hover .hp-case__link { transform: translateY(-6px); }
+  }
+  /* The rail is there from the start now: card 01's slices are what the
+     build draws on. */
+  .hp-build__stage.has-rail .hp-rail { opacity: 1; }
+  .hp-rail__travel {
+    flex: none;
+    width: 100%;
+    height: calc(var(--rail-n) * 85vh);
+  }
   /* The image is what the whole sequence resolves into. Only opacity is
      ever animated on it; a clip to its window is set once and dropped once. */
   .hp-build .hp-case__art { will-change: opacity; }
@@ -1373,7 +1805,10 @@
      The layer above is the navy, and it fades in when the card closes
      round the window — the same moment as on a desktop, where the link
      was never painted. Until then the drawing sits on the stage. */
-  #hp-build .hp-case__link { background: transparent; }
+  /* Only the card being built: the rail's other cards live in the same
+     stage now and keep their own ground. */
+  #hp-build .hp-build__stage > .hp-case .hp-case__link,
+  #hp-build .hp-case--build-slice .hp-case__link { background: transparent; }
   /* On a phone this card uses the same head and the same crop as the other
      four. Holding the sentence in the artwork's own band left the last line
      on the checkout — about 8px of air, where the wholesale card has the
@@ -1575,15 +2010,341 @@
      hairline, the headline and the copyright row rather than starting the label
      40px inside them. It is the default from .hp-eyebrow--rule now, so there is
      no exception here and the footer matches the case study's other eyebrows. */
+  /* The top line: the label, and the time where she is. */
+  .hp-footer__meta {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  }
+  .hp-footer__meta .hp-eyebrow {
+    font: 500 clamp(13px, 1.05vw, 16px)/1.35 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: rgba(255,255,255,0.7);
+  }
+  .hp-footer__meta .hp-eyebrow::before { display: none; }
+  .hp-footer__clock {
+    font: 500 clamp(13px, 1.05vw, 16px)/1.35 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.7);
+    font-variant-numeric: tabular-nums;
+  }
+  /* The sign-off, set as her name is at the top of the page: the first line
+     flush left, the second flush right, the pixel full stop to end it. */
   .hp-footer__title {
     margin: clamp(22px, 3vh, 40px) 0 0;
     font-family: var(--ff-display);
-    font-size: clamp(52px, 8.4vw, 148px);
-    line-height: 0.92;
-    letter-spacing: -0.048em;
+    font-size: clamp(56px, 11vw, 196px);
+    line-height: 0.9;
+    letter-spacing: -0.055em;
     font-weight: 800;
     color: var(--ink);
-    max-width: 12ch;
+  }
+  .hp-footer__line { display: block; overflow: hidden; padding-bottom: 0.2em; margin-bottom: -0.2em; }
+  .hp-footer__line--r { text-align: right; }
+  .hp-footer__in { display: inline-block; white-space: nowrap; }
+  /* The lede and the buttons share a row, so the sign-off has the room. */
+  .hp-footer__row {
+    display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap;
+    gap: 28px 48px;
+    margin-top: clamp(40px, 6vh, 80px);
+  }
+  .hp-footer__row .hp-footer__lede { margin: 0; }
+
+  /* ---------- FOOTER, simplified ----------
+     The sign-off, three ways to reach her, one line of small print. No
+     rules: space does the dividing. */
+  .hp-footer::before, .hp-footer__base::before { display: none; }
+  /* Its own height, not most of a screen: it ends close under the links. */
+  .hp-footer.hp-footer {
+    min-height: 0;
+    padding-top: clamp(72px, 12vh, 140px);
+    padding-bottom: clamp(24px, 3.5vh, 36px);
+  }
+  .hp-footer__links {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    justify-content: start;
+    gap: 28px clamp(48px, 8vw, 140px);
+    /* the same gap as the one above the small print, so the links sit
+       evenly between the two */
+    margin-top: clamp(48px, 8vh, 88px);
+  }
+  .hp-footer__col { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .hp-footer__a {
+    display: inline-flex; align-items: center; gap: 0.35em;
+    font-family: var(--ff-display); font-weight: 500;
+    font-size: clamp(18px, 1.75vw, 28px); line-height: 1.3; letter-spacing: -0.015em;
+    color: #fff; text-decoration: none;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size 0.35s cubic-bezier(.2,.7,.2,1);
+  }
+  .hp-footer__a:hover, .hp-footer__a:focus-visible { background-size: 100% 1px; }
+  .hp-footer__arrow { display: inline-flex; }
+  .hp-footer__arrow svg { width: 0.62em; height: 0.62em; display: block; transition: transform 0.3s ease; }
+  .hp-footer__a:hover .hp-footer__arrow svg { transform: translate(2px, -2px); }
+  .hp-footer .hp-footer__base {
+    margin-top: clamp(48px, 8vh, 88px);
+    padding-top: 0;
+    color: rgba(255,255,255,0.5);
+  }
+  .hp-footer .hp-footer__top { justify-content: flex-end; color: rgba(255,255,255,0.5); gap: 8px; }
+  .hp-footer .hp-footer__top:hover { color: #fff; }
+  @media (max-width: 760px) {
+    .hp-footer__links { grid-template-columns: minmax(0, 1fr); }
+    .hp-footer .hp-footer__base { flex-wrap: nowrap; justify-content: space-between; text-align: left; }
+  }
+
+  /* ---------- ABOUT ----------
+     Broken out: a small label on the left, her words large on the right,
+     each lighting from grey to white as it scrolls past. The table opens
+     across both underneath, from the last line. Stacked below 900. */
+  .hp-about {
+    position: relative;
+    max-width: var(--shell);
+    margin: 0 auto;
+    padding: 0 var(--pad-x) clamp(40px, 8vh, 100px);
+    background: var(--bg);
+  }
+  /* The copy is one screen: while the visitor scrolls the stage holds still
+     and the words light up in reading order. Without the pin (reduced
+     motion, or a screen too short to hold it all) it is ordinary flow. */
+  .hp-about__pin { position: relative; }
+  .hp-about.is-pinned .hp-about__pin { height: 230vh; height: 230svh; }
+  .hp-about__stage {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(110px, 16vh, 180px) 0 clamp(40px, 6vh, 80px);
+  }
+  .hp-about.is-pinned .hp-about__stage {
+    position: sticky; top: 0;
+    min-height: 100vh; min-height: 100svh;
+    padding: clamp(100px, 13vh, 140px) 0 clamp(24px, 4vh, 48px);
+  }
+  .hp-about__eyebrow {
+    margin: 0;
+    font: 500 clamp(13px, 1.05vw, 16px)/1.35 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.02em;
+    color: rgba(255,255,255,0.55);
+  }
+  .hp-about__eyebrow { margin-bottom: clamp(16px, 3vh, 36px); }
+  /* One column, the four beats in order, set in from the left at a size
+     that fills the screen; sized to its height as well as its width so the
+     whole of it holds on one. */
+  .hp-about__copy {
+    margin-left: clamp(0px, 22%, 300px);
+    max-width: 33em;
+    font-size: clamp(18px, min(1.95vw, 2.8vh), 32px);
+  }
+  .hp-about__lead { font-weight: inherit; }
+  .hp-about__p {
+    margin: 0 0 1.75em;
+    font-family: var(--ff-display);
+    font-weight: 400;
+    font-size: inherit;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: #fff;
+    text-wrap: pretty;
+  }
+  /* ---- one beat at a time ----
+     The section holds for a few screens; the beats share one place, centred,
+     and come through it in turn, each large, lit word by word as the page
+     is scrolled, then lifted away for the next. Set by the script, so
+     without it (or with reduced motion) the four simply sit in order. */
+  .hp-about.is-beats .hp-about__pin { height: 460vh; height: 460svh; }
+  .hp-about.is-beats .hp-about__stage {
+    position: sticky; top: 0;
+    height: 100vh; height: 100svh;
+    padding: clamp(110px, 15vh, 150px) 0 clamp(40px, 7vh, 80px);
+    justify-content: center; align-items: stretch; text-align: left;
+  }
+  .hp-about.is-beats .hp-about__eyebrow { margin: 0 0 clamp(20px, 4vh, 40px); }
+  /* Editorial: the label on the left edge, the words set in from it. */
+  .hp-about.is-beats .hp-about__copy {
+    margin: 0 0 0 clamp(0px, 22%, 300px); max-width: 26em;
+    font-size: clamp(18px, min(2.1vw, 3.3vh), 34px);
+  }
+  .hp-about.is-beats .hp-about__beat { margin: 0 0 1.05em; }
+  .hp-about.is-beats .hp-about__beat:last-child { margin-bottom: 0; }
+  .hp-about.is-beats .hp-about__p { margin: 0; line-height: 1.28; letter-spacing: -0.02em; text-wrap: pretty; }
+  .hp-about__rail { display: none; }
+  .hp-about.is-beats .hp-about__rail { display: none; }
+  .hp-about__rail .lt-seg { background: rgba(252,249,245,0.2); }
+  @media (max-width: 900px) {
+    .hp-about.is-beats .hp-about__copy { margin-left: 0; font-size: clamp(18px, min(5vw, 3vh), 28px); }
+  }
+
+  /* The invitation on the last beat. Where there is a pointer it is the
+     pointer: over the stage, the cursor becomes a label with a ball in it,
+     and a click opens the table. Where there is not, the button shows under
+     the beat instead. Either way it waits until that beat is reached. */
+  .hp-about__cta { margin: 1.05em 0 0; font-size: 1em; color: #fff; }
+  @media (hover: hover) and (pointer: fine) {
+  }
+  /* The last line, at the size of the rest: read last, not first. */
+  .hp-about__ask { margin: 2em 0 0; }
+  /* After the question, two bats with a ball rallying between them: the
+     invitation drawn rather than written. Part of the same button. */
+  .hp-bats {
+    display: inline-block;
+    width: 1.9em; height: 1.65em;
+    flex: none;
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.2,.7,.2,1);
+  }
+  .hp-bats svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  /* Keepy-uppy: the ball bounced up and down on the one red bat, which
+     gives a little as it lands. */
+  .hp-bats__y { animation: hp-keepy 0.8s infinite; }
+  .hp-bats__bat { animation: hp-keepy-bat 0.8s infinite; }
+  @keyframes hp-keepy {
+    0% { transform: translateY(26px); animation-timing-function: cubic-bezier(.2,.6,.4,1); }
+    50% { transform: translateY(4px); animation-timing-function: cubic-bezier(.6,0,.8,.4); }
+    100% { transform: translateY(26px); }
+  }
+  @keyframes hp-keepy-bat { 0%, 100% { transform: translateY(1.5px); } 12%, 88% { transform: translateY(0); } }
+  .hp-game:hover .hp-bats__y, .hp-game:hover .hp-bats__bat { animation-duration: 0.55s; }
+  .hp-game[aria-expanded="true"] .hp-bats__y, .hp-game[aria-expanded="true"] .hp-bats__bat { animation-play-state: paused; }
+  /* out of the way until the copy has been read to the end */
+  @media (prefers-reduced-motion: reduce) { .hp-bats__y, .hp-bats__bat { animation: none; } }
+  @media (max-width: 900px) {
+    .hp-about__copy { margin-left: 0; }
+  }
+  @media (max-width: 760px) {
+    .hp-about__copy { font-size: clamp(19px, min(5.4vw, 3vh), 26px); }
+  }
+
+  /* The question is the way in: underlined, with a ball bouncing beside it
+     now and then to catch the eye. */
+  /* The call to action, on its own line: plainly what to do, and a ping
+     pong ball bouncing for its full stop. No underline and no box: a sheen
+     passes over the words every few seconds instead. */
+  .hp-game {
+    display: inline-flex; align-items: baseline;
+    padding: 0; margin: 0; border: 0; background: none;
+    font-family: var(--ff-display); font-size: inherit; font-weight: 700; letter-spacing: -0.015em;
+    color: #fff; cursor: pointer;
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.2,.7,.2,1);
+  }
+  .hp-game__t {
+    background: linear-gradient(100deg, #fff 0%, #fff 40%, #f7c9bf 50%, #fff 60%, #fff 100%) 0 0 / 300% 100%;
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: hp-sheen 2.4s ease-in-out infinite;
+    transition: transform 0.3s cubic-bezier(.2,.7,.2,1);
+  }
+  @keyframes hp-sheen { 0% { background-position: 100% 0; } 45%, 100% { background-position: 0% 0; } }
+  .hp-game:hover .hp-game__t { transform: translateX(3px); }
+  .hp-game__ball {
+    display: inline-block; flex: none;
+    width: 0.3em; height: 0.3em; margin-left: 0.32em;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff, #f3e7dd 55%, #cdbdb0);
+    animation: hp-game-hop 0.9s infinite;
+  }
+  @keyframes hp-game-hop {
+    0% { transform: translateY(0) scale(1.18, 0.82); animation-timing-function: cubic-bezier(.2,.6,.4,1); }
+    8% { transform: translateY(-0.05em) scale(1); }
+    50% { transform: translateY(-0.75em); animation-timing-function: cubic-bezier(.6,0,.8,.4); }
+    100% { transform: translateY(0) scale(1.18, 0.82); }
+  }
+  .hp-game:hover .hp-game__ball { animation-duration: 0.55s; }
+  .hp-game[aria-expanded="true"] .hp-game__ball { animation-play-state: paused; }
+  .hp-about__cta { transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.2,.7,.2,1); }
+  .hp-about.is-sweep:not(.is-fixer) .hp-about__cta { opacity: 0; transform: translateY(8px); pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { .hp-game__t, .hp-game__ball { animation: none; } }
+  .hp-game:focus-visible { outline: 2px solid #fff; outline-offset: 0.12em; border-radius: 4px; }
+  .hp-ball {
+    display: inline-block;
+    width: 0.32em; height: 0.32em;
+    margin-left: 0.22em;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fff, #f3e7dd 55%, #cdbdb0);
+    vertical-align: baseline;
+    animation: hp-ball-hop 3.2s cubic-bezier(.3,0,.7,1) 0.8s infinite;
+    transform-origin: 50% 100%;
+    transition: opacity 0.4s ease;
+  }
+  /* Out of the way until the copy has been read to the end. */
+  .hp-game:hover .hp-ball, .hp-game:focus-visible .hp-ball { animation-duration: 1.1s; animation-delay: 0s; }
+  .hp-game[aria-expanded="true"] .hp-ball { animation: none; }
+  @keyframes hp-ball-hop {
+    0%, 36%, 100% { transform: none; }
+    3% { transform: scale(1.15, 0.85); }
+    10% { transform: translateY(-0.7em); }
+    17% { transform: scale(1.12, 0.88); }
+    22% { transform: translateY(-0.3em); }
+    28% { transform: scale(1.06, 0.94); }
+    32% { transform: translateY(-0.1em); }
+  }
+  @media (prefers-reduced-motion: reduce) { .hp-ball, .hp-game:hover .hp-ball { animation: none; } }
+
+  /* ---------- THE TABLE ----------
+     The table, centred on the screen when it opens, its close on the
+     corner; under it the two spins side by side, under the half of the
+     table each is played from. The one playing is lit and its ball spins
+     the way the shot does. */
+  .hp-pong { height: 0; overflow: hidden; }
+  .hp-pong__in {
+    max-width: 1040px; margin: 0 auto;
+    min-height: 100vh; min-height: 100svh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 40px 0;
+  }
+  .hp-pong__court { position: relative; }
+  .hp-pong__cv { display: block; width: 100%; }
+  /* The close sits in the top right of the screen while the table is in
+     view, level with the nav, and goes when it is not. */
+  .hp-pong__close {
+    position: fixed; right: var(--pad-x); top: 36px; z-index: 101;
+    opacity: 0; pointer-events: none;
+    display: grid; place-items: center;
+    width: 40px; height: 40px; padding: 0;
+    border: 1px solid rgba(252,249,245,0.22); border-radius: 50%;
+    background: none; color: rgba(255,255,255,0.7); cursor: pointer;
+    background: rgba(18,18,22,0.55);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    transition: border-color 0.2s ease, color 0.2s ease, opacity 0.3s ease;
+  }
+  .hp-pong.is-in-view .hp-pong__close { opacity: 1; pointer-events: auto; }
+  .hp-pong__close svg { width: 14px; height: 14px; }
+  .hp-pong__close:hover { border-color: rgba(252,249,245,0.7); color: #fff; }
+  .hp-pong__close:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  /* Contained under the table: about the width of its top, centred, the
+     two side by side and each read from its left edge. */
+  .hp-pong__spins {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(28px, 5vw, 64px);
+    width: min(100%, 660px);
+    margin: clamp(44px, 7vh, 80px) auto 0;
+  }
+  .hp-spin {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
+    padding: 0; margin: 0; border: 0; background: none; text-align: left;
+    color: #fff; cursor: pointer;
+    opacity: 0.38;
+    transition: opacity 0.25s ease;
+  }
+  .hp-spin:hover { opacity: 0.7; }
+  .hp-spin[aria-pressed="true"] { opacity: 1; }
+  .hp-spin:focus-visible { outline: 2px solid #fff; outline-offset: 6px; border-radius: 6px; }
+  .hp-spin__name {
+    display: inline-flex; align-items: center; gap: 0.4em;
+    font-family: var(--ff-display); font-weight: 600;
+    font-size: clamp(22px, 2.3vw, 34px); letter-spacing: -0.02em; line-height: 1.1;
+  }
+  .hp-spin__note {
+    max-width: 38ch;
+    font-size: clamp(14px, 1.15vw, 17px); line-height: 1.5;
+    color: rgba(255,255,255,0.72);
+  }
+  /* the ball spins the way the shot does: forward for topspin, back for
+     backspin, and only on the one being played */
+  .hp-spin__icon { width: 0.95em; height: 0.95em; flex: none; }
+  .hp-spin--back .hp-spin__icon { transform: scaleX(-1); }
+  .hp-spin[aria-pressed="true"] .hp-spin__icon path { transform-origin: 12px 12px; animation: hp-spin-turn 1.1s linear infinite; }
+  @keyframes hp-spin-turn { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .hp-spin__icon path { animation: none !important; } }
+  @media (max-width: 600px) {
+    .hp-pong__spins { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .hp-spin { gap: 6px; }
   }
   /* The lede is the only thing between the headline and the buttons, so it
      carries the interval on both sides itself. It used to sit in the left
@@ -1670,8 +2431,8 @@
     margin-right: calc(-1 * var(--foot-x));
     margin-top: clamp(56px, 9vh, 110px);
     padding: var(--base-gap) var(--foot-x) 0;
-    font-size: 13px;
-    letter-spacing: -0.003em;
+    font: 500 clamp(13px, 1.05vw, 16px)/1.35 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.02em;
     color: var(--ink-3);
   }
   /* The same geometry as the rule at the top of the footer, in the same terms:
@@ -1709,7 +2470,8 @@
     padding: 0;
     background: none;
     border: 0;
-    font-size: 13px;
+    font: inherit;
+    letter-spacing: inherit;
     color: var(--ink-2);
     cursor: pointer;
     transition: color 0.25s ease;
@@ -1737,7 +2499,7 @@
   @media (max-width: 900px) {
     /* Fills ~94% of the width instead of ~104%, which is what clipped the
        mark at every width below 900px. */
-    .hp-wordmark__row { font-size: min(14.5vw, 28vh, 150px); }
+    .hp-wordmark__row { font-size: min(10.6vw, 28vh, 120px); }
   }
 
   /* ---------- Tablet portrait ---------- */
@@ -1763,7 +2525,7 @@
        rather than a separately tuned size that has to be kept in step. */
 
     .hp-footer { min-height: 0; }
-    .hp-footer__title { font-size: clamp(60px, 10vw, 92px); }
+    .hp-footer__title { font-size: clamp(60px, 12vw, 120px); }
     /* The 56ch override is gone: the base measure is now 50ch, which is wider
        than the 40ch this band existed to escape and narrower than the 56ch it
        used. At 56ch this band was already setting three lines, but as 66/78/17
@@ -1798,6 +2560,17 @@
     .hp-nav__avatar { width: 36px; height: 36px; }
     .hp-nav__name { font-size: 14px; }
     .hp-nav__links { gap: 2px; }
+    /* No keyboard to speak of, so no keys. 10 gap + 12 link padding, less 12. */
+    .hp-nav__key { display: none; }
+    /* Four links and a name do not fit a phone. The photo stays as the mark;
+       her name is the first thing the page itself says. */
+    .hp-nav__name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .hp-nav__links--ext { margin-left: 4px; padding-left: 14px; }
+    .hp-nav__links--ext::before { height: 14px; }
+    /* The arrows stay: the sound control they once made room for is gone,
+       and they say these two leave the site. Smaller, and close to the word. */
+    .hp-nav__link { padding-left: 8px; padding-right: 8px; gap: 3px; }
+    .hp-nav__arrow svg { width: 16px; height: 16px; }
     /* Labels stay. Hiding them left two identical arrow glyphs with no way to
        tell CV from LinkedIn — the arrow is the decoration, not the label. */
     .hp-nav__link {
@@ -1986,7 +2759,7 @@
        rule has to be told about it or it would start 6px inside the column it
        is meant to align with. Same padding as before, named once. */
     .hp-footer { --foot-x: 22px; min-height: 0; padding: 76px var(--foot-x) 28px; }
-    .hp-footer__title { font-size: clamp(46px, 13vw, 76px); }
+    .hp-footer__title { font-size: clamp(44px, 14vw, 80px); }
     /* Left at 52ch against a 16.5px body: on a phone the viewport is the
        measure long before any ch value is, so this only binds from about 585px
        up. Three lines is not physically available below that at a legible
@@ -1997,7 +2770,7 @@
     /* The rule is back here too, so the margin goes back to what it was when
        it last had one to sit above. --base-gap is inherited from the base
        rule, which floors at 20px — right for a 12px bar. */
-    .hp-footer__base { margin-top: 46px; font-size: 12px; }
+    .hp-footer__base { margin-top: 46px; }
   }
   /* ---------- Short portrait phones: no scroll cue ----------
      Measured, not assumed. The hero's copy block is a fixed content height at
@@ -2059,7 +2832,7 @@
     /* The pill ends at 74px here, not 106, so the desktop clearance of 124
        pushed the card off the bottom of a landscape phone. 86 clears this
        shorter pill and still leaves the card on the screen. */
-    .hp-root { --deck-clear: 86px; }
+    .hp-root { --deck-clear: 96px; }
     .hp-hero {
       min-height: 0;
       padding-top: 92px;
@@ -2124,10 +2897,12 @@
     /* 8 gap + 9 link padding. */
     .hp-nav__brand { padding-right: 17px; gap: 8px; }
     .hp-nav__name { font-size: 13px; }
-    .hp-nav__link { padding: 11px 9px; font-size: 12.5px; }
+    .hp-nav__link { padding: 11px 7px; font-size: 12.5px; }
+    .hp-nav__links--ext { margin-left: 2px; padding-left: 8px; }
+    .hp-nav .hp-sound { width: 36px; }
     /* Down with everything else around it, and it buys the two arrows some of
        the room the brand divider takes back. */
-    .hp-nav__arrow svg { width: 12px; height: 12px; }
+    .hp-nav__arrow svg { width: 16px; height: 16px; }
   }
 
   /* Where the arrows genuinely stop fitting, measured rather than assumed. They
@@ -2243,6 +3018,33 @@
     display: block;
     opacity: 0;
   }
+  /* On the last beat of About the same dot grows into a pill instead: white,
+     "Click to start a rally", a sheen through the words and an orange ball
+     bouncing at the end. It opens out from the dot rather than appearing. */
+  .hp-cursor__pill {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 46px; max-width: 46px; padding: 0 18px;
+    border-radius: 999px; background: #fff; overflow: hidden; white-space: nowrap;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+    font-family: var(--ff-display); font-weight: 700; font-size: 15px; letter-spacing: -0.01em;
+    opacity: 0;
+    transition: max-width 0.5s cubic-bezier(.3,.7,.2,1), opacity 0.2s ease;
+  }
+  .hp-cursor.is-pill { background: transparent; box-shadow: none; }
+  .hp-cursor.is-pill .hp-cursor__arrow { opacity: 0 !important; }
+  .hp-cursor.is-pill .hp-cursor__pill { max-width: 300px; opacity: 1; }
+  .hp-cursor__words {
+    background: linear-gradient(100deg, #0b0b0d 0%, #0b0b0d 38%, #f08a24 50%, #0b0b0d 62%, #0b0b0d 100%) 0 0 / 300% 100%;
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    animation: hp-sheen 2.2s ease-in-out infinite;
+  }
+  .hp-cursor__ballx {
+    width: 9px; height: 9px; border-radius: 50%; flex: none;
+    background: radial-gradient(circle at 35% 30%, #ffc27a, #f08a24 60%, #c96a12);
+    animation: hp-game-hop 0.8s infinite;
+  }
   @media (pointer: fine) {
     html.hp-cursor-live,
     html.hp-cursor-live * {
@@ -2332,6 +3134,8 @@
   // either lives in the stage or at the top of the carousel — and a page
   // that re-decided on resize would have to move a card between sections.
   var BUILD_ON = false;
+  // The sideways rail of the rest of the work. Off: they stack vertically.
+  var RAIL_ON = false;
   function decideBuild() {
     return !REDUCED &&
       typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined';
@@ -2466,7 +3270,21 @@
 
     function disable() { enabled = false; }
 
-    return { play: play, enabled: isOn, enable: enable, disable: disable };
+    // On by default. A browser will not let a page make a sound until the
+    // visitor has clicked, tapped or pressed a key, so the first of those
+    // anywhere on the page starts it, quietly, with no switching-on chime.
+    function arm() {
+      if (REDUCED) return;
+      var start = function() {
+        ['pointerdown', 'keydown', 'touchend'].forEach(function(t) { window.removeEventListener(t, start, true); });
+        if (enabled) return;
+        enabled = true;
+        context();
+      };
+      ['pointerdown', 'keydown', 'touchend'].forEach(function(t) { window.addEventListener(t, start, true); });
+    }
+
+    return { play: play, enabled: isOn, enable: enable, disable: disable, arm: arm };
   })();
 
   // The control's mark: the same two arcs either way, and a line through
@@ -2528,18 +3346,42 @@
   var LINKEDIN = 'https://www.linkedin.com/in/abigail-truman/';
 
   var HERO = {
-    // One sentence. The comma after her name is hers: the line introduces her
-    // One line, Manrope 24, the same weight all the way across. The frame
-    // sets it in white above the 48px statement.
-    greeting: 'Hey, I&rsquo;m Abbie. A Product Design Leader in the UK.',
-    // One paragraph, in the body face. She picked that over three display
-    // sentences: it is the thing you read, not a poster. Two sentences now,
-    // the work and then the people, still the one block.
-    // The wink stays in brackets, a step smaller than the greeting, and the
-    // apostrophe in P's is typographic.
-    statement: '<span class="hp-hero__sentence">I perfect the pixels, piece together the bigger picture and take ideas from pencil to production.</span> <span class="hp-hero__sentence">Through it all, I invest in people as much as the product.</span>',
-    aside: '(All those P&rsquo;s are pure coincidence, I promise)'
+    hey: 'Hey, I&rsquo;m',
+    first: 'Abbie',
+    last: 'Truman',
+    role: 'Product Design Leader',
+    place: 'Based in the UK',
+    cue: 'Psst&hellip; scroll for the good stuff',
+    // The sentence, word by word. The number is the beat the word lights on;
+    // the code is the effect the word plays when it does.
+    words: [
+      'Whether|0', 'I&rsquo;m|0', 'perfecting|0', 'pixels,|0|px',
+      'piecing|1', 'together|1', 'the|1', 'bigger|1|bp', 'picture,|1|bp',
+      'or|2', 'taking|2', 'ideas|2', 'from|2', 'pencil|2|pe',
+      'to|3', 'production,|3|pr',
+      'I|4', 'always|4', 'invest|4', 'in|4', 'people|4|pp',
+      'as|5', 'much|5', 'as|5', 'the|5', 'product|5|pd'
+    ],
+    full: 'Whether I’m perfecting pixels, piecing together the bigger picture, or taking ideas from pencil to production, I always invest in people as much as the product.',
+    // The rail under the sentence names each beat as it plays.
+    beats: ['Pixels', 'Picture', 'Pencil', 'Production', 'People', 'Product'],
+    outro: ['Proudest', 'projects']
   };
+  // The sitemap the hero zooms out to. Generic pages, not projects: [left, top,
+  // width, height] in percent of the screen, and a page name.
+  var SITEMAP = [
+    [-72, 2, 56, 42, 'About'], [-72, 56, 56, 42, 'Work'],
+    [116, 2, 56, 42, 'Case study'], [116, 56, 56, 42, 'Process'],
+    [0, 118, 48, 42, 'Writing'], [52, 118, 48, 42, 'Contact'],
+    [0, -60, 48, 42, 'Approach'], [52, -60, 48, 42, 'Services']
+  ];
+  var SITEMAP_LINKS = [['h', 100, 22, 16], ['h', 100, 77, 16], ['h', -16, 22, 16], ['h', -16, 77, 16], ['v', 24, 100, 18], ['v', 76, 100, 18], ['v', 24, -18, 18], ['v', 76, -18, 18]];
+  // The people the work is made with. Each lands round the word "people".
+  var PEOPLE = [
+    { name: 'Design peers', c: '#c3aee6' }, { name: 'Research', c: '#9fc7a4' },
+    { name: 'Engineering', c: '#93a5da' }, { name: 'Content', c: '#d99e9e' },
+    { name: 'The business', c: '#d9bb8e' }
+  ];
 
   // In the order the cards are in, because that is the order a visitor who
   // scrolls on will meet them. The fibre provider is unnamed on its own card
@@ -2567,7 +3409,7 @@
     }).join('');
   }
 
-  var WORDMARK = 'Selected work';
+  var WORDMARK = HERO.title;
 
   // Two values per card, and neither is a style choice made here.
   //
@@ -2863,12 +3705,257 @@
   var PHONE = '07387 382836';
   var PHONE_TEL = '+447387382836';
 
+  // About: two paragraphs and somewhere to play. A draft in her own lines
+  // from the hero, for her to rewrite in her voice.
+  // About: in her words. Each word lights from grey to white as it scrolls
+  // past, and the last line is the way into the table.
+  var ABOUT = {
+    eyebrow: 'About me',
+    // Each beat is its opening, set a touch heavier so the four can be
+    // scanned, then the rest.
+    body: [
+      ['Currently leading, designing, and shipping at Elixirr.', 'I was the first to use AI&#8209;assisted development to deliver end to end, and now I&rsquo;m helping other teams do the same.'],
+      ['I like to understand things deeply.', 'I once designed for a Deals due diligence team and got so deep in their workflow, they were convinced I could do their role.'],
+      ['Above all, I&rsquo;m a fixer wherever I am.', 'When my table tennis league needed a way to track match data, I disappeared into Cursor for a weekend and built one.']
+    ],
+    lead: 'Speaking of which,',
+    // tap on a touch screen, click everywhere else
+    game: ((window.matchMedia && window.matchMedia('(hover: none)').matches) ? 'tap' : 'click') + ' here to start a rally'
+  };
+  // The shots on offer. w: spin, + is topspin, - is backspin. side: curve
+  // across the table, seen as the ball coming towards you. v: pace, m/s.
+  var PONG_SPINS = [
+    { id: 'top', name: 'Topspin', note: 'Brush up the back of the ball and it spins forward, dipping down onto the table. You can hit hard and still land it.' },
+    { id: 'back', name: 'Backspin', note: 'Slide under the ball and it spins backwards, floating over the net and slowing after the bounce. It&rsquo;s surprisingly hard to hit back.' }
+  ];
+
+  // PONG-PHYSICS-START
+  // A rally, worked out in full before it is drawn, in metres and seconds.
+  // x runs along the table from the net (left player at -x), y is height above
+  // the playing surface, z is across it with + towards the viewer. The ball is
+  // a 40mm, 2.7g ball: gravity, air drag, and the Magnus force from its spin
+  // (topspin pulls it down, backspin holds it up, sidespin bends it across).
+  // Spin is carried as the speed of the ball's surface, m/s. On the table the
+  // bounce is a hollow sphere with friction: the contact point slips until it
+  // grips or the friction runs out, which is why topspin keeps its pace,
+  // backspin checks up, and a flat ball skids.
+  var PONG = (function() {
+    var G = 9.81, R = 0.02, NET_H = 0.1525, HL = 1.37, HW = 0.7625, FLOOR = -0.76;
+    var KD = 0.14, KM = 0.17, KCAP = 0.11, E_T = 0.89, MU = 0.5, E_F = 0.6, DT = 1 / 480;
+    // v: pace off the bat (along the table), s: topspin (- is backspin), side:
+    // sidespin, land: how deep, as a share of the far half. take: the height
+    // the next player waits for the ball to drop to; plane: how far back.
+    var SHOT = {
+      serve:  { v: 5.5, s: 0, serve: true, land: 0.55, pose: 'push' },
+      // a short backspin serve, first bounce nearer the net, so the push
+      // rally starts as low over the net as it carries on
+      bserve: { v: 5, s: -2, serve: true, land: 0.4, own: 0.95, pose: 'push' },
+      // backspin: short pushes, kept low over the net
+      push:   { v: 5.2, s: -6, land: 0.55, pose: 'push' },
+      // topspin: a drive, brushed forward and up, a hand or two over the net
+      loop:   { v: 11, s: 7, land: 0.78, pose: 'top', take: 0.22, plane: 0.4 },
+      // smash: one keeps smashing, the other keeps lobbing it back up high
+      // from well back; every smash bounces up high
+      lob:    { v: 4.5, s: 2, land: 0.85, pose: 'lob', take: 0.35, plane: 0.85 },
+      smash:  { v: 13, s: 2, land: 0.5, pose: 'smash', take: 0.95, plane: 0.35 }
+    };
+    // Each rally: the serve, then the shot that repeats. The smash rally has
+    // no serve: it starts on the lob, from the far side, so the first thing
+    // seen is a high ball.
+    var RALLY = {
+      top:   { serve: 'serve', loop: ['loop'] },
+      back:  { serve: 'bserve', loop: ['push'] },
+      smash: { serve: null, loop: ['lob', 'smash'] }
+    };
+
+    function step(b, dt, t, ev) {
+      var sp = Math.sqrt(b.vx * b.vx + b.vy * b.vy + b.vz * b.vz);
+      // Lift from spin grows with it, then levels off: a heavy chop does not
+      // turn the ball into a wing.
+      var kw = sp > 0.01 ? Math.min(KM, KCAP * sp / Math.max(0.01, Math.abs(b.w))) : 0;
+      var ks = sp > 0.01 ? Math.min(KM, KCAP * sp / Math.max(0.01, Math.abs(b.ws))) : 0;
+      var ax = -KD * sp * b.vx + kw * b.w * b.vy + ks * b.ws * b.vz;
+      var ay = -G - KD * sp * b.vy - kw * b.w * b.vx;
+      var az = -KD * sp * b.vz - ks * b.ws * b.vx;
+      var x0 = b.x;
+      b.vx += ax * dt; b.vy += ay * dt; b.vz += az * dt;
+      b.x += b.vx * dt; b.y += b.vy * dt; b.z += b.vz * dt;
+      b.w *= 1 - 0.08 * dt; b.ws *= 1 - 0.08 * dt;
+      // the net
+      if (!b.netted && x0 * b.x <= 0 && x0 !== b.x && b.y - R < NET_H && b.y > -0.01 && Math.abs(b.z) < HW + 0.15) {
+        b.netted = true;
+        b.x = x0 > 0 ? 0.015 : -0.015;
+        b.vx *= -0.12; b.vy *= 0.25; b.vz *= 0.3; b.w *= 0.2; b.ws *= 0.2;
+        if (ev) ev.push({ t: t, type: 'net' });
+      }
+      // the table
+      if (b.y - R <= 0 && b.vy < 0 && Math.abs(b.x) <= HL && Math.abs(b.z) <= HW) {
+        b.y = R;
+        var vin = -b.vy;
+        b.vy = vin < 0.25 ? 0 : E_T * vin;
+        var u = b.vx - b.w;
+        var dvx = -0.4 * u, dw = 0.6 * u, cap = MU * (1 + E_T) * vin;
+        if (Math.abs(dvx) > cap) { var k = cap / Math.abs(dvx); dvx *= k; dw *= k; }
+        b.vx += dvx; b.w += dw;
+        // sidespin grabs a little across the table too
+        b.vz += -0.15 * b.ws * (b.vx >= 0 ? 1 : -1) * 0.2; b.ws *= 0.85;
+        if (vin >= 0.25) {
+          b.bounces.push(b.x > 0 ? 1 : -1);
+          if (ev) ev.push({ t: t, type: 'bounce' });
+        }
+      }
+      // the floor
+      if (b.y - R <= FLOOR && b.vy < 0) {
+        b.y = FLOOR + R; b.vy = -E_F * b.vy; b.vx *= 0.75; b.vz *= 0.75; b.w *= 0.4;
+        if (ev) ev.push({ t: t, type: 'floor' });
+      }
+    }
+    function copy(b) {
+      return { x: b.x, y: b.y, z: b.z, vx: b.vx, vy: b.vy, vz: b.vz, w: b.w, ws: b.ws, netted: false, bounces: [] };
+    }
+    // Fly a copy until it lands: the first bounce, or for a serve the second.
+    function flight(b, n) {
+      var c = copy(b), t = 0;
+      while (t < 3) {
+        step(c, DT, t); t += DT;
+        if (c.netted) return { net: true, x: 0, t: t, z: c.z, b: c.bounces };
+        if (c.bounces.length >= n) return { x: c.x, t: t, z: c.z, b: c.bounces };
+        if (c.y < FLOOR + 0.2 || Math.abs(c.x) > HL + 3) break;
+      }
+      return { x: (c.vx >= 0 ? 1 : -1) * 99, t: t, z: c.z, b: c.bounces };
+    }
+    // The lift that lands it where it is meant to: more lift goes longer.
+    function lift(b, d, xt) {
+      var lo = -8, hi = 8, f;
+      for (var i = 0; i < 40; i++) {
+        b.vy = (lo + hi) / 2;
+        f = flight(b, 1);
+        if (f.net || (f.x - xt) * d < 0) lo = b.vy; else hi = b.vy;
+      }
+      return f;
+    }
+    // Where it is sent across the table: given, or back across from where it
+    // was played.
+    function zTarget(b, shot) { return shot.zt != null ? shot.zt : (b.z > 0 ? -0.22 : 0.22); }
+    function aim(b, d, shot) {
+      var zt = zTarget(b, shot), xt = d * HL * shot.land;
+      b.vz = 0;
+      if (shot.serve) {
+        // A legal serve: first bounce on the server's own half, then over
+        // the net onto the far half. Pace is searched for, lift solved.
+        var best = null, vz = 0;
+        for (var pass = 0; pass < 2; pass++) {
+          best = null;
+          for (var v = 3; v <= 8.01; v += 0.25) {
+            b.vx = d * v; b.vz = vz;
+            lift(b, d, -d * (shot.own || 1.15));
+            var f2 = flight(b, 2);
+            if (f2.net || f2.b.length < 2 || f2.b[0] !== -d || f2.b[1] !== d) continue;
+            var err = Math.abs(f2.x - xt);
+            if (!best || err < best.err) best = { v: v, vy: b.vy, err: err, f: f2 };
+          }
+          if (!best) break;
+          vz += (zt - best.f.z) / Math.max(0.2, best.f.t);
+        }
+        if (!best) { b.vx = d * 5.5; b.vz = 0; lift(b, d, -d * (shot.own || 1.15)); return; }
+        b.vx = d * best.v; b.vy = best.vy; b.vz = vz - (zt - best.f.z) / Math.max(0.2, best.f.t);
+        lift(b, d, -d * (shot.own || 1.15));
+        return;
+      }
+      for (var pass = 0; pass < 3; pass++) {
+        var f = lift(b, d, xt);
+        b.vz += (zt - f.z) / Math.max(0.2, f.t);
+      }
+      lift(b, d, xt);
+    }
+
+    // A rally that never ends: worked out a few seconds ahead of where it is
+    // being drawn, and extended as it plays. If a shot ever goes astray the
+    // ball is served again.
+    // amount: how heavy the spin is, 1 as played; the shots are aimed
+    // afresh for it, so heavier topspin still lands, it just dips harder
+    function rally(key, amount) {
+      var pat = RALLY[key] || RALLY.top;
+      var k = amount || 1;
+      var o = { S: [], S0: 0, ev: [], hits: [], DT: DT, t: 0, resets: 0 };
+      var b, n = 0, started = false;
+      function rec() { o.S.push({ t: o.t, x: b.x, y: b.y, z: b.z, vx: b.vx, vy: b.vy, vz: b.vz, w: b.w, ws: b.ws }); }
+      function fly() { step(b, DT, o.t, o.ev); o.t += DT; rec(); }
+      // who plays first: the server on the left, or the lobber on the right
+      var first = pat.serve ? 1 : -1;
+      function serveUp() {
+        n = 0;
+        if (!pat.serve) {
+          b = { x: HL + 0.8, y: 0.3, z: -0.2, vx: 0, vy: 0, vz: 0, w: 0, ws: 0, netted: false, bounces: [] };
+          if (!started) { rec(); started = true; }
+          return;
+        }
+        b = { x: -(HL + 0.25), y: 0.1, z: 0.25, vx: 0, vy: 2.6, vz: 0, w: 0, ws: 0, netted: false, bounces: [] };
+        if (!started) { rec(); started = true; }
+        // the toss, then the serve as it falls past chest height
+        while (!(b.vy < 0 && b.y < 0.32)) fly();
+      }
+      function shotFor(i) {
+        var base = pat.serve ? SHOT[i === 0 ? pat.serve : pat.loop[(i - 1) % pat.loop.length]] : SHOT[pat.loop[i % pat.loop.length]];
+        if (base.serve || k === 1) return base;
+        var o = {}; for (var key2 in base) o[key2] = base[key2];
+        o.s = base.s * k;
+        // pace follows spin: heavier topspin is hit harder and still dips
+        // in; heavier backspin floats slower
+        o.v = base.s > 0 ? base.v * (0.7 + 0.3 * k) : base.v * (1.15 - 0.15 * k);
+        return o;
+      }
+      function stroke() {
+        var shot = shotFor(n), next = shotFor(n + 1), d = n % 2 === 0 ? first : -first;
+        o.hits.push({ t: o.t, side: d, x: b.x, y: b.y, z: b.z, pose: shot.pose });
+        o.ev.push({ t: o.t, type: 'hit' });
+        b.vx = d * shot.v; b.w = shot.s * d; b.ws = -(shot.side || 0) * d;
+        b.netted = false; b.bounces = [];
+        aim(b, d, shot);
+        var take = next.take || 0.2, plane = HL + (next.plane || 0.32), t0 = o.t;
+        for (;;) {
+          fly();
+          if (b.bounces.indexOf(d) >= 0 && (b.x * d >= plane || (b.vy < 0 && b.y < take && b.x * d > 0.35))) { n++; return true; }
+          if (o.t - t0 > 3 || b.y < FLOOR + 0.05) return false;
+        }
+      }
+      o.extend = function(until) {
+        if (!started) serveUp();
+        while (o.t < until) {
+          if (!stroke()) {
+            o.resets++;
+            var te = o.t + 0.6;
+            while (o.t < te) fly();
+            serveUp();
+          }
+        }
+      };
+      // the sample at a time, from what is kept
+      o.at = function(t) {
+        var i = Math.round(t / DT) - o.S0;
+        return o.S[Math.max(0, Math.min(o.S.length - 1, i))];
+      };
+      // forget what has been drawn long ago
+      o.trim = function(t) {
+        var drop = Math.round((t - 2) / DT) - o.S0;
+        if (drop > 4000) { o.S.splice(0, drop); o.S0 += drop; }
+        while (o.hits.length > 8 && o.hits[1].t < t - 3) o.hits.shift();
+      };
+      o.extend(6);
+      return o;
+    }
+    return { rally: rally, HL: HL, HW: HW, NET_H: NET_H, R: R, FLOOR: FLOOR };
+  })();
+  // PONG-PHYSICS-END
   var FOOTER = {
     eyebrow: 'Get in touch',
     // Uniform Manrope 800. "talk." was the last Instrument Serif italic on the
     // page and the owner asked for it to go, so the <em> went with the rule
     // that styled it rather than being left to inherit a browser italic.
     title: 'Let&rsquo;s talk.',
+    // The sign-off carries the P's on: two lines set like her name.
+    ping: ['Ping me', 'for projects'],
+    fact: 'I play competitive ping pong <span>(table tennis)</span> in three different leagues.',
     lede: '<strong>Open to new opportunities</strong> \u2014 product design leadership, in-house or consultancy. If you&rsquo;re hiring, building a team, or just want a second opinion, my inbox is open.'
   };
 
@@ -3348,7 +4435,17 @@
           '<img class="hp-nav__avatar" src="' + AVATAR + '" alt="Abbie Truman" loading="eager">' +
           '<span class="hp-nav__name">Abbie Truman</span>' +
         '</div>' +
-        '<div class="hp-nav__links">' +
+        // The pages, each with the key that opens it.
+        '<div class="hp-nav__links hp-nav__links--pages">' +
+          '<a class="hp-nav__link" href="#work" data-key="w" aria-keyshortcuts="W">' +
+            '<span>Work</span><kbd class="hp-nav__key" aria-hidden="true">W</kbd>' +
+          '</a>' +
+          '<a class="hp-nav__link" href="#about" data-key="a" aria-keyshortcuts="A">' +
+            '<span>About</span><kbd class="hp-nav__key" aria-hidden="true">A</kbd>' +
+          '</a>' +
+        '</div>' +
+        // Out of the site, behind a rule of their own.
+        '<div class="hp-nav__links hp-nav__links--ext">' +
           '<a class="hp-nav__link" href="' + CV + '" target="_blank" rel="noopener">' +
             '<span>CV</span>' +
             '<span class="hp-nav__arrow" aria-hidden="true">' + ARROW_NE + '</span>' +
@@ -3360,37 +4457,109 @@
         '</div>' +
       '</nav>';
 
+    function storyWords() {
+      return HERO.words.map(function(t) {
+        var p = t.split('|');
+        return '<span class="lt-w" data-b="' + p[1] + '"' + (p[2] ? ' data-fx="' + p[2] + '"' : '') + '>' + p[0] + '</span>';
+      }).join(' ') + '<i class="lt-pix lt-pix--end" aria-hidden="true"></i>';
+    }
+    function sitemapHtml() {
+      return '<div class="lt-map" aria-hidden="true">' +
+        SITEMAP_LINKS.map(function(c) {
+          return c[0] === 'h'
+            ? '<div class="lt-conn lt-conn--h" style="left:' + c[1] + '%;top:' + c[2] + '%;width:' + c[3] + '%"></div>'
+            : '<div class="lt-conn lt-conn--v" style="left:' + c[1] + '%;top:' + c[2] + '%;height:' + c[3] + '%"></div>';
+        }).join('') +
+        SITEMAP.map(function(f, i) {
+          var body = i % 2
+            ? '<div class="lt-fm__pl"></div><div class="lt-fm__blk"></div><div class="lt-fm__bar" style="width:70%"></div><div class="lt-fm__bar" style="width:52%"></div>'
+            : '<div class="lt-fm__pl"></div><div class="lt-fm__bar" style="width:62%"></div><div class="lt-fm__bar" style="width:40%"></div><div class="lt-fm__blk"></div>';
+          return '<div class="lt-fm" style="left:' + f[0] + '%;top:' + f[1] + '%;width:' + f[2] + '%;height:' + f[3] + '%">' +
+            '<div class="lt-fm__b">' + body + '</div></div>';
+        }).join('') +
+      '</div>';
+    }
     var heroHtml = '' +
-      '<section class="hp-hero" id="hp-hero">' +
-        // Lightsets, all of it, and the only reason any of it is in the document
-        // is that the exit and the pointer have to be able to transform it. Three
-        // boxes: the key light, and the pointer's layer with the second light
-        // inside it. Hidden from the tree.
-        '<div class="hp-hero__glow" aria-hidden="true">' +
-          '<div class="hp-hero__glow-a"></div>' +
-          '<div class="hp-hero__lamp"><div class="hp-hero__glow-b"></div></div>' +
-        '</div>' +
-        '<div class="hp-hero__main">' +
-          '<p class="hp-hero__greeting">' + HERO.greeting + '</p>' +
-          // The inner span is taken apart into words and then into measured
-          // lines, so the heading's accessible name is carried whole on the
-          // element itself and the pieces are hidden from the tree.
-          '<h1 class="hp-hero__statement" aria-label="' + stripTags(HERO.statement) + '">' +
-            '<span class="hp-hero__statement-inner" aria-hidden="true">' + splitWords(HERO.statement, 'hp-hero__word') + '</span>' +
-          '</h1>' +
-          '<p class="hp-hero__aside">' + HERO.aside + '</p>' +
-        '</div>' +
-        '<div class="hp-hero__lower">' +
-          // Drawn twice. The second copy is what makes the loop seamless, and
-          // it is hidden from the tree so the list is announced once. Its
-          // links stay clickable but stay out of the tab order.
-          '<div class="hp-hero__clients" id="hp-clients">' +
-            '<div class="hp-hero__marquee">' +
-              '<div class="hp-hero__track">' +
-                '<ul class="hp-hero__clients-list" aria-label="Recent clients">' + clientMarks(false) + '</ul>' +
-                '<ul class="hp-hero__clients-list" aria-hidden="true">' + clientMarks(true) + '</ul>' +
+      '<section class="lt" id="hp-hero" aria-label="Introduction">' +
+        '<div class="lt-stage">' +
+          '<div class="hp-hero__glow" aria-hidden="true">' +
+            '<div class="hp-hero__glow-a"></div>' +
+            '<div class="hp-hero__lamp"><div class="hp-hero__glow-b"></div></div>' +
+          '</div>' +
+          '<div class="lt-world">' +
+            sitemapHtml() +
+            '<div class="lt-home">' +
+              // The flat masthead: only for a reader who has asked for less
+              // motion. Everyone else meets her name down the corridor.
+              '<div class="lt-mast" aria-hidden="true">' +
+                '<p class="lt-hey">' + HERO.hey + '</p>' +
+                '<i class="lt-rule lt-rule--a" aria-hidden="true"></i>' +
+                '<p class="lt-name">' +
+                  '<span class="lt-line"><span class="lt-in">' + HERO.first + '</span></span>' +
+                  '<span class="lt-line"><span class="lt-in">' + HERO.last + '<i class="lt-pix lt-pix--name" aria-hidden="true"></i></span></span>' +
+                '</p>' +
+                '<i class="lt-rule lt-rule--b" aria-hidden="true"></i>' +
+                '<div class="lt-meta">' +
+                  '<span class="lt-meta__i">' + HERO.role + ' &mdash; ' + HERO.place.charAt(0).toLowerCase() + HERO.place.slice(1) + '</span>' +
+                  '<span class="lt-meta__i lt-cue">' + HERO.cue + ' <span class="lt-cue__arrow" aria-hidden="true">&darr;</span></span>' +
+                '</div>' +
+              '</div>' +
+              // The story: the sentence, whole and readable, and a rail under it.
+              '<div class="lt-story">' +
+                '<p class="lt-sent" aria-label="' + HERO.full + '"><span aria-hidden="true">' + storyWords() + '</span></p>' +
+                // How far there is to go: a segment for each beat, and her
+                // pixel travelling along them.
+                '<div class="lt-rail" aria-hidden="true">' +
+                  '<i class="lt-seg"><b></b></i><i class="lt-seg"><b></b></i><i class="lt-seg"><b></b></i>' +
+                  '<i class="lt-seg"><b></b></i><i class="lt-seg"><b></b></i><i class="lt-seg"><b></b></i>' +
+                  '<i class="lt-head"></i>' +
+                '</div>' +
               '</div>' +
             '</div>' +
+          '</div>' +
+          // Her name, in depth: its own layer outside the world, so the
+          // sitemap's zoom and this perspective never compound.
+          '<h1 class="lt-sr">' + HERO.first + ' ' + HERO.last + ', ' + HERO.role + '. ' + HERO.place + '.</h1>' +
+          '<div class="lt-3d" aria-hidden="true">' +
+            '<div class="lt-3d__space">' +
+              '<div class="lt-3d__cam">' +
+                // Her name, arriving out of the dark as pixels.
+                '<div class="lt-3d__name">' +
+                  '<p class="lt-3d__hey"><span>' + HERO.hey + '</span></p>' +
+                  '<p class="lt-name lt-3d__big">' +
+                    '<span class="lt-line"><span class="lt-nw">' + HERO.first + '</span></span>' +
+                    '<span class="lt-line"><span class="lt-nw">' + HERO.last + '</span><i class="lt-pix lt-pix--name"></i></span>' +
+                    '<canvas class="lt-3d__pxc"></canvas>' +
+                  '</p>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          // The way out: the title rises in the way her name used to, then
+          // swings away round the curve, as a card leaves the rail.
+          '<div class="lt-pp" aria-hidden="true"><div class="lt-pp__swing">' +
+            '<p class="lt-pp__hey">Check out some of my</p>' +
+            '<p class="lt-name lt-pp__t">' +
+              '<span class="lt-line"><span class="lt-pin">' + HERO.outro[0] + '</span></span>' +
+              '<span class="lt-line"><span class="lt-pin">' + HERO.outro[1] + '<i class="lt-pix lt-pix--name"></i></span></span>' +
+            '</p>' +
+          '</div></div>' +
+          // The small print, flat on the glass.
+          '<div class="lt-hud" aria-hidden="true">' +
+            '<span>' + HERO.role + ' &mdash; ' + HERO.place.charAt(0).toLowerCase() + HERO.place.slice(1) + '</span>' +
+            '<span class="lt-cue"><span>' + HERO.cue + '</span><span class="lt-cue__ring" aria-hidden="true"><svg viewBox="0 0 18 18"><path d="M9 2.5v12M3.5 9.5 9 15l5.5-5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></span>' +
+          '</div>' +
+          // Effects are drawn over the world, at screen scale.
+          '<div class="lt-ov" aria-hidden="true">' +
+            '<svg class="lt-ov__svg"><defs><filter id="lt-rough" x="-5%" y="-20%" width="110%" height="140%">' +
+              '<feTurbulence type="fractalNoise" baseFrequency="1.4" numOctaves="1" seed="3" result="n"/>' +
+              '<feDisplacementMap in="SourceGraphic" in2="n" scale="2.2"/></filter></defs>' +
+              '<text class="lt-graphite" filter="url(#lt-rough)"></text></svg>' +
+            '<canvas class="lt-pxc"></canvas>' +
+            '<div class="lt-code"></div>' +
+            PEOPLE.map(function(p) {
+              return '<div class="lt-cur" style="--cc:' + p.c + '"><svg viewBox="0 0 16 16"><path d="M2 1.5l11 5.2-4.6 1.4-1.6 4.6z" fill="' + p.c + '" stroke="#0a0a0c" stroke-width="1"/></svg><b>' + p.name + '</b></div>';
+            }).join('') +
           '</div>' +
         '</div>' +
       '</section>';
@@ -3411,55 +4580,129 @@
     // deck; the spacer after it is the scroll the build plays over.
     var cardsHtml = PROJECTS.map(buildCase);
     if (BUILD_ON) {
-      cardsHtml[0] = '<div class="hp-build" id="hp-build">' +
-        '<div class="hp-build__stage">' +
+      // The rest of the work rides in the build's own stage, on a curved rail
+      // to the right of card 01, so when the build is done the next project
+      // swings in beside it rather than arriving from below. The rail's
+      // scroll is its own spacer, after the build's.
+      // RAIL_ON: the sideways drum. Off, the rest stack vertically after the
+      // build as the deck, each card arriving over the last with its copy
+      // in full view.
+      var rest = RAIL_ON ? cardsHtml.slice(1) : [];
+      var after = RAIL_ON ? [] : cardsHtml.slice(1);
+      cardsHtml = ['<div class="hp-build" id="hp-build">' +
+        '<div class="hp-build__stage' + (rest.length ? ' has-rail' : '') + '">' +
           buildGuidesSvg() +
           cardsHtml[0] +
+          (rest.length ? '<div class="hp-rail">' + rest.join('') + '</div>' : '') +
         '</div>' +
       '</div>' +
-      '<div class="hp-build__travel" aria-hidden="true"></div>';
+      '<div class="hp-build__travel" aria-hidden="true"></div>' +
+      (rest.length ? '<div class="hp-rail__travel" aria-hidden="true" style="--rail-n:' + (rest.length + 1) + '"></div>' : '')].concat(after);
     }
 
     // The sound control, only where there is a build to hear. Fixed, so it is
     // at the root and not in the stage; a fixed box inside the stage would be
     // laid out against the stage the moment anything gave it a transform.
-    var soundHtml = BUILD_ON
-      ? '<button type="button" class="hp-sound" id="hp-sound" aria-pressed="false">' +
-          SOUND_ICON +
-          '<span class="hp-sound__label-off">Sound off</span>' +
-          '<span class="hp-sound__label-on">Sound on</span>' +
-        '</button>'
-      : '';
+    // The sound control lives in the nav now, so it has no fixed button of
+    // its own.
+    var soundHtml = '';
 
-    var casesHtml = '<section class="hp-cases' + (BUILD_ON ? ' hp-cases--build' : '') + '" id="hp-cases" aria-label="Selected work">' +
+    var casesHtml = '<section class="hp-cases' + (BUILD_ON ? ' hp-cases--build' : '') + '" id="hp-cases" aria-label="Proudest projects">' +
       '<div class="hp-cases__list">' +
         cardsHtml.join('') +
         '<div class="hp-cases__hold" aria-hidden="true"></div>' +
       '</div>' +
     '</section>';
 
+    // A table tennis bat: a round blade in its rubber's colour, a wooden handle.
+    // A table tennis bat, drawn flat: a shield-shaped blade, rounded over
+    // the top with a near-straight foot, and one wood throughout, showing
+    // below the rubber where the blade flares into the handle. No outlines
+    // and no shine. The rubber takes the bat's colour.
+    var PONG_BAT = '<svg viewBox="0 0 150 276" aria-hidden="true">' +
+      '<rect x="60" y="164" width="30" height="110" rx="12" fill="#e2b583"/>' +
+      '<path d="M75 2C121 2 148 38 148 82C148 112 140 132 126 144C114 154 100 160 92 176L58 176C50 160 36 154 24 144C10 132 2 112 2 82C2 38 29 2 75 2Z" fill="#e2b583"/>' +
+      '<path d="M75 2C121 2 148 38 148 82C148 108 141 126 130 138L20 138C9 126 2 108 2 82C2 38 29 2 75 2Z" fill="currentColor"/>' +
+    '</svg>';
+    var words = function(t) {
+      return t.split(' ').map(function(w) { return '<span class="hp-about__w">' + w + '</span>'; }).join(' ');
+    };
+    var aboutHtml = '' +
+      '<section class="hp-about" id="hp-about" aria-label="' + ABOUT.eyebrow + '">' +
+        '<div class="hp-about__pin"><div class="hp-about__stage">' +
+        '<p class="hp-about__eyebrow">' + ABOUT.eyebrow + '</p>' +
+        '<div class="hp-about__copy">' +
+          ABOUT.body.map(function(t, i) {
+            var last = i === ABOUT.body.length - 1;
+            return '<div class="hp-about__beat' + (last ? ' hp-about__fixer' : '') + '">' +
+              '<p class="hp-about__p"><span class="hp-about__lead">' + words(t[0]) + '</span> ' + words(t[1]) + '</p>' +
+              // On the last beat the invitation is the cursor itself; this
+              // button is what touch screens see in its place, and what a
+              // keyboard reaches.
+              (last ? '<p class="hp-about__cta">' + ABOUT.lead + ' <button class="hp-game" type="button" aria-expanded="false" aria-controls="hp-pong">' +
+                '<span class="hp-game__t">' + ABOUT.game + '</span><span class="hp-game__ball" aria-hidden="true"></span>' +
+              '</button></p>' : '') +
+            '</div>';
+          }).join('') +
+        '</div>' +
+        // four segments, one a beat, the hero's own progress line
+        '<div class="lt-rail hp-about__rail" aria-hidden="true">' +
+          ABOUT.body.map(function() { return '<i class="lt-seg"><b></b></i>'; }).join('') +
+          '<i class="lt-head"></i>' +
+        '</div>' +
+        '</div></div>' +
+        // Opened by "Tap here to start a rally": the table, with its close on
+        // the corner, and under it the two spins to choose between.
+        '<div class="hp-pong" id="hp-pong" hidden>' +
+          '<div class="hp-pong__in">' +
+            '<div class="hp-pong__court">' +
+              '<canvas class="hp-pong__cv" aria-hidden="true"></canvas>' +
+              '<button class="hp-pong__close" type="button" aria-label="Close the table">' +
+                '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
+              '</button>' +
+            '</div>' +
+            '<div class="hp-pong__spins" role="group" aria-label="Pick a spin">' +
+              PONG_SPINS.map(function(k, i) {
+                return '<button class="hp-spin hp-spin--' + k.id + '" type="button" data-spin="' + k.id + '" aria-pressed="' + (i === 0) + '">' +
+                  '<span class="hp-spin__name">' + '<svg class="hp-spin__icon" viewBox="0 0 24 24" aria-hidden="true">' +
+                      '<circle cx="12" cy="12" r="5.5" fill="#fdf2ec"/>' +
+                      '<path d="M12 3a9 9 0 0 1 9 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
+                      '<path d="M18.6 10.4 21 12.2l2-2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
+                    '</svg>' + k.name + '</span>' +
+                  '<span class="hp-spin__note">' + k.note + '</span>' +
+                '</button>';
+              }).join('') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</section>';
+
+    // The footer: the sign-off, then three plain ways to reach her, then one
+    // line of small print. No rules and no boxes.
+    var link = function(href, text, ext) {
+      return '<a class="hp-footer__a" href="' + href + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>' + text +
+        '<span class="hp-footer__arrow" aria-hidden="true">' + ARROW_NE + '</span></a>';
+    };
     var footerHtml = '' +
       '<footer class="hp-footer" id="hp-footer">' +
-        '<span class="hp-eyebrow hp-eyebrow--rule">' + FOOTER.eyebrow + '</span>' +
-        '<h2 class="hp-footer__title">' + FOOTER.title + '</h2>' +
-        '<p class="hp-footer__lede">' + FOOTER.lede + '</p>' +
-        // A phone number where LinkedIn used to be. LinkedIn is still one tap
-        // away in the nav, and repeating it here spent the ghost button on a
-        // link the page already has rather than on a second way to make contact.
-        '<div class="hp-footer__ctas">' +
-          '<a class="hp-footer__cta" href="mailto:' + EMAIL + '">' + EMAIL + '<span class="hp-footer__cta-arrow">' + ARROW_NE + '</span></a>' +
-          '<a class="hp-footer__cta is-ghost" href="tel:' + PHONE_TEL + '">' + PHONE + '<span class="hp-footer__cta-arrow">' + ARROW_NE + '</span></a>' +
+        '<h2 class="hp-footer__title" aria-label="' + FOOTER.ping.join(' ') + '.">' +
+          '<span class="hp-footer__line" aria-hidden="true"><span class="hp-footer__in">' + FOOTER.ping[0] + '</span></span>' +
+          '<span class="hp-footer__line hp-footer__line--r" aria-hidden="true"><span class="hp-footer__in">' + FOOTER.ping[1] + '<i class="lt-pix lt-pix--name"></i></span></span>' +
+        '</h2>' +
+        '<div class="hp-footer__links">' +
+          '<div class="hp-footer__col">' + link('mailto:' + EMAIL, EMAIL) + link('tel:' + PHONE_TEL, PHONE) + '</div>' +
+          '<div class="hp-footer__col">' + link(LINKEDIN, 'LinkedIn', true) + link(CV, 'CV', true) + '</div>' +
         '</div>' +
         '<div class="hp-footer__base">' +
-          '<button class="hp-footer__top" type="button" data-top>' +
-            '<span class="hp-footer__cta-arrow" aria-hidden="true">' + ARROW_UP + '</span>Back to top' +
-          '</button>' +
           '<span>&copy; ' + new Date().getFullYear() + ' Abbie Truman</span>' +
+          '<button class="hp-footer__top" type="button" data-top>Back to top' +
+            '<span class="hp-footer__arrow" aria-hidden="true">' + ARROW_UP + '</span>' +
+          '</button>' +
         '</div>' +
       '</footer>';
 
     var html = '<div class="hp-root" id="hp-root">' +
-      navHtml + heroHtml + wordmarkHtml + casesHtml + footerHtml + soundHtml +
+      navHtml + heroHtml + casesHtml + aboutHtml + footerHtml + soundHtml +
     '</div>';
 
     document.body.insertAdjacentHTML('afterbegin', html);
@@ -3592,6 +4835,7 @@
     var root = document.getElementById('hp-root');
     if (!btn || !root) return;
     btn.addEventListener('click', function() {
+      freeHero();
       root.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
     });
   }
@@ -3622,6 +4866,7 @@
         var card = document.querySelector('.hp-case--' + link.getAttribute('data-case'));
         if (!card) return;
         e.preventDefault();
+        freeHero();
         root.scrollTo({ top: cardRestTop(root, card), behavior: REDUCED ? 'auto' : 'smooth' });
       });
     });
@@ -3656,6 +4901,7 @@
           + cases.getBoundingClientRect().top
           - root.getBoundingClientRect().top;
       smooth = smooth && !REDUCED;
+      freeHero();
       root.scrollTo({ top: top, behavior: smooth ? 'smooth' : 'auto' });
       // Where it went, which is not always where it was sent: an instant scroll
       // aimed past the end of a page that is still filling in gets clamped, and
@@ -4090,6 +5336,55 @@
     });
   }
 
+  // ---------- SLICES ----------
+  // CSS cannot bend an element, so a card on the curve is drawn as SLICES
+  // vertical strips: clones of the whole card, each clipped to its strip and
+  // placed where that strip of the card would sit on the drum (see the rail).
+  // Clones are hidden from the accessibility tree and the tab order; the real
+  // card stays, unseen, as the link and the thing a screen reader reads.
+  // One slice: each card is drawn whole and flat, and turns as a panel round
+  // the drum, like the faces of a box going past. (More slices bend the card
+  // to the drum; tried, and the cards read better straight.)
+  var SLICES = 1;
+  function quietClone(el) {
+    el.setAttribute('aria-hidden', 'true');
+    el.removeAttribute('id');
+    if (el.matches('a')) el.setAttribute('tabindex', '-1');
+    Array.prototype.forEach.call(el.querySelectorAll('a, button, [tabindex]'), function(n) { n.setAttribute('tabindex', '-1'); });
+  }
+  function cutSlices(card, host, extra) {
+    var out = [];
+    for (var k = 0; k < SLICES; k++) {
+      var c = card.cloneNode(true);
+      quietClone(c);
+      c.classList.add('hp-case--slice');
+      if (extra) c.classList.add(extra);
+      var l = k / SLICES * 100, r = 100 - (k + 1) / SLICES * 100;
+      // Half a percent of overlap each side, so no seam shows between strips.
+      c.style.clipPath = 'inset(-1px ' + Math.max(0, r - 0.5) + '% -1px ' + Math.max(0, l - 0.5) + '%)';
+      // A clipped, turned slice is never on screen as far as lazy loading
+      // can tell, so every slice asks for its image now.
+      Array.prototype.forEach.call(c.querySelectorAll('img'), function(im) { im.setAttribute('loading', 'eager'); });
+      host.appendChild(c);
+      out.push(c);
+    }
+    return out;
+  }
+  // Where a card's edge sits on screen once it is on the drum: the stage's
+  // perspective, the drum's radius, the card's half-width. The build's
+  // hairlines frame the curved card with it.
+  var RAIL_PERSP = 1800;
+  // Tight enough that a card visibly bends along its whole height, top as
+  // well as bottom; the pitch between cards opens to match (see the rail).
+  function railRadius(W, w) { return Math.max(W * 0.62, w * 0.95); }
+  var RAIL_PITCH = 1.06;
+  function railEdge(W, w) {
+    var R = railRadius(W, w), th = w / 2 / R;
+    var X = R * Math.sin(th), Z = R * (1 - Math.cos(th));
+    var k = RAIL_PERSP / (RAIL_PERSP - Z);
+    return { x: X * k, k: k };
+  }
+
   // ---------- THE BUILD ----------
   // Card 01 assembled in front of the reader: lines, a grid, the wireframe,
   // some of its code, the screenshot, the card. One timeline, scrubbed over
@@ -4133,6 +5428,32 @@
     var navy = card && card.querySelector('.hp-build__navy');
     var guides = section.querySelector('.hp-build__guides');
     if (!stage || !card || !img || !wire || !guides || !navy) return;
+
+    // On the rail, card 01 is built already curved: it is sliced before
+    // anything is set on it, and every part the build moves is moved in the
+    // card and in all its slices at once. The real card is still the one
+    // everything is measured from; twin() gives a part and its copies.
+    var railHost = stage.classList.contains('has-rail') ? stage.querySelector('.hp-rail') : null;
+    var copies = railHost ? cutSlices(card, railHost, 'hp-case--build-slice') : [];
+    function pathOf(el) {
+      var p = [], n = el;
+      while (n && n !== card) { var par = n.parentNode; p.unshift(Array.prototype.indexOf.call(par.children, n)); n = par; }
+      return p;
+    }
+    function twin(el) {
+      if (!copies.length || !el) return el;
+      var p = pathOf(el);
+      return [el].concat(copies.map(function(c) {
+        var n = c;
+        for (var i = 0; i < p.length; i++) n = n.children[p[i]];
+        return n;
+      }));
+    }
+    function twins(list) {
+      var out = [];
+      Array.prototype.forEach.call(list, function(e) { out = out.concat(twin(e)); });
+      return out;
+    }
 
     var lines = Array.prototype.slice.call(guides.querySelectorAll('.hb-guide'));
     var regs = Array.prototype.slice.call(guides.querySelectorAll('.hb-reg'));
@@ -4255,21 +5576,32 @@
         at = inStage(img);
         ir = { height: img.offsetHeight };
       }
+      if (copies.length && SLICES > 1) {
+        // The card is on the drum: its edges come forward and so sit wider
+        // and taller on screen than the flat card measured above.
+        // seen from the card's own middle, as the stage's perspective is
+        var edge = railEdge(vw, w), oy = t + h / 2, cx0 = l + w / 2;
+        l = cx0 - edge.x; w = edge.x * 2;
+        var tt = oy + (t - oy) * edge.k, bb = oy + (t + h - oy) * edge.k;
+        t = tt; h = bb - tt;
+      }
       var src = sourceWindow(img);
-      wire.setAttribute('viewBox', [src.x, src.y, src.w, src.h].map(function(v) {
+      var vb = [src.x, src.y, src.w, src.h].map(function(v) {
         return Math.round(v * 100) / 100;
-      }).join(' '));
+      }).join(' ');
+      [].concat(twin(wire)).forEach(function(wv) { wv.setAttribute('viewBox', vb); });
       if (codes.length && src.w && src.h) {
         // The gift card button, then the first product tile, each set a
         // little to the right of the control so the wire shows down its
         // left edge. File percentages, read through the crop the way the
         // wire's viewBox is.
         [{ x: 17.51, y: 79.6, w: 38.19 }, { x: 60.46, y: 56.43, w: 25.03 }].forEach(function(p, i) {
-          var el = codes[i];
-          if (!el) return;
-          el.style.setProperty('--code-x', ((p.x / 100 * src.nw - src.x) / src.w * 100) + '%');
-          el.style.setProperty('--code-y', ((p.y / 100 * src.nh - src.y) / src.h * 100) + '%');
-          el.style.setProperty('--code-w', (p.w * src.nw / src.w) + '%');
+          if (!codes[i]) return;
+          [].concat(twin(codes[i])).forEach(function(el) {
+            el.style.setProperty('--code-x', ((p.x / 100 * src.nw - src.x) / src.w * 100) + '%');
+            el.style.setProperty('--code-y', ((p.y / 100 * src.nh - src.y) / src.h * 100) + '%');
+            el.style.setProperty('--code-w', (p.w * src.nw / src.w) + '%');
+          });
         });
       }
       var clipTop = (0.3652 * src.nh - src.y) / src.h * 100;
@@ -4282,7 +5614,7 @@
         clipRy.toFixed(2) + '% 0 0)';
       // Past 0.90 the clip has been dropped and the card is the picture.
       // Putting it back would crop a finished card on a resize.
-      if (tl && tl.progress() < 0.9) gsap.set(img, { clipPath: windowClip });
+      if (tl && tl.progress() < 0.9) gsap.set(twin(img), { clipPath: windowClip });
       // The two lines that run across the card are the heading block, shifted
       // up so the top one is the underside of the address bar. 1057 and 1256
       // are those edges in the file, the same pixels the wire draws. Read
@@ -4308,18 +5640,33 @@
       var yHead = guideY(1256);
       var yChrome = yPage;
       var xGut = l + w * 0.566;            // the gutter between its two columns
+      // The two horizontals bow, as a level line does on the inside of a
+      // drum: they pass through the card exactly where the wire needs them,
+      // and lean away from the middle of the screen toward its edges, the
+      // more the further from the middle they are. The verticals are the
+      // drum's own axis, so they stay straight. A quadratic through the card
+      // line at the centre: its control point is the mirror of its ends.
+      var BOW = 0, cy = vh / 2;
+      function bowed(y, from, to) {
+        var e = y + (y - cy) * BOW, c = 2 * y - e;
+        return 'M' + from + ' ' + e + 'Q' + (vw / 2) + ' ' + c + ' ' + to + ' ' + e;
+      }
       // d, length, gap before the kept span, kept span
       var defs = [
-        ['M0 ' + yPage + 'H' + vw, vw, l, w],
+        [bowed(yPage, 0, vw), vw, l, w],
         ['M' + l + ' 0V' + vh, vh, t, h],
         ['M' + (l + w) + ' ' + vh + 'V0', vh, vh - (t + h), h],
-        ['M' + vw + ' ' + yHead + 'H0', vw, vw - (l + w), w],
+        [bowed(yHead, vw, 0), vw, vw - (l + w), w],
         ['M' + xGut + ' 0V' + vh, vh, yChrome, t + h - yChrome]
       ];
       lines.forEach(function(ln, i) {
         ln.setAttribute('d', defs[i][0]);
-        LEN[i] = defs[i][1];
-        TRIM[i] = [defs[i][2], defs[i][3]];
+        // A curve is longer than the span it covers; the dashes are in
+        // lengths along the line, so the trim scales with it.
+        var len = ln.getTotalLength ? ln.getTotalLength() : defs[i][1];
+        var k = len / defs[i][1];
+        LEN[i] = len;
+        TRIM[i] = [defs[i][2] * k, defs[i][3] * k];
       });
       // A coordinate at each of the four corners. The numbers are the
       // artwork's own pixel size, 3024 by 2708 — the one set of numbers that
@@ -4335,13 +5682,31 @@
         [l, t + h, 'end', -8, 16, 'x 0 · y 2708'],
         [l + w, t + h, 'start', 8, 16, 'x 3024 · y 2708']
       ];
+      // Kept on screen: where the frame runs close to the edge (tablet,
+      // phone) a label that would hang off it tucks inside the corner instead,
+      // and the top pair never rises under the nav.
+      var gb = guides.getBoundingClientRect();
+      var gw = gb.width || window.innerWidth;
+      var navEl = document.querySelector('.hp-nav');
+      var navB = navEl ? navEl.getBoundingClientRect().bottom - gb.top + 14 : 0;
+      var EDGE = 12;
       regs.forEach(function(g, i) {
         var c = corners[i];
         var tx = g.querySelector('.hb-label');
+        tx.textContent = c[5];
+        tx.setAttribute('text-anchor', c[2]);
         tx.setAttribute('x', c[0] + c[3]);
         tx.setAttribute('y', c[1] + c[4]);
-        tx.setAttribute('text-anchor', c[2]);
-        tx.textContent = c[5];
+        var tw = tx.getComputedTextLength ? tx.getComputedTextLength() : 0;
+        var x = c[0] + c[3], y = c[1] + c[4], anchor = c[2];
+        if (anchor === 'end' && x - tw < EDGE) { anchor = 'start'; x = c[0] + 8; }
+        if (anchor === 'start' && x + tw > gw - EDGE) { anchor = 'end'; x = c[0] - 8; }
+        if (anchor === 'start' && x < EDGE) x = EDGE;
+        if (anchor === 'end' && x > gw - EDGE) x = gw - EDGE;
+        if (c[4] < 0 && y < navB) y = Math.max(navB, c[1] + 16);
+        tx.setAttribute('x', x);
+        tx.setAttribute('y', y);
+        tx.setAttribute('text-anchor', anchor);
       });
     }
     function dashNone() { return '0 0 0 ' + FAR; }
@@ -4356,19 +5721,22 @@
     layoutGuides();
     gsap.set(lines, { strokeDasharray: dashNone() });
     gsap.set(regs, { opacity: 0 });
-    gsap.set(cols, { scaleY: 0, transformOrigin: '50% 0%' });
-    gsap.set(outlines, { strokeDasharray: dashNone() });
-    gsap.set([boxes, dims, dims2, ground], { opacity: 0 });
+    // From here on, every target is a part and its copies.
+    var imgT = twin(img), navyT = twin(navy), colsLayerT = twin(colsLayer);
+    var boxesT = twin(boxes), dimsT = twin(dims), dims2T = twin(dims2), groundT = twin(ground);
+    var barsT = twins(bars), strokesT = twins(strokes), headT = twins(head);
+    gsap.set(twins(cols), { scaleY: 0, transformOrigin: '50% 0%' });
+    gsap.set(twins(outlines), { strokeDasharray: dashNone() });
+    gsap.set([].concat(boxesT, dimsT, dims2T, groundT), { opacity: 0 });
     els.forEach(function(el) {
-      if (el.getAttribute('data-unfold') === 'fade') gsap.set(el, { autoAlpha: 0 });
-      else gsap.set(el, { clipPath: WIPE_SHUT });
+      if (el.getAttribute('data-unfold') === 'fade') gsap.set(twin(el), { autoAlpha: 0 });
+      else gsap.set(twin(el), { clipPath: WIPE_SHUT });
     });
-    // The image is clipped to its browser window — the navy above and either
-    // side of it cut away, the window's own top corners kept — for the whole
-    // build, and unclipped in one frame at the end; the clip is never tweened.
-    gsap.set(img, { opacity: 0, clipPath: windowClip });
-    gsap.set(navy, { opacity: 0 });
-    gsap.set(head, { opacity: 0, y: 24 });
+    // The image is clipped to its browser window for the whole build, and
+    // unclipped in one frame at the end; the clip is never tweened.
+    gsap.set(imgT, { opacity: 0, clipPath: windowClip });
+    gsap.set(navyT, { opacity: 0 });
+    gsap.set(headT, { opacity: 0, y: 24 });
     section.classList.add('is-live');
 
     // ---- the timeline ----
@@ -4452,17 +5820,17 @@
     // boxes and the measurements fade in; the hairlines give up the parts of
     // themselves outside the card.
     cols.forEach(function(c, i) {
-      tl.to(c, { scaleY: 1, duration: 0.025 }, 0.11 + 0.008 * i);
+      tl.to(twin(c), { scaleY: 1, duration: 0.025 }, 0.11 + 0.008 * i);
       land(0.135 + 0.008 * i);
     });
     outlines.forEach(function(o, i) {
       var L = o.getTotalLength();
-      tl.fromTo(o, { strokeDasharray: dashNone() }, { strokeDasharray: '0 0 ' + L + ' ' + FAR, duration: 0.04 }, 0.15 + 0.01 * i);
+      tl.fromTo(twin(o), { strokeDasharray: dashNone() }, { strokeDasharray: '0 0 ' + L + ' ' + FAR, duration: 0.04 }, 0.15 + 0.01 * i);
       land(0.19 + 0.01 * i);
     });
-    tl.to(boxes, { opacity: 1, duration: 0.04 }, 0.17);
+    tl.to(boxesT, { opacity: 1, duration: 0.04 }, 0.17);
     land(0.21);
-    tl.to(dims, { opacity: 1, duration: 0.03 }, 0.19);
+    tl.to(dimsT, { opacity: 1, duration: 0.03 }, 0.19);
     lines.forEach(function(ln, i) {
       tl.fromTo(ln, { strokeDasharray: dashFull(i) }, { strokeDasharray: dashTrim(i), duration: 0.05 }, 0.18);
     });
@@ -4497,14 +5865,14 @@
       var to = fade
         ? { autoAlpha: 1, duration: 0.05, ease: 'power1.out', force3D: false }
         : { clipPath: WIPE_OPEN, duration: 0.03, ease: 'power1.out' };
-      tl.to(el, to, at);
+      tl.to(twin(el), to, at);
       land(at + (fade ? 0.05 : 0.03));
       var box = boxFor[el.getAttribute('data-el')];
-      if (box) tl.to(box, { opacity: 0, duration: 0.03 }, at);
+      if (box) tl.to(twin(box), { opacity: 0, duration: 0.03 }, at);
     });
-    tl.to(ground, { opacity: 1, duration: 0.06 }, 0.30);
-    tl.to(dims2, { opacity: 1, duration: 0.03 }, 0.37);
-    tl.to(colsLayer, { opacity: 0.33, duration: 0.06 }, 0.36);
+    tl.to(groundT, { opacity: 1, duration: 0.06 }, 0.30);
+    tl.to(dims2T, { opacity: 1, duration: 0.03 }, 0.37);
+    tl.to(colsLayerT, { opacity: 0.33, duration: 0.06 }, 0.36);
 
     // 4 — Code. Both panels fill, the two snippets type together, and the
     // fills dissolve as the screenshot comes through, so each panel becomes
@@ -4515,30 +5883,31 @@
       // the box left the markup sitting on the checkout at full strength.
       // autoAlpha also sets visibility, which takes the layer away when the
       // fade ends rather than leaving a stale one painted.
-      tl.to(codes, { autoAlpha: 1, duration: 0.02, force3D: false }, 0.46);
+      var codesT = twins(codes);
+      tl.to(codesT, { autoAlpha: 1, duration: 0.02, force3D: false }, 0.46);
       var codeN = 0;
       var codeLines = [];
       Array.prototype.forEach.call(codes, function(box) {
         var ls = box.querySelectorAll('.hp-build__code-line');
         codeN = Math.max(codeN, ls.length);
         Array.prototype.forEach.call(ls, function(cl, i) {
-          codeLines.push(cl);
-          tl.to(cl, { autoAlpha: 1, duration: 0.004, force3D: false }, 0.47 + 0.004 * i);
+          codeLines = codeLines.concat(twin(cl));
+          tl.to(twin(cl), { autoAlpha: 1, duration: 0.004, force3D: false }, 0.47 + 0.004 * i);
         });
       });
       for (var ci = 0; ci < codeN; ci++) land(0.474 + 0.004 * ci);
       tl.to(codeLines, { autoAlpha: 0, duration: 0.08, force3D: false }, 0.54);
-      tl.to(codes, { autoAlpha: 0, duration: 0.08, force3D: false }, 0.54);
+      tl.to(codesT, { autoAlpha: 0, duration: 0.08, force3D: false }, 0.54);
     }
 
     // 5 — The Boots checkout. The image resolves through the wire — bars go
     // first so the real type is not fighting grey blocks, strokes follow.
     // The image is still masked to its window; the navy comes next.
-    tl.to(img, { opacity: 1, duration: 0.09, ease: 'power1.inOut' }, 0.54);
-    tl.to(bars, { opacity: 0, duration: 0.06 }, 0.54);
-    tl.to(strokes, { opacity: 0, duration: 0.08 }, 0.56);
-    tl.to([colsLayer, dims, dims2, ground], { opacity: 0, duration: 0.04 }, 0.54);
-    outlines.forEach(function(o) { tl.to(o, { opacity: 0, duration: 0.04 }, 0.54); });
+    tl.to(imgT, { opacity: 1, duration: 0.09, ease: 'power1.inOut' }, 0.54);
+    tl.to(barsT, { opacity: 0, duration: 0.06 }, 0.54);
+    tl.to(strokesT, { opacity: 0, duration: 0.08 }, 0.56);
+    tl.to([].concat(colsLayerT, dimsT, dims2T, groundT), { opacity: 0, duration: 0.04 }, 0.54);
+    outlines.forEach(function(o) { tl.to(twin(o), { opacity: 0, duration: 0.04 }, 0.54); });
 
     // 6 — The card. The navy fades up behind the window across the whole
     // frame, one even fade, while the hairlines close and the registration
@@ -4547,13 +5916,15 @@
     // at 0.90 in a single frame: the image is the same navy where the layer
     // was showing, so nothing changes and the card at rest is the image
     // alone, as every other card is.
-    tl.to(navy, { opacity: 1, duration: 0.08, ease: 'power1.inOut' }, 0.72);
+    tl.to(navyT, { opacity: 1, duration: 0.08, ease: 'power1.inOut' }, 0.72);
     lines.forEach(function(ln, i) {
       tl.fromTo(ln, { strokeDasharray: dashTrim(i) }, { strokeDasharray: dashGone(i), duration: 0.06 }, 0.72);
     });
     tl.to(regs, { opacity: 0, duration: 0.03 }, 0.72);
-    tl.to(head, { opacity: 1, y: 0, duration: 0.06, stagger: 0.012, ease: 'power2.out' }, 0.85);
-    tl.set(img, { clipPath: 'none' }, 0.90);
+    head.forEach(function(hd, i) {
+      tl.to(twin(hd), { opacity: 1, y: 0, duration: 0.06, ease: 'power2.out' }, 0.85 + 0.012 * i);
+    });
+    tl.set(imgT, { clipPath: 'none' }, 0.90);
     // Holds the timeline's length at 1, so 0.93–1.00 is the rest.
     tl.to({ v: 0 }, { v: 1, duration: 0.01 }, 0.99);
 
@@ -4572,6 +5943,1011 @@
     });
   }
 
+
+  // ---------- THE STORY ----------
+  // Every effect is a function of the scroll, so dragging back plays it
+  // backwards. The words are measured with the world at rest (offsetLeft and
+  // offsetTop ignore transforms), and every overlay is placed from those.
+  //
+  // Beat timings, in timeline units:
+  //   0.0–0.9  the masthead flicks up and out; the sentence arrives in grey
+  //   0.9–2.5  pixels      the word resolves from an 18px grid to crisp type
+  //   2.5–4.1  picture     the hero zooms out to the sitemap and back
+  //   4.1–5.0  pencil      the word is drawn in graphite, then inked
+  //   5.0–5.9  production  its markup types out
+  //   5.9–7.7  people      the people it is made with gather round the word
+  //   7.7–8.4  product     the full stop lands, the same pixel as her name's
+  //   8.4–9.0  it flicks out line by line; "Check out some of my" fades in
+  //   9.0–9.9  "Proudest" and "projects" close in from the sides, then hold
+  //            long enough to be read
+  //   9.9–11.35 a slow drift into the turn, then the swing away round the
+  //            curve; the build, pinned under the hero by then (see
+  //            .lt--handoff), draws its curved hairlines behind it as the
+  //            hero's ground clears
+  // The build is under the hero for the last 40vh of its 640vh pin, which
+  // in these units is from about 10.6: everything the hand-off needs to have
+  // happened, the ground clearing above all, is done before then.
+  // The page's own jumps (the nav, back to top) pass through the hero
+  // without being held to its pace; set for the length of the scroll.
+  var HERO_FREE_UNTIL = 0;
+  function freeHero() { HERO_FREE_UNTIL = performance.now() + 2500; }
+  var LT_END = 11.35;
+
+  function initStory(root) {
+    var sec = document.getElementById('hp-hero');
+    if (!sec || !sec.classList.contains('lt')) return;
+    var q = function(sel) { return sec.querySelector(sel); };
+    var stage = q('.lt-stage'), world = q('.lt-world'), home = q('.lt-home');
+    var words = Array.prototype.slice.call(sec.querySelectorAll('.lt-w'));
+    var fxWord = function(code) { return q('.lt-w[data-fx="' + code + '"]'); };
+
+    if (REDUCED || typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+      sec.classList.add('lt--static');
+      return;
+    }
+
+    var pxc = q('.lt-pxc'), graphite = q('.lt-graphite'), code = q('.lt-code');
+    var curs = sec.querySelectorAll('.lt-cur');
+    var map = q('.lt-map');
+    var segs = sec.querySelectorAll('.lt-seg b'), segBox = sec.querySelectorAll('.lt-seg'), head = q('.lt-head');
+    var pixEnd = q('.lt-pix--end');
+    // The six beats' spans, in timeline units.
+    var BEATS = [[0.9, 2.5], [2.5, 4.1], [4.1, 5.0], [5.0, 5.9], [5.9, 7.7], [7.7, 8.4]];
+    var tun = q('.lt-3d'), cam = q('.lt-3d__cam');
+    var pp = q('.lt-pp'), ppSwing = q('.lt-pp__swing'), ppIn = sec.querySelectorAll('.lt-pin');
+
+    var fx = { px: 0, zoom: 0, pe: 0, ink: 0, code: 0, pp: 0, ppOut: 0, cam: 1000, intro: -700, swing: 0 };
+    var W = 0, H = 0, R = {}, tl = null;
+
+    // ---- measuring ----
+    function rectOf(el) {
+      var x = 0, y = 0, n = el;
+      while (n && n !== home) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+      return { x: x, y: y, w: el.offsetWidth, h: el.offsetHeight };
+    }
+    function measure() {
+      W = stage.clientWidth; H = stage.clientHeight;
+      tun.style.setProperty('--W', W + 'px');
+      tun.style.setProperty('--H', H + 'px');
+      if (nm && nm.data) prepName();
+      ['px', 'pe', 'pr', 'pp'].forEach(function(k) { R[k] = rectOf(fxWord(k)); });
+      R.sent = rectOf(q('.lt-sent'));
+      q('.lt-ov__svg').setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+      prepPixels(); preparePencil(); place();
+    }
+    // The sentence's lines, as the words that share a top edge.
+    function lineGroups() {
+      var groups = [], last = null;
+      words.forEach(function(w) {
+        var t = w.offsetTop;
+        if (last === null || Math.abs(t - last) > 4) { groups.push([]); last = t; }
+        groups[groups.length - 1].push(w);
+      });
+      groups[groups.length - 1].push(pixEnd);
+      return groups;
+    }
+    function fontOf(el) {
+      var cs = getComputedStyle(el), fs = parseFloat(cs.fontSize);
+      return { fs: fs, font: cs.fontWeight + ' ' + fs + 'px Manrope', weight: cs.fontWeight };
+    }
+    // Manrope: ascender 1.066em, descender 0.3em.
+    function baselineIn(boxH, fs) { return (boxH - 1.366 * fs) / 2 + 1.066 * fs; }
+
+    // ---- pixels: sample the word once, draw it at any grid size ----
+    var pxData = null, pxW = 0, pxH = 0, pxDpr = 1, PAD = 4, lastB = -1;
+    function prepPixels() {
+      var w = fxWord('px'), r = R.px, f = fontOf(w);
+      pxDpr = Math.min(2, window.devicePixelRatio || 1);
+      pxW = Math.round(r.w + PAD * 2); pxH = Math.round(r.h);
+      var off = document.createElement('canvas');
+      off.width = pxW * pxDpr; off.height = pxH * pxDpr;
+      var o = off.getContext('2d');
+      o.scale(pxDpr, pxDpr); o.font = f.font; o.fillStyle = '#fff'; o.textBaseline = 'alphabetic';
+      if ('letterSpacing' in o) o.letterSpacing = getComputedStyle(w).letterSpacing;
+      o.fillText(w.textContent, PAD, baselineIn(r.h, f.fs));
+      pxData = { d: o.getImageData(0, 0, off.width, off.height).data, w: off.width };
+      pxc.width = pxW * pxDpr; pxc.height = pxH * pxDpr;
+      pxc.style.cssText = 'left:' + Math.round(r.x - PAD) + 'px;top:' + Math.round(r.y) + 'px;width:' + pxW + 'px;height:' + pxH + 'px;';
+      lastB = -1;
+    }
+    var GRID = [18, 14, 11, 9, 7, 5, 4, 3, 2];
+    function drawPixels(b) {
+      if (b === lastB) return; lastB = b;
+      var x = pxc.getContext('2d');
+      x.setTransform(pxDpr, 0, 0, pxDpr, 0, 0);
+      x.clearRect(0, 0, pxW, pxH);
+      var d = pxData.d, ow = pxData.w, step = Math.max(1, b / 4);
+      for (var gy = 0; gy < pxH; gy += b) for (var gx = 0; gx < pxW; gx += b) {
+        var sum = 0, n = 0;
+        for (var sy = gy; sy < Math.min(pxH, gy + b); sy += step)
+          for (var sx = gx; sx < Math.min(pxW, gx + b); sx += step) { sum += d[(Math.round(sy * pxDpr) * ow + Math.round(sx * pxDpr)) * 4 + 3]; n++; }
+        var a = sum / n / 255;
+        if (a > 0.04) { x.fillStyle = 'rgba(255,255,255,' + Math.min(1, a * 1.15) + ')'; x.fillRect(gx, gy, b, b); }
+        if (b >= 7) { x.strokeStyle = 'rgba(255,255,255,0.07)'; x.strokeRect(gx + 0.5, gy + 0.5, b, b); }
+      }
+    }
+
+    // ---- pencil: the word as graphite outlines ----
+    function preparePencil() {
+      var w = fxWord('pe'), r = R.pe, f = fontOf(w);
+      graphite.setAttribute('x', r.x);
+      graphite.setAttribute('y', r.y + baselineIn(r.h, f.fs));
+      graphite.setAttribute('font-family', 'Manrope');
+      graphite.setAttribute('font-weight', f.weight);
+      graphite.setAttribute('font-size', f.fs);
+      graphite.setAttribute('letter-spacing', getComputedStyle(w).letterSpacing);
+      graphite.textContent = w.textContent;
+    }
+
+    // ---- where everything sits ----
+    // The code chip sits under the word, over the grey line still to come,
+    // so it never covers anything already read.
+    function place() {
+      var r = R.pr;
+      // Measured at its full length and kept on the screen: on a phone the
+      // word ends a line, and the chip would otherwise run off the edge.
+      var was = code.textContent;
+      code.textContent = '<span class="w">production</span>';
+      var cw = code.offsetWidth;
+      code.textContent = was;
+      var left = Math.max(12, Math.min(r.x, W - cw - 12));
+      code.style.left = left + 'px'; code.style.top = (r.y + r.h + 4) + 'px';
+    }
+    // Round the word, never on it: two above, two below, one trailing.
+    function peopleAt(i, r) {
+      // Narrow screens: there is no room round the word without covering the
+      // lines either side of it, so the five sit in two tidy rows under the
+      // sentence, the arrows pointing back up at it.
+      if (W < 720 && R.sent) {
+        var rows = [[0, 1], [2, 3, 4]], row = i < 2 ? 0 : 1, members = rows[row], gap = 10;
+        var widths = members.map(function(j) { return curs[j].offsetWidth; });
+        var total = widths.reduce(function(a, b) { return a + b; }, 0) + gap * (members.length - 1);
+        var x0 = (W - total) / 2;
+        for (var m = 0; m < members.length && members[m] !== i; m++) x0 += widths[m] + gap;
+        return [x0, R.sent.y + R.sent.h + 12 + row * 36];
+      }
+      // A ring round the word itself, close in but never over it. A chip
+      // hangs below and right of its cursor's tip, so the two above have
+      // their tips high enough for the chip to sit just over the word, the
+      // one to the left has its chip end before the word starts, and the one
+      // below starts just under it.
+      var at = [
+        [r.x - 56, r.y - 40],                 // above left
+        [r.x + r.w - 6, r.y - 42],            // above right
+        [r.x - 118, r.y + r.h * 0.3],         // left
+        [r.x + r.w * 0.2, r.y + r.h + 2],     // below
+        [r.x + r.w + 10, r.y + r.h * 0.45]    // right
+      ][i];
+      return [Math.max(8, Math.min(W - 150, at[0])), at[1]];
+    }
+    function peopleFrom(i) {
+      return [[-80, -60], [W * 0.5, -80], [-120, H + 40], [W * 0.4, H + 60], [W + 40, H * 0.6]][i];
+    }
+
+    // ---- one render for every effect ----
+    var SRC = '<span class="w">production</span>';
+    function render() {
+      // pixels
+      var pxOn = fx.px > 0 && fx.px < 1;
+      fxWord('px').style.visibility = pxOn ? 'hidden' : '';
+      pxc.style.opacity = pxOn ? 1 : 0;
+      if (pxOn) drawPixels(GRID[Math.min(GRID.length - 1, Math.floor(fx.px * GRID.length))]);
+
+      // picture
+      var z = fx.zoom, ze = z < 0.5 ? 4 * z * z * z : 1 - Math.pow(-2 * z + 2, 3) / 2;
+      var Z = W < 720 ? 0.3 : 0.36;
+      world.style.transform = 'scale(' + (1 - (1 - Z) * ze) + ')';
+      var mapA = Math.min(1, z * 2.5);
+      map.style.opacity = mapA;
+      home.style.outline = mapA > 0.01 ? '2.5px solid rgba(252,249,245,' + (0.55 * mapA) + ')' : 'none';
+
+      // pencil
+      var peOn = fx.pe > 0 && fx.ink < 1;
+      fxWord('pe').style.visibility = peOn ? 'hidden' : '';
+      graphite.style.opacity = peOn ? 1 : 0;
+      graphite.style.strokeDashoffset = 260 * (1 - fx.pe);
+      graphite.style.fill = 'rgba(255,255,255,' + fx.ink + ')';
+
+      // production
+      code.textContent = SRC.slice(0, Math.round(SRC.length * fx.code));
+
+      // people: in from the edges, then back out before the product beat
+      var rp = R.pp;
+      curs.forEach(function(el, i) {
+        var tin = Math.min(1, Math.max(0, (fx.pp - i * 0.14) / 0.44));
+        var tout = Math.min(1, Math.max(0, (fx.ppOut - (4 - i) * 0.08) / 0.68));
+        var ein = 1 - Math.pow(1 - tin, 3), eout = tout * tout * tout;
+        var from = peopleFrom(i), to = peopleAt(i, rp);
+        var x = from[0] + (to[0] - from[0]) * ein, y = from[1] + (to[1] - from[1]) * ein;
+        x += (from[0] - to[0]) * eout; y += (from[1] - to[1]) * eout;
+        el.style.opacity = tin > 0 && tout < 1 ? 1 : 0;
+        el.style.transform = 'translate(' + Math.round(x) + 'px,' + Math.round(y) + 'px)';
+      });
+
+      // her name's camera
+      cam.style.transform = 'translateZ(' + (fx.cam + fx.intro).toFixed(1) + 'px)';
+
+      // the title's swing: round a drum the reader stands inside, the same
+      // geometry the rail uses, so it leaves exactly as a card does
+      if (fx.swing > 0) {
+        var Rs = W * 0.9, th = -fx.swing * 1.25;
+        ppSwing.style.transform = 'translate3d(' + (Rs * Math.sin(th)).toFixed(1) + 'px,0,' +
+          (Rs * (1 - Math.cos(th))).toFixed(1) + 'px) rotateY(' + (-th * 180 / Math.PI).toFixed(2) + 'deg)';
+        ppSwing.style.opacity = (1 - Math.max(0, (fx.swing - 0.55) / 0.45)).toFixed(3);
+      } else {
+        ppSwing.style.transform = '';
+        ppSwing.style.opacity = '';
+      }
+
+      // how far there is to go
+      var t = tl ? tl.time() : 0;
+      var hx = 0;
+      BEATS.forEach(function(b, i) {
+        var f = Math.min(1, Math.max(0, (t - b[0]) / (b[1] - b[0])));
+        segs[i].style.width = (f * 100) + '%';
+        if (f > 0) hx = segBox[i].offsetLeft + segBox[i].offsetWidth * f;
+      });
+      head.style.transform = 'translateX(' + hx.toFixed(1) + 'px)';
+    }
+
+    // ---- the entrance: down the corridor to her name ----
+    var nameBlock = q('.lt-3d__name'), big = q('.lt-3d__big'), npx = q('.lt-3d__pxc');
+    var hey3 = q('.lt-3d__hey'), hud = q('.lt-hud'), namePix = q('.lt-3d__big .lt-pix');
+    gsap.set('.lt-story', { opacity: 0 });
+    gsap.set(words, { opacity: 0, y: 14 });
+    gsap.set(pixEnd, { scale: 0 });
+    // The entrance owns the HUD's lines and the scroll owns the HUD, so a
+    // reader who scrolls before the entrance ends cannot bring it back.
+    var hudLines = hud.children;
+    var heyWords = hey3.firstChild;
+    gsap.set([heyWords, hudLines], { opacity: 0 });
+    gsap.set(ppIn, { opacity: 0 });
+    gsap.set(namePix, { opacity: 0, y: '-1.2em' });
+    big.style.color = 'transparent';
+
+    // Her name, drawn once in the font, then shown at any grid size: the
+    // same resolve as the pixels beat, so the page's first move and its
+    // first idea are the same one.
+    var nm = { b: 28, data: null, w: 0, h: 0, dpr: 1, last: -1 };
+    function prepName() {
+      var cs = getComputedStyle(big), fs = parseFloat(cs.fontSize);
+      nm.dpr = Math.min(2, window.devicePixelRatio || 1);
+      nm.w = big.offsetWidth; nm.h = big.offsetHeight;
+      var off = document.createElement('canvas');
+      off.width = Math.round(nm.w * nm.dpr); off.height = Math.round(nm.h * nm.dpr);
+      var o = off.getContext('2d');
+      o.scale(nm.dpr, nm.dpr);
+      o.font = cs.fontWeight + ' ' + fs + 'px Manrope';
+      if ('letterSpacing' in o) o.letterSpacing = cs.letterSpacing;
+      o.fillStyle = '#fff'; o.textBaseline = 'alphabetic';
+      Array.prototype.forEach.call(big.querySelectorAll('.lt-nw'), function(w) {
+        o.fillText(w.textContent, w.offsetLeft, w.offsetTop + baselineIn(w.offsetHeight, fs));
+      });
+      nm.img = o.getImageData(0, 0, off.width, off.height);
+      nm.data = { d: nm.img.data, w: off.width };
+      npx.width = off.width; npx.height = off.height;
+      npx.style.width = nm.w + 'px'; npx.style.height = nm.h + 'px';
+      nm.last = -1;
+    }
+    function drawName() {
+      var b = Math.max(1, Math.round(nm.b));
+      if (b === nm.last || !nm.data) return; nm.last = b;
+      var x = npx.getContext('2d');
+      x.setTransform(nm.dpr, 0, 0, nm.dpr, 0, 0);
+      x.clearRect(0, 0, nm.w, nm.h);
+      if (b <= 1) {
+        // The last frame is the word itself, crisp, so the hand-over to the
+        // real text underneath is the same picture on both sides.
+        x.setTransform(1, 0, 0, 1, 0, 0);
+        x.putImageData(nm.img, 0, 0);
+        return;
+      }
+      var d = nm.data.d, ow = nm.data.w, step = Math.max(1, b / 4);
+      for (var gy = 0; gy < nm.h; gy += b) for (var gx = 0; gx < nm.w; gx += b) {
+        var sum = 0, n = 0;
+        for (var sy = gy; sy < Math.min(nm.h, gy + b); sy += step)
+          for (var sx = gx; sx < Math.min(nm.w, gx + b); sx += step) { sum += d[(Math.round(sy * nm.dpr) * ow + Math.round(sx * nm.dpr)) * 4 + 3]; n++; }
+        var a = sum / n / 255;
+        if (a > 0.04) { x.fillStyle = 'rgba(255,255,255,' + Math.min(1, a * 1.15) + ')'; x.fillRect(gx, gy, b, b); }
+      }
+    }
+
+    var fontsReady = (document.fonts && document.fonts.load)
+      ? Promise.race([Promise.all([document.fonts.load('800 80px Manrope'), document.fonts.load('500 40px Manrope')]), new Promise(function(r) { setTimeout(r, 900); })])
+      : Promise.resolve();
+    fontsReady.then(function() {
+      measure();
+      prepName(); drawName();
+      gsap.timeline({ defaults: { ease: 'power2.out' } })
+        // the camera glides in toward her name
+        .to(fx, { intro: 0, duration: 2.4, ease: 'power3.out', onUpdate: render }, 0)
+        // her name resolves out of the grid, coarse to crisp
+        .to(nm, { b: 1, duration: 1.5, ease: 'power2.inOut', onUpdate: drawName }, 0.45)
+        // The real text comes up under the canvas's crisp last frame, and
+        // only once it has painted does the canvas go.
+        .add(function() {
+          big.style.color = '';
+          requestAnimationFrame(function() { requestAnimationFrame(function() { npx.style.visibility = 'hidden'; }); });
+        }, 2.0)
+        .to(heyWords, { opacity: 1, duration: 0.8 }, 1.1)
+        // the full stop drops in last and starts to blink, like a caret
+        // waiting for the rest of the sentence
+        .to(namePix, { opacity: 1, y: 0, duration: 0.7, ease: 'bounce.out' }, 2.0)
+        .to(hudLines, { opacity: 1, duration: 0.9, stagger: 0.1 }, 1.8);
+      buildScroll();
+    });
+    window.addEventListener('resize', function() { if (tl) { measure(); render(); } });
+
+    // ---- the scroll ----
+    function buildScroll() {
+      tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          trigger: sec, start: 'top top', end: 'bottom bottom',
+          scrub: 0.8, invalidateOnRefresh: true,
+          // Stopped between two beats, the page eases on to the end of the
+          // one it was in, in the direction it was going, so no beat is left
+          // half played. These are the moments each beat has finished.
+          snap: {
+            snapTo: [0, 2.35, 3.95, 4.95, 5.85, 7.2, 8.35, 9.95, LT_END].map(function(t) { return t / LT_END; }),
+            directional: true,
+            delay: 0.12,
+            duration: { min: 0.35, max: 1.1 },
+            ease: 'power2.inOut'
+          }
+        },
+        onUpdate: render
+      });
+      function light(b, at) {
+        tl.to(sec.querySelectorAll('.lt-w[data-b="' + b + '"]'), { color: '#fff', duration: 0.25, stagger: 0.03 }, at);
+      }
+
+      // the camera flies on, through her name; the sentence arrives grey
+      // Everything else fades, and her name leaves the stage: Abbie off to
+      // the left, Truman off to the right, the full stop going with it. The
+      // sentence comes up in the space they leave.
+      var nameLines = big.querySelectorAll('.lt-line');
+      tl.set(npx, { visibility: 'hidden' }, 0.001)
+        .set(big, { color: '' }, 0.001)
+        .to(hud, { opacity: 0, duration: 0.3 }, 0)
+        .to(hey3, { opacity: 0, y: -12, duration: 0.3 }, 0)
+        .to(nameLines[0], { x: function() { return -W * 1.15; }, duration: 0.8, ease: 'power2.in' }, 0.06)
+        .to(nameLines[1], { x: function() { return W * 1.15; }, duration: 0.8, ease: 'power2.in' }, 0.1)
+        .set(tun, { visibility: 'hidden' }, 0.92)
+        .to('.lt-story', { opacity: 1, duration: 0.2 }, 0.62)
+        .to(words, { opacity: 1, y: 0, duration: 0.4, stagger: 0.01, ease: 'power2.out' }, 0.62);
+
+      // 1 pixels, given room to resolve
+      light(0, 0.9);
+      tl.to(fx, { px: 1, duration: 1.3 }, 1.0);
+
+      // 2 picture
+      light(1, 2.5);
+      tl.to(fx, { zoom: 1, duration: 0.6 }, 2.7)
+        .to(fx, { zoom: 0, duration: 0.55 }, 3.5);
+
+      // 3 pencil
+      light(2, 4.1);
+      tl.to(fx, { pe: 1, duration: 0.55 }, 4.2)
+        .to(fx, { ink: 1, duration: 0.2 }, 4.75);
+
+      // 4 production: its markup types out, and that is the whole beat
+      light(3, 5.0);
+      tl.to(code, { opacity: 1, duration: 0.05 }, 5.05)
+        .to(fx, { code: 1, duration: 0.45 }, 5.05)
+        .to(code, { opacity: 0, duration: 0.15 }, 5.75);
+
+      // 5 people, who arrive one at a time and leave before the product
+      light(4, 5.9);
+      tl.to(fx, { pp: 1, duration: 1.0 }, 5.95)
+        .to(fx, { ppOut: 1, duration: 0.4 }, 7.25);
+
+      // 6 product: the full stop lands, the same pixel as her name's
+      light(5, 7.7);
+      tl.to(pixEnd, { scale: 1, duration: 0.25, ease: 'back.out(3)' }, 8.05);
+
+      // the sentence flicks out a line at a time, the way the name did
+      var lines = lineGroups();
+      lines.forEach(function(g, i) {
+        tl.to(g, { y: -46, opacity: 0, duration: 0.32, ease: 'power2.in' }, 8.4 + i * 0.06);
+      });
+      tl.to(sec.querySelector('.lt-rail'), { opacity: 0, duration: 0.2 }, 8.4)
+        .set('.lt-story', { visibility: 'hidden' }, 8.85)
+
+      // "Proudest projects" rises in the way her name used to
+      ;
+      // Once the sentence has cleared, "Proudest projects" comes on as her
+      // name went off: Proudest from the left, projects from the right,
+      // meeting in the middle.
+      tl.set(pp, { visibility: 'visible' }, 8.85)
+        // the small line first, so the title has something to finish
+        .fromTo('.lt-pp__hey', { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, ease: 'power2.out', immediateRender: false }, 8.85)
+        // then the curtains: Proudest from the left, projects from the right
+        .fromTo(ppIn[0], { x: function() { return -W * 1.1; }, opacity: 1 }, { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out', immediateRender: false }, 9.0)
+        .fromTo(ppIn[1], { x: function() { return W * 1.1; }, opacity: 1 }, { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out', immediateRender: false }, 9.08)
+        // A held read, then each line carries on the way it was going and
+        // out the other side: Proudest off to the right, projects off to the
+        // left, crossing in the middle. The build draws in behind them.
+        .to('.lt-pp__hey', { opacity: 0, y: -10, duration: 0.3 }, 10.2)
+        .to(ppIn[0], { x: function() { return W * 1.15; }, duration: 0.8, ease: 'power2.in' }, 10.25)
+        .to(ppIn[1], { x: function() { return -W * 1.15; }, duration: 0.8, ease: 'power2.in' }, 10.31);
+
+      handoff();
+      tl.to({}, { duration: 0.05 }, LT_END - 0.05);
+
+      // A hard flick plays every beat rather than skipping them: inside the
+      // story the page may run only a beat or so ahead of what is drawn, and
+      // is held there while the drawing catches up, at the scrub's pace. Not
+      // for the page's own jumps, which are let through.
+      var LEAD = 1.4;
+      gsap.ticker.add(function() {
+        var st = tl.scrollTrigger;
+        if (!st || !st.isActive || performance.now() < HERO_FREE_UNTIL) return;
+        var span = st.end - st.start;
+        var ahead = st.progress * LT_END - tl.time();
+        if (ahead > LEAD) root.scrollTop = st.start + ((tl.time() + LEAD) / LT_END) * span;
+        else if (ahead < -LEAD) root.scrollTop = st.start + ((tl.time() - LEAD) / LT_END) * span;
+      });
+
+      ScrollTrigger.refresh();
+      render();
+    }
+
+    // ---- the hand-off ----
+    // The build's stage is pinned under the last of the hero (see
+    // .lt--handoff). The ground clears just before it is, so the build's
+    // curved hairlines draw in behind the title as it swings away.
+    function handoff() {
+      if (!document.getElementById('hp-build')) return;
+      sec.classList.add('lt--handoff');
+      tl.to(stage, { backgroundColor: 'rgba(10,10,12,0)', duration: 0.12 }, 10.47)
+        .to('.lt-stage > .hp-hero__glow', { opacity: 0, duration: 0.12 }, 10.47);
+    }
+  }
+
+  // ---------- THE RAIL ----------
+  // The work, on a curve, and the cards bend to it: the reader stands inside
+  // a drum, and each card's place is an angle round it, its distance along
+  // the rail from the middle of the screen over the radius. Every card is
+  // drawn as slices (see SLICES); card 01's are the build's own, so it is
+  // made curved and is already in place when the rail starts to move.
+  //
+  // It is alive in three ways. The scroll drives a spring rather than the
+  // cards directly, so they overshoot a little and settle. Speed tightens
+  // the drum and leans every card. And speed sends a ripple across each card,
+  // which dies away as the scroll stops.
+  //
+  // It ends where it began: a fresh plain copy of card 01 comes round last,
+  // so the rail rests on the Boots card.
+  function initRail(root, buildEl, rail) {
+    var stage = buildEl.querySelector('.hp-build__stage');
+    var first = stage.querySelector(':scope > .hp-case');
+    var travel = document.querySelector('.hp-build__travel');
+    var railTravel = document.querySelector('.hp-rail__travel');
+    if (!stage || !first || !travel || !railTravel) return;
+    var cards = [first].concat(Array.prototype.slice.call(rail.querySelectorAll(':scope > .hp-case:not(.hp-case--slice)')));
+    var decks = [Array.prototype.slice.call(rail.querySelectorAll(':scope > .hp-case--build-slice'))];
+    var made = false;
+    var spring = { x: 0, v: 0 }, target = 0, lean = 0, leanV = 0, phase = 0, live = true;
+
+    // The real cards are measured and clicked, never seen: only their
+    // slices are drawn.
+    cards.forEach(function(c) { c.style.opacity = 0; });
+
+    function plainFirst() {
+      var d = document.createElement('div');
+      d.innerHTML = buildCase(PROJECTS[0], 1);
+      return d.firstElementChild;
+    }
+    // The rest are cut the first time the rail moves.
+    function make() {
+      made = true;
+      var src = cards.slice(1).concat([plainFirst()]);
+      src.forEach(function(card) { decks.push(cutSlices(card, rail)); });
+      hover(1);
+    }
+    // Hovering the real card lifts all of its slices together, so the card
+    // lifts as one rather than strip by strip.
+    function hover(from) {
+      cards.forEach(function(card, i) {
+        var set = decks[i];
+        if (!set || i < from) return;
+        card.addEventListener('mouseenter', function() { set.forEach(function(sl) { sl.classList.add('is-hover'); }); });
+        card.addEventListener('mouseleave', function() { set.forEach(function(sl) { sl.classList.remove('is-hover'); }); });
+      });
+    }
+
+    function place() {
+      var W = stage.clientWidth;
+      var w = first.offsetWidth;
+      var oy = first.offsetTop + first.offsetHeight / 2;
+      if (oy !== place.oy) { place.oy = oy; stage.style.perspectiveOrigin = '50% ' + oy.toFixed(1) + 'px'; }
+      var P = w * RAIL_PITCH;
+      var n = cards.length + 1;
+      var along = spring.x * (n - 1) * P;
+      var speed = Math.min(1, Math.abs(lean));
+      var R = railRadius(W, w) / (1 + speed * 0.6);
+      var moving = spring.x > 0.0005;
+
+      decks.forEach(function(set, i) {
+        var dx = i * P - along;
+        var tc = Math.max(-1.45, Math.min(1.45, dx / R));
+        var cx = R * Math.sin(tc), cz = R * (1 - Math.cos(tc));
+        var leanR = lean * 9 * Math.PI / 180;
+        // Until the rail moves, only card 01 is there.
+        var show = i === 0 ? 1 : Math.min(1, spring.x * 25);
+        var real = cards[i];
+        if (real && real !== first) {
+          real.style.opacity = 0;
+          real.style.transform = 'translate3d(' + cx.toFixed(1) + 'px,0,' + cz.toFixed(1) + 'px) rotateY(' + (-tc * 180 / Math.PI + lean * 9).toFixed(2) + 'deg)';
+        }
+        for (var k = 0; k < set.length; k++) {
+          var xk = ((k + 0.5) / SLICES - 0.5) * w;
+          var td = tc + xk / R;
+          var qx = R * Math.sin(td), qz = R * (1 - Math.cos(td));
+          // the ripple: a wave along the card, as tall as the scroll is fast
+          qz += Math.sin(xk / w * Math.PI * 2 + phase + i) * 26 * speed;
+          var phi = td - leanR;
+          var c = Math.cos(phi), sn = Math.sin(phi);
+          // the card turns about its own centre, so the strip's offset is
+          // taken back off after the turn
+          var px = qx - xk * c, pz = qz - xk * sn;
+          var st = set[k].style;
+          st.transform = 'translate3d(' + px.toFixed(1) + 'px,0,' + pz.toFixed(1) + 'px) rotateY(' + (-phi * 180 / Math.PI).toFixed(2) + 'deg)';
+          st.opacity = show;
+          var sh = set[k].querySelector(':scope .hp-case__shade');
+          // One shade for the whole card, from where its middle is: shading
+          // each strip by its own angle shows the strips.
+          if (sh) sh.style.opacity = Math.min(0.5, Math.abs(tc) * 0.55).toFixed(3);
+        }
+      });
+    }
+
+    ScrollTrigger.create({
+      trigger: railTravel,
+      start: function() { return layoutTopOf(root, buildEl) + travel.offsetHeight; },
+      end: function() { return layoutTopOf(root, buildEl) + travel.offsetHeight + railTravel.offsetHeight; },
+      invalidateOnRefresh: true,
+      onUpdate: function(self) {
+        // The last tenth of the scroll is a hold on the home card.
+        target = Math.min(1, self.progress / 0.9);
+        if (target > 0 && !made) make();
+        leanV = Math.max(-1, Math.min(1, self.getVelocity() / 2600));
+        live = true;
+      }
+    });
+
+    // The spring and the lean run every frame while there is anything left
+    // to settle, and stop when there is not.
+    gsap.ticker.add(function(time, dt) {
+      if (!live) return;
+      var k = Math.min(dt, 50) / 16.7;
+      spring.v += (target - spring.x) * 0.06 * k;
+      spring.v *= Math.pow(0.8, k);
+      spring.x += spring.v * k;
+      if (spring.x < 0) { spring.x = 0; spring.v = 0; }
+      lean += (leanV - lean) * 0.12 * k;
+      leanV *= Math.pow(0.86, k);
+      phase += lean * 0.25 * k;
+      place();
+      live = !(Math.abs(target - spring.x) < 0.00005 && Math.abs(spring.v) < 0.00005 &&
+        Math.abs(lean) < 0.001 && Math.abs(leanV) < 0.001);
+    });
+    place();
+    hover(0);
+    window.addEventListener('resize', function() { live = true; });
+  }
+
+  // ---------- THE FOOTER ----------
+  // The time where she is, the email to copy, and the fun fact's rally.
+  function initFooter() {
+    var clock = document.querySelector('.hp-footer__clock');
+    if (clock && window.Intl) {
+      var fmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' });
+      var tick = function() { clock.textContent = fmt.format(new Date()) + ' in the UK'; };
+      tick();
+      setInterval(tick, 20000);
+    }
+
+  }
+
+  // ---------- ABOUT: one beat at a time ----------
+  // The section holds while the beats come through one place in turn: each
+  // rises in, its words light from grey to white with the scroll, and it is
+  // lifted away as the next arrives. The last, the invitation, stays.
+  function initAboutReveal() {
+    if (REDUCED) return;
+    var sec = document.getElementById('hp-about');
+    if (!sec) return;
+    var pin = sec.querySelector('.hp-about__pin'), stage = sec.querySelector('.hp-about__stage');
+    var beats = sec.querySelectorAll('.hp-about__beat');
+    if (!beats.length) return;
+    sec.classList.add('is-beats', 'is-sweep');
+    var n = beats.length;
+    // All of it is on the screen together, grey, when the section arrives;
+    // once it has settled, one sweep lights it word by word in reading
+    // order, and then the invitation arrives under it.
+    var words = sec.querySelectorAll('.hp-about__w');
+    gsap.set(words, { color: 'rgba(255,255,255,0.18)' });
+    var LEAD = 0.3, SWEEP = 2.2;
+    var tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      onUpdate: function() {
+        var was = sec.classList.contains('is-fixer');
+        sec.classList.toggle('is-fixer', tl.time() >= LEAD + SWEEP * 0.97);
+        // the cursor changes with it, without waiting for the mouse
+        if (was !== sec.classList.contains('is-fixer') && typeof cursorRecheck === 'function') cursorRecheck();
+      },
+      scrollTrigger: { trigger: pin, start: 'top top', end: 'bottom bottom', scrub: 0.5, invalidateOnRefresh: true }
+    });
+    tl.to({}, { duration: LEAD }, 0);
+    tl.to(words, { color: '#ffffff', duration: 0.12, stagger: { amount: SWEEP - 0.12 } }, LEAD);
+    tl.to({}, { duration: 0.5 }, LEAD + SWEEP);
+
+  }
+
+  // ---------- PING PONG ----------
+  // Opened from "fancy a game?". The shot picked plays as a rally that never
+  // ends: PONG works it out a few seconds ahead and this draws it. The view
+  // is from a little above and to the side, so the table has depth and the
+  // ball's shadow on it shows how high it is.
+  function initPong() {
+    var trigger = document.querySelector('.hp-game');
+    var openers = document.querySelectorAll('.hp-game');
+    var panel = document.getElementById('hp-pong');
+    if (!trigger || !panel || !window.CanvasRenderingContext2D) return;
+    function expanded(v) { Array.prototype.forEach.call(openers, function(o) { o.setAttribute('aria-expanded', String(v)); }); }
+    var cv = panel.querySelector('.hp-pong__cv');
+    var ctx = cv.getContext('2d');
+    var spins = panel.querySelectorAll('.hp-spin');
+    var root = document.getElementById('hp-root');
+    var HAS_GSAP = typeof gsap !== 'undefined';
+    var HL = PONG.HL, HW = PONG.HW, NET_H = PONG.NET_H;
+    var SLOW = 0.5;
+    // The camera: across the table is drawn up and to the right.
+    var KX = 0.3, KY = 0.24, YTOP = 0.8, YBOT = -0.38;
+    // how much air to show above the table: the smash's lobs need more
+    var TOPS = { top: 0.8, back: 0.8 };
+    var L = {};
+    var current = 'top', data = null, keys = null, raf = 0, run = 0, simT = 0, last = 0, onScreen = true, evI = 0;
+
+    // ---- the bat ----
+    var BAT_WOOD = new Path2D('M61 164h28v58a11 11 0 0 1-11 11h-6a11 11 0 0 1-11-11z M75 2C121 2 148 38 148 82C148 112 140 132 126 144C114 154 100 160 92 176L58 176C50 160 36 154 24 144C10 132 2 112 2 82C2 38 29 2 75 2Z');
+    var BAT_RUBBER = new Path2D('M75 2C121 2 148 38 148 82C148 108 141 126 130 138L20 138C9 126 2 108 2 82C2 38 29 2 75 2Z');
+    var BAT_COL = { '1': '#f04e55', '-1': '#3c3c42' };
+
+    // ---- how each stroke moves the bat, in the hitter's own terms ----
+    // [forward, up, across, angle] from the contact point. The angle tips
+    // the bat: + closes the face over the ball, - opens it under.
+    // at: where the bat's head meets the ball, from its centre, so the push
+    // can be seen to get under it and the loop to come over the top of it.
+    var POSE = {
+      // backspin: the bat laid back almost flat and glided forward along
+      // the underside of the ball, a long low push
+      push:  { back: [-0.24, 0.0, 0, 82], hit: 86, at: [-0.02, -0.055], fol: [0.24, -0.03, 0, 88], tb: 0.26, tf: 0.24 },
+      // topspin: face closed over the ball, from just below it, forward and
+      // up to about head height; the face stays closed throughout
+      top:   { back: [-0.2, -0.12, 0.04, 25], hit: 45, at: [-0.03, 0.03], fol: [0.22, 0.26, -0.05, 60], tb: 0.22, tf: 0.2 },
+      // the lob: from deep and low, lifted up under the ball, high and slow
+      lob:   { back: [-0.1, -0.22, 0, -10], hit: -5, at: [-0.02, -0.03], fol: [0.08, 0.5, 0, 15], tb: 0.26, tf: 0.26 },
+      // the smash: bat cocked high behind, brought down over the top of the
+      // ball near the top of its bounce, through and across
+      smash: { back: [-0.22, 0.38, 0.05, -35], hit: 55, at: [-0.02, 0.035], fol: [0.3, -0.45, -0.05, 105], tb: 0.22, tf: 0.16 },
+      flat:  { back: [-0.16, 0.0, 0.04, 0], hit: 10, at: [-0.03, 0], fol: [0.2, 0.1, 0, 20], tb: 0.2, tf: 0.16 }
+    };
+    function ready(f, t) { return { t: t || 0, x: -f * (HL + 0.42), y: 0.18, z: 0.28, a: 0 }; }
+    function batKeys(hits) {
+      var k = { '1': [], '-1': [] };
+      function add(f, key) {
+        var list = k[f];
+        while (list.length > 1 && list[list.length - 1].t >= key.t) list.pop();
+        list.push(key);
+      }
+      var t0 = hits.length ? hits[0].t - 1 : 0;
+      add(1, ready(1, t0)); add(-1, ready(-1, t0));
+      hits.forEach(function(h) {
+        var f = h.side, Q = POSE[h.pose] || POSE.flat;
+        add(f, { t: h.t - Q.tb, x: h.x + f * Q.back[0], y: h.y + Q.back[1], z: h.z + Q.back[2], a: Q.back[3] });
+        add(f, { t: h.t, x: h.x + f * Q.at[0], y: h.y + Q.at[1], z: h.z, a: Q.hit });
+        add(f, { t: h.t + Q.tf, x: h.x + f * Q.fol[0], y: h.y + Q.fol[1], z: h.z + Q.fol[2], a: Q.fol[3] });
+        add(f, ready(f, h.t + Q.tf + 0.38));
+      });
+      return k;
+    }
+    function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+    function batAt(list, t, f) {
+      var s = list[list.length - 1];
+      if (t <= list[0].t) s = list[0];
+      else for (var i = 1; i < list.length; i++) {
+        if (t <= list[i].t) {
+          var a = list[i - 1], b = list[i], k = ease((t - a.t) / Math.max(1e-6, b.t - a.t));
+          s = { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, z: a.z + (b.z - a.z) * k, a: a.a + (b.a - a.a) * k };
+          break;
+        }
+      }
+      // light on their feet: a small bounce between shots
+      return { x: s.x, y: s.y + 0.012 * Math.sin(t * 11 + f), z: s.z, a: s.a };
+    }
+
+    // ---- the view ----
+    function layout() {
+      var W = cv.parentNode.clientWidth || 600;
+      // on a phone the players stand a little nearer the edges, so the table
+      // itself can be bigger
+      var spanX = 2 * (HL + (W < 600 ? 0.62 : 0.9)) + 2 * HW * KX;
+      // One height for every shot, so switching never moves the page: the
+      // smash's extra air is found by zooming out, the table kept on the floor.
+      var H0 = Math.min(520, window.innerHeight * 0.6);
+      var spanY = (YTOP + HW * KY) - (YBOT - HW * KY);
+      var U = Math.min(W / spanX, H0 / spanY);
+      var H = Math.round(spanY * U);
+      var dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      cv.style.height = H + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      L = { W: W, H: H, U: U, cx: W / 2, base: H + (YBOT - HW * KY) * U };
+    }
+    function P(x, y, z) { return [L.cx + (x - z * KX) * L.U, L.base - (y + z * KY) * L.U]; }
+    function quad(a, b, c, d) { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(d[0], d[1]); ctx.closePath(); }
+    function line(a, b) { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
+
+    function drawTable() {
+      var T = 0.04;
+      // legs, fading to the floor
+      [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function(c) {
+        var x = c[0] * (HL - 0.3), z = c[1] * (HW - 0.12);
+        var a = P(x, -T, z), b = P(x, YBOT + 0.05, z);
+        var g = ctx.createLinearGradient(a[0], a[1], b[0], b[1]);
+        g.addColorStop(0, 'rgba(70,82,104,0.9)'); g.addColorStop(1, 'rgba(70,82,104,0)');
+        ctx.strokeStyle = g; ctx.lineWidth = Math.max(2, 0.035 * L.U); line(a, b);
+      });
+      // its thickness: the near edge and the left end
+      ctx.fillStyle = '#10213b';
+      quad(P(-HL, 0, HW), P(HL, 0, HW), P(HL, -T, HW), P(-HL, -T, HW)); ctx.fill();
+      ctx.fillStyle = '#0c1a30';
+      quad(P(-HL, 0, -HW), P(-HL, 0, HW), P(-HL, -T, HW), P(-HL, -T, -HW)); ctx.fill();
+      // the top
+      var top = ctx.createLinearGradient(0, P(0, 0, -HW)[1], 0, P(0, 0, HW)[1]);
+      top.addColorStop(0, '#203f6c'); top.addColorStop(1, '#1a355c');
+      ctx.fillStyle = top;
+      quad(P(-HL, 0, -HW), P(HL, 0, -HW), P(HL, 0, HW), P(-HL, 0, HW)); ctx.fill();
+      // the white lines: the edges and the centre line
+      ctx.strokeStyle = 'rgba(244,241,236,0.92)'; ctx.lineWidth = Math.max(1.2, 0.02 * L.U);
+      quad(P(-HL, 0, -HW), P(HL, 0, -HW), P(HL, 0, HW), P(-HL, 0, HW)); ctx.stroke();
+      ctx.lineWidth = Math.max(0.8, 0.008 * L.U); ctx.strokeStyle = 'rgba(244,241,236,0.6)';
+      line(P(-HL, 0, 0), P(HL, 0, 0));
+    }
+    function drawNet() {
+      var z0 = -HW - 0.15, z1 = HW + 0.15;
+      ctx.fillStyle = 'rgba(244,241,236,0.08)';
+      quad(P(0, 0, z0), P(0, NET_H, z0), P(0, NET_H, z1), P(0, 0, z1)); ctx.fill();
+      ctx.strokeStyle = 'rgba(244,241,236,0.18)'; ctx.lineWidth = 0.6;
+      for (var z = z0; z <= z1 + 1e-6; z += 0.06) line(P(0, 0, z), P(0, NET_H, z));
+      for (var y = 0.03; y < NET_H; y += 0.03) line(P(0, y, z0), P(0, y, z1));
+      ctx.strokeStyle = 'rgba(244,241,236,0.95)'; ctx.lineWidth = Math.max(1.4, 0.015 * L.U);
+      line(P(0, NET_H, z0), P(0, NET_H, z1));
+      ctx.strokeStyle = 'rgba(244,241,236,0.7)'; ctx.lineWidth = 1.5;
+      line(P(0, -0.02, z0), P(0, NET_H, z0)); line(P(0, -0.02, z1), P(0, NET_H, z1));
+    }
+    function ballR(z) { return Math.max(3.6, 0.026 * L.U) * (1 + z * 0.06); }
+    function drawShadow(b) {
+      if (!(Math.abs(b.x) <= HL && Math.abs(b.z) <= HW && b.y >= -0.01)) return;
+      var h = Math.max(0, b.y), p = P(b.x, 0, b.z), r = ballR(b.z);
+      ctx.fillStyle = 'rgba(0,0,0,' + (0.5 * Math.max(0.15, 1 - h / 0.9)).toFixed(3) + ')';
+      ctx.beginPath(); ctx.ellipse(p[0], p[1], r * (1.1 + h * 1.2), r * (0.42 + h * 0.4), 0, 0, Math.PI * 2); ctx.fill();
+    }
+    // The flight path: the last half second of where the ball has been, a
+    // line that fades out behind it, so the dip of topspin and the float of
+    // backspin can be read from the shape.
+    function drawPath(path) {
+      if (path.length < 2) return;
+      ctx.lineCap = 'round';
+      for (var i = 1; i < path.length; i++) {
+        var a = P(path[i - 1].x, path[i - 1].y, path[i - 1].z), c = P(path[i].x, path[i].y, path[i].z);
+        var k = i / path.length;
+        ctx.strokeStyle = 'rgba(253,242,236,' + (0.32 * k * k).toFixed(3) + ')';
+        ctx.lineWidth = Math.max(1, ballR(path[i].z) * 0.7 * k);
+        ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(c[0], c[1]); ctx.stroke();
+      }
+    }
+    // The ball: shaded, with its printed mark turning the way it spins
+    // (clockwise as drawn is topspin going right), and squashed for a
+    // moment where it meets the table or a bat.
+    function drawBall(b, ang, sq) {
+      var p = P(b.x, b.y, b.z), r = ballR(b.z);
+      ctx.save();
+      ctx.translate(p[0], p[1]);
+      if (sq) ctx.scale(sq[0], sq[1]);
+      var g = ctx.createRadialGradient(-r * 0.35, -r * 0.4, r * 0.1, 0, 0, r);
+      g.addColorStop(0, '#ffffff'); g.addColorStop(0.55, '#f6ece4'); g.addColorStop(1, '#cdbdb0');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+      ctx.clip();
+      ctx.rotate(ang);
+      ctx.fillStyle = 'rgba(208,96,52,0.8)';
+      ctx.beginPath(); ctx.ellipse(r * 0.52, 0, r * 0.3, r * 0.2, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(208,96,52,0.35)';
+      ctx.beginPath(); ctx.ellipse(-r * 0.6, 0, r * 0.16, r * 0.11, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+    function drawBat(f, s) {
+      // a touch over life size, so the stroke reads
+      var p = P(s.x, s.y, s.z), sc = 0.2 * L.U / 146 * (1 + s.z * 0.06);
+      ctx.save();
+      ctx.translate(p[0], p[1]);
+      ctx.rotate(f * s.a * Math.PI / 180);
+      ctx.scale(sc, sc);
+      ctx.translate(-75, -78);
+      ctx.fillStyle = '#e2b583'; ctx.fill(BAT_WOOD);
+      ctx.fillStyle = BAT_COL[f]; ctx.fill(BAT_RUBBER);
+      ctx.restore();
+    }
+
+    var REST = { x: -(HL + 0.25), y: 0.1, z: 0.25 };
+    var ang = 0, angT = -1;
+    function squashAt(t) {
+      // the nearest contact: flattened against the table, or against the bat
+      if (!data) return null;
+      var best = null;
+      for (var i = Math.max(0, evI - 4); i < Math.min(data.ev.length, evI + 4); i++) {
+        var e = data.ev[i], d = Math.abs(t - e.t);
+        if ((e.type === 'bounce' || e.type === 'hit') && d < 0.022 && (!best || d < best.d)) best = { d: d, type: e.type };
+      }
+      if (!best) return null;
+      var q = 1 - best.d / 0.022;
+      return best.type === 'bounce' ? [1 + 0.22 * q, 1 - 0.26 * q] : [1 - 0.24 * q, 1 + 0.2 * q];
+    }
+    function frame(t) {
+      ctx.clearRect(0, 0, L.W, L.H);
+      drawTable();
+      var live = data && t >= 0;
+      var b = live ? data.at(t) : REST;
+      var k = live && keys ? keys : { '1': [ready(1)], '-1': [ready(-1)] };
+      var path = [];
+      if (live) for (var i = 50; i >= 0; i--) { var tt = t - i * 0.01; if (tt > 0) path.push(data.at(tt)); }
+      // the mark turns at the ball's spin, slowed to where the eye can
+      // follow it but always the right way round
+      if (live && angT >= 0) {
+        var rev = (b.w || 0) / (2 * Math.PI * PONG.R);
+        ang += Math.max(-9, Math.min(9, rev * 0.14)) * (t - angT) * 2 * Math.PI;
+      }
+      angT = live ? t : -1;
+      var sq = live ? squashAt(t) : null;
+      // whatever is further back is drawn first
+      if (b.z < 0) { drawShadow(b); drawPath(path); drawBall(b, ang, sq); drawNet(); }
+      else { drawNet(); drawShadow(b); drawPath(path); drawBall(b, ang, sq); }
+      var ta = Math.max(0, t);
+      drawBat(1, batAt(k['1'], ta, 1)); drawBat(-1, batAt(k['-1'], ta, -1));
+    }
+
+    // ---- playing: a clock that only runs while the table is on screen ----
+    function tick(now) {
+      var dt = Math.min(0.05, (now - last) / 1000); last = now;
+      simT += dt * SLOW;
+      // keep a few seconds worked out ahead, and forget what is long past
+      if (data.t < simT + 3) { data.extend(simT + 6); keys = batKeys(data.hits); }
+      data.trim(simT);
+      while (evI < data.ev.length && data.ev[evI].t <= simT) {
+        var e = data.ev[evI++];
+        if (e.type !== 'floor' && typeof SOUND !== 'undefined') SOUND.play('tick');
+      }
+      if (evI > 200) { data.ev.splice(0, evI); evI = 0; }
+      frame(simT);
+      raf = requestAnimationFrame(tick);
+    }
+    function resume() {
+      if (!data || raf || !onScreen || panel.hidden) return;
+      last = performance.now();
+      raf = requestAnimationFrame(tick);
+    }
+    function pause() { cancelAnimationFrame(raf); raf = 0; }
+    var amount = 1;
+    function play(key) {
+      pause();
+      current = key;
+      if (TOPS[key] && TOPS[key] !== YTOP) { YTOP = TOPS[key]; layout(); }
+      data = PONG.rally(key, amount);
+      keys = batKeys(data.hits);
+      simT = 0; evI = 0;
+      resume();
+    }
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(es) {
+        onScreen = es[0].isIntersecting;
+        panel.classList.toggle('is-in-view', onScreen && !panel.hidden);
+        if (onScreen) resume(); else pause();
+      }, { root: root, threshold: 0 }).observe(cv);
+    }
+
+    function open() {
+      panel.hidden = false;
+      expanded(true);
+      layout(); frame(-1);
+      var go = function() {
+        panel.style.height = 'auto';
+        if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
+        if (root) {
+          // the table and its choices, together, in the middle of the screen
+          var court = panel.querySelector('.hp-pong__court'), picks = panel.querySelector('.hp-pong__spins');
+          var gTop = court.getBoundingClientRect().top, gBot = picks.getBoundingClientRect().bottom;
+          var y = root.scrollTop + gTop - root.getBoundingClientRect().top + (gBot - gTop) / 2 - root.clientHeight / 2;
+          freeHero();
+          root.scrollTo({ top: y, behavior: REDUCED ? 'auto' : 'smooth' });
+        }
+        if (!REDUCED) play(current);
+      };
+      if (HAS_GSAP && !REDUCED) {
+        gsap.fromTo(panel, { height: 0 }, { height: 'auto', duration: 0.7, ease: 'power3.inOut', onComplete: go });
+        gsap.fromTo(panel.querySelector('.hp-pong__in'), { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, delay: 0.15, ease: 'power3.out', clearProps: 'transform' });
+      } else go();
+    }
+    function close() {
+      pause(); data = null;
+      expanded(false);
+      panel.classList.remove('is-in-view');
+      var done = function() { panel.hidden = true; if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh(); };
+      if (HAS_GSAP && !REDUCED) gsap.to(panel, { height: 0, duration: 0.5, ease: 'power3.inOut', onComplete: done });
+      else { panel.style.height = '0px'; done(); }
+      trigger.focus({ preventScroll: true });
+    }
+    Array.prototype.forEach.call(openers, function(o) {
+      o.addEventListener('click', function() {
+        if (o.getAttribute('aria-expanded') === 'true') close(); else open();
+      });
+    });
+    panel.querySelector('.hp-pong__close').addEventListener('click', close);
+    Array.prototype.forEach.call(spins, function(btn) {
+      btn.addEventListener('click', function() {
+        Array.prototype.forEach.call(spins, function(o) { o.setAttribute('aria-pressed', String(o === btn)); });
+        var key = btn.getAttribute('data-spin');
+        if (!REDUCED) play(key); else current = key;
+      });
+    });
+    window.addEventListener('resize', function() {
+      if (panel.hidden) return;
+      layout(); if (!data) frame(-1);
+    });
+  }
+
+  // ---------- THE NAV'S KEYS ----------
+  // W for the work, A for about. Ignored while typing anywhere, and with any
+  // modifier held, so the browser's own shortcuts are never taken.
+  function initNavKeys() {
+    var root = document.getElementById('hp-root');
+    var links = document.querySelectorAll('.hp-nav__link[data-key]');
+    if (!root || !links.length) return;
+    function goWork() {
+      // The page's own anchor does the scrolling; it listens for the hash.
+      if (window.location.hash === '#work') window.dispatchEvent(new HashChangeEvent('hashchange'));
+      else window.location.hash = 'work';
+    }
+    function goAbout() {
+      var f = document.getElementById('hp-about') || document.getElementById('hp-footer');
+      if (!f) return;
+      var top = root.scrollTop + f.getBoundingClientRect().top - root.getBoundingClientRect().top;
+      freeHero();
+      root.scrollTo({ top: top, behavior: REDUCED ? 'auto' : 'smooth' });
+    }
+    var go = { w: goWork, a: goAbout };
+    Array.prototype.forEach.call(links, function(l) {
+      l.addEventListener('click', function(e) { e.preventDefault(); go[l.getAttribute('data-key')](); });
+    });
+    window.addEventListener('keydown', function(e) {
+      if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || e.repeat) return;
+      var t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      var k = (e.key || '').toLowerCase();
+      if (!go[k]) return;
+      var link = document.querySelector('.hp-nav__link[data-key="' + k + '"]');
+      if (link) {
+        // The key on the pill presses down, so the shortcut is seen to be the link.
+        link.classList.add('is-pressed');
+        setTimeout(function() { link.classList.remove('is-pressed'); }, 160);
+      }
+      go[k]();
+    });
+  }
+
   function initScrollScenes() {
     if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
       console.warn('GSAP / ScrollTrigger unavailable — scenes static');
@@ -4581,6 +6957,9 @@
 
     var root = document.getElementById('hp-root');
     ScrollTrigger.defaults({ scroller: root });
+
+    initStory(root);
+    initAboutReveal();
 
     // ---------- WORDMARK ----------
     // The section holds itself still: it is 220vh tall with a position:sticky
@@ -4689,7 +7068,7 @@
       return Math.round(root.clientHeight - soundBtn.getBoundingClientRect().top);
     }
 
-    if (soundBtn && buildEl && casesEl) {
+    if (soundBtn && buildEl && casesEl && !soundBtn.closest('.hp-nav')) {
       ScrollTrigger.create({
         trigger: buildEl,
         // On once the stage is properly on screen, after the receded wordmark
@@ -4735,7 +7114,10 @@
     var STEP = 0.05, SHADE = 0.18, SHADE_MAX = 0.6;
 
     var list = casesEl && casesEl.querySelector('.hp-cases__list');
-    if (list && cards.length > 1 && !REDUCED) {
+    var railEl = document.querySelector('.hp-rail');
+    if (railEl && buildEl) initRail(root, buildEl, railEl);
+    // The stacking deck is the fallback for a page without the build.
+    if (list && cards.length > 1 && !REDUCED && !railEl) {
       // One writer per property, for all five cards, driven from one scrub.
       // Each card's position in the pile is worked out every frame from how
       // far each card in front of it has travelled, so there is never a
@@ -4748,11 +7130,13 @@
       // translateZ(0) keeps the layer the stylesheet promised the card. Each
       // value is remembered so a frame that changes nothing writes nothing.
       var was = cards.map(function() { return -1; });
-      function setScale(k, v) {
+      var wasY = cards.map(function() { return 1e9; });
+      function setScale(k, v, y) {
         v = Math.round(v * 10000) / 10000;
-        if (v === was[k]) return;
-        was[k] = v;
-        cards[k].style.transform = 'translateZ(0) scale(' + v + ')';
+        y = Math.round((y || 0) * 10) / 10;
+        if (v === was[k] && y === wasY[k]) return;
+        was[k] = v; wasY[k] = y;
+        cards[k].style.transform = 'translate3d(0,' + y + 'px,0) scale(' + v + ')';
       }
       var setShade = cards.map(function(c) {
         var sh = c.querySelector('.hp-case__shade');
@@ -4763,6 +7147,7 @@
       var geo = { len: 1, vh: 1, y: [], park: [] };
       function measure() {
         var top = layoutTop(list);
+        geo.top = top;
         geo.vh = root.clientHeight;
         geo.len = Math.max(1, list.offsetHeight - geo.vh);
         cards.forEach(function(c, i) {
@@ -4782,12 +7167,15 @@
         if (!deck) return;   // the refresh that fires as the trigger is made
         var s = deck.progress() * geo.len;
         var depth = 0;
+        // The soft landing: each arriving card is drawn where follow() has
+        // eased it to, which trails the page and settles after it.
+        var land = function(k) { return k === 0 || !lag ? 0 : (lag[k] || 0); };
         // From the front of the pile to the back. A card's depth is the sum
         // of how far each card in front of it has come: a cover half-way up
         // the screen has sent it half a step back, and a cover that is
         // parked has sent it a whole one, and the next cover adds to that.
         for (var k = cards.length - 1; k >= 0; k--) {
-          setScale(k, 1 - STEP * depth);
+          setScale(k, 1 - STEP * depth, land(k));
           if (setShade[k]) setShade[k](Math.min(SHADE_MAX, SHADE * depth));
           if (k > 0) {
             // Card k travels from its top at the bottom of the screen to its
@@ -4819,14 +7207,76 @@
           onRefresh: function() { measure(); paint(); }
         }
       }).to({}, { duration: 1 });
+      // The soft landing. A sticky card stops dead on its parking line at
+      // whatever speed the page was scrolling, which reads as hitting a wall,
+      // and easing over a stretch of scroll does not help a fast flick, which
+      // covers any stretch in a frame or two. So it is eased in time: each
+      // arriving card is drawn chasing where it really is, closing a fixed
+      // share of the gap every frame. It trails a little as it comes up, and
+      // when the line stops it the card keeps gliding the last of the way and
+      // settles, however hard the page was thrown. Measured where the card is
+      // drawn, less what is already applied, because a stuck card's offsets
+      // report where it is stuck.
+      var lag = cards.map(function() { return 0; });
+      var wasUp = cards.map(function() { return false; });
+      var vis = cards.map(function() { return null; });
+      var TAU = 0.16;
+      function follow(time, deltaMs) {
+        var t = root.scrollTop, top = geo.top;
+        // only near the deck
+        if (t < top - geo.vh || t > top + list.offsetHeight) {
+          if (lag.some(function(v) { return v; })) { lag = lag.map(function() { return 0; }); vis = vis.map(function() { return null; }); paint(); }
+          return;
+        }
+        var a = 1 - Math.exp(-(Math.min(deltaMs, 64) / 1000) / TAU);
+        var rootTop = root.getBoundingClientRect().top, moved = false;
+        for (var k = 1; k < cards.length; k++) {
+          var nat = cards[k].getBoundingClientRect().top - rootTop - lag[k];
+          // a tick as each card lands on the pile, on its way down the page
+          var landed = nat <= (geo.park[k] || 0) + 1;
+          if (landed && wasUp[k] && typeof SOUND !== 'undefined') SOUND.play('tick');
+          wasUp[k] = !landed;
+          if (vis[k] === null) vis[k] = nat;
+          vis[k] += (nat - vis[k]) * a;
+          var off = vis[k] - nat;
+          // never more than a short way behind, and nothing once it is close
+          if (off > 160) { off = 160; vis[k] = nat + off; }
+          if (off < -160) { off = -160; vis[k] = nat + off; }
+          if (Math.abs(off) < 0.25) { off = 0; vis[k] = nat; }
+          if (off !== lag[k]) { lag[k] = off; moved = true; }
+        }
+        // The stage the first card is drawn in is eased the same way, so
+        // when the pile leaves at the end it trails exactly as the cards do
+        // and the stack goes as one block. Only once it is above its line
+        // (leaving, or coming back down to it): on the way in from the hero
+        // it stays exact, because the hero's lines hand over to it there.
+        if (stageEl) {
+          var sNat = stageEl.getBoundingClientRect().top - rootTop - stageLag;
+          if (stageVis === null) stageVis = sNat;
+          stageVis += (sNat - stageVis) * a;
+          var sOff = stageVis - sNat;
+          if (sNat > 0.5) { sOff = 0; stageVis = sNat; }
+          if (sOff > 160) { sOff = 160; stageVis = sNat + sOff; }
+          if (sOff < -160) { sOff = -160; stageVis = sNat + sOff; }
+          if (Math.abs(sOff) < 0.25) { sOff = 0; stageVis = sNat; }
+          if (sOff !== stageLag) {
+            stageLag = sOff;
+            stageEl.style.transform = sOff ? 'translate3d(0,' + sOff.toFixed(1) + 'px,0)' : '';
+          }
+        }
+        if (moved) paint();
+      }
+      var stageEl = list.querySelector('.hp-build'), stageLag = 0, stageVis = null;
+      gsap.ticker.add(follow);
     }
 
     // ---------- FOOTER ----------
     var footer = document.getElementById('hp-footer');
     if (footer) {
       reveal(footer, [
-        { els: footer.querySelectorAll('.hp-eyebrow--rule, .hp-footer__title'), y: 30, stagger: 0.1 },
-        { els: footer.querySelectorAll('.hp-footer__lede, .hp-footer__ctas, .hp-footer__base'), y: 24, stagger: 0.09, at: 0.3 }
+        // the sign-off rises out of its lines, the way her name does
+        { els: footer.querySelectorAll('.hp-footer__in'), y: 120, stagger: 0.1, at: 0.05, duration: 1.3 },
+        { els: footer.querySelectorAll('.hp-footer__col, .hp-footer__base'), y: 24, stagger: 0.09, at: 0.35 }
       ]);
     }
 
@@ -4966,6 +7416,14 @@
       return !build || build.classList.contains('is-developed');
     }
 
+    // Over About, where a click anywhere starts a rally.
+    function overRally() { return false; }
+    function aim(el) {
+      var pill = overRally(el);
+      node.classList.toggle('is-pill', pill);
+      setTarget(overCard(el) || pill ? 1 : minScale);
+    }
+
     function place(clientX, clientY, el) {
       x = clientX;
       y = clientY;
@@ -4974,7 +7432,7 @@
         node.classList.add('is-on');
         document.documentElement.classList.add('hp-cursor-live');
       }
-      setTarget(overCard(el) ? 1 : minScale);
+      aim(el);
       paint();
     }
 
@@ -5005,12 +7463,12 @@
 
     function onScroll() {
       if (!shown || !node) return;
-      setTarget(overCard(document.elementFromPoint(x, y)) ? 1 : minScale);
+      aim(document.elementFromPoint(x, y));
     }
 
     cursorRecheck = function () {
       if (!shown || !node) return;
-      setTarget(overCard(document.elementFromPoint(x, y)) ? 1 : minScale);
+      aim(document.elementFromPoint(x, y));
     };
 
     function mount() {
@@ -5018,7 +7476,8 @@
       node = document.createElement('div');
       node.className = 'hp-cursor';
       node.setAttribute('aria-hidden', 'true');
-      node.innerHTML = '<svg class="hp-cursor__arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="#000" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      node.innerHTML = '<svg class="hp-cursor__arrow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="#000" stroke-width="2.15" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+        '<span class="hp-cursor__pill"><span class="hp-cursor__words">Click to start a rally</span><span class="hp-cursor__ballx"></span></span>';
       arrow = node.firstChild;
       document.body.appendChild(node);
       document.documentElement.classList.add('hp-has-cursor');
@@ -5111,6 +7570,10 @@
       BUILD_ON = decideBuild();
       build();
       revealNav();
+      initNavKeys();
+      initFooter();
+      SOUND.arm();
+      initPong();
       initSoundToggle();
       initNavHide();
       initBackToTop();
