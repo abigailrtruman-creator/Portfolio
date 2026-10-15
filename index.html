@@ -256,6 +256,7 @@
   .hp-nav__brand {
     display: flex;
     align-items: center;
+    color: inherit; text-decoration: none;
     gap: 14px;
     /* Closes the brand group, and sits the same distance from her name as it does
        from `CV`. That distance is not one value: on the name's side it is this
@@ -2307,44 +2308,58 @@
   .hp-pong__close svg { width: 14px; height: 14px; }
   .hp-pong__close:hover { border-color: rgba(252,249,245,0.7); color: #fff; }
   .hp-pong__close:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
-  /* Contained under the table: about the width of its top, centred, the
-     two side by side and each read from its left edge. */
+  /* Under the table, centred: one switch in the nav's glass, a pill that
+     slides to the spin being played, and that spin's line beneath it. */
   .hp-pong__spins {
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(28px, 5vw, 64px);
-    width: min(100%, 660px);
+    display: flex; flex-direction: column; align-items: center;
+    gap: clamp(18px, 2.6vh, 26px);
+    width: min(100%, 560px);
     margin: clamp(44px, 7vh, 80px) auto 0;
+    text-align: center;
   }
+  .hp-pong__toggle {
+    position: relative; display: grid; grid-template-columns: 1fr 1fr;
+    padding: 5px; border-radius: 999px;
+    border: 1px solid rgba(252,249,245,0.16);
+    background: rgba(18,18,22,0.55);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  }
+  .hp-pong__toggle::before {
+    content: ""; position: absolute; top: 5px; bottom: 5px; left: 5px;
+    width: calc(50% - 5px); border-radius: 999px; background: #fff;
+    transition: transform 0.45s cubic-bezier(.2,.8,.2,1);
+  }
+  .hp-pong__toggle:has(.hp-spin--back[aria-pressed="true"])::before { transform: translateX(100%); }
   .hp-spin {
-    display: flex; flex-direction: column; align-items: flex-start; gap: 10px;
-    padding: 0; margin: 0; border: 0; background: none; text-align: left;
-    color: #fff; cursor: pointer;
-    opacity: 0.38;
-    transition: opacity 0.25s ease;
+    position: relative; z-index: 1;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 11px 22px; margin: 0; border: 0; border-radius: 999px; background: none;
+    font: 600 15px/1 var(--ff-display); letter-spacing: -0.01em;
+    color: rgba(255,255,255,0.6); cursor: pointer;
+    transition: color 0.3s ease;
   }
-  .hp-spin:hover { opacity: 0.7; }
-  .hp-spin[aria-pressed="true"] { opacity: 1; }
-  .hp-spin:focus-visible { outline: 2px solid #fff; outline-offset: 6px; border-radius: 6px; }
-  .hp-spin__name {
-    display: inline-flex; align-items: center; gap: 0.4em;
-    font-family: var(--ff-display); font-weight: 600;
-    font-size: clamp(22px, 2.3vw, 34px); letter-spacing: -0.02em; line-height: 1.1;
-  }
-  .hp-spin__note {
-    max-width: 38ch;
-    font-size: clamp(14px, 1.15vw, 17px); line-height: 1.5;
-    color: rgba(255,255,255,0.72);
-  }
+  .hp-spin:hover { color: #fff; }
+  .hp-spin[aria-pressed="true"] { color: #0a0a0c; }
+  .hp-spin:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
   /* the ball spins the way the shot does: forward for topspin, back for
      backspin, and only on the one being played */
-  .hp-spin__icon { width: 0.95em; height: 0.95em; flex: none; }
+  .hp-spin__icon { width: 16px; height: 16px; flex: none; }
   .hp-spin--back .hp-spin__icon { transform: scaleX(-1); }
   .hp-spin[aria-pressed="true"] .hp-spin__icon path { transform-origin: 12px 12px; animation: hp-spin-turn 1.1s linear infinite; }
   @keyframes hp-spin-turn { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .hp-spin__icon path { animation: none !important; } }
+  .hp-pong__notes { display: grid; }
+  .hp-pong__note {
+    grid-area: 1 / 1; margin: 0; max-width: 46ch; text-wrap: balance;
+    font-size: clamp(14px, 1.1vw, 16px); line-height: 1.55;
+    color: rgba(255,255,255,0.62);
+    opacity: 0; transform: translateY(4px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .hp-pong:has(.hp-spin--top[aria-pressed="true"]) .hp-pong__note--top,
+  .hp-pong:has(.hp-spin--back[aria-pressed="true"]) .hp-pong__note--back { opacity: 1; transform: none; }
   @media (max-width: 600px) {
-    .hp-pong__spins { grid-template-columns: minmax(0, 1fr); gap: 18px; }
-    .hp-spin { gap: 6px; }
+    .hp-spin { padding: 10px 16px; font-size: 14px; }
   }
   /* The lede is the only thing between the headline and the buttons, so it
      carries the interval on both sides itself. It used to sit in the left
@@ -3379,8 +3394,8 @@
   // The people the work is made with. Each lands round the word "people".
   var PEOPLE = [
     { name: 'Design peers', c: '#c3aee6' }, { name: 'Research', c: '#9fc7a4' },
-    { name: 'Engineering', c: '#93a5da' }, { name: 'Content', c: '#d99e9e' },
-    { name: 'The business', c: '#d9bb8e' }
+    { name: 'Engineering', c: '#93a5da' }, { name: 'Users', c: '#d99e9e' },
+    { name: 'Decision makers', c: '#d9bb8e' }
   ];
 
   // In the order the cards are in, because that is the order a visitor who
@@ -4431,10 +4446,11 @@
   function build() {
     var navHtml = '' +
       '<nav class="hp-nav" aria-label="Primary">' +
-        '<div class="hp-nav__brand">' +
-          '<img class="hp-nav__avatar" src="' + AVATAR + '" alt="Abbie Truman" loading="eager">' +
+        // Her name goes home: the top of this page, from anywhere on it.
+        '<a class="hp-nav__brand" href="/" data-home>' +
+          '<img class="hp-nav__avatar" src="' + AVATAR + '" alt="" loading="eager">' +
           '<span class="hp-nav__name">Abbie Truman</span>' +
-        '</div>' +
+        '</a>' +
         // The pages, each with the key that opens it.
         '<div class="hp-nav__links hp-nav__links--pages">' +
           '<a class="hp-nav__link" href="#work" data-key="w" aria-keyshortcuts="W">' +
@@ -4661,17 +4677,26 @@
                 '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>' +
               '</button>' +
             '</div>' +
-            '<div class="hp-pong__spins" role="group" aria-label="Pick a spin">' +
-              PONG_SPINS.map(function(k, i) {
-                return '<button class="hp-spin hp-spin--' + k.id + '" type="button" data-spin="' + k.id + '" aria-pressed="' + (i === 0) + '">' +
-                  '<span class="hp-spin__name">' + '<svg class="hp-spin__icon" viewBox="0 0 24 24" aria-hidden="true">' +
-                      '<circle cx="12" cy="12" r="5.5" fill="#fdf2ec"/>' +
-                      '<path d="M12 3a9 9 0 0 1 9 9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>' +
-                      '<path d="M18.6 10.4 21 12.2l2-2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>' +
-                    '</svg>' + k.name + '</span>' +
-                  '<span class="hp-spin__note">' + k.note + '</span>' +
-                '</button>';
-              }).join('') +
+            // One switch, in the nav's glass, and under it the line for the
+            // spin being played. Both lines share one place, so the switch
+            // never moves when the other is picked.
+            '<div class="hp-pong__spins">' +
+              '<div class="hp-pong__toggle" role="group" aria-label="Pick a spin">' +
+                PONG_SPINS.map(function(k, i) {
+                  return '<button class="hp-spin hp-spin--' + k.id + '" type="button" data-spin="' + k.id + '" aria-pressed="' + (i === 0) + '">' +
+                    '<svg class="hp-spin__icon" viewBox="0 0 24 24" aria-hidden="true">' +
+                      '<circle cx="12" cy="12" r="5.5" fill="currentColor"/>' +
+                      '<path d="M12 3a9 9 0 0 1 9 9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+                      '<path d="M18.6 10.4 21 12.2l2-2.6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
+                    '</svg>' + k.name +
+                  '</button>';
+                }).join('') +
+              '</div>' +
+              '<div class="hp-pong__notes" aria-live="polite">' +
+                PONG_SPINS.map(function(k) {
+                  return '<p class="hp-pong__note hp-pong__note--' + k.id + '">' + k.note + '</p>';
+                }).join('') +
+              '</div>' +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -4835,6 +4860,16 @@
     var root = document.getElementById('hp-root');
     if (!btn || !root) return;
     btn.addEventListener('click', function() {
+      freeHero();
+      root.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
+    });
+    // The name in the nav does the same, and drops any #work or #about so a
+    // reload starts at the top too.
+    var home = document.querySelector('[data-home]');
+    if (home) home.addEventListener('click', function(e) {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
       freeHero();
       root.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
     });
@@ -6233,6 +6268,8 @@
       Array.prototype.forEach.call(big.querySelectorAll('.lt-nw'), function(w) {
         o.fillText(w.textContent, w.offsetLeft, w.offsetTop + baselineIn(w.offsetHeight, fs));
       });
+      // a page laid out at no width (a hidden tab) has nothing to sample yet
+      if (!off.width || !off.height) return;
       nm.img = o.getImageData(0, 0, off.width, off.height);
       nm.data = { d: nm.img.data, w: off.width };
       npx.width = off.width; npx.height = off.height;
@@ -6290,23 +6327,38 @@
 
     // ---- the scroll ----
     function buildScroll() {
-      tl = gsap.timeline({
-        defaults: { ease: 'none' },
-        scrollTrigger: {
+      // The timeline is driven by hand rather than scrubbed (see the speed
+      // limit below), so the trigger only measures the scroll and snaps it.
+      var BEATS = [0, 2.35, 3.95, 4.95, 5.85, 7.2, 8.35, 9.95, LT_END], snapping = false;
+      tl = gsap.timeline({ defaults: { ease: 'none' }, paused: true, onUpdate: render });
+      var st = ScrollTrigger.create({
           trigger: sec, start: 'top top', end: 'bottom bottom',
-          scrub: 0.8, invalidateOnRefresh: true,
+          // what invalidateOnRefresh did for a scrubbed timeline: values that
+          // depend on the window's width are worked out again
+          onRefresh: function() { var t = tl.time(); tl.invalidate(); tl.time(t); },
           // Stopped between two beats, the page eases on to the end of the
           // one it was in, in the direction it was going, so no beat is left
           // half played. These are the moments each beat has finished.
+          // "The direction it was going" is the drawing's, not the scroll's:
+          // the pace limit below pulls the scroll back while the drawing
+          // catches up, and read as a scroll that would snap a beat backwards.
           snap: {
-            snapTo: [0, 2.35, 3.95, 4.95, 5.85, 7.2, 8.35, 9.95, LT_END].map(function(t) { return t / LT_END; }),
-            directional: true,
+            snapTo: function(v) {
+              var at = v * LT_END, head = tl.time();
+              var dir = Math.abs(at - head) > 0.02 ? (at > head ? 1 : -1) : (st.direction || 1);
+              var pick = dir > 0 ? LT_END : 0;
+              BEATS.forEach(function(b) {
+                if (dir > 0 ? (b >= at - 0.001 && b < pick) : (b <= at + 0.001 && b > pick)) pick = b;
+              });
+              return pick / LT_END;
+            },
             delay: 0.12,
             duration: { min: 0.35, max: 1.1 },
-            ease: 'power2.inOut'
+            ease: 'power2.inOut',
+            onStart: function() { snapping = true; },
+            onInterrupt: function() { snapping = false; },
+            onComplete: function() { snapping = false; }
           }
-        },
-        onUpdate: render
       });
       function light(b, at) {
         tl.to(sec.querySelectorAll('.lt-w[data-b="' + b + '"]'), { color: '#fff', duration: 0.25, stagger: 0.03 }, at);
@@ -6389,10 +6441,38 @@
       // story the page may run only a beat or so ahead of what is drawn, and
       // is held there while the drawing catches up, at the scrub's pace. Not
       // for the page's own jumps, which are let through.
+      // The drawing follows the scroll with the same easing a 0.8s scrub had,
+      // but under a speed limit, so a hard flick still plays each beat at a
+      // watchable pace. The two drawn beats get the lowest limits: the zoom
+      // out to the bigger picture (about 0.75s out and 0.7s back in) and the
+      // pencil outline (about 0.85s to draw; its fill follows at the usual pace), however fast the
+      // wheel went. The page's own jumps (freeHero) are let through.
+      var chasing = false;
+      function rate(t) {
+        if (t > 2.5 && t < 4.1) return 0.75;
+        if (t >= 4.15 && t < 4.75) return 0.65;
+        return 2.2;
+      }
+      gsap.ticker.add(function(time, dtMs) {
+        var target = st.progress * LT_END, t = tl.time(), d = target - t;
+        if (Math.abs(d) < 0.0005) { if (d) tl.time(target); return; }
+        var dt = Math.min(dtMs, 100) / 1000;
+        var step = d * (1 - Math.exp(-dt / 0.27));
+        // a jump stays unlimited until the drawing has caught up with it,
+        // however long the trip, so the top of the page is never left rewinding
+        if (performance.now() < HERO_FREE_UNTIL) chasing = true;
+        else if (Math.abs(d) < 0.02) chasing = false;
+        if (!chasing) {
+          var cap = rate(t) * dt;
+          step = Math.max(-cap, Math.min(cap, step));
+        }
+        tl.time(t + step);
+      });
+
       var LEAD = 1.4;
       gsap.ticker.add(function() {
-        var st = tl.scrollTrigger;
-        if (!st || !st.isActive || performance.now() < HERO_FREE_UNTIL) return;
+        // a snap carries the page at most one beat on; it is let land
+        if (!st.isActive || snapping || chasing || performance.now() < HERO_FREE_UNTIL) return;
         var span = st.end - st.start;
         var ahead = st.progress * LT_END - tl.time();
         if (ahead > LEAD) root.scrollTop = st.start + ((tl.time() + LEAD) / LT_END) * span;
