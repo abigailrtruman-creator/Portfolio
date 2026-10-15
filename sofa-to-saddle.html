@@ -2839,6 +2839,13 @@
     .hp-footer__links { grid-template-columns: minmax(0, 1fr); }
     .hp-footer .hp-footer__title { font-size: clamp(44px, 14vw, 80px); }
   }
+
+  /* the build's guides round the hero picture: drawn in, and they stay */
+  .cs-ed-guides { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+  .cs-ed-guides line { stroke: rgba(255,255,255,0.32); stroke-width: 1; }
+  /* more room between the copy and the picture, so the guides that run past
+     its corners have space to breathe */
+  .cs-hero .cs-figure { margin-top: clamp(104px, 13vh, 168px); }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -4663,6 +4670,37 @@
       if (window.__lenis && !reduced) window.__lenis.scrollTo(0);
       else window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
     });
+  })();
+</script>
+<script>
+  // The hero picture framed by the build's guides: drawn in, then left there.
+  (function() {
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // guides round the hero picture
+    var fig = document.querySelector('.cs-hero .cs-figure');
+    var img = fig && fig.querySelector('.cs-hero__video, img');
+    if (img) {
+      if (getComputedStyle(fig).position === 'static') fig.style.position = 'relative';
+      var NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+      svg.setAttribute('class', 'cs-ed-guides');
+      fig.appendChild(svg);
+      var draw = function() {
+        var fr = fig.getBoundingClientRect(), ir = img.getBoundingClientRect();
+        var l = ir.left - fr.left, t = ir.top - fr.top, w = ir.width, h = ir.height, X = 48;
+        svg.innerHTML = '';
+        [[l - X, t, l + w + X, t], [l - X, t + h, l + w + X, t + h], [l, t - X, l, t + h + X], [l + w, t - X, l + w, t + h + X]].forEach(function(c, i) {
+          var ln = document.createElementNS(NS, 'line');
+          ln.setAttribute('x1', c[0]); ln.setAttribute('y1', c[1]); ln.setAttribute('x2', c[2]); ln.setAttribute('y2', c[3]);
+          var len = Math.hypot(c[2] - c[0], c[3] - c[1]);
+          ln.style.strokeDasharray = len; ln.style.strokeDashoffset = len;
+          svg.appendChild(ln);
+          if (still) ln.style.strokeDashoffset = 0;
+          else ln.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 900, delay: 250 + i * 120, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+        });
+      };
+      if (img.tagName !== 'IMG' || img.complete) draw(); else img.addEventListener('load', draw, { once: true });
+      var rt; window.addEventListener('resize', function() { clearTimeout(rt); rt = setTimeout(function() { still = true; draw(); }, 150); });
+    }
   })();
 </script>
 </body>

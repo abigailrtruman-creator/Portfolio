@@ -2887,6 +2887,9 @@
   /* the build's guides round the hero picture: drawn in, and they stay */
   .cs-ed-guides { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
   .cs-ed-guides line { stroke: rgba(255,255,255,0.32); stroke-width: 1; }
+  /* more room between the copy and the picture, so the guides that run past
+     its corners have space to breathe */
+  .cs-hero .cs-figure { margin-top: clamp(104px, 13vh, 168px); }
 
 </style>
 
@@ -4534,7 +4537,7 @@
     var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // guides round the hero picture
     var fig = document.querySelector('.cs-hero .cs-figure');
-    var img = fig && fig.querySelector('img');
+    var img = fig && fig.querySelector('.cs-hero__video, img');
     if (img) {
       if (getComputedStyle(fig).position === 'static') fig.style.position = 'relative';
       var NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
@@ -4554,7 +4557,7 @@
           else ln.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 900, delay: 250 + i * 120, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
         });
       };
-      if (img.complete) draw(); else img.addEventListener('load', draw, { once: true });
+      if (img.tagName !== 'IMG' || img.complete) draw(); else img.addEventListener('load', draw, { once: true });
       var rt; window.addEventListener('resize', function() { clearTimeout(rt); rt = setTimeout(function() { still = true; draw(); }, 150); });
     }
   })();
