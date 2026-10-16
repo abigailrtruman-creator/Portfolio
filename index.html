@@ -6340,8 +6340,18 @@
       var st = ScrollTrigger.create({
           trigger: sec, start: 'top top', end: 'bottom bottom',
           // what invalidateOnRefresh did for a scrubbed timeline: values that
-          // depend on the window's width are worked out again
-          onRefresh: function() { var t = tl.time(); tl.invalidate(); tl.time(t); },
+          // depend on the window's width are worked out again. Rewound first,
+          // as ScrollTrigger does, so every tween re-reads its start from the
+          // hero's opening state; re-reading from wherever the page happened
+          // to be (the table, say) took the finished hero as the start, and
+          // scrolling back up then had nothing to bring back.
+          onRefresh: function() {
+            var t = tl.time();
+            tl.time(0, true);
+            tl.invalidate();
+            tl.time(t, true);
+            render();
+          },
           // Stopped between two beats, the page eases on to the end of the
           // one it was in, in the direction it was going, so no beat is left
           // half played. These are the moments each beat has finished.
