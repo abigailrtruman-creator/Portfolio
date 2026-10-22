@@ -1933,10 +1933,15 @@
     .st-band > div + div { border-left: 0; border-top: 1px solid var(--st-line); }
   }
   @media (prefers-reduced-motion: reduce) { .st-band::before { transition: none; transform: none !important; } }
-  /* the hero's guides carry on down the page and become the numbers' lines,
-     so it reads as one drawing rather than lines everywhere */
-  .st-morph .st-glance .st-band::before { opacity: 0; }
+  /* as you scroll, the hero's guides fade away and the numbers' lines grow in
+     their own place: the rule across from the left, then the dividers down */
+  .st-morph .st-glance .st-band::before { transition: none; transform: scaleX(var(--st-rule, 0)); }
+  .st-morph .st-glance .st-band > div { position: relative; }
   .st-morph .st-glance .st-band > div + div { border-left-color: transparent; }
+  .st-morph .st-glance .st-band > div + div::before {
+    content: ""; position: absolute; left: -1px; top: 0; bottom: 0; width: 1px;
+    background: var(--st-line); transform-origin: top; transform: scaleY(var(--st-div, 0));
+  }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -3299,34 +3304,31 @@
   })();
 </script>
 <script>
-  // As you scroll, the frame round the hero picture softens into the
-  // numbers' lines in one continuous movement: the top and bottom guides flow
-  // together into the band's top rule, and the side guides drift into place as
-  // its dividers. A spring carries the progress, so the lines follow the
-  // scroll with a little weight rather than being locked to it. On a phone,
-  // where the numbers stack, the band keeps its own lines.
+  // As you scroll past the hero, its guides fade away, and the numbers'
+  // lines grow in where they belong: the rule draws across from the left, then
+  // the dividers draw down. A spring carries the progress, so it moves with
+  // the scroll but settles softly. On a phone, where the numbers stack, the
+  // band simply draws in on its own.
   (function() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var fig = document.querySelector('.cs-hero .cs-figure');
     var band = document.querySelector('.st-glance .st-band');
     if (!fig || !band) return;
     var root = document.documentElement, on = false, raf = 0, last = 0;
-    var pos = -1, vel = 0, K = 70, C = 2 * Math.sqrt(70);
-    // each guide sets off a touch after the one before, so they move as a group, not a block
-    var LAG = [0.14, 0, 0.07, 0.07];
-    function lerp(a, b, k) { return a + (b - a) * k; }
-    function ease(k) { k = Math.min(1, Math.max(0, k)); return 0.5 - 0.5 * Math.cos(Math.PI * k); }
-    function base(ln) {
-      if (!ln.dataset.b) ln.dataset.b = ['x1', 'y1', 'x2', 'y2'].map(function(a) { return ln.getAttribute(a); }).join(',');
-      return ln.dataset.b.split(',').map(Number);
+    var pos = -1, vel = 0, K = 60, C = 2 * Math.sqrt(60);
+    function seg(p, a, b) { return Math.min(1, Math.max(0, (p - a) / (b - a))); }
+    function ease(k) { return 0.5 - 0.5 * Math.cos(Math.PI * k); }
+    function off() {
+      root.classList.remove('st-morph'); on = false; pos = -1;
+      var svg = fig.querySelector('.cs-ed-guides'); if (svg) svg.style.opacity = '';
     }
     function frame(now) {
       raf = 0;
-      var lines = fig.querySelectorAll('.cs-ed-guides line');
+      var svg = fig.querySelector('.cs-ed-guides');
       var cells = band.children;
       var row = cells.length > 1 && Math.abs(cells[0].getBoundingClientRect().top - cells[1].getBoundingClientRect().top) < 2;
-      if (lines.length !== 4 || !row) { if (on) { root.classList.remove('st-morph'); on = false; } pos = -1; return; }
-      var fr = fig.getBoundingClientRect(), br = band.getBoundingClientRect(), vh = window.innerHeight;
+      if (!svg || !row) { if (on) off(); return; }
+      var br = band.getBoundingClientRect(), vh = window.innerHeight;
       // 0 while the band is below the fold, 1 once its top reaches 40% of the screen
       var target = Math.min(1, Math.max(0, (vh - br.top) / (vh * 0.6)));
       var dt = Math.min(0.05, ((now - (last || now)) / 1000) || 0.016); last = now;
@@ -3335,22 +3337,9 @@
       var settled = Math.abs(target - pos) < 0.0005 && Math.abs(vel) < 0.001;
       if (settled) { pos = target; vel = 0; }
       if (!on) { root.classList.add('st-morph'); on = true; }
-      var bl = br.left - fr.left, bt = br.top - fr.top, br_ = bl + br.width, bb = bt + br.height;
-      var divs = [];
-      for (var i = 1; i < cells.length; i++) divs.push(cells[i].getBoundingClientRect().left - fr.left);
-      // where each guide comes to rest: top and bottom both become the rule
-      var to = [[bl, bt, br_, bt], [bl, bt, br_, bt]];
-      to[2] = divs[0] != null ? [divs[0], bt, divs[0], bb] : [br_, bt, br_, bt];
-      to[3] = divs[1] != null ? [divs[1], bt, divs[1], bb] : [br_, bt, br_, bt];
-      [].forEach.call(lines, function(ln, i) {
-        var b = base(ln), t = to[i], k = ease((pos - LAG[i]) / (1 - 0.14));
-        if (pos > 0) ln.style.strokeDasharray = 'none';
-        ln.setAttribute('x1', lerp(b[0], t[0], k)); ln.setAttribute('y1', lerp(b[1], t[1], k));
-        ln.setAttribute('x2', lerp(b[2], t[2], k)); ln.setAttribute('y2', lerp(b[3], t[3], k));
-        // a guide with no divider to become fades as it arrives; the doubled rule hides its twin
-        var fade = (i > 1 && divs[i - 2] == null) || i === 0;
-        ln.style.opacity = fade && k > 0 ? (i === 0 ? (k >= 1 ? 0 : 1) : 1 - k) : '';
-      });
+      svg.style.opacity = 1 - ease(seg(pos, 0, 0.45));
+      band.style.setProperty('--st-rule', ease(seg(pos, 0.35, 0.85)));
+      band.style.setProperty('--st-div', ease(seg(pos, 0.6, 1)));
       if (!settled) raf = requestAnimationFrame(frame);
     }
     function ask() { if (!raf) raf = requestAnimationFrame(frame); }
