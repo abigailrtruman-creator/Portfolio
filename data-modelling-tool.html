@@ -2998,35 +2998,36 @@
     font-size: clamp(18px, 1.45vw, 22px); line-height: 1.5; letter-spacing: -0.01em;
     color: var(--ink-2); text-wrap: pretty;
   }
-  /* ---------- Impact: four results in the band's language ----------
-     A 2x2 grid under one hairline that draws across, with the same dividers
-     as the numbers at the top of the page. Every result is set at one size,
-     words and figures alike, and a small step number keeps the order: one
-     result led to the next. Scoped under .st so the chapter's paragraph
-     sizes can't shrink it. */
-  .st .st-chain {
-    position: relative; list-style: none; padding: 0;
-    margin: clamp(48px, 7vh, 72px) 0 0;
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0;
-  }
-  .st .st-chain::before {
+  /* ---------- Impact: a results list ----------
+     One row per result: the figure on the left, what it means on the right,
+     a hairline between rows and one that draws across the top. Numbers and
+     words share one size, so the rows read as a set. Scoped under .st so the
+     chapter's paragraph sizes can't shrink it. */
+  .st .st-results { position: relative; list-style: none; padding: 0; margin: clamp(48px, 7vh, 72px) 0 0; }
+  .st .st-results::before {
     content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
     background: var(--st-line); transform-origin: left;
     transition: transform 1.4s cubic-bezier(.65,0,.35,1);
   }
-  .cs-motion .st .st-chain:not(.is-in)::before { transform: scaleX(0); }
-  .st .st-chain li { position: relative; margin: 0; padding: clamp(28px, 4vh, 40px) clamp(20px, 2.6vw, 40px) clamp(32px, 4.4vh, 44px) 0; }
-  .st .st-chain li:nth-child(2n) { padding-left: clamp(20px, 2.6vw, 40px); border-left: 1px solid var(--st-line); }
-  .st .st-chain li:nth-child(n+3) { border-top: 1px solid var(--st-line); }
-  .st .st-chain li::before { content: none; }
-  .st .st-chain .st-chain__k { margin: 0 0 clamp(18px, 2.6vh, 26px); font: 500 12.5px/1 var(--st-mono); letter-spacing: 0.02em; color: var(--ink-3); }
-  .st .st-chain .st-chain__n {
+  .cs-motion .st .st-results:not(.is-in)::before { transform: scaleX(0); }
+  .st .st-results li {
+    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(24px, 3vw, 48px);
+    align-items: start; margin: 0; padding: clamp(28px, 4vh, 40px) 0;
+  }
+  /* the title's cap height meets the figure's, rather than its baseline */
+  .st .st-results li > div { padding-top: clamp(4px, 0.5vw, 8px); }
+  .st .st-results li + li { border-top: 1px solid var(--st-line); }
+  .st .st-results li::before { content: none; }
+  .st .st-results .st-results__n {
     margin: 0; font-family: var(--ff-display); font-weight: 600;
-    font-size: clamp(40px, 4.2vw, 60px); line-height: 0.95; letter-spacing: -0.05em;
+    font-size: clamp(44px, 4.6vw, 68px); line-height: 0.95; letter-spacing: -0.05em;
     color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums;
   }
-  .st .st-chain .st-chain__t { margin: 14px 0 0; font-family: var(--ff-display); font-weight: 600; font-size: 17px; line-height: 1.3; letter-spacing: -0.01em; color: var(--ink); }
-  .st .st-chain .st-chain__d { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); max-width: 24em; }
+  .st .st-results .st-results__t { margin: 0; font-family: var(--ff-display); font-weight: 600; font-size: clamp(17px, 1.3vw, 19px); line-height: 1.3; letter-spacing: -0.01em; color: var(--ink); }
+  .st .st-results .st-results__d { margin: 6px 0 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2); max-width: 30em; }
+  @media (max-width: 600px) {
+    .st .st-results li { grid-template-columns: minmax(0, 1fr); row-gap: 14px; }
+  }
   @media (max-width: 900px) {
     .st-people__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .st-people__grid > div:nth-child(n) { padding-left: 0; border-left: 0; }
@@ -3035,9 +3036,6 @@
   @media (max-width: 600px) {
     .st-people__grid { grid-template-columns: minmax(0, 1fr); }
     .st-people__grid > div:nth-child(n) { padding-left: 0; border-left: 0; }
-    .st .st-chain { grid-template-columns: minmax(0, 1fr); }
-    .st .st-chain li, .st .st-chain li:nth-child(2n) { padding: 26px 0 30px; border-left: 0; }
-    .st .st-chain li + li { border-top: 1px solid var(--st-line); }
   }
 
   /* ---------- Across the platform: the rest of the work, at one scale ---------- */
@@ -3571,12 +3569,11 @@
       <section class="cs-chapter">
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The impact.</h2>
-          <p>Together with the other features I designed, the DimMetric Editor made the platform one that Partners chose to champion, for their practitioners and their clients. One result led to the next:</p>
-          <ol class="st-chain" data-reveal>
-            <li><p class="st-chain__k">01</p><p class="st-chain__n" data-count>+24%</p><p class="st-chain__t">deployment rate</p><p class="st-chain__d">With a notable reduction in projects being abandoned.</p></li>
-            <li><p class="st-chain__k">02</p><p class="st-chain__n" data-count>4</p><p class="st-chain__t">new territories onboarded</p><p class="st-chain__d">And engagement up among existing users.</p></li>
-            <li><p class="st-chain__k">03</p><p class="st-chain__n">Partners</p><p class="st-chain__t">championed it</p><p class="st-chain__d">They agreed to promote it within their teams.</p></li>
-            <li><p class="st-chain__k">04</p><p class="st-chain__n">Extended</p><p class="st-chain__t">with further global investment</p><p class="st-chain__d">Because of its success and usage, at the end of our contracted phase.</p></li>
+          <p>The DimMetric Editor launched alongside the other features I designed. Together, they changed how much the platform was used, how far it reached, and how the business backed it.</p>
+          <ol class="st-results" data-reveal>
+            <li><p class="st-results__n" data-count>+24%</p><div><p class="st-results__t">Deployment rate</p><p class="st-results__d">With a notable reduction in projects being abandoned.</p></div></li>
+            <li><p class="st-results__n" data-count>4</p><div><p class="st-results__t">New territories onboarded</p><p class="st-results__d">And engagement up among existing users.</p></div></li>
+            <li><p class="st-results__n">Extended</p><div><p class="st-results__t">Championed by Partners, with further global investment</p><p class="st-results__d">Partners agreed to promote it within their teams, and because of its success and usage, the work was extended at the end of our contracted phase.</p></div></li>
           </ol>
         </div>
       </section>
