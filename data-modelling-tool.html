@@ -3071,7 +3071,7 @@
   .st-tour__tab {
     display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 8px; align-items: baseline; width: 100%;
     padding: 10px 0; border: 0; border-bottom: 1px solid rgba(255,255,255,0.08); background: none;
-    font: 500 14px/1.35 var(--ff-body, inherit); text-align: left; color: var(--ink-3); cursor: pointer;
+    font: 500 14px/1.35 var(--ff-body, inherit); white-space: nowrap; text-align: left; color: var(--ink-3); cursor: pointer;
     transition: color 0.2s;
   }
   .st-tour__tab span { display: none; }
@@ -3084,7 +3084,10 @@
   .st .st-gallery__item img, .st .st-gallery__item .cs-figure__open { max-width: none; width: 100%; }
   .st .st-gallery__item img { border-radius: 0; height: auto; -webkit-user-drag: none; }
   .st .st-tour__stage .st-gallery__item figcaption { display: none; }
-  .st-tour__foot { grid-column: 2; display: flex; align-items: flex-start; gap: 24px; margin-top: 18px; }
+  /* the caption and controls sit above the screen, so they stay put while the view resizes */
+  .st-tour__list { grid-row: 1 / span 2; }
+  .st-tour__foot { grid-column: 2; grid-row: 1; display: flex; align-items: flex-start; gap: 24px; margin-bottom: 18px; }
+  .st-tour__stage { grid-column: 2; grid-row: 2; }
   .st-tour__cap { flex: 1; margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); min-height: 3em; }
   .st-tour__cap strong { color: var(--ink); font-weight: 600; }
   .st-tour__nav { display: flex; align-items: center; gap: 10px; flex: none; }
@@ -3102,7 +3105,9 @@
     .st-tour__list::-webkit-scrollbar { display: none; }
     .st-tour__tab { display: block; width: auto; white-space: nowrap; padding: 9px 14px; border: 1px solid rgba(255,255,255,0.14); border-radius: 999px; font-size: 14px; }
     .st-tour__tab[aria-selected="true"] { border-color: #f08a24; }
-    .st-tour__foot { grid-column: 1; flex-direction: column; gap: 14px; }
+    .st-tour__list { grid-row: auto; }
+    .st-tour__foot { grid-column: 1; grid-row: auto; align-items: flex-start; gap: 14px; }
+    .st-tour__stage { grid-column: 1; grid-row: auto; }
   }
   @media (max-width: 700px) {
     .st-band { grid-template-columns: minmax(0, 1fr); }
@@ -3467,7 +3472,7 @@
       <h2 class="st-gallery__title" id="gallery-h" data-reveal>The DimMetric Editor was one part of the platform I designed. Here&rsquo;s more of it.</h2>
     </div>
     <div class="st-gallery__grid" role="region" aria-label="More of the platform">
-      <figure class="cs-figure st-gallery__item">
+      <figure class="cs-figure st-gallery__item" data-name="Project overview">
         <img src="/assets/dmt-gal-project-overview-1080.0d2860d3.webp"
              srcset="/assets/dmt-gal-project-overview-720.0d2860d3.webp 720w, /assets/dmt-gal-project-overview-1080.0d2860d3.webp 1080w, /assets/dmt-gal-project-overview-1440.0d2860d3.webp 1440w"
              sizes="(min-width: 1100px) 720px, (min-width: 761px) 66vw, 92vw"
@@ -3476,7 +3481,7 @@
              loading="lazy" decoding="async">
         <figcaption><span class="cs-figure__text"><strong>Project overview.</strong> Progress through each stage, the team, and the latest jobs and activity.</span></figcaption>
       </figure>
-      <figure class="cs-figure st-gallery__item">
+      <figure class="cs-figure st-gallery__item" data-name="Flat files">
         <img src="/assets/dmt-gal-flat-files-1080.d37e3728.webp"
              srcset="/assets/dmt-gal-flat-files-720.d37e3728.webp 720w, /assets/dmt-gal-flat-files-1080.d37e3728.webp 1080w, /assets/dmt-gal-flat-files-1440.d37e3728.webp 1440w"
              sizes="(min-width: 1100px) 720px, (min-width: 761px) 66vw, 92vw"
@@ -3485,7 +3490,7 @@
              loading="lazy" decoding="async">
         <figcaption><span class="cs-figure__text"><strong>Flat files.</strong> Grouped by source of data, with upload status and actions by permission.</span></figcaption>
       </figure>
-      <figure class="cs-figure st-gallery__item">
+      <figure class="cs-figure st-gallery__item" data-name="Mapping files">
         <img src="/assets/dmt-gal-mapping-files-1080.383a073f.webp"
              srcset="/assets/dmt-gal-mapping-files-720.383a073f.webp 720w, /assets/dmt-gal-mapping-files-1080.383a073f.webp 1080w, /assets/dmt-gal-mapping-files-1440.383a073f.webp 1440w"
              sizes="(min-width: 1100px) 720px, (min-width: 761px) 66vw, 92vw"
@@ -3494,7 +3499,7 @@
              loading="lazy" decoding="async">
         <figcaption><span class="cs-figure__text"><strong>Mapping files.</strong> Upload, version history, locking and replacement.</span></figcaption>
       </figure>
-      <figure class="cs-figure st-gallery__item">
+      <figure class="cs-figure st-gallery__item" data-name="File errors">
         <img src="/assets/dmt-gal-file-errors-1080.c9b19cd3.webp"
              srcset="/assets/dmt-gal-file-errors-720.c9b19cd3.webp 720w, /assets/dmt-gal-file-errors-1080.c9b19cd3.webp 1080w, /assets/dmt-gal-file-errors-1440.c9b19cd3.webp 1440w"
              sizes="(min-width: 1100px) 720px, (min-width: 761px) 66vw, 92vw"
@@ -3503,7 +3508,7 @@
              loading="lazy" decoding="async">
         <figcaption><span class="cs-figure__text"><strong>File settings and errors.</strong> Errors and warnings explained where they occur.</span></figcaption>
       </figure>
-      <figure class="cs-figure st-gallery__item">
+      <figure class="cs-figure st-gallery__item" data-name="Diagram view">
         <img src="/assets/dmt-gal-analysis-diagram-1080.b949880a.webp"
              srcset="/assets/dmt-gal-analysis-diagram-720.b949880a.webp 720w, /assets/dmt-gal-analysis-diagram-1080.b949880a.webp 1080w, /assets/dmt-gal-analysis-diagram-1440.b949880a.webp 1440w"
              sizes="(min-width: 1100px) 720px, (min-width: 761px) 66vw, 92vw"
@@ -3512,7 +3517,7 @@
              loading="lazy" decoding="async">
         <figcaption><span class="cs-figure__text"><strong>Analysis, diagram view.</strong> The data model as a diagram, in basic mode.</span></figcaption>
       </figure>
-      <figure class="cs-figure st-gallery__item">
+      <figure class="cs-figure st-gallery__item" data-name="DAX editor">
         <img src="/assets/dmt-gal-analysis-dax-1080.da620deb.webp"
              srcset="/assets/dmt-gal-analysis-dax-720.da620deb.webp 720w, /assets/dmt-gal-analysis-dax-1080.da620deb.webp 1080w, /assets/dmt-gal-analysis-dax-1440.da620deb.webp 1440w"
              sizes="(min-width: 1100px) 720px, (min-width: 761px) 66vw, 92vw"
@@ -3521,7 +3526,7 @@
              loading="lazy" decoding="async">
         <figcaption><span class="cs-figure__text"><strong>Analysis, DAX editor.</strong> Advanced mode, with a calculated column open for editing.</span></figcaption>
       </figure>
-      <figure class="cs-figure st-gallery__item">
+      <figure class="cs-figure st-gallery__item" data-name="Jobs">
         <img src="/assets/dmt-gal-jobs-1080.be7a6e2e.webp"
              srcset="/assets/dmt-gal-jobs-720.be7a6e2e.webp 720w, /assets/dmt-gal-jobs-1080.be7a6e2e.webp 1080w, /assets/dmt-gal-jobs-1440.be7a6e2e.webp 1440w"
              sizes="(min-width: 1100px) 720px, (min-width: 761px) 66vw, 92vw"
@@ -3530,7 +3535,7 @@
              loading="lazy" decoding="async">
         <figcaption><span class="cs-figure__text"><strong>Jobs.</strong> A clearer breakdown of what failed and why.</span></figcaption>
       </figure>
-      <figure class="cs-figure st-gallery__item">
+      <figure class="cs-figure st-gallery__item" data-name="Deploy">
         <img src="/assets/dmt-gal-deploy-1080.1f07a570.webp"
              srcset="/assets/dmt-gal-deploy-720.1f07a570.webp 720w, /assets/dmt-gal-deploy-1080.1f07a570.webp 1080w, /assets/dmt-gal-deploy-1440.1f07a570.webp 1440w"
              sizes="(min-width: 1100px) 720px, (min-width: 761px) 66vw, 92vw"
@@ -3539,7 +3544,7 @@
              loading="lazy" decoding="async">
         <figcaption><span class="cs-figure__text"><strong>Deploy.</strong> Deploying to workspaces, with progress shown as it runs.</span></figcaption>
       </figure>
-      <figure class="cs-figure st-gallery__item">
+      <figure class="cs-figure st-gallery__item" data-name="Data setup">
         <img src="/assets/dmt-gal-data-setup-1080.9e3de372.webp"
              srcset="/assets/dmt-gal-data-setup-720.9e3de372.webp 720w, /assets/dmt-gal-data-setup-1080.9e3de372.webp 1080w, /assets/dmt-gal-data-setup-1440.9e3de372.webp 1440w"
              sizes="(min-width: 1100px) 720px, (min-width: 761px) 66vw, 92vw"
@@ -3548,7 +3553,7 @@
              loading="lazy" decoding="async">
         <figcaption><span class="cs-figure__text"><strong>Data setup.</strong> The financial year, data centre and project duration that shape everything downstream.</span></figcaption>
       </figure>
-      <figure class="cs-figure st-gallery__item">
+      <figure class="cs-figure st-gallery__item" data-name="Team members">
         <img src="/assets/dmt-gal-team-1080.e7d520ce.webp"
              srcset="/assets/dmt-gal-team-720.e7d520ce.webp 720w, /assets/dmt-gal-team-1080.e7d520ce.webp 1080w, /assets/dmt-gal-team-1440.e7d520ce.webp 1440w"
              sizes="(min-width: 1100px) 720px, (min-width: 761px) 66vw, 92vw"
@@ -4880,7 +4885,7 @@
       '<button type="button" class="st-tour__btn" data-step="1" aria-label="Next screen">' + arrow('M9 6l6 6-6 6') + '</button></div>';
     var cap = foot.querySelector('.st-tour__cap'), count = foot.querySelector('.st-tour__count b');
     var tabs = items.map(function(it, i) {
-      var name = (it.querySelector('figcaption strong') || {}).textContent || ('Screen ' + (i + 1));
+      var name = it.getAttribute('data-name') || (it.querySelector('figcaption strong') || {}).textContent || ('Screen ' + (i + 1));
       var li = document.createElement('li'), b = document.createElement('button');
       b.type = 'button'; b.className = 'st-tour__tab'; b.setAttribute('role', 'tab');
       b.innerHTML = '<span>' + pad(i) + '</span>' + name.replace(/\.$/, '');
@@ -4920,7 +4925,7 @@
     grid.innerHTML = '';
     grid.classList.add('st-tour');
     grid.removeAttribute('role');
-    grid.appendChild(list); grid.appendChild(stage); grid.appendChild(foot);
+    grid.appendChild(list); grid.appendChild(foot); grid.appendChild(stage);
     col.appendChild(grid);
     show(0);
   })();
