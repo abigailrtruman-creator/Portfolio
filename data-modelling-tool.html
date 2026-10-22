@@ -2967,7 +2967,8 @@
     font-size: clamp(24px, 2.4vw, 34px); line-height: 1.18; letter-spacing: -0.025em;
     color: var(--ink); text-wrap: balance;
   }
-  .st .cs-trial .cs-pair__k { display: inline-flex; align-items: center; gap: 8px; }
+  /* only the insight's own label takes the orange point; Before and After keep theirs */
+  .st .cs-chapter--turn .cs-trial > .cs-pair__k { display: inline-flex; align-items: center; gap: 8px; }
   .st .cs-chapter--turn .cs-trial > .cs-pair__k::before,
   .st .cs-trial__finding .cs-pair__k::before {
     content: ""; width: 7px; height: 7px; border-radius: 50%; flex: none;
