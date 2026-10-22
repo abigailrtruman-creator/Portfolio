@@ -2998,13 +2998,8 @@
   .fx-prio__key { display: flex; flex-wrap: wrap; gap: 8px 22px; list-style: none; margin: 0; padding: 16px 0 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
   .fx-prio__key li { display: flex; align-items: center; gap: 8px; font: 500 12px/1.3 var(--st-mono); letter-spacing: 0.01em; color: var(--ink-3); }
   /* the three releases side by side, each a short list under its name */
-  /* on wide screens the board takes the column's full width, reaching back
-     over the part number's rail, so each name keeps to one line */
-  @media (min-width: 1000px) {
-    .cs-story .fx-prio { max-width: none; width: calc(100% + 13ch + var(--story-gap)); margin-left: calc(-13ch - var(--story-gap)); }
-  }
   .fx-prio__cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .fx-prio__row { padding: 22px clamp(14px, 2vw, 24px) 6px; }
+  .fx-prio__row { padding: 22px clamp(14px, 2vw, 22px) 6px; }
   .fx-prio__row:first-child { padding-left: 0; }
   .fx-prio__row + .fx-prio__row { border-left: 1px solid rgba(255,255,255,0.08); }
   .fx-prio__k { margin-bottom: 14px; }
@@ -3017,7 +3012,7 @@
   .fx-prio__f--core::before { background: #f4f1ec; }
   .fx-prio__f--dev::before { background: rgba(255,255,255,0.32); }
   .fx-prio__f--ws::before { background: #f08a24; }
-  .cs-story .fx-prio figcaption { margin: 18px 0 0; max-width: none; }
+  .fx-prio figcaption { margin-top: 18px; }
   @media (max-width: 640px) {
     .fx-prio__cols { grid-template-columns: minmax(0, 1fr); }
     .fx-prio__row, .fx-prio__row:first-child { padding: 20px 0 10px; }
@@ -3320,15 +3315,15 @@
               <div class="fx-prio__cols">
               <div class="fx-prio__row">
                 <div class="fx-prio__k"><p class="fx-prio__name">Minimum viable product</p><p class="fx-prio__date">June 2024</p></div>
-                <ul class="fx-prio__fs"><li class="fx-prio__f fx-prio__f--core">API documentation</li><li class="fx-prio__f fx-prio__f--core">Tutorials and use case examples</li><li class="fx-prio__f fx-prio__f--core">Feedback and support channels</li><li class="fx-prio__f fx-prio__f--core">Search</li><li class="fx-prio__f fx-prio__f--core">API explorer</li><li class="fx-prio__f fx-prio__f--core">Onboarding</li><li class="fx-prio__f fx-prio__f--core">Test environments</li><li class="fx-prio__f fx-prio__f--core">Developer registration and profiles</li><li class="fx-prio__f fx-prio__f--core">Terms of service and privacy policy</li><li class="fx-prio__f fx-prio__f--dev">Configuration audit</li><li class="fx-prio__f fx-prio__f--ws">Capturing the need for more help</li><li class="fx-prio__f fx-prio__f--ws">Process models and narratives</li><li class="fx-prio__f fx-prio__f--ws">Product configurator</li></ul>
+                <ul class="fx-prio__fs"><li class="fx-prio__f fx-prio__f--core">API documentation</li><li class="fx-prio__f fx-prio__f--core">Tutorials and use cases</li><li class="fx-prio__f fx-prio__f--core">Feedback and support</li><li class="fx-prio__f fx-prio__f--core">Search</li><li class="fx-prio__f fx-prio__f--core">API explorer</li><li class="fx-prio__f fx-prio__f--core">Onboarding</li><li class="fx-prio__f fx-prio__f--core">Test environments</li><li class="fx-prio__f fx-prio__f--core">Developer registration</li><li class="fx-prio__f fx-prio__f--core">Terms and privacy</li><li class="fx-prio__f fx-prio__f--dev">Configuration audit</li><li class="fx-prio__f fx-prio__f--ws">Asking for more help</li><li class="fx-prio__f fx-prio__f--ws">Process models</li><li class="fx-prio__f fx-prio__f--ws">Product configurator</li></ul>
               </div>
               <div class="fx-prio__row">
                 <div class="fx-prio__k"><p class="fx-prio__name">Next phase</p><p class="fx-prio__date">October 2024</p></div>
-                <ul class="fx-prio__fs"><li class="fx-prio__f fx-prio__f--core">Billing and pricing information</li><li class="fx-prio__f fx-prio__f--core">Integration with the API gateway</li><li class="fx-prio__f fx-prio__f--core">API status and health</li><li class="fx-prio__f fx-prio__f--core">Rate limiting and quotas</li><li class="fx-prio__f fx-prio__f--core">SDKs and code samples</li><li class="fx-prio__f fx-prio__f--core">Community engagement</li><li class="fx-prio__f fx-prio__f--dev">Alerts and notifications</li><li class="fx-prio__f fx-prio__f--ws">Enhanced user testing</li><li class="fx-prio__f fx-prio__f--ws">Gratification</li><li class="fx-prio__f fx-prio__f--ws">Code mapping across suppliers</li></ul>
+                <ul class="fx-prio__fs"><li class="fx-prio__f fx-prio__f--core">Billing and pricing</li><li class="fx-prio__f fx-prio__f--core">API gateway integration</li><li class="fx-prio__f fx-prio__f--core">API status and health</li><li class="fx-prio__f fx-prio__f--core">Rate limiting and quotas</li><li class="fx-prio__f fx-prio__f--core">SDKs and code samples</li><li class="fx-prio__f fx-prio__f--core">Community engagement</li><li class="fx-prio__f fx-prio__f--dev">Alerts and notifications</li><li class="fx-prio__f fx-prio__f--ws">Enhanced user testing</li><li class="fx-prio__f fx-prio__f--ws">Gratification</li><li class="fx-prio__f fx-prio__f--ws">Supplier code mapping</li></ul>
               </div>
               <div class="fx-prio__row">
                 <div class="fx-prio__k"><p class="fx-prio__name">Backlog</p><p class="fx-prio__date">March 2025</p></div>
-                <ul class="fx-prio__fs"><li class="fx-prio__f fx-prio__f--core">Enhanced community engagement</li><li class="fx-prio__f fx-prio__f--core">Event calendar and updates</li><li class="fx-prio__f fx-prio__f--core">API changelog</li><li class="fx-prio__f fx-prio__f--core">API versioning</li><li class="fx-prio__f fx-prio__f--core">API analytics</li><li class="fx-prio__f fx-prio__f--dev">Export service configurator</li><li class="fx-prio__f fx-prio__f--dev">Open API export</li><li class="fx-prio__f fx-prio__f--dev">Localisation</li><li class="fx-prio__f fx-prio__f--ws">Content management</li></ul>
+                <ul class="fx-prio__fs"><li class="fx-prio__f fx-prio__f--core">Enhanced community</li><li class="fx-prio__f fx-prio__f--core">Events and updates</li><li class="fx-prio__f fx-prio__f--core">API changelog</li><li class="fx-prio__f fx-prio__f--core">API versioning</li><li class="fx-prio__f fx-prio__f--core">API analytics</li><li class="fx-prio__f fx-prio__f--dev">Export configurator</li><li class="fx-prio__f fx-prio__f--dev">Open API export</li><li class="fx-prio__f fx-prio__f--dev">Localisation</li><li class="fx-prio__f fx-prio__f--ws">Content management</li></ul>
               </div>
               </div>
             </div>
