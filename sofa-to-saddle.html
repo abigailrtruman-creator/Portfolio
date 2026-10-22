@@ -2846,6 +2846,27 @@
   /* more room between the copy and the picture, so the guides that run past
      its corners have space to breathe */
   .cs-hero .cs-figure { margin-top: clamp(104px, 13vh, 168px); }
+
+  /* ================= NUMBERS BAND (story layer) =================
+     The study's own figures under the hero, under one hairline that draws
+     across, counting up to themselves the first time they are seen. The
+     same piece as on the data modelling study. */
+  .st { --st-line: rgba(255,255,255,0.26); }
+  .st-glance { padding-top: clamp(120px, 16vh, 180px); position: relative; z-index: 1; }
+  .st-band { position: relative; display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); margin: 0; }
+  .st-band > div { padding: clamp(26px, 4vh, 40px) clamp(18px, 2.4vw, 36px); }
+  .st-band > div:first-child { padding-left: 0; }
+  .st-band > div + div { border-left: 1px solid var(--st-line); }
+  .st-band dt { font-family: var(--ff-display); font-weight: 600; font-size: clamp(44px, 5vw, 76px); line-height: 0.95; letter-spacing: -0.05em; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .st-band dd { margin: 12px 0 0; font-size: 15.5px; line-height: 1.45; color: var(--ink-2); max-width: 22em; }
+  .st-band::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--st-line); transform-origin: left; pointer-events: none; transition: transform 1.2s cubic-bezier(.65,0,.35,1); }
+  .cs-motion .st-band:not(.is-in)::before { transform: scaleX(0); }
+  @media (max-width: 700px) {
+    .st-band { grid-template-columns: minmax(0, 1fr); }
+    .st-band > div { padding-left: 0; padding-right: 0; }
+    .st-band > div + div { border-left: 0; border-top: 1px solid var(--st-line); }
+  }
+  @media (prefers-reduced-motion: reduce) { .st-band::before { transition: none; transform: none !important; } }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -2915,7 +2936,7 @@
 
 <main id="cs-main">
 
-<article>
+<article class="st">
 
   <div class="cs-glow" aria-hidden="true"></div>
 
@@ -2958,6 +2979,16 @@
       </figure>
     </div>
   </header>
+
+  <section class="st-glance cs-wrap" aria-label="At a glance">
+    <div class="cs-col">
+      <dl class="st-band" data-reveal>
+        <div><dt data-count>12</dt><dd>weeks to build and launch, a fraction of the usual time</dd></div>
+        <div><dt data-count>3,000</dt><dd>riders signed up on day one</dd></div>
+        <div><dt data-count>~20</dt><dd>senior stakeholders aligned in one workshop</dd></div>
+      </dl>
+    </div>
+  </section>
 
   <section class="cs-overview cs-wrap" aria-label="Overview">
     <div class="cs-col">
@@ -4701,6 +4732,41 @@
       if (img.tagName !== 'IMG' || img.complete) draw(); else img.addEventListener('load', draw, { once: true });
       var rt; window.addEventListener('resize', function() { clearTimeout(rt); rt = setTimeout(function() { still = true; draw(); }, 150); });
     }
+  })();
+</script>
+<script>
+  // Story layer: numbers count up to themselves the first time they are
+  // seen. The text in the page is the final figure, so without script, or
+  // with reduced motion, it simply reads as written.
+  (function() {
+    var els = document.querySelectorAll('[data-count]');
+    if (!els.length || !('IntersectionObserver' in window)) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    function parse(t) {
+      var m = t.match(/^(\D*?)([\d,]+(?:\.\d+)?)(.*)$/);
+      return m ? { pre: m[1], n: parseFloat(m[2].replace(/,/g, '')), dp: (m[2].split('.')[1] || '').length, comma: m[2].indexOf(',') > -1, post: m[3] } : null;
+    }
+    function run(el) {
+      var p = parse(el.textContent.trim());
+      if (!p) return;
+      var start = performance.now(), dur = 1500;
+      (function step(now) {
+        var k = Math.min(1, (now - start) / dur);
+        var e = 1 - Math.pow(2, -10 * k);
+        var v = (p.n * (k < 1 ? e : 1)).toFixed(p.dp);
+        if (p.comma) v = Number(v).toLocaleString('en-GB', { minimumFractionDigits: p.dp, maximumFractionDigits: p.dp });
+        el.textContent = p.pre + v + p.post;
+        if (k < 1) requestAnimationFrame(step);
+      })(start);
+    }
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(en) {
+        if (!en.isIntersecting) return;
+        io.unobserve(en.target);
+        run(en.target);
+      });
+    }, { threshold: 0.6 });
+    [].forEach.call(els, function(el) { io.observe(el); });
   })();
 </script>
 </body>

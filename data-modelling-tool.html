@@ -2974,7 +2974,7 @@
     content: ""; width: 7px; height: 7px; border-radius: 50%; flex: none;
     background: #f08a24; box-shadow: 0 0 10px rgba(240,138,36,0.6);
   }
-  .st .cs-trial__finding .cs-pair__k { display: flex; margin-bottom: 14px; font: 500 12.5px/1 var(--st-mono); letter-spacing: 0.02em; color: var(--ink-3); }
+  .st .cs-trial__finding .cs-pair__k { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font: 500 12.5px/1 var(--st-mono); letter-spacing: 0.02em; color: var(--ink-3); }
 
   .st .st-close strong { color: var(--ink); font-weight: 700; }
 
@@ -3235,12 +3235,12 @@
       <div class="st-people" data-reveal>
         <p class="st-people__k">Who I led the work with</p>
         <dl class="st-people__grid" data-reveal data-stagger>
-          <div><dt>Product owners</dt><dd>Ran the requirements workshop, and led the prioritisation that set the MVP.</dd></div>
-          <div><dt>Tech</dt><dd>Tested the requirements against their proof of concept to find the gaps early.</dd></div>
-          <div><dt>The business</dt><dd>Co-defined the target journey, and the hierarchy logic with Deals.</dd></div>
-          <div><dt>Research</dt><dd>Led the discussion guide our researcher tested with.</dd></div>
-          <div><dt>Super users</dt><dd>Ran light-touch sessions to catch territory-specific needs.</dd></div>
-          <div><dt>Practitioners</dt><dd>Shadowed and interviewed them, then tested with eight across four countries.</dd></div>
+          <div><dt>Product owners</dt><dd>I ran the requirements workshop and led the prioritisation, so the MVP they committed to was built on user evidence.</dd></div>
+          <div><dt>Tech</dt><dd>I tested my requirements against their proof of concept, so gaps surfaced before build, not after.</dd></div>
+          <div><dt>The business</dt><dd>I co-defined the target journey and hierarchy logic with Deals, giving the business one model to stand behind.</dd></div>
+          <div><dt>Research</dt><dd>I wrote the discussion guide our researcher tested with, so every session answered the questions that mattered.</dd></div>
+          <div><dt>Super users</dt><dd>I ran light-touch sessions with them, so territory-specific needs shaped the design early.</dd></div>
+          <div><dt>Practitioners</dt><dd>I shadowed and interviewed them, then tested with eight across four countries, so the design held up beyond one office.</dd></div>
         </dl>
       </div>
     </div>
@@ -4693,8 +4693,8 @@
     if (!els.length || !('IntersectionObserver' in window)) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     function parse(t) {
-      var m = t.match(/^(\D*?)(\d+(?:\.\d+)?)(.*)$/);
-      return m ? { pre: m[1], n: parseFloat(m[2]), dp: (m[2].split('.')[1] || '').length, post: m[3] } : null;
+      var m = t.match(/^(\D*?)([\d,]+(?:\.\d+)?)(.*)$/);
+      return m ? { pre: m[1], n: parseFloat(m[2].replace(/,/g, '')), dp: (m[2].split('.')[1] || '').length, comma: m[2].indexOf(',') > -1, post: m[3] } : null;
     }
     function run(el) {
       var p = parse(el.textContent.trim());
@@ -4703,7 +4703,9 @@
       (function step(now) {
         var k = Math.min(1, (now - start) / dur);
         var e = 1 - Math.pow(2, -10 * k);
-        el.textContent = p.pre + (p.n * (k < 1 ? e : 1)).toFixed(p.dp) + p.post;
+        var v = (p.n * (k < 1 ? e : 1)).toFixed(p.dp);
+        if (p.comma) v = Number(v).toLocaleString('en-GB', { minimumFractionDigits: p.dp, maximumFractionDigits: p.dp });
+        el.textContent = p.pre + v + p.post;
         if (k < 1) requestAnimationFrame(step);
       })(start);
     }
