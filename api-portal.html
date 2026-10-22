@@ -3017,6 +3017,9 @@
     .fx-prio__cols { grid-template-columns: minmax(0, 1fr); }
     .fx-prio__row, .fx-prio__row:first-child { padding: 20px 0 10px; }
     .fx-prio__row + .fx-prio__row { border-left: 0; border-top: 1px solid rgba(255,255,255,0.08); }
+    /* two columns of features within each release, so the board stays short on a phone */
+    .fx-prio__fs { column-count: 2; column-gap: 16px; }
+    .fx-prio__f { break-inside: avoid; font-size: 13px; }
   }
   /* each part opens with one framing line under its title, a step up from body */
   .st .st-lead {
@@ -3288,7 +3291,7 @@
         <section class="cs-chapter cs-chapter--even">
           <div class="cs-chapter__body" data-reveal data-stagger>
             <p>The design team was <strong>two people</strong>, me and the head of UX, and the client&rsquo;s product stakeholder was a C-suite executive with very little time, in an organisation going through major change. So every session we got had to end in a decision.</p>
-            <p>We ran a workshop with the key stakeholders to define the product vision and agree a feature list, then <strong>prioritised the features into three groups</strong>.</p>
+            <p>We ran a workshop with the key stakeholders to define the product vision and agree a feature list. Developers were in the room too, and the features they said mattered most went onto the list alongside the core requirements. Then we <strong>prioritised the features into three groups</strong>.</p>
             <dl class="cs-owners">
               <div class="cs-owner"><dt>Minimum viable product</dt><dd>The essentials. Enough for the platform to be functional and to stand on its own.</dd></div>
               <div class="cs-owner"><dt>Next phase</dt><dd>Prioritised straight after the MVP: significant added value, and achievable in the near term.</dd></div>
@@ -3310,7 +3313,7 @@
           <figure class="cs-figure cs-figure--plate fx-prio" data-reveal>
             <div class="fx-prio__board" role="group" aria-label="Feature prioritisation: every feature in one of three dated releases, marked by where it came from">
               <ul class="fx-prio__key" aria-label="Key">
-                <li class="fx-prio__f--core">Already required</li><li class="fx-prio__f--dev">Asked for by developers</li><li class="fx-prio__f--ws">Defined in the workshop</li>
+                <li class="fx-prio__f--core">Already required</li><li class="fx-prio__f--dev">Raised by developers</li><li class="fx-prio__f--ws">Added in the workshop</li>
               </ul>
               <div class="fx-prio__cols">
               <div class="fx-prio__row">
