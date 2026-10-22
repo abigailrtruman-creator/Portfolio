@@ -3498,6 +3498,7 @@
     // page needing to know which card is which.
     saddle:  { bg: '#11b67a', ink: '#020814' },
     cycling: { bg: '#00247d', ink: '#ffffff' },   // white 13.606:1
+    data:    { bg: '#ca501e', ink: '#ffffff' },   // the art's own ground
     // The entry in this file with the longest history of not clearing, and the
     // only card in the set that has now been inverted and back. It was pink
     // through seven exports and white was measured on every one of them —
@@ -3701,19 +3702,20 @@
       }
     },
     {
-      title: 'British Cycling website',
-      slug: 'cycling',
-      card: 'cycling',
-      desc: '<span class="hp-case__line">Untangling <strong>British Cycling&rsquo;s</strong> web and</span>' +
-        '<span class="hp-case__line">employee experience to redefine a nationwide</span>' +
-        '<span class="hp-case__line">ecosystem of sport.</span>',
-      tags: ['UX & UI', 'Content', 'Strategy'],
-      href: '/british-cycling',
+      // In place of the British Cycling website while that one is written.
+      title: 'Data modelling tool',
+      slug: 'data',
+      card: 'data',
+      desc: '<span class="hp-case__line">Reinventing the financial due diligence workflow</span>' +
+        '<span class="hp-case__line">with an <strong>AI-powered data modelling tool</strong></span>' +
+        '<span class="hp-case__line">across 60+ territories.</span>',
+      tags: ['UX & UI', 'Research', 'Strategy'],
+      href: '/data-modelling-tool',
       art: {
-        base: 'assets/case-british-cycling', tag: '2b834c42',
-        w: 3024, h: 2708,
-        clear: 0.362,
-        alt: 'The British Cycling find-an-event page in a browser window, with search and filters over a race photograph'
+        base: 'assets/case-data-modelling', tag: 'b58ab4da',
+        w: 5280, h: 4728,
+        clear: 0.366,
+        alt: 'The DimMetric Editor in a browser window: account descriptions mapped to net sales, cost of sales and staff costs, beside a collapsible profit and loss hierarchy'
       }
     }
   ];
@@ -4099,8 +4101,9 @@
   var ART_WEBP_W = [1008, 1512, 2016, 3024];
   var ART_SIZES = '(min-width: 1280px) 1008px, 79vw';
 
+  // A card whose art was supplied smaller than the others lists its own rungs.
   function artSrcset(art) {
-    return ART_WEBP_W.map(function (w) {
+    return (art.widths || ART_WEBP_W).map(function (w) {
       return art.base + '-' + w + '.' + art.tag + '.webp ' + w + 'w';
     }).join(', ');
   }
