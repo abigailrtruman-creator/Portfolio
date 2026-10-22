@@ -2924,7 +2924,7 @@
   /* ================= STORY LAYER =================
      One set of pieces for every case study, switched on by .st on the
      article, that changes how the copy is shown and never the copy itself:
-       .st-band     the numbers, framed by the build's guides; they count up
+       .st-band     the numbers, under one hairline that draws across; they count up
        story titles a hairline draws across above each part as it arrives
        insights     the finding set large, after an orange point
      The guides are for numbers only. Nothing sticks, nothing lights up. */
@@ -2949,14 +2949,14 @@
   }
   .st-band dd { margin: 12px 0 0; font-size: 15.5px; line-height: 1.45; color: var(--ink-2); max-width: 22em; }
   .st-band dd small { display: block; margin-top: 6px; font-size: 14px; color: var(--ink-3); }
-  .st-band::before, .st-band::after {
-    content: ""; position: absolute; pointer-events: none;
+  /* one hairline along the top, drawn across as the numbers arrive */
+  .st-band::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+    background: var(--st-line); transform-origin: left; pointer-events: none;
     transition: transform 1.2s cubic-bezier(.65,0,.35,1);
   }
-  .st-band::before { left: -32px; right: -32px; top: 0; bottom: 0; border-top: 1px solid var(--st-line); border-bottom: 1px solid var(--st-line); }
-  .st-band::after { top: -32px; bottom: -32px; left: 0; right: 0; border-left: 1px solid var(--st-line); border-right: 1px solid var(--st-line); transition-delay: 0.12s; }
   .cs-motion .st-band:not(.is-in)::before { transform: scaleX(0); }
-  .cs-motion .st-band:not(.is-in)::after { transform: scaleY(0); }
+  .st-band > div:first-child { padding-left: 0; }
   /* inside the writing column a band runs the column's width */
   .cs-chapter__body .st-band { margin: clamp(40px, 5vh, 56px) 0; }
   .cs-chapter__body .st-band dt { font-size: clamp(40px, 4.2vw, 60px); }
@@ -2988,11 +2988,10 @@
   @media (max-width: 700px) {
     .st-band { grid-template-columns: minmax(0, 1fr); }
     .st-band > div + div { border-left: 0; border-top: 1px solid var(--st-line); }
-    .st-band::before { left: -10px; right: -10px; }
-    .st-band::after { top: -10px; bottom: -10px; }
+    .st-band > div { padding-left: 0; padding-right: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .st-band::before, .st-band::after, .st .cs-story__title::before { transition: none; transform: none !important; }
+    .st-band::before, .st .cs-story__title::before { transition: none; transform: none !important; }
   }
 </style>
 
