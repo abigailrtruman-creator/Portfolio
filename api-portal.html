@@ -42,48 +42,126 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
 
 <style>
-  /* ---------- WHAT THIS PAGE IS
-     The third case study, and deliberately the same document as the first two:
-     boots-checkout.html's tokens, nav, chapter grid and footer, copied rather
-     than imported for the reason given there — there is no shared stylesheet on
-     this site to import from, index.html carries its CSS inline because it was
-     built as a Squarespace injection, and extracting one is a change to files
-     that have been tuned against a screenshot matrix. Copying keeps the class
-     names, so grepping .cs-chapter returns all three case studies and a change
-     to one is findable from the others.
+  /* ---------- WHAT THIS PAGE SHARES WITH THE HOMEPAGE, AND WHAT IT DOES NOT
+     The tokens, the nav pill and the footer are the homepage's, copied rather
+     than imported, and they keep their hp- names so that a change to either
+     one is findable from the other: grepping .hp-nav returns both files. There
+     is no shared stylesheet to import from — index.html carries its CSS inline
+     because it was built as a Squarespace injection — and extracting one is a
+     change to a file that has been tuned against a screenshot matrix. Not
+     something to do as a side effect of adding a page.
 
-     This page used to carry one figure, the hero, on the grounds that what the
-     discovery produced was client material that was not hers to publish. That
-     has been cleared, so the eight artboards are here — the workshop, the
-     prioritisation board, the benchmarked templates, the journey map, the site
-     map, the content specification and the two rows of design templates — and
-     with them the captions and the viewer this page had been written without.
-     Both were taken from pwc-client-portal.html rather than rewritten, so
-     .cs-figure figcaption, .cs-figure__label, .cs-figure__open and the whole
-     .cs-lb block are that page's, unaltered.
+     What is deliberately NOT copied is the scroller. index.html paints itself
+     into a position:fixed .hp-root with its own overflow, which is a leftover
+     of being injected into someone else's document; this page is the whole
+     document and scrolls natively. That also means no GSAP: the homepage needs
+     it for a scrubbed timeline, this page needs one fade per section, which is
+     an IntersectionObserver and a CSS transition. ---------- */
+  @property --text-end {
+    syntax: "<length>";
+    inherits: true;
+    initial-value: 0px;
+  }
+  /* ---------- THE PAGE TURNS WHITE AT THE CLOSE ----------
+     Reading, the page is black. As the impact section arrives only the ground
+     cross-fades to white. The outgoing white writing keeps its colour and
+     dissolves into that ground; the close is already black and emerges from it.
+     This is the important part of Dilara Cumhur's transition: it is one surface
+     changing underneath two fixed ink colours, not the whole page inverting.
+     The light values are the Sofa to Saddle study's, to the
+     number, so the two closes are one close: for a while this page turned to
+     the Boots homepage card's blue instead, and the owner's read was that
+     the close should not take the study's colour — it should go white, the
+     same on every study. Let's talk does not take the fade. The footer keeps
+     the page's own black and the type it has on that black. Between the
+     close and the footer is the next study, a black band the width of the window, so
+     the white runs to where the footer's black starts.
 
-     The viewer is here for the reason it is there: these are artboards, not
-     device renders. A journey map nine stages wide and a row of three design
-     templates 12,300px across are drawn at 1120 on the page, which is a map of
-     them rather than a reading of them. build-fibre-figures.py cuts the 3360px
-     copy each one opens. The hero is skipped, the same as the other two pages
-     skip theirs — it is a photograph, there is nothing in it to read closely,
-     and build-api-figures.py gives it no zoom copy to open.
+     There is no box. The page itself is what changes, and whatever is on
+     screen at that moment turns with it. That is why every surface below is
+     a token and not a colour: the ground, the four inks, the hairlines, the
+     wash, the nav pill and its shadow.
 
-     Two differences from sofa-to-saddle.html, which is what this was copied
-     from: the viewer above, and .cs-terms, which is this page's own and is
-     explained where it is defined.
-     ---------- */
+     The blend follows the scroll. --turn runs from 0 to 1 as the impact
+     section comes up the window, and every token is a mix of its dark and
+     light values by that amount. It is not a timed fade: the colour is
+     wherever the section is, so it stops when the scroll stops, and a reader
+     who scrolls back up sees it run backwards. The script eases the amount
+     (smoothstep) so the ends are soft, and lets it trail the scroll by a
+     fraction of a second so a flick of the wheel glides rather than steps.
+     A reader who has asked for reduced
+     motion gets the end state, black or white, with no blend.
+
+     The script, and the account of where the turn starts and ends, is next
+     to the nav. */
+  @property --bg       { syntax: "<color>"; inherits: true; initial-value: #0a0a0c; }
+  @property --ink      { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+  @property --ink-1    { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.74); }
+  @property --ink-2    { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.52); }
+  @property --ink-3    { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.40); }
+  @property --rule     { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.10); }
+  @property --rule-2   { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.30); }
+  @property --wash     { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.04); }
+  @property --nav-bg   { syntax: "<color>"; inherits: true; initial-value: rgba(18,18,22,0.55); }
+  @property --nav-line { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.09); }
+  @property --nav-ink  { syntax: "<color>"; inherits: true; initial-value: #ffffff; }
+  @property --nav-dim  { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.55); }
+  @property --nav-wash { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.06); }
+  @property --cta-bg   { syntax: "<color>"; inherits: true; initial-value: #fcf9f5; }
+  @property --cta-ink  { syntax: "<color>"; inherits: true; initial-value: #0a0a0c; }
+  @property --nav-hi   { syntax: "<color>"; inherits: true; initial-value: rgba(255,255,255,0.07); }
+  @property --nav-sh-1 { syntax: "<color>"; inherits: true; initial-value: rgba(0,0,0,0.55); }
+  @property --nav-sh-2 { syntax: "<color>"; inherits: true; initial-value: rgba(0,0,0,0.28); }
+  @property --turn     { syntax: "<number>"; inherits: true; initial-value: 0; }
+  @property --ink-turn { syntax: "<number>"; inherits: true; initial-value: 0; }
+  html.is-light { --turn: 1; }
   :root {
     --ff-display: 'Manrope', 'Inter', -apple-system, sans-serif;
     --ff-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
-    --bg: #0a0a0c;
-    --ink: #ffffff;
-    --ink-1: rgba(255,255,255,0.74);
-    --ink-2: rgba(255,255,255,0.52);
-    --ink-3: rgba(255,255,255,0.40);
-    --rule: rgba(255,255,255,0.10);
+    /* 0 on the black page, 1 once the close has settled. The script writes it
+       from the impact section's position; these mixes are the whole turn.
+       Each one is `light by --turn, over dark`. The light values are the
+       same as the Saddle study's: the dark set mirrored and pushed a
+       step stronger, because a 40% black on white is fainter to the eye than
+       a 40% white on black. */
+    --turn: 0;
+    /* Ink does not animate with the ground. The reading page inherits zero,
+       while the impact close pins this to one. The old white writing therefore
+       fades into the arriving white and the new black writing appears from it. */
+    --ink-turn: 0;
+    /* The light sheet is a warm off-white, not pure white: #fcf9f5, the
+       paper tone Designary's pages sit on. Every light surface on the site
+       (this close, the next-study card, the filled buttons) shares it. */
+    --bg:    color-mix(in srgb, #fcf9f5 calc(var(--turn) * 100%), #0a0a0c);
+    --ink:   color-mix(in srgb, #0a0a0c calc(var(--ink-turn) * 100%), #ffffff);
+    --ink-1: color-mix(in srgb, rgba(10,10,12,0.78) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.74));
+    --ink-2: color-mix(in srgb, rgba(10,10,12,0.66) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.52));
+    --ink-3: color-mix(in srgb, rgba(10,10,12,0.58) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.40));
+    --rule:  color-mix(in srgb, rgba(10,10,12,0.16) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.10));
+    /* The short dash before an eyebrow. */
+    --rule-2: color-mix(in srgb, rgba(10,10,12,0.44) calc(var(--ink-turn) * 100%), rgba(255,255,255,0.30));
+    /* Everything except the ground holds its colour through the handoff.
+       The impact section supplies its own light-page wash below. */
+    --wash: rgba(255,255,255,0.04);
+    /* Like the reference's fixed white pill, this page's dark glass nav keeps
+       one appearance while the surface beneath it changes. */
+    --nav-bg: rgba(18,18,22,0.55);
+    --nav-line: rgba(255,255,255,0.09);
+    --nav-ink: #ffffff;
+    --nav-dim: rgba(255,255,255,0.55);
+    --nav-wash: rgba(255,255,255,0.06);
+    --nav-hi: rgba(255,255,255,0.07);
+    --nav-sh-1: rgba(0,0,0,0.55);
+    --nav-sh-2: rgba(0,0,0,0.28);
+    /* The footer's buttons. The footer stays black and pins these back; the
+       mix is here so a CTA anywhere else on the page would follow the turn. */
+    --cta-bg:  color-mix(in srgb, #0a0a0c calc(var(--ink-turn) * 100%), #fcf9f5);
+    --cta-ink: color-mix(in srgb, #ffffff calc(var(--ink-turn) * 100%), #0a0a0c);
+
+    /* Half a second, with the same property and curve as Dilara Cumhur's
+       homepage: the background changes and the ink on either side stays put. */
+    transition: --turn 500ms cubic-bezier(0.25, 0.1, 0.25, 1);
 
     /* Her homepage card colour for this project, tinting the glow under the
        hero so each case study carries its own colour rather than the same grey
@@ -91,50 +169,40 @@
        picked to sit behind card text, and over a near-black page the same alpha
        reads very differently from one hue to the next. So strength is what the
        pages share — every tint is solved for the same lift off the background
-       and the same chroma — and hue is what separates them. The alpha carries
-       most of the level, and has to: at the 0.13 this used to run at, reaching
-       this much light would need a tint brighter than sRGB can state.
+       and the same chroma — and hue is what separates them.
 
-       Her card was re-exported six times without this number moving — #ea5587,
-       #ea497f, the deep #b22152, #ff4885, #ff5b97, #df467e — because all six
-       sat between 338.0 and 340.0 degrees of hue, a two-degree spread across
-       exports ranging from 70% to 100% in value. Only lightness changed, and
-       lightness is the one thing this does not take from the card.
+       The first version of this held that strength down at the level of the
+       blue-grey it replaced. That was quiet enough to be tasteful and too quiet
+       to be worth doing: on the pages carrying a lot of copy the hue could not
+       be told apart from the grey. This is the same construction pitched up
+       until each colour is legible as that colour. The alpha carries most of the
+       rise, and has to: at the 0.13 this used to run at, reaching this much
+       light would need a tint brighter than sRGB can state.
 
-       The seventh export is the one the old note here said would need this
-       recomputed: the card went from pink to a pale cyan, #d1eced, which is a
-       156-degree turn. So this is now solved at 182.1 degrees, and only the hue
-       came from her — the card's own 11.8% saturation did not, any more than
-       the pink's 68.6% did. Composited at this alpha over --bg it lands 13.78
-       of L* above the page at 58.7% saturation, which is where every other page
-       in the set sits.
-
-       The eighth deepened that cyan to #53c4ca and left this alone, which is
-       the pink run's rule holding rather than an oversight: the hue moved 0.9
-       of a degree, to 183.0, and value and saturation are the two things this
-       does not take from the card.
-
-       The ninth is the second turn this has had to follow. The owner re-coloured
-       the card dark — #31324f, so its overlay text could go white — and that is
-       238.0 degrees, a 55-degree move off the cyan. Re-solved at the same lift
-       and the same chroma as every other page: 13.82 of L* above --bg at 58.7%
-       saturation, against the cyan's 13.82 and 58.6%, so only the hue has
-       changed here either. The tint itself is now a near-full-value blue at
-       97.6%, where the cyan was at 49.8% — blue is the darkest hue at a given
-       saturation, so reaching the set's lift at this hue takes very nearly all
-       the light sRGB has at 0.30 alpha. Which is the old note's point about
-       0.13 arriving at 0.30. */
+       Re-solved when her card moved from #0060bf to #0f0f64, which is 30 degrees
+       round from blue into indigo — far enough that the old tint would have read
+       as a different colour from the card the visitor clicked. This is the one
+       hue in the set where the sRGB ceiling actually bites: blue contributes
+       least of the three channels to luminance, so at the chroma the other pages
+       run at, the target lift is simply not reachable here. The trade is made
+       towards light rather than saturation, because a glow that is the wrong
+       brightness reads as a mistake and one that is slightly less saturated
+       reads as this colour. At 58.8% the composite chroma is just inside the
+       range the other four already span, and the lift lands on target. */
     --glow-tint: rgba(91,96,249,0.30);
 
     --pad-x: clamp(28px, 6vw, 110px);
     --shell: 1560px;
-    /* The reading column. 1120px is the homepage card's cap, so a figure on
-       this page is the same width as the card the visitor clicked to get
-       here, on a screen tall enough for the card to reach that cap. Below that
-       the card is sized from the viewport height instead and arrives here
-       larger than it left, which is the price of the card fitting the screen
-       it was on. See --card-cap-h in index.html. */
-    --measure: 1120px;
+    /* The reading column. As wide as what is in it and no wider: the chapter
+       rail (13ch), the gap beside it (--story-gap, 88px at its widest) and the
+       writing (--text-end, 70ch), which come to 924px at the fonts and sizes
+       this page sets. It was 1120px, the homepage card's cap, so that the
+       hero picture matched the card the visitor had clicked; but the writing
+       is capped at 70ch and never reached the column's right edge, so on a
+       wide window the hero and the overview ran 200px past everything below
+       them — a page that was wider at the top than at the bottom. The owner
+       asked for one grid, and the grid is the writing's. */
+    --measure: 924px;
 
     /* The interval between one section and the next. Stated once because the
        page is a stack of them and the rhythm is the only thing holding the
@@ -147,33 +215,54 @@
        lands under it. */
     --nav-clear: 132px;
 
-    /* How wide a figure is drawn: four tenths of the reading column, and the same
-       fraction as the other two pages so all three read at one scale. Written
-       off --measure rather than as the 448px it comes to, because it is meant to
-       be a proportion of the column and not a number that happens to sit near
-       one. Below roughly a 510px window the column is narrower than this and
-       takes over. The caption under each figure takes the same value, so the two
-       share their edges.
+    /* How wide a figure is drawn. One number for every figure on the page, and
+       the caption under it takes the same value so the two share their edges.
 
-       This was a height, 64vh, with the width falling out of each board's aspect
-       ratio. One rule applied evenly, and an uneven result: the widths ran nearly
-       two to one, every figure was centred at a different one, and what decided
-       the width was how many screens had been composed onto a board in Figma —
-       something the reader cannot see. Fixing the width makes the invariant the
-       one that is visible against the column. Height is now whatever the picture
-       is, which is a difference nobody can see, since two figures here are never
-       on screen together.
+       This was a height — 64vh, with every figure capped to it and the width
+       falling out of the aspect ratio. One rule, applied evenly, and the result
+       was not even: these boards are between 0.59 and 1.15, so equal height
+       produced figures from 374px to 729px wide, each centred, none sharing an
+       edge with the body copy or with each other. And what set the width was how
+       many screens had been composed onto a board in Figma, which is an
+       authoring decision the reader cannot see. A board holding more of the
+       interface was drawn smaller for holding it.
 
-       The fraction came down from 820px and then 672 because a width sets the
-       height, and a figure taller than a screen turns the page into a sequence of
-       pictures with writing between them. The viewer is what makes a smaller
-       figure affordable: any of them opens at 1680, so on the page they are there
-       to be recognised rather than studied. */
-    --fig-w: calc(0.4 * var(--measure));
+       Fixing the width instead makes the invariant the visible one. Vertical
+       differences between figures cannot be seen — they are minutes apart in a
+       scroll — where horizontal ones are measured against the column on every
+       figure. Height is now whatever the picture is.
+
+       Four tenths of the column, written as a fraction of --measure rather than
+       as the 448px it comes to, because the figure is meant to be a proportion
+       of the reading column and not a number that happens to sit near one. The
+       column is min(1120px, about 88vw), so below roughly a 510px window the
+       column is narrower than this and takes over — which is the only case where
+       two figures on the page differ in width.
+
+       Arrived at by coming down twice, from 820 and then 672, and the reason both
+       were too big is worth recording. A width sets the height, and these boards
+       are portrait: at 672 the tallest came to 1126px, so a figure occupied more
+       than a screen and the page became a sequence of pictures with writing
+       between them. Four tenths puts the tall ones near 750px, which is about
+       where they sat when the cap was 64vh — the size the page has read at all
+       along — and it keeps the writing as the widest thing on the page.
+
+       What makes this affordable is the viewer. The figures do not need to be as
+       large as the artwork will bear, because any of them opens at 1680; on the
+       page they are there to be recognised, not studied.
+
+       Written out now rather than as 0.4 of --measure: the column came down
+       from 1120 to 924 to match the writing, and the figures were sized
+       against the writing all along, which did not change. */
+    --fig-w: 448px;
   }
-
+  @media (prefers-reduced-motion: reduce) {
+    :root { transition: none; }
+  }
   html {
     background: var(--bg);
+    /* The rail sticks under the nav, so an anchored jump has to stop there
+       too rather than putting the heading behind the pill. */
     scroll-padding-top: var(--nav-clear);
   }
   body {
@@ -223,16 +312,24 @@
     content: '';
     width: clamp(16px, 4.2vw, 28px);
     height: 1px;
-    background: rgba(255,255,255,0.3);
+    background: var(--rule-2);
   }
 
   /* ---------- NAV (floating pill, from the homepage) ----------
-     Content-width and centred at every width: no width is set anywhere, and the
-     phone max-width is a guard against the screen edges rather than a layout.
-     Every value in here is the homepage's — see index.html for why each is what
-     it is, and boots-checkout.html for the two differences a case study page
-     needs (the brand is a link home, and there is no entrance animation because
-     the pill is not on a GSAP timeline here). */
+     Content-width and centred at every width, as on the homepage: no width is set
+     anywhere, and the phone max-width is a guard against the screen edges rather
+     than a layout. It should not be stretched to the page's column at any
+     breakpoint — a pill wide enough to push the brand and the links to opposite
+     ends leaves the divider stranded after her name.
+
+     Two differences from the homepage, both because this page is not it. The brand
+     is a link home rather than a label, and there is no entrance animation: the
+     homepage fades the pill in on a GSAP timeline this page does not load, so it
+     is simply translated into place.
+
+     Everything else is meant to match, including the arrow breakpoint and the
+     divider's padding — see index.html for why each value is what it is. The two
+     navs have the same content, so the same numbers hold. */
   .hp-nav {
     position: fixed;
     top: 28px;
@@ -242,20 +339,40 @@
     align-items: center;
     gap: 24px;
     /* Left padding equals the vertical padding, which is what makes the space
-       around the avatar even: the pill's ends are fully round, so the cap's
-       radius is half the height and the avatar is concentric with it only when
-       the two paddings match. */
+       around the avatar even. The pill's ends are fully round, so the cap's radius
+       is half the height — the avatar's radius plus this padding — and the avatar
+       is concentric with it only when the two paddings match. At 12 against 16 the
+       gap was 13px over and under and 17px at the far left, and pinched visibly at
+       the avatar's upper-left shoulder where the cap curves away.
+
+       Holds only while the avatar is the tallest thing in the row; below 900px the
+       link's 44px floor is taller, and the left padding carries that offset too.
+
+       15 and a 46px avatar, down from 18 and 52: the pill was 90px deep and read
+       as a bar rather than as something floating over the page. Both numbers had
+       to move together to keep the avatar centred in the cap — dropping only the
+       padding would have left it 3px off the round end. */
     padding: 15px 11px 15px 15px;
-    background: rgba(18,18,22,0.55);
-    border: 1px solid rgba(255,255,255,0.09);
+    background: var(--nav-bg);
+    border: 1px solid var(--nav-line);
     border-radius: 999px;
     backdrop-filter: blur(28px) saturate(1.6);
     -webkit-backdrop-filter: blur(28px) saturate(1.6);
     box-shadow:
-      inset 0 1px 0 rgba(255,255,255,0.07),
-      0 32px 80px -16px rgba(0,0,0,0.55),
-      0 6px 24px rgba(0,0,0,0.28);
+      inset 0 1px 0 var(--nav-hi),
+      0 32px 80px -16px var(--nav-sh-1),
+      0 6px 24px var(--nav-sh-2);
     transform: translateX(-50%);
+    /* Out of the way while the reader is scrolling down, back the moment they
+       scroll up or bring the pointer to the top edge — the homepage's
+       behaviour, with the same timing, see initNavHide in both files. */
+    transition: opacity 0.45s cubic-bezier(0.32,0.72,0,1),
+                transform 0.45s cubic-bezier(0.32,0.72,0,1);
+  }
+  .hp-nav.is-hidden {
+    opacity: 0;
+    transform: translate(-50%, -28px);
+    pointer-events: none;
   }
   .hp-nav__brand {
     display: flex;
@@ -263,12 +380,20 @@
     gap: 14px;
     /* Sits the same distance from her name as it does from `CV`, and that is not
        one value: the name's side is this padding, the label's side is the pill's
-       gap plus the link's own left padding, 24 + 18 here. */
+       gap plus the link's own left padding, 24 + 18 here. Derived, not matched by
+       eye — at 24 the line sat 18px off centre between the two words. */
     padding-right: 42px;
-    border-right: 1px solid rgba(255,255,255,0.09);
+    border-right: 1px solid var(--nav-line);
     text-decoration: none;
-    /* The brand is an <a> here and a plain div on the homepage, so without this
-       it computes to the browser's default link blue. */
+    /* No border-radius. It was 999px, to make the link pill-shaped, and it bent
+       the border-right above into a visible arc — the divider was a curve on this
+       page and a straight line on the homepage. The radius was buying nothing:
+       there is no background on the brand to clip, and the page's focus ring sets
+       its own 3px radius. */
+    /* The brand is an <a> here and a plain div on the homepage, so without this it
+       computes to the browser's default link blue. Nothing shows it today — the
+       name sets its own white and the avatar is an image — but anything added
+       inside, or any currentColor in it, would come out blue. */
     color: inherit;
   }
   .hp-nav__avatar {
@@ -276,7 +401,7 @@
     height: 46px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1px solid rgba(255,255,255,0.16);
+    border: 1px solid var(--nav-line);
     display: block;
   }
   .hp-nav__name {
@@ -284,7 +409,7 @@
     font-weight: 500;
     letter-spacing: -0.015em;
     line-height: 1.2;
-    color: #fff;
+    color: var(--nav-ink);
     white-space: nowrap;
   }
 
@@ -303,7 +428,7 @@
     font-size: 15px;
     font-weight: 500;
     letter-spacing: -0.005em;
-    color: #fff;
+    color: var(--nav-ink);
     text-decoration: none;
     white-space: nowrap;
     border-radius: 999px;
@@ -311,28 +436,30 @@
     touch-action: manipulation;
     transition: background 100ms ease-out, color 100ms ease-out, transform 100ms ease-out;
   }
-  .hp-nav__link:hover { background: rgba(255,255,255,0.06); }
+  .hp-nav__link:hover { background: var(--nav-wash); }
   .hp-nav__link:active,
   .hp-nav__link.is-pressed {
-    background: rgba(255,255,255,0.10);
+    background: var(--nav-line);
     transform: scale(0.97);
   }
   .hp-nav__arrow {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255,255,255,0.55);
+    color: var(--nav-dim);
     transition: color 100ms ease-out, transform 100ms ease-out;
   }
-  .hp-nav__link:hover .hp-nav__arrow { color: #fff; transform: translate(3px, -3px); }
+  .hp-nav__link:hover .hp-nav__arrow { color: var(--nav-ink); transform: translate(3px, -3px); }
   .hp-nav__arrow svg { width: 16px; height: 16px; display: block; }
 
   /* ---------- Page shell ---------- */
   /* Longhands, not `padding: 0 var(--pad-x)`. Every section below sets its own
-     padding-top off --section, and .cs-wrap is on those same elements, so the
-     shorthand's implied `padding-top: 0` competes with them — and inside the
-     phone media query it wins. Naming only the two sides this rule is about
-     removes the argument rather than settling it by declaration order. */
+     padding-top off --section, and .cs-wrap is on those same elements — so the
+     shorthand's implied `padding-top: 0` competes with them. At the base it
+     happens to lose, because the section rules are declared after it; inside
+     the phone media query it happened to win, and the whole page lost its
+     vertical rhythm at 600px and under. Naming only the two sides this rule is
+     actually about removes the argument rather than settling it by order. */
   .cs-wrap {
     max-width: var(--shell);
     margin: 0 auto;
@@ -345,28 +472,43 @@
   .cs-col {
     max-width: var(--measure);
     margin: 0 auto;
+    /* The line is longer than a narrow reading measure, so the writing uses
+       more of the column. Registered as a length on this element: ch follows
+       this font, and a larger paragraph does not stretch the line with it. */
+    --text-end: 70ch;
   }
 
   /* ---------- HERO ----------
-     The picture is drawn at the width it is given and the hero is however tall
-     that comes to, so the bottom of the render falls below the fold and the
-     first scroll finishes it.
+     The picture sets the height, and the hero runs as tall as its contents:
+     the sentence, the tags and then the picture, all in the reading column,
+     and the hero is however tall that comes to. On a short window the bottom
+     of the picture falls below the fold and the first scroll finishes it.
 
-     This used to be a budget: a hero fixed at 100svh, the copy taking its share
-     and the figure given the rest, with object-fit keeping the whole render
-     inside whatever was left. The other three case studies left that model and
-     this page was the last on it, which is why its picture came out 757px wide
-     at 1440 while theirs were at the full column. A budget cannot spend a width
-     it is not allowed to be tall for. The fixed height, the figure's flex share
-     and object-fit have all gone together — they were one mechanism. */
+     For a while this was a held hero: fixed at one screen, sticky, with the
+     overview riding up over it as a rounded sheet and the hero fading
+     underneath. The owner tried it on this page and on the Saddle one and
+     did not like it, so the hold, the sheet and the fade have all gone and
+     the hero is an ordinary block again. What survived from that work is the
+     arrival from the homepage card (see ARRIVING FROM THE HOMEPAGE), which
+     does not depend on any of it.
+
+     The copy never sits on the picture: this render is a product shot with
+     the laptop in the middle of it, and a title laid over the keyboard needs
+     a scrim that takes the laptop down with it. */
   .cs-hero {
     position: relative;
     z-index: 1;
     display: flex;
     flex-direction: column;
-    /* Clearance under the nav pill, which ends 106px down. Nothing competes for
-       this any more: with the hero sized to its contents, what this adds it adds
-       to the page rather than taking it off the picture. */
+    /* Clearance under the nav pill, which ends 106px down. This was the tightest
+       number that cleared it — 118px, twelve pixels of daylight — on the
+       reasoning that every pixel above the eyebrow was a pixel off the picture.
+       At the owner's request the pill now gets a margin rather than the minimum
+       it can survive on: 148px leaves 42px under it, which reads as space the
+       nav was given rather than as space it happened to have left.
+
+       Nothing competes for this. With the hero sized to its contents, what
+       this adds it adds to the page rather than taking it off the picture. */
     padding-top: clamp(148px, 15vh, 168px);
     padding-bottom: clamp(24px, 3vh, 44px);
   }
@@ -375,9 +517,10 @@
      sentence and the pills sit in the writing column anyway, so the page
      has one left edge for its words from top to bottom and the hero's text
      is a step in from the picture rather than flush with it. The same
-     columns and gap as .cs-chapter, so the edges agree to the pixel; the
-     picture spans both columns, as the chapter figures do. The grid
-     collapses where the chapters' does — see the 600px band. */
+     columns and gap as .cs-chapter and .cs-story, so the edges agree to the
+     pixel; the picture takes the writing column too, see .cs-hero .cs-figure.
+     The grid collapses where the
+     chapters' does — see the 600px band. */
   .cs-hero > .cs-col {
     display: grid;
     grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
@@ -402,97 +545,121 @@
      picture start on the overview's edge. The stories keep the rail for
      their numbers. */
   .cs-hero .cs-figure { grid-column: 1 / -1; }
+  /* The row sits under the sentence, at the owner's request. Less than the
+     generic .cs-tags margin, which was sized to follow an eyebrow-and-heading
+     pair: this follows a heading alone and should read as its footnote rather
+     than as a section of its own.
 
-  /* The page's heading, and what the project was rather than what it was called
-     — the eyebrow above it already reads "Case study · Full-fibre provider
-     portals".
+     About one and a half times the eyebrow's distance above the heading, so
+     the stack steps — label close, footnote further, picture furthest — and
+     the heading is clearly the eyebrow's and not the pills'. The vw
+     term is what keeps this inside a narrow, tall window; on a desktop
+     the vh term is the one that counts. Opened up once more at the
+     owner's request, for air. */
+  .cs-hero .cs-tags {
+    margin-top: clamp(24px, min(5vh, 4.2vw), 48px);
+    /* PROTOTYPE — as wide as its pills and no wider, as the card's row is.
+       The view transition snapshots the element's box; a row stretched to
+       the column's width here and to the card's width there is two boxes of
+       different proportions holding the same pills, and the pills would
+       change size in the blend. Shrunk to fit at both ends, the boxes are
+       the same box. */
+    align-self: flex-start;
+  }
 
-     One constraint: three lines, at the widest cap that still holds them. Which
-     here is no cap at all. This is the longest statement in the set at 140
-     characters, and at 38px it makes three lines at every width from 836 up to
-     the full 1120 — measured on the real element, with the per-character spans
-     the splitter leaves behind and text-wrap: balance doing what it does. There
-     is no width inside the column at which it becomes two, so there is nothing
-     for a cap to protect and the sentence gets the column.
+  /* The lede promoted to the page's heading, at something close to the size the
+     old title was. Two sentences of ordinary weight rather than two words of
+     800: this says what the project was, where the old title said its name
+     twice.
 
-     It was held at three quarters of the column, which is where every page in the
-     set started. That number was tuned for a shorter sentence on another page and
-     carried here on the assumption it was doing the same job; on this page it was
-     costing 280px and buying nothing. The other pages keep a cap because theirs
-     genuinely flip — Boots at 864px, Sofa to Saddle at 960 — and both record the
-     measurement next to the number.
+     One constraint: three lines, and the lines should taper — longest at the
+     top, shortest at the bottom — so the sentence has a shape. This is the
+     shortest statement in the set at 97 characters, so unlike the other pages
+     the width is what does the work here rather than the size — the full
+     column gives it two very long lines. 38px is the set's shared ceiling.
+
+     The cap used to be a pixel value, 840, measured as the widest width that
+     still held three lines. It did hold three, but the wrong three: with
+     balance on, the third came out longest. The cap is in em now so the break
+     points travel with the size, and the number is chosen for the shape rather
+     than the count; see the rule. 100% is the floor: below about 1000px of
+     window the column is narrower than the cap and the sentence should have
+     all of it.
 
      The size clamp carries a vh term as well as a vw one, which the rest of the
-     page's type does not. Ordinary headings can afford to be sized off the
-     width alone because whatever they push down the page is only pushed. Here
-     it is taken: every line this gains is a line the picture loses, so on a
-     short window the type has to give way. It binds only below 704px of window
-     height, which is where 5.4vh drops under the 38px ceiling. */
+     page's type does not. That was load-bearing when the hero was one fixed
+     screen: every line this gained was a line the picture lost, so on a short
+     window the type had to give way. The picture sets its own size now and
+     nothing is taken from it, so the vh term is only holding the heading in
+     proportion to short windows. It binds only below 704px of window height,
+     which is where 5.4vh drops under the 38px ceiling. */
   .cs-hero__statement {
-    /* Close under the eyebrow, which is this heading's label; the pills get
-       more below. Same numbers on every case page — this one used to sit
-       further off its eyebrow than the Boots and British Cycling headings. */
+    /* Under the eyebrow. The eyebrow is the heading's label — "Case study ·
+       Boots website" is what the sentence below it is — so it sits close,
+       about half the heading's size away, and the pair reads as one piece.
+       The pills get more below (see .cs-hero .cs-tags): the three used to sit
+       at near-equal intervals, which grouped nothing with anything. The vw
+       term keeps it under the pills' gap on a narrow, tall window, where that
+       gap is sized by width and this one would otherwise overtake it. */
     margin: clamp(22px, min(3.2vh, 3vw), 32px) 0 0;
-    /* The measure that gives the sentence its shape — three lines, each a
-       little shorter than the one above, with the client's phrase on a line
-       of its own:
+    /* The width that gives the sentence its shape, at the owner's request:
+       three lines, each a little shorter than the one above —
 
-         Defining the new digital experience
-         for a wholesale full-fibre provider
-         built to outpace the industry.
+         Modernising the Boots.com checkout
+         and 'last mile' experience that serves
+         21 million customers annually.
 
-       In em so the breaks are the same at every size. The homepage cards
-       share one cap of their own, so this measure is the page's. Greedy
-       wrapping, not balance: balance evens the lines out, which is the
-       opposite of a taper. 100% is the floor for a column narrower than
-       this. */
-    max-width: min(16.2em, 100%);
+       In em so the breaks are the same at every size the clamp below
+       produces: the second line is 16.8em wide split for the entrance and
+       the second would take "21" at 17.4em, so this sits between, with room
+       either side. The homepage cards share one cap of their own, so this
+       measure is the page's. Greedy wrapping, not balance — balance evens
+       the lines out, which is the opposite of a taper. 100% is the floor
+       for a column narrower than this. */
+    max-width: min(17.1em, 100%);
     font-family: var(--ff-display);
     font-weight: 500;
-    /* The last term keeps the measure above inside the writing column: 16.2em
+    /* The last term keeps the measure above inside the writing column: 17.1em
        at this size must not exceed the column (100cqi, from .cs-hero__text),
        so where the column is narrower than the sentence wants, the type comes
        down until it fits rather than the lines re-wrapping. That is what
        keeps the breaks the card's at every width the grid is in play — the
-       column lost a rail's worth to the indent. This is the shortest sentence
-       in the set, so it binds only from about 800px of window down. The 24px
-       floor still wins on a phone, where the grid has collapsed. */
-    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh, 100cqi / 16.2), 38px);
+       column lost a rail's worth to the indent, and between about 700 and
+       1000px of window that was the difference between three lines and
+       four. The 24px floor still wins on a phone, where the grid has already
+       collapsed and the sentence runs the whole column. */
+    font-size: clamp(24px, min(18px + 1.9vw, 5.4vh, 100cqi / 17.1), 38px);
     line-height: 1.14;
     letter-spacing: -0.028em;
     color: var(--ink);
     text-wrap: wrap;
   }
-  /* 600 on the lifted phrase, as the homepage card has it: the two snapshots
-     the transition blends have to be the same glyphs at the same weight. */
+  /* PROTOTYPE — 600 on the lifted phrase, as the homepage card has it. The
+     card's sentence and this heading are now one block of type that the view
+     transition carries from one page to the other, and for that to be a
+     clean move rather than a blend the two must be set identically down to
+     the weight of the client's name. */
   .cs-hero__statement strong { color: var(--ink); font-weight: 600; }
-  /* As wide as its pills and no wider, as the card's row is. The transition
-     snapshots the element's box, and a row stretched to the column here and
-     shrunk to its pills there is two boxes of different proportions holding
-     the same pills. The gap under the heading is the card's, for the same
-     reason. */
-  .cs-hero .cs-tags {
-    /* About one and a half times the eyebrow's distance above the heading,
-       so the stack steps — label close, footnote further, picture furthest. */
-    margin-top: clamp(24px, min(5vh, 4.2vw), 48px);
-    align-self: flex-start;
-  }
   .cs-hero__statement-inner { display: block; }
-  /* "full-fibre" is held whole. Split into one box per word for the
-     entrance, the heading cannot break at the hyphen; arriving from the
-     homepage it is set plain and could; and the card it arrives from holds
-     the word too (.hp-case__lockup). Pinned, the three wrap alike. */
-  .cs-hero__lockup { white-space: nowrap; }
   /* The pieces the splitter leaves behind. Words stay whole so the sentence
      still breaks at spaces; letters are the things that move. */
   .cs-hero__word { display: inline-block; white-space: nowrap; }
   .cs-hero__char { display: inline-block; transform: translateZ(0); }
 
-  /* The homepage's ambient glow. A separate element rather than a pseudo on the
-     hero, and stretched with left/right rather than the usual
-     100vw-and-pull-it-back: 100vw counts the scrollbar, so that idiom is a page
-     wider than its window on every desktop that reserves room for one. With no
-     positioned ancestor, 0 and 0 here are the viewport's content edges exactly.
+  /* There used to be a media query here for the two windows where holding the
+     hero open at one screen stopped being worth it — a phone on its side, where
+     one screen gave the copy everything and the picture about fifty pixels, and
+     a phone upright, where a full screen reserved a quarter of the page as blank
+     space the picture could not grow into. Both were opting out of the fixed
+     height. The hero is sized to its contents everywhere now, which is what
+     those two windows were asking for, so the exception went with the rule. */
+
+  /* The homepage's ambient glow, which this page did not have. A separate
+     element rather than a pseudo on the hero, and stretched with left/right
+     rather than the usual 100vw-and-pull-it-back: 100vw counts the scrollbar,
+     so that idiom is a page wider than its window on every desktop that
+     reserves room for one. With no positioned ancestor, 0 and 0 here are the
+     viewport's content edges exactly.
 
      The measure inside the gradient does use vw, which the element's own width
      could not. A percentage there is rejected — Chrome will not accept one
@@ -500,13 +667,21 @@
      rather than the one value — and the scrollbar stops mattering once the
      number is only deciding how far the light reaches.
 
-     Right of centre, which is where the hero's empty half is. Everything in it
-     is left-aligned inside the measure, and the figure is contained top-left in
-     a box the full width of that, so the picture never reaches the right side at
-     any of these aspect ratios. Left of centre the brightest part of the light
-     sat behind the eyebrow and the tag chips, which are the two smallest things
-     on the page; here it falls on background, and the only type it reaches is
-     the tail of the longest heading lines, which are white and large. */
+     Right of centre, because left of centre the brightest part of the light sat
+     behind the eyebrow and the tag chips, which are the two smallest things on
+     the page. Over there the only type it reaches is the tail of the longest
+     heading lines, which are white and large.
+
+     It used to fall on empty background as well, since the picture was contained
+     top-left and never reached the right side of the column. Now that the
+     picture fills the column the light lands behind it for the height they
+     share, and what stays visible is the part above the photograph and the part
+     outside the column. That is a quieter glow than it was, which is the right
+     direction for something ambient.
+
+     Before the hero in the article, with no positioned ancestor, so it is
+     placed against the page: the first screen's height from the top, which
+     is where the light is. */
   .cs-glow {
     --glow-measure: min(100vw, var(--shell));
     position: absolute;
@@ -522,7 +697,9 @@
       var(--glow-tint) 0%, transparent 68%);
   }
 
-  /* The same pill on every case study: 14px, the same padding, the same hairline. */
+  /* One pill, the same size on every case study. It sits further under the
+     heading than the heading sits under the eyebrow, so the three read as
+     label, then sentence, then a row of their own. */
   .cs-tags {
     display: flex;
     flex-wrap: wrap;
@@ -552,20 +729,40 @@
   }
 
   /* ---------- Figures ----------
-     No frame, no radius and no border here on purpose, the same as on the other
-     pages: the device edges, the surface and its shadows are all inside her
-     hero render, and the artboards below reach their own edges. Anything drawn
-     around either would be a second frame around a frame.
+     Her exports are cropped to the artboard and composited on this page's
+     background by build-boots-figures.py, so there is no frame, no radius and
+     no border here on purpose: the rounded surfaces and their shadows are in
+     her artwork, and anything drawn around them would be a second frame around
+     a frame. See that script for why the alpha is flattened rather than kept.
 
-     Capped at one screenful of height, not width, so each figure's width
-     follows its own proportions. It is also what keeps them sharp: the widest
-     artboard here is 12,300px and the page draws it at 1120 at most.
+     One exception: boots-confirm. It is the figure on screen when the page
+     turns light at the close, and its export came out of Figma with the page
+     black baked in rather than transparent, so on a white page it was a black
+     slab with two screens in it. Its ladder (tag f8a166ef) was rebuilt with
+     that black knocked out and the alpha kept, so the page shows through in
+     either colour. If it is re-exported, export it transparent and the build
+     script's normal path will do; if the turn to light ever moves earlier, the
+     figures above it will need the same treatment.
 
-     The gap between the writing and the picture it belongs to has to stay
+     Capped at one screenful. Each of these artboards carries two or three full
+     screens in a single export, so at the column's width they laid out to about
+     1900px apiece: a figure you scroll past rather than look at, nine times.
+
+     The cap is on the height, not the width, so each one's width follows its
+     own proportions — the tall composites come in narrow, the wide ones stay
+     wide — and the run of them stops being nine identical slabs. What it costs
+     is legibility at this size, and that is the whole job of Enlarge, below:
+     the small picture is the index, the viewer is the document.
+
+     An earlier version of the same idea clipped them to a window their contents
+     panned through as the page scrolled. That came out on the owner's
+     instruction, and this is the version that does not move: the picture is
+     whole and simply drawn small. */
+  /* The gap between the writing and the picture it belongs to. It has to stay
      clearly smaller than the gap between one chapter and the next, or the
-     figure stops reading as the end of this chapter and starts looking like the
-     opening of the following one. The pair is kept at roughly 0.7: see
-     .cs-chapter + .cs-chapter, which moves with this. */
+     figure stops reading as the end of this chapter and starts looking like
+     the opening of the following one. The pair is kept at roughly 0.7: see
+     .cs-chapter + .cs-chapter, which moved with this. */
   .cs-figure {
     margin: clamp(64px, 9vh, 108px) 0 0;
   }
@@ -574,8 +771,9 @@
      smaller screen, which is the only case where two figures here differ.
 
      aspect-ratio off each figure's own --ar reserves the right height before the
-     file arrives, from the number the build authored rather than from whatever
-     the rung rounded to. */
+     file arrives. The intrinsic width and height attributes would do it too; this
+     is stated because the ratio is authored per figure and the box should come
+     from the same number the build wrote, not from whatever the rung rounded to. */
   .cs-figure img {
     display: block;
     width: 100%;
@@ -584,56 +782,45 @@
     aspect-ratio: var(--ar, auto);
     margin-inline: auto;
   }
-  /* The caption is exactly as wide as the picture above it, which is now a
-     single number for both. It used to be an expression: the figures were capped
-     by height, so the benchmark sheet came out about 590px wide and a row of
-     templates about 1120, and the caption had to recompute each one from --ar to
-     land on the same edges. One width for every figure retires that. */
-  .cs-figure figcaption {
-    margin: 26px auto 0;
-    max-width: min(100%, var(--fig-w));
-    /* Bottom a shade over the top: the eyebrow's cap-height leaves the box
-       looking heavier above than below when the four sides are equal. */
-    padding: 19px 22px 20px;
+  /* Standing in for the screenshots while they are redrawn. One proportion for
+     every slot, rather than the old boards' ratios, so an empty frame does not
+     take a screen to itself. The caption under it is the note of what belongs
+     there. */
+  .cs-ph {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    max-width: var(--fig-w);
+    margin-inline: auto;
+    aspect-ratio: 16 / 9;
     border: 1px solid var(--rule);
     border-radius: 0;
-    font-size: 14px;
-    line-height: 1.5;
-    letter-spacing: -0.004em;
-    /* A step up from --ink-3. Inside a box the text is being presented rather
-       than tucked away, and at 0.40 it looked like a disabled control. */
-    color: var(--ink-2);
-    text-align: left;
-  }
-  /* The eyebrow pattern the page uses above every section heading, one size
-     down: it sits inside a 14px block here rather than over a display title,
-     and at the full 12px it competed with the sentence it introduces.
-
-     aria-hidden because a figcaption is already announced as the caption of its
-     figure. Spelling that out again is repetition for the one visitor who
-     cannot see the layout that makes it useful. */
-  .cs-figure__label {
-    display: block;
-    margin-bottom: 8px;
+    background: var(--wash);
+    color: var(--ink-3);
     font-size: 11px;
+    font-weight: 500;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    font-weight: 500;
-    color: var(--ink-3);
   }
-  /* The button the script wraps each figure's picture in, so that opening the
-     viewer is a real control with a real label rather than a click handler on
-     an image. --fig-w, the same as the picture, so it hugs the artwork and does
-     not open the viewer from the empty column beside it. This was fit-content,
-     which hugged it too but cost the page its reserved space: a percentage width
-     inside a fit-content parent is indefinite, so every lazy figure measured
-     zero until its file arrived and the page shifted under the reader. Stating
-     the width makes it definite, and the aspect-ratio on the image can then hold
-     the box open from the first paint. The peek pill is drawn over it only while
-     a pointer is there. */
+
+  /* ---------- Enlarge ----------
+     At --fig-w these composites render the interface's own 14px type at four or
+     five pixels. That is not a defect to be fixed by drawing them bigger
+     — there is no size that fits three stacked screens into one screen legibly —
+     it is the reason the viewer exists, and it is what lets --fig-w be chosen
+     for the page's rhythm rather than as the largest size the artwork needs. The
+     figure is a button onto a 3360px copy. See build-boots-figures.py for why
+     that width is not simply a fourth entry in the srcset. */
   .cs-figure__open {
     position: relative;
     display: block;
+    /* --fig-w, the same as the picture, so the button hugs the artwork and does
+       not open the viewer from the empty column beside it. This was fit-content,
+       which hugged it too but cost the page its reserved space: a percentage
+       width inside a fit-content parent is indefinite, so every lazy figure
+       measured zero until its file arrived and the page shifted under the reader
+       nine times. Stating the width makes it definite, and the aspect-ratio on
+       the image can then hold the box open from the first paint. */
     width: 100%;
     max-width: var(--fig-w);
     margin: 0 auto;
@@ -746,43 +933,104 @@
       backdrop-filter: none;
     }
   }
+  /* The caption is exactly as wide as the picture above it, which is now a
+     single number for both. It used to be an expression — the figures were
+     capped by height, their widths ran from 374px to 729px, and the caption had
+     to recompute each one from --ar to land on the same edges. One width for
+     every figure retires that arithmetic, and the caption boxes come into line
+     with each other as a consequence rather than as a second decision.
+
+     Given an outline rather than left loose under the picture. Centred grey
+     text with nothing around it was the quietest thing on the page and read as
+     a stray line rather than as part of the figure. The border is --rule, the
+     same value as the line between chapters, so the commentary is drawn in the
+     page's existing vocabulary instead of introducing a second one. */
+  /* The figure box is the writing column, so the paragraph stays the widest
+     thing on the page. The picture is narrower than that column and sits in
+     the middle of it. The hero is the exception: it is the column. */
+  .cs-story .cs-figure {
+    width: 100%;
+    max-width: var(--text-end);
+    margin-left: 0;
+    margin-right: auto;
+  }
+  .cs-story .cs-figure .cs-figure__open,
+  .cs-story .cs-figure img,
+  .cs-story .cs-figure figcaption {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  /* A picture that sits in the middle of a chapter, then more writing. The
+     same gap that opens above the picture, so it reads as part of the
+     paragraph rather than as the close of the chapter. */
+  .cs-story .cs-figure + .cs-chapter__body {
+    margin-top: clamp(64px, 9vh, 108px);
+  }
+  /* Desktop beside the phone. The usual figure width would shrink both
+     screens, so this one takes the writing column. */
+  .cs-story .cs-figure--pair img,
+  .cs-story .cs-figure--pair .cs-figure__open,
+  .cs-story .cs-figure--pair figcaption {
+    max-width: 100%;
+  }
+  .cs-figure figcaption {
+    margin: 26px auto 0;
+    max-width: min(100%, var(--fig-w));
+    padding: 18px 22px;
+    border: 1px solid var(--rule);
+    border-radius: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    letter-spacing: -0.004em;
+    /* A step up from --ink-3. Inside a box the text is being presented rather
+       than tucked away, and at 0.40 it looked like a disabled control. */
+    color: var(--ink-2);
+    text-align: left;
+  }
+  /* The gap between the copy and the picture, widened at the owner's request
+     from 22/3.4vh/48. It was the smallest gap that still separated the two, and
+     a hero whose picture starts almost immediately under the tags reads as one
+     block rather than as a title and then a photograph. This is the only
+     vertical space in the hero that is purely a judgement — the padding above is
+     nav clearance and the margin between the sentence and the tags is type
+     spacing, but nothing forces this number except how the two want to sit
+     together. */
   .cs-hero .cs-figure {
     flex: 0 0 auto;
-    margin-top: clamp(72px, 9vh, 128px);
+    margin-top: clamp(52px, 7.4vh, 108px);
   }
   /* The picture at the column's width, and as tall as that makes it. No
      object-fit and no object-position: both existed to place a picture inside a
      box bigger than itself, and there is no such box now — the height is a
      result of the width rather than a budget the width has to fit into.
+     width:100% with height:auto is the whole of it.
 
-     The column, not the shell. This figure sat outside .cs-col until now, which
-     gave it the shell's width against the 1120 of the heading above it and every
-     chapter figure below, and made it the only thing on the page not on the
-     page's left edge. It also made the sizes attribute a lie: it has always said
-     1120px, which is what the picture is now and was not before. */
-  .cs-hero .cs-figure img {
+     The intrinsic width and height on the <img> are what reserve the right
+     amount of page before the file arrives; with the hero sized to its
+     contents there is nothing else holding that space open. */
+  .cs-hero .cs-figure img,
+  .cs-hero .cs-ph {
     display: block;
     width: 100%;
     height: auto;
     /* .cs-figure img draws every picture on the page at --fig-w, which is right
-       for a chapter figure and wrong for this one. The hero is the page's opening
-       image and the only one allowed the column's full width; without this it
-       would sit narrower than the heading above it. */
+       for a chapter figure and wrong for this one. */
     max-width: none;
   }
+  .cs-hero .cs-ph { display: grid; }
 
   /* Square corners, at the owner's request. The homepage card and the Up
      next card keep theirs; the hero is a photograph on the page, not a card. */
 
   /* ---------- Overview ----------
-     The facts, then the reframe. Same reading size as the chapters: 16px, which
-     is what the Boots study settled on after this used to be set larger. */
+     Two opening paragraphs, then the three summaries. The role in the first
+     paragraph is the only bold on the page's opening. */
   .cs-overview {
     padding-top: var(--section);
   }
   .cs-overview__body {
     margin: clamp(28px, 4vh, 44px) 0 0;
-    max-width: 58ch;
+    max-width: var(--text-end);
   }
   .cs-overview__body p {
     margin: 0 0 1.1em;
@@ -792,15 +1040,79 @@
     color: var(--ink-1);
   }
   .cs-overview__body p:last-child { margin-bottom: 0; }
-  .cs-overview__body strong { color: var(--ink); font-weight: 500; }
+  .cs-overview__body strong,
+  .cs-path__body strong,
+  .cs-chapter__body strong {
+    color: inherit;
+    font-weight: inherit;
+  }
+  /* The role in the opening line. Same size as the sentence, actually bold. */
+  .cs-overview__body p:first-child strong {
+    font-weight: 700;
+    color: var(--ink);
+  }
+  /* A label at the start of a paragraph, actually bold. The rule above
+     flattens every other strong so emphasis in the writing stays quiet. */
+  .cs-chapter__body strong.cs-runin {
+    display: block;
+    margin-bottom: 0.55em;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+  }
+  .cs-chapter__body p:has(> strong.cs-runin) {
+    margin-top: clamp(40px, 5.5vh, 64px);
+  }
+  /* Three decisions, scanned by the name. The label holds the left edge and
+     the explanation sits beside it, still inside the writing column. */
+  .cs-owners {
+    margin: clamp(32px, 4.4vh, 48px) 0 0;
+  }
+  .cs-owner {
+    display: grid;
+    grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+    column-gap: clamp(18px, 2.2vw, 28px);
+    align-items: start;
+    padding: clamp(20px, 2.8vh, 28px) 0;
+  }
+  .cs-owner + .cs-owner {
+    background-image: linear-gradient(var(--rule), var(--rule));
+    background-repeat: no-repeat;
+    background-position: left top;
+    background-size: 100% 1px;
+  }
+  .cs-owner dt {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-owner dd {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-owner strong {
+    color: inherit;
+    font-weight: inherit;
+  }
 
   /* ---------- Chapters ----------
      Two columns: a rail carrying the chapter's number and its beat, and the
-     writing. The rail is not sticky — on the Boots page it was, tracking down
-     the page and brightening as you entered the chapter, and it came out on the
-     owner's instruction: a number pinned level with the top of the screen for
-     the length of a chapter reads as a thing that has failed to scroll rather
-     than as a marker. */
+     writing. The rail used to be sticky, its number tracking down the page and
+     brightening as you entered the chapter. It was removed on the owner's
+     instruction. It was orientation nobody had asked for, and a number pinned
+     level with the top of the screen for the length of a chapter reads as a
+     thing that has failed to scroll rather than as a marker. */
   .cs-chapters {
     padding-top: var(--section);
   }
@@ -810,10 +1122,9 @@
     column-gap: clamp(28px, 4.5vw, 88px);
     padding-top: clamp(56px, 8vh, 104px);
   }
-  /* The hairline opens each chapter across the full column, so the chapters
-     read as a numbered series rather than as a run of headings. The first one
-     has none: it would be a line ruled directly under the overview's last
-     paragraph, closing it rather than opening anything. */
+  /* Outside the three stories, a following chapter still opens with a line.
+     Inside a story that line is turned off: the sections belong to the story,
+     and the line is reserved for the break between stories. */
   .cs-chapter + .cs-chapter {
     margin-top: clamp(92px, 13vh, 154px);
     border-top: 1px solid var(--rule);
@@ -824,17 +1135,35 @@
     flex-direction: column;
     gap: 10px;
   }
-  /* The same number the Boots and Sofa to Saddle stories carry in
-     this margin: one figure, no total. */
   .cs-chapter__no {
     font-family: var(--ff-display);
-    font-weight: 700;
-    font-size: clamp(48px, 5vw, 64px);
+    font-weight: 800;
+    font-size: clamp(24px, 2vw, 34px);
     line-height: 1;
-    letter-spacing: -0.045em;
-    color: var(--ink-2);
+    letter-spacing: -0.03em;
+    /* Was 0.22, which is 1.91:1 against the page. The reasoning was that this
+       marks where a chapter starts rather than being a thing to read, and that
+       at this size a brighter grey competes with the title beside it — but 3:1
+       is the floor at which large text resolves at all, and below it the number
+       is not quietly subordinate, it is illegible. --ink-3 is 3.77:1: over the
+       line, and still obviously second to a white title. */
+    color: var(--ink-3);
   }
-  .cs-chapter__body { max-width: 62ch; }
+  /* The total, sized and dimmed as an annotation on the number rather than as
+     part of it. Its job is to say how much of the article is left, which is a
+     thing to glance at; matched to the number it would double the width of the
+     rail to carry information nobody is reading it for. Baseline-aligned by
+     default, which is what makes the pair read as a fraction.
+
+     Same ink as the number. It was dimmed as well as shrunk at first, which is
+     the same demotion applied twice: small text needs more contrast than large
+     text to read as clearly, not less, and at half the size it disappeared.
+     The size is what puts it second. */
+  .cs-chapter__of {
+    font-size: 0.48em;
+    letter-spacing: -0.01em;
+  }
+  .cs-chapter__body { max-width: 62ch; grid-column: 2; }
   .cs-chapter__title {
     margin: 0;
     font-family: var(--ff-display);
@@ -849,8 +1178,9 @@
     line-height: 1.08;
     letter-spacing: -0.032em;
     color: var(--ink);
-    /* Balanced so a two-line headline breaks near its middle instead of leaving
-       one word on the second line. */
+    /* The draft's rule for these is "opinionated, under 8 words, fragments
+       welcome", and several are two sentences. Balanced so a two-line headline
+       breaks near its middle instead of leaving one word on the second line. */
     text-wrap: balance;
   }
   .cs-chapter__body p {
@@ -860,94 +1190,660 @@
     letter-spacing: -0.006em;
     color: var(--ink-1);
   }
-  .cs-chapter__body strong { color: var(--ink); font-weight: 500; }
-  /* The figure box is the writing column, the same width as the copy. The
-     picture is narrower than that and sits in the middle of it. */
-  .cs-chapter .cs-figure {
-    grid-column: 2;
-    justify-self: start;
-    width: min(100%, 62ch);
+  /* A last line of one word reads as a widow. pretty rebreaks the paragraph
+     so that line carries more than the final word. */
+  .cs-overview__body p,
+  .cs-path__note p,
+  .cs-chapter__body p,
+  .cs-chapter__body dd,
+  .cs-dir p,
+  .cs-figure figcaption {
+    text-wrap: pretty;
   }
+  /* The figure belongs to the chapter but not to its measure: it spans the
+     rail as well, so every image on the page is the same width regardless of
+     which column its writing sits in. */
+  .cs-chapter .cs-figure { grid-column: 1 / -1; }
 
-  /* ---------- Named things ----------
-     This page's own, and the only component on it the other two case studies do
-     not have. Two passages here are genuinely enumerable rather than
-     discursive: the three bands the feature list was cut into, and the five
-     parts each design template carried. Both are sets of named things that the
-     client and the technical team then used by name, so the names are the
-     substance. Run together as sentences they become a list that has been
-     talked around, and what a reader takes away is that there were some
-     categories rather than which ones.
-
-     Built out of what the page already has rather than as a new idea: the term
-     is the chapter body's strong, the description is its paragraph at exactly
-     the same size and leading, and the hairline is --rule, the same value that
-     opens every chapter above. No bullets, no numbers and no box — the rule is
-     what groups them, and anything more would make a five-item list the loudest
-     thing in the chapter. */
-  .cs-terms {
-    margin: 1.5em 0 0;
-    padding-left: clamp(18px, 1.8vw, 26px);
-    border-left: 1px solid var(--rule);
+  /* ---------- Three stories ----------
+     The overview names them, then this index stays put while those three are
+     on screen so a reader can move between them without climbing back to the
+     top. It sticks under the nav pill and lets go once the stories end, which
+     is why it lives inside .cs-stories rather than on the page. */
+  /* Each entry is a row across the story grid, title on the left and the
+     note on the right, so this index is a different shape from the chapters
+     without squeezing the writing into a third of the column. */
+  .cs-paths {
+    margin-top: clamp(36px, 5vh, 56px);
+    max-width: min(100%, calc(13ch + clamp(28px, 4.5vw, 88px) + var(--text-end)));
   }
-  .cs-terms dt,
-  .cs-terms dd {
+  .cs-path {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    column-gap: clamp(28px, 4.5vw, 88px);
+    align-items: start;
+    padding: clamp(26px, 3.6vh, 36px) 0;
+  }
+  .cs-path + .cs-path {
+    background-image: linear-gradient(var(--rule), var(--rule));
+    background-repeat: no-repeat;
+    background-position: left top;
+    background-size: 100% 1px;
+  }
+  .cs-path__body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: baseline;
+  }
+  .cs-path__note { min-width: 0; }
+  .cs-path__note p {
+    margin: 0;
     font-size: 16px;
     line-height: 1.62;
     letter-spacing: -0.006em;
-  }
-  .cs-terms dt {
-    font-weight: 500;
-    color: var(--ink);
-  }
-  .cs-terms dd {
-    margin: 0;
     color: var(--ink-1);
   }
-  /* The gap between one pair and the next, and it is the only spacing in here.
-     A term sits directly on its own description — they are one item — and the
-     items are held apart by roughly a line. */
-  .cs-terms dd + dt { margin-top: 1.05em; }
-
-  /* ---------- Reflection ---------- */
-  .cs-reflection {
-    padding-top: var(--section);
+  .cs-path__name {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin: 0 0 12px;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.011em;
   }
-  /* The same heading as a chapter and as the impact section that closes
-     Boots and Sofa to Saddle: this is the last section of the article, not a
-     second hero, so it takes the article's own heading size and weight. */
-  .cs-reflection__title {
-    margin: clamp(20px, 3vh, 34px) 0 0;
+  .cs-path__no {
+    margin: 0 0 10px;
     font-family: var(--ff-display);
     font-weight: 700;
-    font-size: clamp(25px, 2.35vw, 34px);
-    line-height: 1.08;
-    letter-spacing: -0.032em;
+    font-size: 13px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-2);
+  }
+  .cs-path__title {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(20px, 1.7vw, 24px);
+    line-height: 1.15;
+    letter-spacing: -0.028em;
     color: var(--ink);
-    max-width: 26ch;
     text-wrap: balance;
   }
-  .cs-reflection__body {
-    margin: clamp(22px, 3.2vh, 32px) 0 0;
-    max-width: 60ch;
+  .cs-path__body .cs-path__no {
+    margin: 0;
+    color: var(--ink-2);
+    font-family: var(--ff-display);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
   }
-  .cs-reflection__body p {
-    margin: 0 0 1.2em;
-    font-size: clamp(17px, 1.32vw, 19.5px);
+  .cs-path__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .cs-path__title a:hover,
+  .cs-path__title a:focus-visible { text-decoration: none; }
+  .cs-path__body p {
+    margin: 0.9em 0 0;
+    font-size: 16px;
     line-height: 1.62;
     letter-spacing: -0.006em;
     color: var(--ink-1);
   }
-  .cs-reflection__body p:last-child { margin-bottom: 0; }
-  .cs-reflection__body strong { color: var(--ink); font-weight: 500; }
-  /* The opening line is a lead-in, not the first of the two things, and at body
-     size and body grey it reads as a paragraph that forgot to say anything.
-     Lifting it to full ink and a step up in size is what makes the two
-     paragraphs under it read as its list. */
-  .cs-reflection__body p:first-child {
-    margin-bottom: 1.5em;
-    font-size: clamp(18px, 1.42vw, 21px);
+  .cs-path__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    /* A pause after the paragraph, so the jump reads as its own action rather
+       than the next line of the story. */
+    margin-top: clamp(32px, 4.2vh, 44px);
     color: var(--ink);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+  }
+  .cs-path__more svg { width: 16px; height: 16px; display: block; }
+  .cs-path__more:hover .cs-path__arrow,
+  .cs-path__more:focus-visible .cs-path__arrow { transform: translate(3px, -3px); }
+  .cs-path__arrow { display: inline-flex; transition: transform 100ms ease-out; }
+  /* The overview names the three pieces. The space under it is the landing:
+     a line, then the same title set as a chapter, so the first story does not
+     read as another paragraph of the overview. */
+  .cs-stories {
+    max-width: var(--measure);
+    margin-top: clamp(96px, 13vh, 148px);
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: clamp(64px, 8vh, 100px);
+  }
+  /* The number shares the overview's left edge. The writing sits in the next
+     column, the same rail and indent as the other case studies, so the bulk
+     of the copy reads a step in from that edge. */
+  .cs-story {
+    --story-gap: clamp(28px, 4.5vw, 88px);
+    display: grid;
+    grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
+    column-gap: var(--story-gap);
+    align-items: start;
+  }
+  .cs-story > .cs-path__no {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(48px, 5vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.045em;
+    color: var(--ink-2);
+  }
+  .cs-story__main { min-width: 0; }
+  .cs-story__title {
+    margin: 0 0 clamp(56px, 8vh, 88px);
+    max-width: var(--text-end);
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(28px, 2.7vw, 36px);
+    line-height: 1.08;
+    letter-spacing: -0.034em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-story__main > .cs-chapter:first-of-type { padding-top: 0; }
+  /* From the overview on, the page is one reading column, the same centred
+     measure as the hero. The chapter breaks are drawn on that column, so the
+     line starts where the writing starts. */
+  .cs-read {
+    max-width: var(--shell);
+    margin: 0 auto;
+    padding-left: var(--pad-x);
+    padding-right: var(--pad-x);
+    /* Same length the column registers, so a rule on a section — which sits
+       outside that column — still stops where the writing stops. */
+    --text-end: 70ch;
+  }
+  .cs-path__title a:focus-visible,
+  .cs-path__more:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+  .cs-overview,
+  .cs-story { scroll-margin-top: var(--nav-clear); }
+  /* The three stories are the breaks. A line and a real gap between them, and
+     almost none of that between the sections inside one story, so a heading
+     in the middle of Checkout does not look like the start of a new piece. */
+  .cs-story + .cs-story {
+    margin-top: clamp(96px, 13vh, 148px);
+    padding-top: clamp(64px, 8vh, 100px);
+    border-top: 1px solid var(--rule);
+  }
+  .cs-story .cs-chapter { grid-template-columns: minmax(0, 1fr); }
+  .cs-story .cs-chapter__body {
+    grid-column: 1;
+    max-width: var(--text-end);
+  }
+  .cs-story .cs-chapter + .cs-chapter {
+    margin-top: 0;
+    padding-top: clamp(84px, 11vh, 128px);
+    border-top: 0;
+  }
+  .cs-story .cs-chapter__body p { margin-top: 1.7em; }
+  .cs-story .cs-chapter__body h3 + p { margin-top: 0.55em; }
+  /* The story rule above is more specific than the run-in paragraph's own
+     margin, so the pause before a lifted line has to be restated here. */
+  .cs-story .cs-chapter__body p:has(> strong.cs-runin) {
+    margin-top: clamp(36px, 5vh, 52px);
+  }
+  /* This chapter uses one interval. The findings sit on it too, so they
+     don't each open a larger gap of their own. */
+  .cs-story .cs-chapter--even .cs-chapter__body p,
+  .cs-story .cs-chapter--even .cs-chapter__body p:has(> strong.cs-runin) {
+    margin-top: clamp(32px, 4.4vh, 44px);
+  }
+  .cs-story .cs-chapter--even strong.cs-runin { margin-bottom: 0.9em; }
+  /* The four directions stay in the writing column, in the same order you
+     read them: the idea, then its screen, then the next. Same type, same
+     picture width, same gap, so the set is quiet. */
+  .cs-dirs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: var(--text-end);
+  }
+  .cs-dir + .cs-dir { padding-top: clamp(56px, 8vh, 88px); }
+  .cs-dir h3 {
+    margin: 1.7em 0 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(20px, 1.7vw, 24px);
+    line-height: 1.15;
+    letter-spacing: -0.028em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-dir p {
+    margin: 0.7em 0 0;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-dir strong {
+    color: inherit;
+    font-weight: inherit;
+  }
+  /* The turn after the four directions. The insight stays in the quiet fill,
+     written in the same type as the page, then the two findings. The agreed
+     solution steps back out as a plain list, in the same type as the writing. */
+  .cs-story .cs-chapter--turn {
+    padding-top: clamp(108px, 14vh, 156px);
+  }
+  .cs-story .cs-chapter--turn .cs-trial {
+    margin-top: 0;
+    padding: clamp(48px, 6vh, 64px) clamp(40px, 4.6vw, 56px);
+  }
+  .cs-story .cs-chapter--turn .cs-trial > p { margin-top: 0; }
+  /* The card is the grouping. A lead, then two findings: a title and the
+     explanation, on the same edge as the writing. */
+  .cs-story .cs-chapter--turn .cs-trial .cs-pair__k {
+    margin: 0 0 6px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-2);
+  }
+  .cs-story .cs-chapter--turn .cs-trial__lines > p { margin: 0; }
+  .cs-story .cs-chapter--turn .cs-trial__find {
+    margin-top: clamp(40px, 5.2vh, 52px);
+  }
+  .cs-story .cs-chapter--turn .cs-trial__find p.cs-trial__title {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-story .cs-chapter--turn .cs-trial__find p + p {
+    margin: 0.7em 0 0;
+  }
+  .cs-story .cs-chapter--turn .cs-trial + .cs-chapter__title {
+    margin-top: clamp(96px, 12vh, 140px);
+  }
+  /* Four decisions, as a list. A dot, and the sentence in the same type as
+     the writing. Nothing in the line is lifted out of it. */
+  .cs-story .cs-chapter--turn .cs-points {
+    margin-top: clamp(28px, 3.6vh, 40px);
+  }
+  .cs-story .cs-chapter--turn .cs-points li {
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 22px;
+    background: none;
+  }
+  .cs-story .cs-chapter--turn .cs-points li + li { margin-top: 1.15em; }
+  .cs-story .cs-chapter--turn .cs-points li::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    top: 0.55em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ink-2);
+  }
+  .cs-story .cs-chapter--turn .cs-points li p { margin: 0; }
+  .cs-story .cs-chapter--turn .cs-points + p {
+    margin-top: clamp(28px, 3.6vh, 40px);
+  }
+
+  /* ---------- Facts lifted out of the paragraph ----------
+     A set, a pair, a short list, a stack of blocks. Same type and the same
+     hairline as the owner rows, so these read as the writing changing shape.
+     Nothing here is a card. */
+
+  .cs-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    margin: clamp(28px, 4vh, 40px) 0 0;
+    border-top: 1px solid var(--rule);
+  }
+  /* This pair is the two routes, opened by the sentence above it. No rule:
+     the labels do the separating. */
+  .cs-pair--plain {
+    border-top: 0;
+    column-gap: clamp(28px, 4vw, 48px);
+    margin-top: 1.15em;
+  }
+  .cs-chapter--even .cs-pair--plain {
+    margin-top: clamp(22px, 3vh, 32px);
+    column-gap: clamp(40px, 5vw, 64px);
+  }
+  .cs-chapter--even .cs-pair__k { margin-bottom: 14px; }
+  .cs-chapter--even .cs-pair dd { margin-top: 0.8em; }
+  .cs-chapter--even .cs-proof { margin-top: clamp(22px, 3vh, 32px); }
+  /* The two routes and what testing preferred, read as one thing. The only
+     rule is the one between the routes. */
+  .cs-trial {
+    margin-top: clamp(56px, 7.5vh, 80px);
+    padding: clamp(36px, 4.6vh, 48px) clamp(32px, 3.6vw, 40px);
+    background: var(--wash);
+    /* Same diagonal as the hero. The query is the writing column, set on the
+       body below: a unit here would otherwise be the viewport, and the curve
+       would ignore how wide the card actually is. */
+    border-radius: max(14px, 3.4cqw) 0 max(14px, 3.4cqw) 0;
+  }
+  .cs-chapter__body:has(.cs-trial) {
+    container-type: inline-size;
+  }
+  .cs-story .cs-chapter--even .cs-chapter__body .cs-trial + p {
+    margin-top: clamp(56px, 7.5vh, 80px);
+  }
+  .cs-story .cs-chapter--even .cs-trial {
+    padding: clamp(48px, 6vh, 64px) clamp(40px, 4.6vw, 56px);
+  }
+  .cs-trial .cs-pair--plain {
+    margin-top: 0;
+    column-gap: 0;
+  }
+  .cs-trial .cs-pair > div:first-child {
+    padding-right: clamp(28px, 3.2vw, 40px);
+  }
+  .cs-chapter--even .cs-trial .cs-pair__k { margin-bottom: 6px; }
+  .cs-chapter--even .cs-trial .cs-pair dd { margin-top: 1.35em; }
+  .cs-story .cs-chapter--even .cs-chapter__body > p:first-child { margin-top: 0; }
+  .cs-story .cs-chapter--even .cs-chapter__body .cs-trial p { margin-top: 0; }
+  .cs-story .cs-chapter--even .cs-chapter__body .cs-trial p.cs-trial__finding {
+    margin-top: clamp(52px, 6.4vh, 68px);
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+  }
+  .cs-story .cs-chapter--even .cs-chapter__body .cs-trial__finding + p {
+    margin-top: 1.35em;
+  }
+  .cs-pair__k {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink-2);
+  }
+  .cs-pair > div { min-width: 0; padding-top: 16px; }
+  .cs-pair > div + div {
+    padding-left: clamp(18px, 2.4vw, 28px);
+    border-left: 1px solid var(--rule);
+  }
+  .cs-pair.cs-pair--plain > div { padding-top: 0; }
+  .cs-pair.cs-pair--plain > div + div {
+    padding-left: clamp(28px, 3.2vw, 40px);
+    border-left: 1px solid var(--rule);
+  }
+  .cs-pair dt {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-pair dd {
+    margin: 0.45em 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+
+  .cs-points {
+    margin: clamp(32px, 4.4vh, 48px) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .cs-points li {
+    padding: clamp(16px, 2.2vh, 22px) 0;
+    background-image: linear-gradient(var(--rule), var(--rule));
+    background-repeat: no-repeat;
+    background-position: left top;
+    background-size: 100% 1px;
+  }
+  .cs-points li:first-child {
+    padding-top: 0;
+    background-image: none;
+  }
+  .cs-story .cs-chapter__body p.cs-points__title,
+  .cs-impact .cs-chapter__body p.cs-points__title {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.25;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-story .cs-chapter__body .cs-points li p + p,
+  .cs-impact .cs-chapter__body .cs-points li p + p {
+    margin: 0.4em 0 0;
+    font-size: 15px;
+    line-height: 1.55;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+
+  .cs-blocks {
+    margin: clamp(32px, 4.4vh, 48px) 0 0;
+  }
+  .cs-story .cs-chapter__body p.cs-blocks__label {
+    margin: 0 0 2px;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--ink-2);
+  }
+  .cs-blocks ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--rule);
+  }
+  .cs-blocks li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 18px;
+    align-items: baseline;
+    padding: 13px 0;
+    background-image: linear-gradient(var(--rule), var(--rule));
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    background-size: 100% 1px;
+    color: var(--ink);
+    font-size: 16px;
+    letter-spacing: -0.011em;
+    line-height: 1.35;
+  }
+  .cs-blocks__state {
+    font-size: 13px;
+    letter-spacing: -0.006em;
+    color: var(--ink-2);
+  }
+
+  /* The result, read with what it means. Same hairline-free row as the owner
+     names: the figure takes its own width, the explanation takes the rest.
+     The number stays in the chapter's type, not above it. */
+  .cs-proof {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: clamp(20px, 3vw, 36px);
+    align-items: start;
+    margin: clamp(36px, 5vh, 52px) 0 0;
+  }
+  .cs-story .cs-chapter__body p.cs-proof__num {
+    margin: 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(26px, 2.6vw, 32px);
+    line-height: 1;
+    letter-spacing: -0.036em;
+    color: var(--ink);
+  }
+  .cs-story .cs-chapter__body p.cs-proof__what {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.011em;
+    color: var(--ink);
+  }
+  .cs-story .cs-chapter__body p.cs-proof__text {
+    margin: 0.45em 0 0;
+    font-size: 16px;
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  /* A plate fills the writing column. Reserved for the pictures that are the
+     point of the chapter, and only where the artwork is wide enough that the
+     height stays on one screen. */
+  .cs-story .cs-figure--plate {
+    max-width: var(--text-end);
+  }
+  .cs-story .cs-figure--plate .cs-figure__open,
+  .cs-story .cs-figure--plate img {
+    width: 100%;
+    max-width: min(100%, calc(min(78vh, 820px) * var(--ar, 1.2)));
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cs-story .cs-figure--plate figcaption {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: min(100%, calc(min(78vh, 820px) * var(--ar, 1.2)));
+  }
+  .cs-story .cs-chapter__title {
+    font-weight: 600;
+    font-size: clamp(21px, 1.8vw, 26px);
+    letter-spacing: -0.026em;
+  }
+  .cs-stories + .cs-chapters {
+    max-width: var(--measure);
+    margin-top: clamp(72px, 10vh, 120px);
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .cs-stories + .cs-chapters .cs-chapter {
+    padding-top: clamp(48px, 7vh, 84px);
+  }
+  .cs-stories + .cs-chapters .cs-chapter__body {
+    max-width: var(--text-end);
+  }
+  /* The rule runs from the number's edge through the end of the writing. */
+  .cs-stories,
+  .cs-story + .cs-story,
+  .cs-stories + .cs-chapters {
+    border-top: 0;
+    background-image: linear-gradient(var(--rule), var(--rule));
+    background-repeat: no-repeat;
+    background-position: left top;
+    background-size: min(100%, calc(13ch + clamp(28px, 4.5vw, 88px) + var(--text-end))) 1px;
+  }
+  /* The impact section sits directly above the footer. The footer's rule is
+     the full inset of the page, and a second, shorter rule here reads as a
+     mismatch, so the impact section opens without one. */
+  .cs-stories + .cs-chapters {
+    background-image: none;
+  }
+  /* A close, not another chapter. The page cross-fades to white as this
+     arrives (see the top of the stylesheet). The margin above is larger than
+     a section's so the last figure is on its way out before the ground
+     leaves black. */
+  .cs-impact {
+    --ink: #0a0a0c;
+    --ink-1: rgba(10,10,12,0.78);
+    --ink-2: rgba(10,10,12,0.66);
+    --ink-3: rgba(10,10,12,0.58);
+    --rule: rgba(10,10,12,0.16);
+    --rule-2: rgba(10,10,12,0.44);
+    --wash: rgba(10,10,12,0.04);
+    margin-top: clamp(180px, 32vh, 340px);
+    padding: clamp(72px, 11vh, 128px) var(--pad-x);
+  }
+  .cs-impact .cs-chapter { padding-top: 0; }
+  /* Same rail and measure as the stories, so the close starts where the
+     writing starts and ends where the writing ends. */
+  .cs-impact .cs-chapter__body { max-width: var(--text-end); }
+  .cs-impact .cs-chapter__title {
+    font-weight: 800;
+    font-size: clamp(40px, 4.6vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+  }
+  .cs-impact .cs-chapter__body > p:first-of-type {
+    margin-top: clamp(28px, 4vh, 44px);
+  }
+  /* Three findings, each held by its own bar. The bar meets the title cap
+     and the last baseline, and stops short of the next point. */
+  .cs-impact .cs-points {
+    margin-top: clamp(36px, 4.8vh, 52px);
+    padding: 0;
+    background: none;
+  }
+  .cs-impact .cs-points li {
+    position: relative;
+    margin: 0;
+    padding: 0 0 0 18px;
+    background: none;
+  }
+  .cs-impact .cs-points li + li {
+    margin-top: clamp(28px, 3.6vh, 40px);
+  }
+  .cs-impact .cs-points li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 3px;
+    bottom: 4px;
+    width: 3px;
+    border-radius: 2px;
+    background: var(--ink);
+  }
+  .cs-impact .cs-chapter__body > p,
+  .cs-impact .cs-points li p + p {
+    text-wrap: pretty;
+  }
+  .cs-impact .cs-chapter__body .cs-points li p + p {
+    margin-top: 0.45em;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .cs-impact .cs-points + p {
+    margin-top: clamp(32px, 4.2vh, 48px);
+  }
+  main:has(.cs-impact) + .hp-footer {
+    margin-top: 0;
+  }
+  /* No hairline where the next band meets Let's talk. The break is the ground
+     changing back to black, and a rule on that edge would be a second one. */
+  main:has(.cs-impact) + .hp-footer::before {
+    content: none;
   }
 
   /* ---------- NEXT ----------
@@ -976,11 +1872,6 @@
   }
   /* On the studies that close on the white sheet, the card is the ink. */
   .cs-next--ink { --next-bg: #0a0a0c; --next-ink: #ffffff; }
-  /* Dark on white reads lighter than white on black, so the white card's
-     small marks get back the weight the eye takes off them: the kicker and
-     its rule come up from 62% to 80%, and the arrow's stroke thickens. */
-  .cs-next--light .cs-next__kicker { opacity: 0.8; font-weight: 600; }
-  .cs-next--light .cs-next__arrow path { stroke-width: 1.75; }
   /* The impact section's own bottom padding is the gap above every other
      close. The card wants more than that: the writing should be gone before
      the next study arrives. */
@@ -1120,9 +2011,6 @@
     will-change: transform;
   }
   .hp-cursor.is-on { opacity: 1; }
-  /* Over a white card the pointer inverts: a black disc with a white arrow. */
-  html:has(.cs-next--light) .hp-cursor { background: #0a0a0b; }
-  html:has(.cs-next--light) .hp-cursor__arrow path { stroke: #ffffff; }
   .hp-cursor__arrow {
     width: 32px;
     height: 32px;
@@ -1140,12 +2028,61 @@
     .hp-cursor__arrow { transition: none; }
   }
 
+  .cs-chapter__body h3 {
+    margin: clamp(40px, 5.5vh, 64px) 0 0;
+    font-family: var(--ff-display);
+    font-weight: 700;
+    font-size: clamp(18px, 1.45vw, 22px);
+    line-height: 1.2;
+    letter-spacing: -0.022em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .cs-chapter__body h3 + p { margin-top: 0.55em; }
+
+  /* ---------- Reflection ---------- */
+  .cs-reflection {
+    padding-top: var(--section);
+  }
+  .cs-reflection__title {
+    margin: clamp(20px, 3vh, 34px) 0 0;
+    font-family: var(--ff-display);
+    font-weight: 800;
+    font-size: clamp(32px, 3.9vw, 62px);
+    line-height: 1.0;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    max-width: 18ch;
+  }
+  .cs-reflection__body {
+    margin: clamp(30px, 4.5vh, 52px) 0 0;
+    max-width: 60ch;
+  }
+  .cs-reflection__body p {
+    margin: 0 0 1.2em;
+    font-size: clamp(17px, 1.32vw, 19.5px);
+    line-height: 1.62;
+    letter-spacing: -0.006em;
+    color: var(--ink-1);
+  }
+  .cs-reflection__body p:last-child { margin-bottom: 0; }
+  .cs-reflection__body strong { color: var(--ink); font-weight: 500; }
+  /* "Two things worth carrying forward." is a lead-in, not the first of the
+     two things, and at body size and body grey it reads as a paragraph that
+     forgot to say anything. Lifting it to full ink and a step up in size is
+     what makes the two paragraphs under it read as its list. */
+  .cs-reflection__body p:first-child {
+    margin-bottom: 1.5em;
+    font-size: clamp(18px, 1.42vw, 21px);
+    color: var(--ink);
+  }
+
   /* ---------- FOOTER ----------
      The homepage's footer, minus its pitch. There, "Open to new opportunities"
      is the point of the page; here it is a paragraph a reader has to get past
      to reach the two things they came to the bottom for, and it says the same
-     thing twice on a visit that takes in more than one page. So this footer is
-     the contact card only: the heading, an email address, a phone number.
+     thing twice on a visit that takes in both pages. So this footer is the
+     contact card only: the heading, an email address, a phone number.
 
      Back to selected work used to be a line of its own above this block, 190px
      up with a hairline between, and it sits in the base row now. It is the only
@@ -1154,8 +2091,19 @@
      page with one thing at each end instead of a pair crowded onto the right. */
   .hp-footer {
     --foot-x: var(--pad-x);
-    /* The contact close is always black, including after a study has turned
-       white for its impact section. Pin every inherited colour here. */
+    /* The close mixes the page toward white. Let's talk stays the black the
+       rest of the page reads in, type and buttons included, and does not
+       follow --turn: the tokens are pinned back to their dark values here,
+       because the mixes are resolved on :root and setting --turn on this
+       element alone would change nothing. The shadow carries that black out
+       to the viewport when the
+       footer is narrower than the window, so the edge stays one line. It is
+       a spread, clipped to the footer's own top and bottom: two shadows
+       offset by 100vmax were tried first, and an offset moves a copy of the
+       box rather than widening it, so on a window wider than the shell the
+       copies landed off screen and the page's blue showed either side. */
+    --turn: 0;
+    --ink-turn: 0;
     --bg: #0a0a0c;
     --ink: #ffffff;
     --ink-1: rgba(255,255,255,0.74);
@@ -1188,6 +2136,10 @@
     height: 1px;
     background: var(--rule);
   }
+  /* The footer eyebrow's dash used to be suppressed here, as a second statement
+     of the hairline 90px above it. Asked for by the owner and reinstated, so
+     Get in touch now carries the same mark as Overview and Reflection and the
+     footers on both pages stay identical. */
   .hp-footer__title {
     margin: clamp(22px, 3vh, 40px) 0 0;
     font-family: var(--ff-display);
@@ -1214,8 +2166,8 @@
     gap: 12px;
     min-height: 44px;
     padding: 18px 24px;
-    background: #fcf9f5;
-    color: #0a0a0c;
+    background: var(--cta-bg);
+    color: var(--cta-ink);
     border-radius: 999px;
     font-size: 15px;
     font-weight: 500;
@@ -1227,8 +2179,8 @@
   }
   .hp-footer__cta.is-ghost {
     background: transparent;
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--ink);
+    border: 1px solid var(--rule-2);
   }
   .hp-footer__cta:active,
   .hp-footer__cta.is-pressed {
@@ -1306,8 +2258,8 @@
      Opt-in from JS, never opt-out. The hidden state is scoped to a class the
      script adds to <html>, so a visitor whose JS fails or is blocked gets the
      article at full opacity rather than a blank page with an intact DOM.
-     expo.out as a bezier, matching the homepage's GSAP default so all the pages
-     settle with the same easing. */
+     expo.out as a bezier, matching the homepage's GSAP default so the two
+     pages settle with the same easing. */
   .cs-motion [data-reveal]:not([data-stagger]) {
     opacity: 0;
     transform: translateY(26px);
@@ -1338,6 +2290,10 @@
   .cs-motion [data-stagger].is-in > :nth-child(2) { transition-delay: 90ms; }
   .cs-motion [data-stagger].is-in > :nth-child(3) { transition-delay: 165ms; }
   .cs-motion [data-stagger].is-in > :nth-child(n+4) { transition-delay: 225ms; }
+
+  /* The hero figure has no entrance of its own. It used to open out of an
+     inset window, and every figure below it repeated the gesture on scroll;
+     both are gone. See the figure block further down for why. */
 
   /* ---------- Headings, a line at a time ----------
      The one motion here that is about the writing rather than the pictures.
@@ -1375,7 +2331,7 @@
   /* The hero's sequence. Everything else on this page is released by the scroll
      reaching it, so its order is whatever order the reader arrives in. This one
      is released on load, which makes it the only place where the order of
-     arrival is composed: rule, then title, then what the title is about. */
+     arrival is composed: title, then what kind of work it was. */
   .cs-motion .cs-hero .hp-eyebrow,
   .cs-motion .cs-tags {
     opacity: 0;
@@ -1388,17 +2344,33 @@
     transition: opacity 0.95s cubic-bezier(0.16,1,0.3,1),
                 transform 0.95s cubic-bezier(0.16,1,0.3,1);
   }
-  .cs-motion .cs-hero.is-in .cs-tags { transition-delay: 0.54s; }
+  /* The tags sit under the sentence and arrive after it has begun. The
+     letters start at 0.22s and run their stagger for about a second more;
+     0.6s puts the row on its way while the sentence's last line is still
+     landing, so the two read as one arrival in order rather than as two. */
+  .cs-motion .cs-hero.is-in .cs-tags { transition-delay: 0.6s; }
 
   /* Figures have no entrance of their own: they fade and rise on the generic
-     [data-reveal] above, the same as a heading or a paragraph. */
+     [data-reveal] above, the same as a heading or a paragraph.
+
+     They used to open out of an inset window, and there was a scale(1.045)
+     riding along with it. The scale went first, because together the two read
+     as the artwork zooming. The window went second, for the same reason on its
+     own: measured across all ten figures the mask's edges swept 47 to 49px
+     every time one came into view, and at that distance an opening mask is not
+     read as a frame being lifted, it is read as the picture changing size. A
+     screenshot of an interface has no tolerance for that — the thing being
+     looked at is fine detail, and anything that moves it competes with it. */
 
   /* ---------- Viewer ----------
-     Lifted from pwc-client-portal.html unaltered, which took it from the Boots
-     page. One state: the picture at the width of the screen, scrolled down like
-     the page it is a picture of. It had two on Boots, fit and actual size, and
-     fit turned out to be the problem the viewer exists to solve wearing the
-     viewer's clothes. */
+     One state: the picture at the width of the screen, scrolled down like the
+     page it is a picture of. It had two, fit and actual size, with a toggle and
+     a drag to pan. Fit was the problem the viewer exists to solve wearing the
+     viewer's clothes — it drew a 1:1.7 composite 530px wide to make it fit a
+     900px-tall screen — and every artboard here is taller than it is wide, so
+     filling the width and scrolling is the only sensible reading of any of
+     them. Once that is true the toggle, the pan and the second cursor have
+     nothing left to do. */
   .cs-lb[hidden] { display: none; }
   .cs-lb {
     position: fixed;
@@ -1494,6 +2466,18 @@
      Everything that can be a continuous curve already is one in the base
      rules, so these bands only carry things that genuinely change shape: the
      nav pill's density, and the chapter rail going from a column to a row. */
+  @media (max-width: 800px) {
+    .cs-paths { max-width: var(--text-end); }
+    .cs-path {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 14px;
+    }
+    .cs-owner {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 8px;
+    }
+  }
+
   @media (min-width: 601px) and (max-width: 900px) {
     /* 20px of offset and a 74px pill. */
     :root { --nav-clear: 120px; }
@@ -1513,13 +2497,12 @@
       top: 14px;
       gap: 10px;
       /* Left is vertical + 4 from here down, not vertical: the row is the link's
-         44px tap-target floor rather than the 36px avatar, so the avatar is
-         centred and gains 4px above and below on its own. 6 and 10 give an even
-         11px. */
+         44px tap-target floor rather than the 36px avatar, so the avatar is centred
+         and gains 4px above and below on its own. 6 and 10 give an even 11px. */
       padding: 6px 6px 6px 10px;
-      /* A guard, not a width: the pill still hugs, and this only stops a long
-         name taking it to the screen edges. Percentage rather than 100vw, which
-         counts a classic scrollbar this element's containing block does not. */
+      /* A guard, not a width: the pill still hugs, and this only stops a long name
+         taking it to the screen edges. Percentage rather than 100vw, which counts
+         a classic scrollbar this element's containing block does not. */
       max-width: calc(100% - 24px);
     }
     /* 10 gap + 12 link padding. */
@@ -1531,15 +2514,27 @@
       min-width: 44px;
       padding: 11px 12px;
       font-size: 13px;
+      /* The arrows are shown at this width now, so the label needs clearing from
+         the glyph. It was 0 only because there was nothing there. */
       gap: 4px;
     }
 
-    .cs-wrap { padding-left: 22px; padding-right: 22px; }
-
+    .cs-wrap,
+    .cs-read { padding-left: 22px; padding-right: 22px; }
+    .cs-impact { padding-left: 22px; padding-right: 22px; }
+    /* Looser than the desktop's 1.14, which is set for a 38px line with room
+       either side of it. At 25px over four lines the same ratio reads as
+       packed; this gives each line a little air without losing the block. */
+    .cs-hero__statement { line-height: 1.2; }
+    /* A little more under the sentence than the desktop's clamp gives, at
+       the owner's request, so the row reads as the sentence's footnote
+       rather than stacking on it. */
+    .cs-hero .cs-tags { margin-top: 28px; }
     /* The rail stops being a column beside the writing and becomes a line
        above it. A 13ch column on a 346px screen leaves the body 20ch, which is
        not a measure. */
-    .cs-chapter {
+    .cs-chapter,
+    .cs-story {
       grid-template-columns: minmax(0, 1fr);
       row-gap: 18px;
     }
@@ -1548,15 +2543,45 @@
     .cs-hero > .cs-col { grid-template-columns: minmax(0, 1fr); }
     .cs-hero__text,
     .cs-hero .cs-figure { grid-column: 1; }
-    /* The grid has one column here, so a figure still asking for column 2
-       would build a second one and sit in it. */
-    .cs-chapter .cs-figure { grid-column: 1; width: 100%; }
     .cs-chapter__rail {
       flex-direction: row;
       align-items: baseline;
       gap: 14px;
     }
-    .cs-chapter__body { max-width: none; }
+    .cs-chapter__no { font-size: 20px; }
+    .cs-chapter__body,
+    .cs-path__body { max-width: none; grid-column: auto; }
+    .cs-path {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 14px;
+    }
+    .cs-proof {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 12px;
+    }
+    .cs-pair { grid-template-columns: minmax(0, 1fr); }
+    .cs-pair > div + div {
+      margin-top: 16px;
+      padding-top: 16px;
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--rule);
+    }
+    .cs-pair.cs-pair--plain > div + div {
+      margin-top: 32px;
+      padding-top: 32px;
+      padding-left: 0;
+      border-left: 0;
+      border-top: 1px solid var(--rule);
+    }
+    .cs-trial { padding: 28px 22px; }
+    .cs-story .cs-chapter--even .cs-trial { padding: 36px 26px; }
+    .cs-story .cs-chapter--turn .cs-trial { padding: 36px 26px; }
+    .cs-trial .cs-pair > div:first-child { padding-right: 0; }
+
+    /* Three numbers side by side on a phone sets each label to about 9ch and
+       breaks "UK customers reached" over three lines. Stacked, each stat gets
+       the full width and the row rule becomes the thing separating them. */
 
     .hp-footer { --foot-x: 22px; padding: 66px var(--foot-x) 28px; }
     .hp-footer__title { font-size: clamp(46px, 13vw, 76px); }
@@ -1572,25 +2597,28 @@
     .hp-nav__brand { padding-right: 17px; gap: 8px; }
     .hp-nav__name { font-size: 13px; }
     .hp-nav__link { padding: 11px 9px; font-size: 12.5px; }
-    /* Down with everything else around it, and it buys the two arrows some of
-       the room the brand divider takes back. */
+    /* Down with everything else around it, and it buys the two arrows some of the
+       room the brand divider takes back. */
     .hp-nav__arrow svg { width: 12px; height: 12px; }
   }
 
-  /* Where the arrows stop fitting, as measured on the homepage — the pill hugs,
-     so the pair costs it width, and the phone max-width is what runs out. Only a
+  /* Where the arrows stop fitting, as measured on the homepage — the pill hugs, so
+     the pair costs it width, and the phone max-width is what runs out. Only a
      320px screen cannot hold them. Set at 340 rather than at the exact turn
-     because no device sits between 320 and 360. */
+     because no device sits between 320 and 360, so the narrowest real phone that
+     keeps the arrows has room to spare against a wider fallback face.
+
+     Below this the label needs its gap closed again, or it sits out from the edge
+     of a pill with nothing in the space. */
   @media (max-width: 339px) {
     .hp-nav__arrow { display: none; }
     .hp-nav__link { gap: 0; }
-    /* 8 gap + 9 link padding + the 4px the 44px tap-target floor adds either
-       side of `CV` once the arrow is out and min-width binds. */
+    /* 8 gap + 9 link padding + the 4px the 44px tap-target floor adds either side
+       of `CV` once the arrow is out and min-width binds. */
     .hp-nav__brand { padding-right: 21px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
     /* The reveal is dropped rather than shortened: it is an entrance with
        nothing to communicate, and the state it animates to is the page. */
     .cs-motion [data-reveal] { opacity: 1; transform: none; }
@@ -1619,9 +2647,8 @@
     }
     .hp-footer__back:hover .hp-footer__cta-arrow,
     .hp-footer__back:focus-visible .hp-footer__cta-arrow { transform: none; }
-    /* The viewer still opens — reading a screenshot is not an animation, and
-       someone who has asked for reduced motion has not asked for smaller
-       pictures. What goes is the fade and the rise it opens with. */
+    /* Not gated on .cs-motion: the viewer is not an enhancement, so it is
+       still here to be quietened. */
     .cs-lb,
     .cs-lb.is-open .cs-lb__img,
     .cs-lb.is-open .cs-lb__close { transition: none; }
@@ -1840,6 +2867,23 @@
     .hp-footer .hp-footer__title { font-size: clamp(44px, 14vw, 80px); }
   }
 
+  /* ---------- Editorial pass (Boots first, then the other four) ----------
+     Captions as the homepage's small print rather than boxes; the body set a
+     step larger; the hero framed by the build's faint guides. */
+  .cs-figure figcaption,
+  .cs-story .cs-figure figcaption {
+    padding: 0; border: 0; border-radius: 0;
+    margin-top: 16px;
+    font: 500 clamp(12.5px, 0.95vw, 14px)/1.55 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.01em;
+    color: rgba(255,255,255,0.5);
+  }
+  .cs-chapter__body p, .cs-chapter__body dd {
+    font-size: clamp(16.5px, 1.18vw, 19px);
+    line-height: 1.62;
+  }
+  .cs-chapter__title { font-size: clamp(27px, 2.7vw, 40px); }
+  .cs-story .cs-chapter__title { font-size: clamp(24px, 2.2vw, 32px); }
   /* the build's guides round the hero picture: drawn in, and they stay */
   .cs-ed-guides { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
   .cs-ed-guides line { stroke: rgba(255,255,255,0.32); stroke-width: 1; }
@@ -1847,26 +2891,208 @@
      its corners have space to breathe */
   .cs-hero .cs-figure { margin-top: clamp(104px, 13vh, 168px); }
 
-  /* ================= NUMBERS BAND (story layer) =================
-     The study's own figures under the hero, under one hairline that draws
-     across, counting up to themselves the first time they are seen. The
-     same piece as on the data modelling study. */
-  .st { --st-line: rgba(255,255,255,0.26); }
+
+  /* the Figma file: a still until asked for */
+  .cs-embed { margin: clamp(64px, 9vh, 108px) 0 0; grid-column: 1 / -1; }
+  .cs-embed__poster, .cs-embed iframe { display: block; width: 100%; max-width: 720px; margin: 0 auto; aspect-ratio: 16 / 10; border: 0; border-radius: 0; }
+  .cs-embed__poster { position: relative; padding: 0; overflow: hidden; background: #0f0f12; cursor: pointer; }
+  .cs-embed__poster img { width: 100%; height: 100%; object-fit: cover; object-position: top left; opacity: 0.55; transition: opacity 0.4s ease; }
+  .cs-embed__poster:hover img { opacity: 0.72; }
+  .cs-embed__go { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; background: #fff; color: #0a0a0c; font: 600 15px/1 var(--ff-display); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+  .cs-embed__go { white-space: nowrap; }
+  .cs-embed__go svg { width: 16px; height: 16px; }
+  .cs-embed figcaption {
+    max-width: 720px; margin: 16px auto 0;
+    font: 500 clamp(12.5px, 0.95vw, 14px)/1.55 ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.01em; color: rgba(255,255,255,0.5);
+  }
+  .cs-embed figcaption a { color: inherit; text-underline-offset: 3px; }
+  /* the last study: no Up next, so the impact closes the page */
+  .cs-impact { padding-bottom: clamp(160px, 22vh, 260px); }
+
+  /* six short decisions, two by two, under the screen they're marked on */
+  .cs-decisions {
+    grid-column: 1 / -1; list-style: none; padding: 0;
+    width: 100%; max-width: 720px; margin: 40px auto 0;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 36px;
+  }
+  .cs-decisions li { display: grid; grid-template-columns: 2.2em minmax(0, 1fr); align-items: baseline; align-content: start; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px; }
+  .cs-decisions span { font: 500 12px/1 ui-monospace, "SF Mono", Menlo, monospace; color: rgba(255,255,255,0.5); }
+  .cs-decisions h3 { margin: 0; font-family: var(--ff-display); font-weight: 600; font-size: 16.5px; line-height: 1.3; color: #fff; }
+  .cs-decisions p { grid-column: 2; margin: 6px 0 0; font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.6); }
+  @media (max-width: 600px) { .cs-decisions { grid-template-columns: minmax(0, 1fr); } }
+
+  /* ================= STORY LAYER =================
+     One set of pieces for every case study, switched on by .st on the
+     article, that changes how the copy is shown and never the copy itself:
+       .st-band     the numbers, under one hairline that draws across; they count up
+       insights     the finding set large, after an orange point
+     The guides are for numbers only. Nothing sticks, nothing lights up. */
+  .st { --st-line: rgba(255,255,255,0.26); --st-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace; }
+  .st .cs-impact { --st-line: rgba(10,10,12,0.28); }
+
+  /* ---------- Numbers ---------- */
+  /* clear of the hero picture's own guides, so the two sets of lines never meet */
   .st-glance { padding-top: clamp(120px, 16vh, 180px); position: relative; z-index: 1; }
-  .st-band { position: relative; display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); margin: 0; }
+  .st-band {
+    position: relative;
+    display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr));
+    margin: 0;
+  }
   .st-band > div { padding: clamp(26px, 4vh, 40px) clamp(18px, 2.4vw, 36px); }
-  .st-band > div:first-child { padding-left: 0; }
   .st-band > div + div { border-left: 1px solid var(--st-line); }
-  .st-band dt { font-family: var(--ff-display); font-weight: 600; font-size: clamp(44px, 5vw, 76px); line-height: 0.95; letter-spacing: -0.05em; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .st-band dt {
+    font-family: var(--ff-display); font-weight: 600;
+    font-size: clamp(44px, 5vw, 76px); line-height: 0.95; letter-spacing: -0.05em;
+    color: var(--ink); white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
   .st-band dd { margin: 12px 0 0; font-size: 15.5px; line-height: 1.45; color: var(--ink-2); max-width: 22em; }
-  .st-band::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--st-line); transform-origin: left; pointer-events: none; transition: transform 1.2s cubic-bezier(.65,0,.35,1); }
+  .st-band dd small { display: block; margin-top: 6px; font-size: 14px; color: var(--ink-3); }
+  /* one hairline along the top, drawn across as the numbers arrive */
+  .st-band::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+    background: var(--st-line); transform-origin: left; pointer-events: none;
+    transition: transform 1.2s cubic-bezier(.65,0,.35,1);
+  }
   .cs-motion .st-band:not(.is-in)::before { transform: scaleX(0); }
+  .st-band > div:first-child { padding-left: 0; }
+  /* inside the writing column a band runs the column's width */
+  .cs-chapter__body .st-band { margin: clamp(40px, 5vh, 56px) 0; }
+  .cs-chapter__body .st-band dt { font-size: clamp(40px, 4.2vw, 60px); }
+
+  /* ---------- Insights, set large ---------- */
+  .st .cs-chapter--turn .cs-trial__lines > p,
+  .st .cs-trial__finding {
+    font-family: var(--ff-display); font-weight: 500;
+    font-size: clamp(24px, 2.4vw, 34px); line-height: 1.18; letter-spacing: -0.025em;
+    color: var(--ink); text-wrap: balance;
+  }
+  /* only the insight's own label takes the orange point; Before and After keep theirs */
+  .st .cs-chapter--turn .cs-trial > .cs-pair__k { display: inline-flex; align-items: center; gap: 8px; }
+  .st .cs-chapter--turn .cs-trial > .cs-pair__k::before,
+  .st .cs-trial__finding .cs-pair__k::before {
+    content: ""; width: 7px; height: 7px; border-radius: 50%; flex: none;
+    background: #f08a24; box-shadow: 0 0 10px rgba(240,138,36,0.6);
+  }
+  .st .cs-trial__finding .cs-pair__k { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; font: 500 12.5px/1 var(--st-mono); letter-spacing: 0.02em; color: var(--ink-3); }
+
+  .st .st-close strong { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Who I led the work with ---------- */
+  .st-people { margin-top: clamp(80px, 11vh, 120px); }
+  .st-people__k { margin: 0 0 22px; font: 500 12.5px/1.4 var(--st-mono); letter-spacing: 0.02em; color: var(--ink-3); }
+  .st-people__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 0; border-top: 1px solid var(--st-line); }
+  .st-people__grid > div { padding: 22px 24px 26px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .st-people__grid > div:nth-child(2n) { padding-left: 24px; border-left: 1px solid rgba(255,255,255,0.08); }
+  .st-people__grid dt { font-family: var(--ff-display); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; color: var(--ink); }
+  .st-people__grid dd { margin: 8px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+
+  /* the discussion guide: what each part had to prove, with the question asked set small beneath it */
+  .cs-guide .cs-guide__ask { display: block; margin-top: 12px; padding-left: 14px; border-left: 1px solid rgba(255,255,255,0.18); font: 500 12.5px/1.55 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: 0.005em; color: rgba(255,255,255,0.5); }
+  /* each part opens with one framing line under its title, a step up from body */
+  .st .st-lead {
+    margin: calc(-1 * clamp(24px, 3.6vh, 40px)) 0 clamp(56px, 8vh, 88px);
+    max-width: var(--text-end);
+    font-size: clamp(18px, 1.45vw, 22px); line-height: 1.5; letter-spacing: -0.01em;
+    color: var(--ink-2); text-wrap: pretty;
+  }
+  /* ---------- Impact, said in sentences ----------
+     Each result is one large sentence with its figure inside it, so the
+     number can't be read apart from what it means. Each sits against the same solid bar the Boots
+     study uses for its results. Scoped under .st so the chapter's paragraph
+     sizes can't reach it. */
+  .st .st-said { list-style: none; margin: clamp(44px, 6vh, 64px) 0 0; padding: 0; }
+  .st .st-said li { position: relative; margin: 0; padding: 0 0 0 22px; }
+  .st .st-said li + li { margin-top: clamp(36px, 5vh, 52px); }
+  .st .st-said li::before {
+    content: ""; position: absolute; left: 0; top: 3px; bottom: 4px; width: 3px;
+    border-radius: 2px; background: var(--ink);
+  }
+  .st .st-said .st-said__s {
+    margin: 0; font-family: var(--ff-display); font-weight: 500;
+    font-size: clamp(22px, 2.2vw, 31px); line-height: 1.25; letter-spacing: -0.025em;
+    color: var(--ink-3); text-wrap: pretty;
+  }
+  .st .st-said b { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  @media (max-width: 900px) {
+    .st-people__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .st-people__grid > div:nth-child(n) { padding-left: 0; border-left: 0; }
+    .st-people__grid > div:nth-child(2n) { padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.08); }
+  }
+  @media (max-width: 600px) {
+    .st-people__grid { grid-template-columns: minmax(0, 1fr); }
+    .st-people__grid > div:nth-child(n) { padding-left: 0; border-left: 0; }
+  }
+
+  /* ---------- Across the platform: the rest of the work, at one scale ---------- */
+  .st-gallery { position: relative; z-index: 1; padding-top: clamp(140px, 20vh, 220px); }
+  .st-gallery__title {
+    margin: clamp(20px, 3vh, 28px) 0 0; max-width: 24em;
+    font-family: var(--ff-display); font-weight: 600;
+    font-size: clamp(24px, 2.4vw, 34px); line-height: 1.15; letter-spacing: -0.03em;
+    color: var(--ink); text-wrap: balance;
+  }
+  /* the gallery keeps the stories' rail: its label sits where their numbers
+     do, and the title and row start on the same writing edge as everything
+     around it */
+  .st-gallery > .cs-col {
+    display: grid; grid-template-columns: minmax(0, 13ch) minmax(0, 1fr);
+    column-gap: clamp(28px, 4.5vw, 88px); align-items: start;
+  }
+  .st-gallery > .cs-col > * { grid-column: 2; min-width: 0; }
+  .st-gallery > .cs-col > .hp-eyebrow { grid-column: 1; grid-row: 1; margin-top: 0.6em; }
+  .st-gallery__title { grid-row: 1; margin-top: 0 !important; }
+  @media (max-width: 600px) {
+    .st-gallery > .cs-col { grid-template-columns: minmax(0, 1fr); }
+    .st-gallery > .cs-col > *, .st-gallery > .cs-col > .hp-eyebrow { grid-column: 1; grid-row: auto; }
+    .st-gallery__title { margin-top: clamp(20px, 3vh, 28px) !important; }
+  }
+  /* A divider across the column before the gallery, like the ones between
+     the parts, so it reads as its own interlude. */
+  .st-gallery { padding-top: clamp(120px, 16vh, 180px); }
+  .st-gallery > .cs-col { border-top: 1px solid rgba(255,255,255,0.12); padding-top: clamp(64px, 9vh, 104px); }
+  /* The viewer: one screen at a time on the writing edge, its name and what
+     it is above it, stepped with the arrows, the arrow keys or a swipe. The
+     title area is held to the tallest description, so nothing jumps; only
+     the screen's bottom edge moves as the view fits each one. Before the
+     script runs, the screens simply stack. */
+  .st-gallery__grid { display: grid; gap: 40px; margin: clamp(56px, 8vh, 88px) 0 0; }
+  .st-gallery__grid.st-tour { grid-column: 2; gap: 0; }
+  /* title and description as one block on the left; the count and arrows
+     centred on their own on the right, so the text never runs up to them */
+  .st-tour__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; column-gap: clamp(32px, 5vw, 72px); align-items: center; }
+  .st-tour__nav { grid-column: 2; grid-row: 1 / span 2; }
+  .st-tour__title { grid-column: 1; grid-row: 1; margin: 0; font-family: var(--ff-display); font-size: 18px; font-weight: 600; line-height: 1.3; letter-spacing: -0.01em; color: var(--ink); }
+  .st-tour__desc { grid-column: 1; grid-row: 2; margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+  .st-tour__nav { display: flex; align-items: center; gap: 10px; }
+  .st-tour__count { margin: 0 6px 0 0; font: 500 12.5px/1 var(--st-mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .st-tour__count b { color: var(--ink); font-weight: 500; }
+  .st-tour__btn { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.18); background: transparent; color: var(--ink); cursor: pointer; transition: border-color 0.2s, background-color 0.2s; }
+  .st-tour__btn:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
+  .st-tour__btn:focus-visible { outline: 1px solid var(--ink-3); outline-offset: 2px; }
+  .st-tour__btn svg { width: 17px; height: 17px; }
+  /* where you are: one segment per screen, the current one lit */
+  .st-tour__steps { display: flex; gap: 4px; margin: 28px 0 24px; }
+  .st-tour__steps i { flex: 1; height: 2px; background: rgba(255,255,255,0.14); transition: background-color 0.3s; }
+  .st-tour__steps i.is-on { background: var(--ink); }
+  .st-tour__stage { position: relative; aspect-ratio: 1440 / 1158; transition: height 0.45s cubic-bezier(.65,0,.35,1); overflow: hidden; touch-action: pan-y; }
+  .st .st-tour__stage .st-gallery__item { position: absolute; left: 0; right: 0; top: 0; margin: 0; opacity: 0; visibility: hidden; transition: opacity 0.45s ease, visibility 0s linear 0.45s; }
+  .st .st-tour__stage .st-gallery__item.is-on { opacity: 1; visibility: visible; transition: opacity 0.45s ease; }
+  .st .st-gallery__item img, .st .st-gallery__item .cs-figure__open { max-width: none; width: 100%; }
+  .st .st-gallery__item img { border-radius: 0; height: auto; -webkit-user-drag: none; }
+  .st .st-tour__stage .st-gallery__item figcaption { display: none; }
+  @media (max-width: 600px) {
+    .st-gallery__grid.st-tour { grid-column: 1; }
+  }
   @media (max-width: 700px) {
     .st-band { grid-template-columns: minmax(0, 1fr); }
-    .st-band > div { padding-left: 0; padding-right: 0; }
     .st-band > div + div { border-left: 0; border-top: 1px solid var(--st-line); }
+    .st-band > div { padding-left: 0; padding-right: 0; }
   }
-  @media (prefers-reduced-motion: reduce) { .st-band::before { transition: none; transform: none !important; } }
+  @media (prefers-reduced-motion: reduce) {
+    .st-band::before { transition: none; transform: none !important; }
+  }
   /* as you scroll, the hero's side guides travel down their own edges, turn
      the corner and become the numbers' rule; the dividers grow down as the
      rule passes them. Where the edges don't meet, the guides fade and the
@@ -2023,61 +3249,56 @@
     </div>
   </section>
 
-  <section class="cs-chapters cs-wrap" aria-label="The work, chapter by chapter">
+  <div class="cs-stories">
     <div class="cs-col">
 
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">01</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Making a vague brief buildable.</h2>
-          <p>The requirements we were handed were broad and the feature list was vague, but the timelines and resources were already confirmed. The design team was <strong>two people</strong>, me and the head of UX, and the client&rsquo;s product stakeholder was a C-suite executive with very little time, in an organisation going through major change.</p>
-          <p>So every session we got had to end in a decision. We ran a workshop with the key stakeholders to define the product vision and agree a feature list, then <strong>prioritised the features into three groups</strong>.</p>
-          <dl class="cs-terms">
-            <dt>Minimum viable product</dt>
-            <dd>The essentials. Enough for the platform to be functional and to stand on its own.</dd>
-            <dt>Next phase</dt>
-            <dd>Prioritised straight after the MVP: significant added value, and achievable in the near term.</dd>
-            <dt>Backlog</dt>
-            <dd>Either not an immediate priority, or impactful but complex. Revisited against future needs and resources.</dd>
-          </dl>
-          <p>Out of it came a value proposition, a prioritised feature list and a release plan. <strong>All 8 core features were signed off.</strong></p>
-        </div>
-        <figure class="cs-figure" style="--ar: 1.6980" data-reveal>
+      <section class="cs-story" id="brief" aria-labelledby="brief-h">
+        <p class="cs-path__no" data-reveal>01</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="brief-h" data-reveal>Making a vague brief buildable</h2>
+          <p class="st-lead" data-reveal>The timelines and resources were confirmed before the scope was. The requirements were broad and the feature list was vague.</p>
+        <section class="cs-chapter cs-chapter--even">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <p>The design team was <strong>two people</strong>, me and the head of UX, and the client&rsquo;s product stakeholder was a C-suite executive with very little time, in an organisation going through major change. So every session we got had to end in a decision.</p>
+            <p>We ran a workshop with the key stakeholders to define the product vision and agree a feature list, then <strong>prioritised the features into three groups</strong>.</p>
+            <dl class="cs-owners">
+              <div class="cs-owner"><dt>Minimum viable product</dt><dd>The essentials. Enough for the platform to be functional and to stand on its own.</dd></div>
+              <div class="cs-owner"><dt>Next phase</dt><dd>Prioritised straight after the MVP: significant added value, and achievable in the near term.</dd></div>
+              <div class="cs-owner"><dt>Backlog</dt><dd>Either not an immediate priority, or impactful but complex. Revisited against future needs and resources.</dd></div>
+            </dl>
+            <p>Out of it came a value proposition, a prioritised feature list and a release plan. <strong>All 8 core features were signed off.</strong></p>
+          </div>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.6980" data-reveal>
           <img src="/assets/fibre-workshop-1120.93d3a498.webp"
                srcset="/assets/fibre-workshop-1120.93d3a498.webp 1120w,
                        /assets/fibre-workshop-1680.93d3a498.webp 1680w,
                        /assets/fibre-workshop-2240.93d3a498.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 900px) 720px, 92vw"
                width="5466" height="3219"
                alt="Workshop attendees standing at a wall of printed feature cards, one of them reaching up to a card. The cards are headed API Documentation, Tutorials and Use Case Examples, and Configuration Audit."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The workshop the feature list came out of: every candidate printed, on a wall, in front of the people who had to agree on it.</span></figcaption>
+          <figcaption><span class="cs-figure__text">The workshop the feature list came out of: every candidate printed, on a wall, in front of the people who had to agree on it.</span></figcaption>
         </figure>
-        <figure class="cs-figure" style="--ar: 1.8933" data-reveal>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.8933" data-reveal>
           <img src="/assets/fibre-priorities-1120.74412c25.webp"
                srcset="/assets/fibre-priorities-1120.74412c25.webp 1120w,
                        /assets/fibre-priorities-1680.74412c25.webp 1680w,
                        /assets/fibre-priorities-2240.74412c25.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 900px) 720px, 92vw"
                width="5430" height="2868"
                alt="A board headed Feature Prioritisation. Its features are grouped into an MVP band dated June 2024, a Next Phase band dated October 2024 and a Backlog band dated March 2025, each band with a paragraph explaining what qualifies for it, and each feature card shaded to show whether it came from the core requirements, from developer input, or from the workshop."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The same list once it had been cut into three bands and dated. The shading is a second reading of it: which features were already required, which the developers asked for, and which the room invented.</span></figcaption>
+          <figcaption><span class="cs-figure__text">The same list once it had been cut into three bands and dated. The shading is a second reading of it: which features were already required, which the developers asked for, and which the room invented.</span></figcaption>
         </figure>
-      </section>
+        </section>
 
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">02</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Turning scarce sessions into decisions.</h2>
-          <p>A prioritised list isn&rsquo;t a specification, and we couldn&rsquo;t refine requirements slowly with a stakeholder we rarely saw.</p>
-          <p>So I reviewed best-in-class developer portals and wrote the high-level requirements as <strong>user stories grounded in them</strong>. I took those drafts to the client to validate and change together, so each session was spent deciding rather than gathering. That&rsquo;s how we agreed the high-level requirements.</p>
-        </div>
-        <figure class="cs-figure" style="--ar: 0.9216" data-reveal>
+        <section class="cs-chapter">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <h2 class="cs-chapter__title">Turning scarce sessions into decisions.</h2>
+            <p>A prioritised list isn&rsquo;t a specification, and we couldn&rsquo;t refine requirements slowly with a stakeholder we rarely saw.</p>
+            <p>So I reviewed best-in-class developer portals and wrote the high-level requirements as <strong>user stories grounded in them</strong>. I took those drafts to the client to validate and change together, so each session was spent deciding rather than gathering. That&rsquo;s how we agreed the high-level requirements.</p>
+          </div>
+          <figure class="cs-figure" style="--ar: 0.9216" data-reveal>
           <img src="/assets/fibre-benchmark-1120.24f67b52.webp"
                srcset="/assets/fibre-benchmark-1120.24f67b52.webp 1120w,
                        /assets/fibre-benchmark-1680.24f67b52.webp 1680w,
@@ -2086,146 +3307,160 @@
                width="3622" height="3930"
                alt="Two feature sheets side by side, FNC-03 API Explorer and FNC-01 API Documentation. Each has a numbered greyscale wireframe at the top, panels of user stories and considerations beneath it, and below those a wall of screenshots of other companies' developer portals, among them Google, Azure, BT, Mapbox, Stripe, Spotify and Shell."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">How a requirement was arrived at, read from the bottom up: the portals reviewed, the user stories written from them, and the wireframe those produced.</span></figcaption>
+          <figcaption><span class="cs-figure__text">How a requirement was arrived at, read from the bottom up: the portals reviewed, the user stories written from them, and the wireframe those produced.</span></figcaption>
         </figure>
+        </section>
+        </div>
       </section>
 
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">03</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Seeing three experiences as one.</h2>
-          <p>Plenty was still unanswered, and the client had a lot going on. Rather than wait for answers that weren&rsquo;t coming on our timeline, we moved to helping them define the overall product strategy. That&rsquo;s where the project changed shape.</p>
-          <p>The portal sat between two other experiences: a marketing site to advertise the offering and generate leads, and a partner portal where organisations manage their users, permissions, payments and services, and track orders and service performance. Designing the developer portal alone would have left the joins between them to chance.</p>
-          <p>I built a journey map covering both the partner and the developer experience: the key touchpoints, where the two overlapped, and the content each stage depended on. It gave the client <strong>one connected partner and developer journey</strong> to plan the whole product around.</p>
-        </div>
-        <figure class="cs-figure" style="--ar: 1.2309" data-reveal>
+      <section class="cs-story" id="journey" aria-labelledby="journey-h">
+        <p class="cs-path__no" data-reveal>02</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="journey-h" data-reveal>Seeing three experiences as one</h2>
+          <p class="st-lead" data-reveal>The brief was one portal. Underneath it were three connected experiences nobody had yet drawn as a single thing.</p>
+        <section class="cs-chapter cs-chapter--even">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <p>Plenty was still unanswered, and the client had a lot going on. Rather than wait for answers that weren&rsquo;t coming on our timeline, we moved to helping them define the overall product strategy. That&rsquo;s where the project changed shape.</p>
+            <p>The portal sat between two other experiences: a marketing site to advertise the offering and generate leads, and a partner portal where organisations manage their users, permissions, payments and services, and track orders and service performance.</p>
+          </div>
+        </section>
+
+        <section class="cs-chapter cs-chapter--turn">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <div class="cs-trial">
+              <p class="cs-pair__k">Insight</p>
+              <div class="cs-trial__lines">
+                <p>Partners and developers would move across all three. Designing the portal alone would leave the joins to chance.</p>
+              </div>
+            </div>
+            <h2 class="cs-chapter__title">One journey across all three.</h2>
+            <p>I built a journey map covering both the partner and the developer experience: the key touchpoints, where the two overlapped, and the content each stage depended on. It gave the client <strong>one connected partner and developer journey</strong> to plan the whole product around.</p>
+          </div>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.2309" data-reveal>
           <img src="/assets/fibre-journey-1120.3275a771.webp"
                srcset="/assets/fibre-journey-1120.3275a771.webp 1120w,
                        /assets/fibre-journey-1680.3275a771.webp 1680w,
                        /assets/fibre-journey-2240.3275a771.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 900px) 720px, 92vw"
                width="8556" height="6951"
                alt="A journey map headed End-to-End Partner and Developer Journey, running from Awareness through Consideration, Conversion, Fulfilment, Usage and Support, Retention and Advocacy. Each stage has a row for the partner journey, a row for the developer journey, a row of tags naming which of the marketing website, developer portal and partner portal it touches, and a row setting out the content it needs with examples."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The two journeys on one map, with the sites each stage touches tagged between them. The bottom row is the one that changed the engagement: the content every stage depends on, named while there was still nobody whose job it was.</span></figcaption>
+          <figcaption><span class="cs-figure__text">The two journeys on one map, with the sites each stage touches tagged between them. The bottom row is the one that changed the engagement: the content every stage depends on, named while there was still nobody whose job it was.</span></figcaption>
         </figure>
+        </section>
+        </div>
       </section>
 
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">04</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Making content someone&rsquo;s job.</h2>
-          <p>A developer portal runs almost entirely on content, and the client had none yet and no content strategist. I drafted a site map that put features and content pages into one structure. It showed how much content was needed and which pages would need design work, so the next phase could be scoped against it.</p>
-          <p>Then I built a <strong>content specification</strong>: every piece of content mapped to its feature and page, with guidance on format and style, whether it was timely or evergreen, the metrics it answered to, and what it was for, from supporting a sale to teaching a developer something new. It turned content from a gap nobody owned into work that could be planned, resourced and handed to someone.</p>
-        </div>
-        <figure class="cs-figure" style="--ar: 1.4156" data-reveal>
+      <section class="cs-story" id="content" aria-labelledby="content-h">
+        <p class="cs-path__no" data-reveal>03</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="content-h" data-reveal>Making content someone&rsquo;s job</h2>
+          <p class="st-lead" data-reveal>A developer portal runs almost entirely on content. The client had none yet, and no content strategist.</p>
+        <section class="cs-chapter cs-chapter--even">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <p>I drafted a site map that put features and content pages into one structure. It showed how much content was needed and which pages would need design work, so the next phase could be scoped against it.</p>
+          </div>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.4156" data-reveal>
           <img src="/assets/fibre-sitemap-1120.e007e7c3.webp"
                srcset="/assets/fibre-sitemap-1120.e007e7c3.webp 1120w,
                        /assets/fibre-sitemap-1680.e007e7c3.webp 1680w,
                        /assets/fibre-sitemap-2240.e007e7c3.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 900px) 720px, 92vw"
                width="7725" height="5457"
                alt="A draft site map. Home and Search sit above a row of primary navigation items — Products, APIs, Resources, Community, Support and My Dashboard — each with its secondary pages hanging beneath it and the features it relates to listed inside, with a footer block at the bottom."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Every page the portal needed, in one structure. Drawing it is what turned an open-ended content problem into a countable one.</span></figcaption>
+          <figcaption><span class="cs-figure__text">Every page the portal needed, in one structure. Drawing it is what turned an open-ended content problem into a countable one.</span></figcaption>
         </figure>
-        <figure class="cs-figure" style="--ar: 1.5120" data-reveal>
+        </section>
+
+        <section class="cs-chapter">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <h2 class="cs-chapter__title">Every piece of content, and what it&rsquo;s for.</h2>
+            <p>Then I built a <strong>content specification</strong>: every piece of content mapped to its feature and page, with guidance on format and style, whether it was timely or evergreen, the metrics it answered to, and what it was for, from supporting a sale to teaching a developer something new.</p>
+            <p>It turned content from a gap nobody owned into work that could be planned, resourced and handed to someone.</p>
+          </div>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.5120" data-reveal>
           <img src="/assets/fibre-content-1120.57e83232.webp"
                srcset="/assets/fibre-content-1120.57e83232.webp 1120w,
                        /assets/fibre-content-1680.57e83232.webp 1680w,
                        /assets/fibre-content-2240.57e83232.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 900px) 720px, 92vw"
                width="4731" height="3129"
                alt="A spreadsheet with a row per piece of content, grouped by feature — homepage, products, SDKs, API status and health, changelog. Its columns run from a description and the detail behind it through the content types and assets required, whether the content already exists or is new, the key copy messaging, the metrics it answers to, whether it is evergreen or timely, and its sign-off status."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">The content specification. Format and messaging on the left, and on the right the two columns that made it plannable: what each piece is measured by, and whether it has to be maintained forever.</span></figcaption>
+          <figcaption><span class="cs-figure__text">The content specification. Format and messaging on the left, and on the right the two columns that made it plannable: what each piece is measured by, and whether it has to be maintained forever.</span></figcaption>
         </figure>
-      </section>
+        </section>
 
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">05</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">Templates that carry their own reasoning.</h2>
-          <p>A wireframe on its own doesn&rsquo;t survive a handover: whoever picks it up inherits the picture but none of the thinking. So each template I set up carried five things.</p>
-          <dl class="cs-terms">
-            <dt>Core wireframe</dt>
-            <dd>The essential layout for that feature, which is also what makes the feature&rsquo;s scope visible.</dd>
-            <dt>Feature definition</dt>
-            <dd>The scope and functionality, written down so every stakeholder is holding the same version of it.</dd>
-            <dt>User stories</dt>
-            <dd>The stories we had agreed, kept beside the design so it stays answerable to them.</dd>
-            <dt>Content inputs</dt>
-            <dd>A summary of the content the feature needs, to guide who writes it and where it lands.</dd>
-            <dt>Key considerations</dt>
-            <dd>The main open questions still to be resolved before detailed design.</dd>
-          </dl>
-          <p>Key considerations is the one I&rsquo;d defend hardest. Discovery always ends with open questions, and writing them into the deliverable means the next team starts with them rather than finding them later.</p>
-        </div>
-        <figure class="cs-figure" style="--ar: 2.2308" data-reveal>
+        <section class="cs-chapter">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <h2 class="cs-chapter__title">Templates that carry their own reasoning.</h2>
+            <p>A wireframe on its own doesn&rsquo;t survive a handover: whoever picks it up inherits the picture but none of the thinking. So each template I set up carried five things.</p>
+            <dl class="cs-owners">
+              <div class="cs-owner"><dt>Core wireframe</dt><dd>The essential layout for that feature, which is also what makes the feature&rsquo;s scope visible.</dd></div>
+              <div class="cs-owner"><dt>Feature definition</dt><dd>The scope and functionality, written down so every stakeholder is holding the same version of it.</dd></div>
+              <div class="cs-owner"><dt>User stories</dt><dd>The stories we had agreed, kept beside the design so it stays answerable to them.</dd></div>
+              <div class="cs-owner"><dt>Content inputs</dt><dd>A summary of the content the feature needs, to guide who writes it and where it lands.</dd></div>
+              <div class="cs-owner"><dt>Key considerations</dt><dd>The main open questions still to be resolved before detailed design.</dd></div>
+            </dl>
+            <p>Key considerations is the one I&rsquo;d defend hardest. Discovery always ends with open questions, and writing them into the deliverable means the next team starts with them rather than finding them later.</p>
+          </div>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 2.2308" data-reveal>
           <img src="/assets/fibre-templates-1-1120.1715154b.webp"
                srcset="/assets/fibre-templates-1-1120.1715154b.webp 1120w,
                        /assets/fibre-templates-1-1680.1715154b.webp 1680w,
                        /assets/fibre-templates-1-2240.1715154b.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 900px) 720px, 92vw"
                width="12303" height="5515"
                alt="Three design templates side by side — Homepage, Product Landing Page and API Documentation. Each is a greyscale wireframe of the full page with a definition, user stories, key content inputs and key considerations set out in a column beside it."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">Three of the templates. The wireframe is the left half of each sheet; the four written blocks beside it are the rest of what the next phase inherits.</span></figcaption>
+          <figcaption><span class="cs-figure__text">Three of the templates. The wireframe is the left half of each sheet; the four written blocks beside it are the rest of what the next phase inherits.</span></figcaption>
         </figure>
-        <figure class="cs-figure" style="--ar: 2.2313" data-reveal>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 2.2313" data-reveal>
           <img src="/assets/fibre-templates-2-1120.60cc1812.webp"
                srcset="/assets/fibre-templates-2-1120.60cc1812.webp 1120w,
                        /assets/fibre-templates-2-1680.60cc1812.webp 1680w,
                        /assets/fibre-templates-2-2240.60cc1812.webp 2240w"
-               sizes="(min-width: 512px) 448px, 92vw"
+               sizes="(min-width: 900px) 720px, 92vw"
                width="12292" height="5509"
                alt="Three more design templates side by side — API Catalogue, Changelog, and Feedback and Support — each a greyscale wireframe of the full page with a definition, user stories, key content inputs and key considerations set out in a column beside it."
                loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__label" aria-hidden="true">Image context</span><span class="cs-figure__text">And three more. Key considerations closes every sheet, which is the point: the questions still open at the end of discovery, written into the deliverable rather than left in someone&rsquo;s head.</span></figcaption>
+          <figcaption><span class="cs-figure__text">And three more. Key considerations closes every sheet, which is the point: the questions still open at the end of discovery, written into the deliverable rather than left in someone&rsquo;s head.</span></figcaption>
         </figure>
-      </section>
+        </section>
 
-      <section class="cs-chapter">
-        <div class="cs-chapter__rail" data-reveal data-stagger>
-          <span class="cs-chapter__no">06</span>
-        </div>
-        <div class="cs-chapter__body" data-reveal data-stagger>
-          <h2 class="cs-chapter__title">What the next phase inherited.</h2>
-          <p>Structural changes on the client side paused the work once discovery was complete, so detailed design didn&rsquo;t follow straight on.</p>
-          <p>What discovery produced <strong>set the direction for the next phase</strong>: a connected partner and developer journey, all 8 core features signed off, high-level requirements agreed as user stories, a site map, a content specification, and templates that carry their own open questions.</p>
+        <section class="cs-chapter">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <h2 class="cs-chapter__title">What I&rsquo;d take from it.</h2>
+            <dl class="cs-owners">
+              <div class="cs-owner"><dt>When time with stakeholders is scarce, bring a drafted answer.</dt><dd>Best-practice user stories, a journey map, a site map and a content spreadsheet each turned a session into a decision. I&rsquo;d use that sequence again on any project where access is the constraint.</dd></div>
+              <div class="cs-owner"><dt>Test the edges of a brief early.</dt><dd>We were hired to define one portal, and showing it couldn&rsquo;t be defined on its own took part of the phase. The reframe was right, but making it sooner would have been easier, because the strategy work had to fit around a scope written for something narrower.</dd></div>
+            </dl>
+          </div>
+        </section>
         </div>
       </section>
 
     </div>
-  </section>
+  </div>
 
-  <!-- DRAFT, awaiting the owner's words. The rest of this page is her account
-       shaped into the house structure; this section has no source at all — her
-       copy ends at the pause, and these three paragraphs were written from the
-       nine chapters above to give the page the close the other two have. Both
-       claims in it are readings rather than things she has said: that the
-       drafted-answer method is what made the access constraint survivable, and
-       the whole of the last paragraph, which is a position on the reframe
-       arriving when it did. To be edited or replaced. -->
-  <section class="cs-reflection cs-wrap" aria-labelledby="cs-reflection-h">
+  <section class="cs-impact" aria-label="Where it landed">
     <div class="cs-col">
-      <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Reflection</span>
-      <h2 class="cs-reflection__title" id="cs-reflection-h" data-reveal>What I&rsquo;d take from it.</h2>
-      <div class="cs-reflection__body" data-reveal data-stagger>
-        <p><strong>When time with stakeholders is scarce, bring a drafted answer.</strong> Best-practice user stories, a journey map, a site map and a content spreadsheet each turned a session into a decision. I&rsquo;d use that sequence again on any project where access is the constraint.</p>
-        <p><strong>Test the edges of a brief early.</strong> We were hired to define one portal, and showing it couldn&rsquo;t be defined on its own took part of the phase. The reframe was right, but making it sooner would have been easier, because the strategy work had to fit around a scope written for something narrower.</p>
-      </div>
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">Where it landed.</h2>
+          <p>Structural changes on the client side paused the work once discovery was complete, so detailed design didn&rsquo;t follow straight on. What discovery produced still set the course.</p>
+          <ol class="st-said">
+            <li data-reveal><p class="st-said__s">All <b data-count>8</b> core features were signed off, with the high-level requirements agreed as user stories.</p></li>
+            <li data-reveal><p class="st-said__s">The marketing site, developer portal and partner portal were mapped as <b>one connected journey</b> for partners and developers.</p></li>
+            <li data-reveal><p class="st-said__s">The journey, site map, content specification and templates <b>set the direction</b> for the next phase.</p></li>
+          </ol>
+        </div>
+      </section>
     </div>
   </section>
 
-
-<a class="cs-next cs-next--light" href="/pwc-client-portal">
+<a class="cs-next cs-next--ink" href="/pwc-client-portal">
   <span class="cs-next__card">
     <span class="cs-next__top">
       <span class="cs-next__kicker">Up next</span>
@@ -2256,13 +3491,13 @@
 </footer>
 
 <!-- The viewer. Empty markup rather than markup built from JS so the dialog's
-     role, its label and its control are in the document being reviewed rather
-     than in a string. It carries hidden until it is opened. -->
+     role, its label and its two controls are in the document being reviewed
+     rather than in a string. It carries hidden until it is opened. -->
 <!-- data-lenis-prevent is load-bearing, not decoration. The smoothing library
      binds a wheel listener to the document and calls preventDefault on every
-     event it sees, so with the viewer open the wheel would reach neither the
-     page (correctly, it is locked) nor the picture (not correctly at all): the
-     viewer would open on the top of a 3600px artboard with no way down it. This
+     event it sees, so with the viewer open the wheel reached neither the page
+     (correctly, it is locked) nor the picture (not correctly at all): the
+     viewer opened on the top of a 5600px artboard with no way down it. This
      attribute is how that listener is told to keep its hands off a scroller. -->
 <div class="cs-lb" id="cs-lb" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>
   <div class="cs-lb__stage" data-lb-stage data-lenis-prevent>
@@ -2280,12 +3515,13 @@
      — they sit at the end of the body and the inline script below needs them
      to have run. -->
 <script src="/assets/gsap-3.13.0.96c01b81.js"></script>
+<script src="/assets/scrolltrigger-3.13.0.30821939.js"></script>
 <script src="/assets/lenis-1.3.11.804047c1.js"></script>
 <script>
 (function() {
   var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   (function initPressables() {
-    var sel = '.hp-nav__link,.hp-footer__cta,.hp-footer__back,.cs-lb__btn,.cs-seq__step,.cs-figure__open';
+    var sel = '.hp-nav__link,.hp-footer__cta,.hp-footer__back,.cs-lb__btn,.cs-seq__step,.cs-figure__open,.cs-path__more';
     function on(e) {
       if (e.button) return;
       var el = e.target.closest && e.target.closest(sel);
@@ -2306,6 +3542,7 @@
     });
   })();
 
+  var EASE = 'cubic-bezier(0.16,1,0.3,1)';
 
   document.querySelector('[data-year]').textContent = new Date().getFullYear();
 
@@ -2314,12 +3551,34 @@
   // while it is open, is above it.
   var lenis = null;
 
+  // The three stories are one scroll. These links move between them, and Lenis
+  // has to be the thing that moves, or a native jump fights the smoothed scroll
+  // and lands short. The offset is the section's own scroll-margin, so the
+  // heading arrives below the nav pill.
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest && e.target.closest('a[data-story-jump]');
+    if (!a) return;
+    var id = (a.getAttribute('href') || '').slice(1);
+    var el = document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    var clear = parseFloat(getComputedStyle(el).scrollMarginTop) || 188;
+    if (lenis && !REDUCED) lenis.scrollTo(el, { offset: -clear });
+    else window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - clear, behavior: REDUCED ? 'auto' : 'smooth' });
+    if (history.replaceState) history.replaceState(null, '', '#' + id);
+    var head = document.getElementById(id + '-h');
+    if (head) {
+      head.setAttribute('tabindex', '-1');
+      head.focus({ preventScroll: true });
+    }
+  });
+
   var figures = [].slice.call(document.querySelectorAll('.cs-figure'));
 
   // ---------- Viewer ----------
-  // Lifted from pwc-client-portal.html. Deliberately outside the motion gate
-  // below: being able to read an artboard is not an animation, and someone who
-  // has asked for reduced motion has not asked for smaller pictures.
+  // Deliberately outside the motion gate below: being able to read a screenshot
+  // is not an animation, and someone who has asked for reduced motion has not
+  // asked for smaller pictures.
   var lb = document.getElementById('cs-lb');
   var lbStage = lb.querySelector('[data-lb-stage]');
   var lbImg = lb.querySelector('.cs-lb__img');
@@ -2383,10 +3642,9 @@
 
   // ---------- Pinch ----------
   // A phone draws every figure edge to edge on the page already, so opening one
-  // gains about five per cent and the artboards stay unreadable. There is no
-  // width at which a row of three design templates is legible inside 390px, so
-  // the only real answer is to let it be drawn bigger than the screen and moved
-  // around.
+  // gains about five per cent and the screenshots stay unreadable. There is no
+  // width at which a 3360px artboard is legible inside 390px, so the only real
+  // answer is to let it be drawn bigger than the screen and moved around.
   //
   // Nothing moves sideways until that has been asked for. The stage keeps
   // overflow-x hidden throughout, and panning is done by writing scrollLeft,
@@ -2489,8 +3747,8 @@
     last = null;
     if (pts.size) return;
 
-    // Even fitted to the width, the journey map runs several screenfuls, and
-    // dragging it a hand's width at a time is not reading it.
+    // Even fitted to the width, these artboards run about three screenfuls, and
+    // dragging one a hand's width at a time is not reading it.
     if (Math.abs(vx) > 0.25 || Math.abs(vy) > 0.25) {
       var sx = vx * 15, sy = vy * 15;
       var step = function() {
@@ -2710,8 +3968,8 @@
 
   figures.forEach(function(fig) {
     var img = fig.querySelector('img');
-    // The hero is a photograph: nothing in it is meant to be read closely, and
-    // build-api-figures.py does not give it a zoom copy to open.
+    // The hero is a laptop render: nothing in it is meant to be read, and
+    // build-boots-figures.py does not give it a zoom copy to open.
     if (!img || fig.closest('.cs-hero')) return;
     var src = zoomSrc(img.getAttribute('src'));
     if (!src) return;
@@ -2726,13 +3984,90 @@
     img.parentNode.insertBefore(btn, img);
     btn.appendChild(img);
     btn.addEventListener('click', function() { openLb(img, src); });
+
   });
 
+  // ---------- Nav: away while reading down, back on the way up ----------
+  // The homepage's initNavHide, against the window rather than its scroller.
+  // Down past a dead band hides the pill; up past it, a pointer at the top
+  // edge, or focus landing inside it brings it back. Within the first 120px it
+  // stays regardless, because the hero is composed with it in place.
+  //
+  // Before the motion gate below on purpose: this is wayfinding, not an
+  // entrance, and a reader who has asked for reduced motion still wants the
+  // pill off their heading.
+  (function initNavHide() {
+    var nav = document.querySelector('.hp-nav');
+    if (!nav) return;
+    var last = window.scrollY;
+    var hidden = false;
+    var HOLD = 120;
+    var BAND = 8;
+    function set(h) {
+      if (h === hidden) return;
+      hidden = h;
+      nav.classList.toggle('is-hidden', h);
+    }
+    window.addEventListener('scroll', function() {
+      var y = window.scrollY;
+      var d = y - last;
+      if (y < HOLD) { set(false); last = y; return; }
+      if (d > BAND) set(true);
+      else if (d < -BAND) set(false);
+      if (Math.abs(d) > BAND) last = y;
+    }, { passive: true });
+    if (!window.matchMedia('(hover: none)').matches) {
+      window.addEventListener('mousemove', function(e) {
+        if (e.clientY < 90) set(false);
+      }, { passive: true });
+    }
+    nav.addEventListener('focusin', function() { set(false); });
+  })();
+
+  // ---------- The turn to white ----------
+  // A background cross-fade, not a whole-page inversion. is-light goes on once
+  // the impact section has come about a fifth of the way into the window —
+  // the same moment Dilara Cumhur's homepage lets go of black. The outgoing
+  // white ink stays white and disappears into the new ground; the impact's
+  // black ink is already in place and emerges from it. Scrolling back reverses
+  // the same handoff. A few pixels of hysteresis stops trackpad flicker.
+  //
+  // Ahead of the motion gate. Reduced motion gets the same state as a cut;
+  // the transition is switched off in the stylesheet.
+  (function initLight() {
+    var band = document.querySelector('.cs-impact');
+    if (!band) return;
+    var root = document.documentElement;
+    var on = false;
+    var queued = false;
+    function check() {
+      queued = false;
+      var top = band.getBoundingClientRect().top;
+      var line = window.innerHeight * 0.8 + (on ? 48 : 0);
+      var next = top < line;
+      if (next === on) return;
+      on = next;
+      root.classList.toggle('is-light', on);
+    }
+    function queue() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(check);
+    }
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue);
+    // A page opened at its foot should be white already, not fade into it.
+    root.style.transition = 'none';
+    check();
+    void root.offsetWidth;
+    root.style.transition = '';
+  })();
+
   // ---------- Motion ----------
-  // The class that arms every hidden state in the stylesheet, set only once we
-  // know the reveal can actually run. Before this line every [data-reveal] is at
-  // full opacity, so the failure mode of everything below is a page that does
-  // not fade rather than a page that is not there.
+  // The class that arms every hidden state above, set only once we know the
+  // reveal can actually run. Before this line every [data-reveal] is at full
+  // opacity, so the failure mode of everything below is a page that does not
+  // fade rather than a page that is not there.
   var els = document.querySelectorAll('[data-reveal]');
   if (REDUCED || !('IntersectionObserver' in window)) return;
   document.documentElement.classList.add('cs-motion');
@@ -2801,8 +4136,8 @@
 
   // Where the lines fall is a function of the width, so a width change
   // invalidates every one of them. Height changes are ignored: on a phone the
-  // address bar sliding away fires resize on every scroll, and re-splitting
-  // every heading each time is a scroll jank generator.
+  // address bar sliding away fires resize on every scroll, and re-splitting ten
+  // headings each time is a scroll jank generator.
   var splitW = window.innerWidth;
   var splitTimer;
   window.addEventListener('resize', function() {
@@ -2825,7 +4160,9 @@
   var hero = document.querySelector('.cs-hero');
 
   // ---------- The statement, one letter at a time ----------
-  // The homepage's signature, brought over so every page opens the same way.
+  // The homepage's signature, brought over so the two pages open the same way.
+  // Everything else on this page is released by scrolling to it; this is the
+  // only thing a reader who has just arrived actually sees move.
   //
   // Split in the DOM rather than from a string, which is how the homepage does
   // it, because the sentence here already contains a <strong> and rebuilding it
@@ -2861,10 +4198,9 @@
 
   // There used to be a cursor field here — letters lifting and swelling
   // towards the pointer — the homepage's, brought over with the entrance. It
-  // went from the homepage, then from the Boots page, and now from here, at
-  // the owner's request: a heading that moves under the pointer is a heading
-  // that is hard to read with the pointer on it. The letters are still split,
-  // for the entrance.
+  // went from the homepage and now from here, at the owner's request: a
+  // heading that moves under the pointer is a heading that is hard to read
+  // with the pointer on it. The letters are still split, for the entrance.
 
   // Hidden here rather than in the stylesheet, so that a page which never gets
   // GSAP shows the sentence instead of hiding it forever. The library is a
@@ -2961,7 +4297,20 @@
     });
   }, { rootMargin: '0px 0px -12% 0px', threshold: 0 });
 
-  els.forEach(function(el) { io.observe(el); });
+  // Anything already on the first screen at load is shown rather than
+  // observed. The 12% line is for things the reader scrolls to; a line of
+  // the overview that is on screen before any scroll, which is the phone
+  // layout where the hero is not held and the overview creeps in under the
+  // picture, should not sit invisible until the reader moves 50px. On a
+  // desktop the first screen is the hero alone and this matches nothing.
+  var firstScreen = window.innerHeight;
+  els.forEach(function(el) {
+    if (el.getBoundingClientRect().top < firstScreen) {
+      el.classList.add('is-in');
+      return;
+    }
+    io.observe(el);
+  });
 
   // That shrunk root has a hole in the bottom of it. An element that comes to
   // rest within the last 12% of the viewport at maximum scroll never enters
@@ -2969,8 +4318,10 @@
   // in the DOM, present to a screen reader, and invisible. The footer's
   // copyright bar sits 96px off the page bottom and did exactly that.
   //
-  // Revealing whatever is left once the page bottom is reached cannot drift:
-  // there is nothing below the bottom.
+  // Tuning the margin against that 96px would work today and would be two
+  // numbers in two places that have to be kept in step, with a silent failure
+  // when they drift. Revealing whatever is left once the page bottom is
+  // reached cannot drift: there is nothing below the bottom.
   function sweep() {
     if (window.innerHeight + window.scrollY
         < document.documentElement.scrollHeight - 2) return;
@@ -2984,30 +4335,39 @@
   // A viewport taller than the page is already at the bottom on arrival.
   sweep();
 
+  // ---------- Scroll-driven ----------
+  // Everything past here needs GSAP, and GSAP is on a CDN, so everything past
+  // here is written as though it will not arrive. What is lost if it does not:
+  // the two figures in the stats row read as the numbers they already are.
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+  gsap.registerPlugin(ScrollTrigger);
+
   // ---------- Scroll feel ----------
-  // This page is a long read and a wheel moves it in ~100px jumps. Lenis puts a
-  // short ease on each of those, so the page arrives at positions instead of
-  // cutting between them, which is most of the difference between a long page
-  // that feels built and one that feels long.
+  // This page is about 20,000px of reading and a wheel moves it in ~100px
+  // jumps. Lenis puts a short ease on each of those, so the page arrives at
+  // positions instead of cutting between them, which is most of the difference
+  // between a long page that feels built and one that feels long.
   //
-  // It drives nothing else: no scroll-linked transforms, no pinning. Every
-  // animation on this page is still an entrance triggered once. Third party and
-  // on a CDN, so its absence has to be survivable, and it is — the page scrolls
-  // the way the browser scrolls it.
-  if (typeof gsap === 'undefined' || typeof Lenis === 'undefined') return;
-  lenis = window.__lenis = new Lenis({
-    duration: 1.05,
-    // Fast at the front so the first frame answers the wheel, long tail so it
-    // settles rather than stops. An ease that is gentle at both ends reads as
-    // input lag, which is the failure mode this whole idea has.
-    easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
-    touchMultiplier: 1.6
-  });
-  // One clock. Lenis and GSAP both want a rAF loop, and two of them means two
-  // slightly different ideas of what time it is. lagSmoothing off because Lenis
-  // is doing the smoothing.
-  gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
-  gsap.ticker.lagSmoothing(0);
+  // Third party and on a CDN, so its absence has to be survivable, and it
+  // is — the page scrolls the way the browser scrolls it. Nothing is pinned.
+  if (typeof Lenis !== 'undefined') {
+    lenis = window.__lenis = new Lenis({
+      duration: 1.05,
+      // Fast at the front so the first frame answers the wheel, long tail so it
+      // settles rather than stops. An ease that is gentle at both ends reads as
+      // input lag, which is the failure mode this whole idea has.
+      easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+      touchMultiplier: 1.6
+    });
+    // One clock. Lenis and GSAP both want a rAF loop, and two of them means two
+    // slightly different ideas of what time it is, which shows up as the
+    // entrances below firing a frame late against the scroll that triggered
+    // them. lagSmoothing off because Lenis is doing the smoothing.
+    gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+    gsap.ticker.lagSmoothing(0);
+    lenis.on('scroll', ScrollTrigger.update);
+  }
+
 })();
 </script>
 <script>
@@ -3229,6 +4589,25 @@
   })();
 </script>
 <script>
+  // The Figma file loads only when asked for: it is heavy, and a still keeps
+  // the page fast and in its own style until then.
+  [].forEach.call(document.querySelectorAll('[data-figma]'), function(btn) {
+    btn.addEventListener('click', function() {
+      // On a phone Figma's viewer is too cramped to use in a box; open the file
+      if (window.matchMedia('(max-width: 600px)').matches) {
+        window.open(btn.getAttribute('data-figma').replace('embed.figma.com', 'www.figma.com').replace(/[?&]embed-host=share/, ''), '_blank', 'noopener');
+        return;
+      }
+      var f = document.createElement('iframe');
+      f.src = btn.getAttribute('data-figma');
+      f.title = 'The Figma file';
+      f.allowFullscreen = true;
+      f.loading = 'eager';
+      btn.replaceWith(f);
+    });
+  });
+</script>
+<script>
   // Story layer: numbers count up to themselves the first time they are
   // seen. The text in the page is the final figure, so without script, or
   // with reduced motion, it simply reads as written.
@@ -3371,6 +4750,84 @@
     window.addEventListener('resize', function() { setTimeout(function() { pos = -1; ask(); }, 200); });
     window.addEventListener('load', ask);
     ask();
+  })();
+</script>
+<script>
+  // The gallery viewer: one screen at a time, its name and description above
+  // it, stepped with the arrows, the arrow keys or a swipe. The screens keep
+  // their lightbox on click.
+  (function() {
+    var grid = document.querySelector('.st-gallery__grid');
+    var col = document.querySelector('.st-gallery > .cs-col');
+    if (!grid || !col) return;
+    var items = [].slice.call(grid.querySelectorAll('.st-gallery__item'));
+    if (items.length < 2) return;
+    var n = items.length, cur = 0;
+    function pad(i) { return (i < 9 ? '0' : '') + (i + 1); }
+    function arrow(d) { return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="' + d + '" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+    var head = document.createElement('div'); head.className = 'st-tour__head';
+    head.innerHTML = '<p class="st-tour__title" aria-live="polite"></p><div class="st-tour__nav"><p class="st-tour__count"><b>01</b> / ' + pad(n - 1) + '</p>' +
+      '<button type="button" class="st-tour__btn" data-step="-1" aria-label="Previous screen">' + arrow('M15 18l-6-6 6-6') + '</button>' +
+      '<button type="button" class="st-tour__btn" data-step="1" aria-label="Next screen">' + arrow('M9 6l6 6-6 6') + '</button></div>' +
+      '<p class="st-tour__desc"></p>';
+    var steps = document.createElement('div'); steps.className = 'st-tour__steps'; steps.setAttribute('aria-hidden', 'true');
+    for (var j = 0; j < n; j++) steps.appendChild(document.createElement('i'));
+    var stage = document.createElement('div'); stage.className = 'st-tour__stage';
+    var title = head.querySelector('.st-tour__title'), desc = head.querySelector('.st-tour__desc'), count = head.querySelector('.st-tour__count b');
+    var caps = items.map(function(it) {
+      var t = it.querySelector('.cs-figure__text'), st = t && t.querySelector('strong');
+      stage.appendChild(it);
+      return { t: st ? st.textContent.replace(/\.$/, '') : '', d: t ? t.innerHTML.replace(/<strong>.*?<\/strong>\s*/, '') : '' };
+    });
+    // the title area keeps the height of the longest description
+    function hold() {
+      desc.style.minHeight = '';
+      var max = 0, keep = desc.innerHTML;
+      caps.forEach(function(c) { desc.innerHTML = c.d; max = Math.max(max, desc.offsetHeight); });
+      desc.innerHTML = keep; desc.style.minHeight = max + 'px';
+    }
+    // the view takes the height of the screen it shows, easing between them
+    function fit() {
+      var img = items[cur].querySelector('img');
+      var w = +img.getAttribute('width'), h = +img.getAttribute('height');
+      if (w && h) { stage.style.aspectRatio = 'auto'; stage.style.height = (stage.clientWidth * h / w) + 'px'; }
+    }
+    function show(i) {
+      cur = (i + n) % n;
+      items.forEach(function(it, k) { it.classList.toggle('is-on', k === cur); it.setAttribute('aria-hidden', k === cur ? 'false' : 'true'); });
+      title.textContent = caps[cur].t;
+      desc.innerHTML = caps[cur].d;
+      count.textContent = pad(cur);
+      [].forEach.call(steps.children, function(el, k) { el.classList.toggle('is-on', k === cur); });
+      fit();
+    }
+    [].forEach.call(head.querySelectorAll('[data-step]'), function(b) {
+      b.addEventListener('click', function() { show(cur + (+b.getAttribute('data-step'))); });
+      b.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); show(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); show(cur - 1); }
+      });
+    });
+    // a sideways swipe on the screen steps it; a tap still opens the lightbox
+    var x0 = null, y0 = 0, swiped = false;
+    stage.addEventListener('touchstart', function(e) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; swiped = false; }, { passive: true });
+    stage.addEventListener('touchend', function(e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) { swiped = true; show(cur + (dx < 0 ? 1 : -1)); }
+      x0 = null;
+    }, { passive: true });
+    stage.addEventListener('click', function(e) { if (swiped) { e.preventDefault(); e.stopPropagation(); swiped = false; } }, true);
+    grid.innerHTML = '';
+    grid.classList.add('st-tour');
+    grid.removeAttribute('role');
+    grid.setAttribute('aria-roledescription', 'carousel');
+    grid.setAttribute('aria-label', 'More of the platform');
+    grid.appendChild(head); grid.appendChild(steps); grid.appendChild(stage);
+    col.appendChild(grid);
+    show(0); hold();
+    window.addEventListener('resize', function() { fit(); hold(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(hold);
   })();
 </script>
 </body>
