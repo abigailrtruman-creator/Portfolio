@@ -3056,58 +3056,32 @@
      the parts, so it reads as its own interlude. */
   .st-gallery { padding-top: clamp(120px, 16vh, 180px); }
   .st-gallery > .cs-col { border-top: 1px solid rgba(255,255,255,0.12); padding-top: clamp(64px, 9vh, 104px); }
-  /* The tour: every screen named in a list beside one large view. Pick a
-     name, or step with the arrows, and that screen and its caption show.
-     Before the script runs, the screens simply stack. */
+  /* The viewer: one screen at a time on the writing edge, its name and what
+     it is above it, stepped with the arrows, the arrow keys or a swipe. The
+     title area is held to the tallest description, so nothing jumps; only
+     the screen's bottom edge moves as the view fits each one. Before the
+     script runs, the screens simply stack. */
   .st-gallery__grid { display: grid; gap: 40px; margin: clamp(56px, 8vh, 88px) 0 0; }
-  .st-gallery__grid.st-tour {
-    grid-column: 1 / -1;
-    /* the column's own rail and gap, so the screen starts on the writing edge */
-    grid-template-columns: minmax(0, 13ch) minmax(0, 1fr); column-gap: clamp(28px, 4.5vw, 88px); row-gap: 0;
-    align-items: start;
-  }
-  .st-tour__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(255,255,255,0.12); }
-  .st-tour__list li { margin: 0; }
-  .st-tour__tab {
-    display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 8px; align-items: baseline; width: 100%;
-    padding: 10px 0; border: 0; border-bottom: 1px solid rgba(255,255,255,0.08); background: none;
-    font: 500 14px/1.35 var(--ff-body, inherit); white-space: nowrap; text-align: left; color: var(--ink-3); cursor: pointer;
-    transition: color 0.2s;
-  }
-  .st-tour__tab span { display: none; }
-  .st-tour__tab:hover { color: var(--ink-2); }
-  .st-tour__tab[aria-selected="true"] { color: var(--ink); font-weight: 600; }
-  .st-tour__tab:focus-visible { outline: 1px solid var(--ink-3); outline-offset: 2px; }
-  .st-tour__stage { position: relative; aspect-ratio: 1440 / 1158; transition: height 0.45s cubic-bezier(.65,0,.35,1); overflow: hidden; }
+  .st-gallery__grid.st-tour { grid-column: 2; gap: 0; }
+  .st-tour__head { display: flex; align-items: flex-start; gap: 24px; margin-bottom: 20px; }
+  .st-tour__cap { flex: 1; margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+  .st-tour__cap strong { display: block; margin-bottom: 4px; font-family: var(--ff-display); font-size: 18px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+  .st-tour__nav { display: flex; align-items: center; gap: 10px; flex: none; }
+  .st-tour__count { margin: 0 6px 0 0; font: 500 12.5px/1 var(--st-mono); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .st-tour__count b { color: var(--ink); font-weight: 500; }
+  .st-tour__btn { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.18); background: transparent; color: var(--ink); cursor: pointer; transition: border-color 0.2s, background-color 0.2s; }
+  .st-tour__btn:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
+  .st-tour__btn:focus-visible { outline: 1px solid var(--ink-3); outline-offset: 2px; }
+  .st-tour__btn svg { width: 17px; height: 17px; }
+  .st-tour__stage { position: relative; aspect-ratio: 1440 / 1158; transition: height 0.45s cubic-bezier(.65,0,.35,1); overflow: hidden; touch-action: pan-y; }
   .st .st-tour__stage .st-gallery__item { position: absolute; left: 0; right: 0; top: 0; margin: 0; opacity: 0; visibility: hidden; transition: opacity 0.45s ease, visibility 0s linear 0.45s; }
   .st .st-tour__stage .st-gallery__item.is-on { opacity: 1; visibility: visible; transition: opacity 0.45s ease; }
   .st .st-gallery__item img, .st .st-gallery__item .cs-figure__open { max-width: none; width: 100%; }
   .st .st-gallery__item img { border-radius: 0; height: auto; -webkit-user-drag: none; }
   .st .st-tour__stage .st-gallery__item figcaption { display: none; }
-  /* the caption and controls sit above the screen, so they stay put while the view resizes */
-  .st-tour__list { grid-row: 1 / span 2; }
-  .st-tour__foot { grid-column: 2; grid-row: 1; display: flex; align-items: flex-start; gap: 24px; margin-bottom: 18px; }
-  .st-tour__stage { grid-column: 2; grid-row: 2; }
-  .st-tour__cap { flex: 1; margin: 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); min-height: 3em; }
-  .st-tour__cap strong { color: var(--ink); font-weight: 600; }
-  .st-tour__nav { display: flex; align-items: center; gap: 10px; flex: none; }
-  .st-tour__count { font: 500 12.5px/1 var(--st-mono); color: var(--ink-3); font-variant-numeric: tabular-nums; margin-right: 6px; }
-  .st-tour__count b { color: var(--ink); font-weight: 500; }
-  .st-tour__btn { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.18); background: transparent; color: var(--ink); cursor: pointer; transition: border-color 0.2s, background-color 0.2s; }
-  .st-tour__btn:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
-  .st-tour__btn svg { width: 17px; height: 17px; }
-  @media (max-width: 760px) {
-    .st-gallery__grid.st-tour { grid-template-columns: minmax(0, 1fr); }
-    .st-tour__list {
-      display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; border: 0;
-      margin: 0 calc(-1 * var(--pad-x)) 18px; padding: 0 var(--pad-x);
-    }
-    .st-tour__list::-webkit-scrollbar { display: none; }
-    .st-tour__tab { display: block; width: auto; white-space: nowrap; padding: 9px 14px; border: 1px solid rgba(255,255,255,0.14); border-radius: 999px; font-size: 14px; }
-    .st-tour__tab[aria-selected="true"] { border-color: #f08a24; }
-    .st-tour__list { grid-row: auto; }
-    .st-tour__foot { grid-column: 1; grid-row: auto; align-items: flex-start; gap: 14px; }
-    .st-tour__stage { grid-column: 1; grid-row: auto; }
+  @media (max-width: 600px) {
+    .st-gallery__grid.st-tour { grid-column: 1; }
+    .st-tour__head { flex-direction: column; gap: 14px; }
   }
   @media (max-width: 700px) {
     .st-band { grid-template-columns: minmax(0, 1fr); }
@@ -4865,9 +4839,9 @@
   })();
 </script>
 <script>
-  // The gallery tour: a list of every screen beside one large view. Clicking
-  // a name, the arrows, or the arrow keys in the list changes the screen; the
-  // caption and count follow. The screens keep their lightbox on click.
+  // The gallery viewer: one screen at a time, its name and description above
+  // it, stepped with the arrows, the arrow keys or a swipe. The screens keep
+  // their lightbox on click.
   (function() {
     var grid = document.querySelector('.st-gallery__grid');
     var col = document.querySelector('.st-gallery > .cs-col');
@@ -4876,58 +4850,61 @@
     if (items.length < 2) return;
     var n = items.length, cur = 0;
     function pad(i) { return (i < 9 ? '0' : '') + (i + 1); }
-    var arrow = function(d) { return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="' + d + '" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'; };
-    var list = document.createElement('ol'); list.className = 'st-tour__list'; list.setAttribute('role', 'tablist'); list.setAttribute('aria-label', 'Screens');
-    var stage = document.createElement('div'); stage.className = 'st-tour__stage';
-    var foot = document.createElement('div'); foot.className = 'st-tour__foot';
-    foot.innerHTML = '<p class="st-tour__cap" aria-live="polite"></p><div class="st-tour__nav"><p class="st-tour__count"><b>01</b> / ' + pad(n - 1) + '</p>' +
+    function arrow(d) { return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="' + d + '" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+    var head = document.createElement('div'); head.className = 'st-tour__head';
+    head.innerHTML = '<p class="st-tour__cap" aria-live="polite"></p><div class="st-tour__nav"><p class="st-tour__count"><b>01</b> / ' + pad(n - 1) + '</p>' +
       '<button type="button" class="st-tour__btn" data-step="-1" aria-label="Previous screen">' + arrow('M15 18l-6-6 6-6') + '</button>' +
       '<button type="button" class="st-tour__btn" data-step="1" aria-label="Next screen">' + arrow('M9 6l6 6-6 6') + '</button></div>';
-    var cap = foot.querySelector('.st-tour__cap'), count = foot.querySelector('.st-tour__count b');
-    var tabs = items.map(function(it, i) {
-      var name = it.getAttribute('data-name') || (it.querySelector('figcaption strong') || {}).textContent || ('Screen ' + (i + 1));
-      var li = document.createElement('li'), b = document.createElement('button');
-      b.type = 'button'; b.className = 'st-tour__tab'; b.setAttribute('role', 'tab');
-      b.innerHTML = '<span>' + pad(i) + '</span>' + name.replace(/\.$/, '');
-      b.addEventListener('click', function() { show(i); });
-      li.appendChild(b); list.appendChild(li);
-      stage.appendChild(it);
-      return b;
-    });
-    function show(i, focus) {
-      cur = (i + n) % n;
-      items.forEach(function(it, k) { it.classList.toggle('is-on', k === cur); it.setAttribute('aria-hidden', k === cur ? 'false' : 'true'); });
-      tabs.forEach(function(t, k) { t.setAttribute('aria-selected', k === cur ? 'true' : 'false'); t.tabIndex = k === cur ? 0 : -1; });
-      var fc = items[cur].querySelector('.cs-figure__text');
-      cap.innerHTML = fc ? fc.innerHTML : '';
-      count.textContent = pad(cur);
-      fit();
-      if (focus) tabs[cur].focus();
-      // keep the chosen chip in view on a phone, without moving the page
-      var t = tabs[cur], l = list;
-      if (l.scrollWidth > l.clientWidth) l.scrollTo({ left: t.offsetLeft - 24, behavior: 'smooth' });
+    var stage = document.createElement('div'); stage.className = 'st-tour__stage';
+    var cap = head.querySelector('.st-tour__cap'), count = head.querySelector('.st-tour__count b');
+    var caps = items.map(function(it) { var t = it.querySelector('.cs-figure__text'); stage.appendChild(it); return t ? t.innerHTML : ''; });
+    // the title area keeps the height of the longest description
+    function hold() {
+      cap.style.minHeight = '';
+      var max = 0, keep = cap.innerHTML;
+      caps.forEach(function(c) { cap.innerHTML = c; max = Math.max(max, cap.offsetHeight); });
+      cap.innerHTML = keep; cap.style.minHeight = max + 'px';
     }
-    list.addEventListener('keydown', function(e) {
-      var k = e.key;
-      if (k === 'ArrowDown' || k === 'ArrowRight') { e.preventDefault(); show(cur + 1, true); }
-      if (k === 'ArrowUp' || k === 'ArrowLeft') { e.preventDefault(); show(cur - 1, true); }
-    });
-    [].forEach.call(foot.querySelectorAll('[data-step]'), function(b) {
-      b.addEventListener('click', function() { show(cur + (+b.getAttribute('data-step'))); });
-    });
     // the view takes the height of the screen it shows, easing between them
     function fit() {
       var img = items[cur].querySelector('img');
       var w = +img.getAttribute('width'), h = +img.getAttribute('height');
       if (w && h) { stage.style.aspectRatio = 'auto'; stage.style.height = (stage.clientWidth * h / w) + 'px'; }
     }
-    window.addEventListener('resize', function() { fit(); });
+    function show(i) {
+      cur = (i + n) % n;
+      items.forEach(function(it, k) { it.classList.toggle('is-on', k === cur); it.setAttribute('aria-hidden', k === cur ? 'false' : 'true'); });
+      cap.innerHTML = caps[cur];
+      count.textContent = pad(cur);
+      fit();
+    }
+    [].forEach.call(head.querySelectorAll('[data-step]'), function(b) {
+      b.addEventListener('click', function() { show(cur + (+b.getAttribute('data-step'))); });
+      b.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); show(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); show(cur - 1); }
+      });
+    });
+    // a sideways swipe on the screen steps it; a tap still opens the lightbox
+    var x0 = null, y0 = 0, swiped = false;
+    stage.addEventListener('touchstart', function(e) { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; swiped = false; }, { passive: true });
+    stage.addEventListener('touchend', function(e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.5) { swiped = true; show(cur + (dx < 0 ? 1 : -1)); }
+      x0 = null;
+    }, { passive: true });
+    stage.addEventListener('click', function(e) { if (swiped) { e.preventDefault(); e.stopPropagation(); swiped = false; } }, true);
     grid.innerHTML = '';
     grid.classList.add('st-tour');
     grid.removeAttribute('role');
-    grid.appendChild(list); grid.appendChild(foot); grid.appendChild(stage);
+    grid.setAttribute('aria-roledescription', 'carousel');
+    grid.setAttribute('aria-label', 'More of the platform');
+    grid.appendChild(head); grid.appendChild(stage);
     col.appendChild(grid);
-    show(0);
+    show(0); hold();
+    window.addEventListener('resize', function() { fit(); hold(); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(hold);
   })();
 </script>
 </body>
