@@ -2987,6 +2987,13 @@
   .st-people__grid dt { font-family: var(--ff-display); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; color: var(--ink); }
   .st-people__grid dd { margin: 8px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
 
+  /* each part opens with one framing line under its title, a step up from body */
+  .st .st-lead {
+    margin: calc(-1 * clamp(24px, 3.6vh, 40px)) 0 clamp(56px, 8vh, 88px);
+    max-width: var(--text-end);
+    font-size: clamp(18px, 1.45vw, 22px); line-height: 1.5; letter-spacing: -0.01em;
+    color: var(--ink-2); text-wrap: pretty;
+  }
   /* ---------- Impact: four results in the band's language ----------
      A 2x2 grid under one hairline that draws across, with the same dividers
      as the numbers at the top of the page. Every result is set at one size,
@@ -3247,42 +3254,7 @@
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
       <div class="cs-overview__body" data-reveal data-stagger>
         <p><strong>PwC Deals</strong> practitioners in more than 60 territories used a cloud platform to turn client data into the analysis behind financial due diligence. It handled the basics of building a data model, but at the most important step, practitioners still left it for Excel.</p>
-        <p>As <strong>lead designer</strong>, I led the research, set the design direction and designed 10 new features for the platform. This case study follows the one that closed that gap: the <strong>DimMetric Editor</strong>, which brought practitioners back from Excel. It came together in three parts:</p>
-      </div>
-
-      <div class="cs-paths">
-        <article class="cs-path" data-reveal>
-          <div class="cs-path__body">
-            <p class="cs-path__no">01</p>
-            <h2 class="cs-path__title"><a href="#gap" data-story-jump>Finding the step that kept practitioners in Excel</a></h2>
-          </div>
-          <div class="cs-path__note">
-            <p>The platform combined data well, but it couldn&rsquo;t define hierarchies, and financial statements are built on them. So at the most important step, practitioners left the tool to map accounts by hand in Excel, and every team did it their own way.</p>
-            <a class="cs-path__more" href="#gap" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-          </div>
-        </article>
-
-        <article class="cs-path" data-reveal>
-          <div class="cs-path__body">
-            <p class="cs-path__no">02</p>
-            <h2 class="cs-path__title"><a href="#align" data-story-jump>Getting product, tech and the business to one answer</a></h2>
-          </div>
-          <div class="cs-path__note">
-            <p>Product owned the roadmap, tech owned what was feasible, and the business owned the financial logic. The feature only worked if all three agreed on what it had to do.</p>
-            <a class="cs-path__more" href="#align" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-          </div>
-        </article>
-
-        <article class="cs-path" data-reveal>
-          <div class="cs-path__body">
-            <p class="cs-path__no">03</p>
-            <h2 class="cs-path__title"><a href="#prove" data-story-jump>Proving it with practitioners across four countries</a></h2>
-          </div>
-          <div class="cs-path__note">
-            <p>A tool used in 60+ territories can&rsquo;t be validated in one office. Testing had to show whether the feature worked for practitioners whose processes, language and experience differed.</p>
-            <a class="cs-path__more" href="#prove" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
-          </div>
-        </article>
+        <p>As <strong>lead designer</strong>, I led the research, set the design direction and designed 10 new features for the platform. This case study follows the one that closed that gap: the <strong>DimMetric Editor</strong>, which brought practitioners back from Excel.</p>
       </div>
 
       <div class="st-people" data-reveal>
@@ -3304,6 +3276,7 @@
         <p class="cs-path__no" data-reveal>01</p>
         <div class="cs-story__main">
           <h2 class="cs-story__title" id="gap-h" data-reveal>Finding the step that kept practitioners in Excel</h2>
+          <p class="st-lead" data-reveal>The platform combined data well, but it couldn&rsquo;t define hierarchies, and financial statements are built on them. So at the most important step, practitioners left the tool to map accounts by hand in Excel.</p>
         <section class="cs-chapter cs-chapter--even">
           <div class="cs-chapter__body" data-reveal data-stagger>
             <p>I spent a day shadowing Deals practitioners and interviewing them informally, to see where mapping happened, how it varied from person to person, and where the time went.</p>
@@ -3330,6 +3303,7 @@
         <p class="cs-path__no" data-reveal>02</p>
         <div class="cs-story__main">
           <h2 class="cs-story__title" id="align-h" data-reveal>Getting product, tech and the business to one answer</h2>
+          <p class="st-lead" data-reveal>Product owned the roadmap, tech owned what was feasible, and the business owned the financial logic. The feature only worked if all three agreed on what it had to do.</p>
         <section class="cs-chapter">
           <div class="cs-chapter__body" data-reveal data-stagger>
             <h2 class="cs-chapter__title">Turning research into a scope everyone signed up to.</h2>
@@ -3399,6 +3373,7 @@
         <p class="cs-path__no" data-reveal>03</p>
         <div class="cs-story__main">
           <h2 class="cs-story__title" id="prove-h" data-reveal>Proving it with practitioners across four countries</h2>
+          <p class="st-lead" data-reveal>A tool used in 60+ territories can&rsquo;t be validated in one office. Testing had to show whether the feature worked for practitioners whose processes, language and experience differed.</p>
         <section class="cs-chapter">
           <div class="cs-chapter__body" data-reveal data-stagger>
             <h2 class="cs-chapter__title">Research built around the hard part.</h2>
