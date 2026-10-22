@@ -3300,6 +3300,15 @@
 
   /* the last study: the impact closes the page, so it gets the room Up next had */
   .cs-impact.ed-impact { padding-bottom: clamp(160px, 22vh, 260px); }
+
+  /* boards exported with their own slide ground: no container round them */
+  .ed-fig--board .cs-figure__open { padding: 0; background: none; border: 0; }
+  .ed .ed-fig--board img { border-radius: 14px; max-height: none; }
+  .ed-fig--board { width: min(100%, var(--w)); }
+  /* the discussion guide: the questions as written */
+  .ed-guide > .ed-k { margin-bottom: 18px; }
+  .ed-guide__where { font: 500 12.5px/1.4 var(--mono); letter-spacing: 0.02em; color: var(--ink-3); margin-bottom: 8px !important; }
+  .ed-guide h4 { font-weight: 500; font-size: clamp(18px, 1.4vw, 21px); line-height: 1.38; }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -3430,7 +3439,7 @@
 
   <section class="ed-overview ed-grid" id="overview" aria-label="Overview">
     <p class="ed-label" data-reveal>Overview</p>
-    <p class="ed-lede" data-reveal>Deals practitioners had a cloud platform that turned client data into structured data cubes and generated industry-specific analytical outputs, used in more than 60 territories. It covered the basics of building a data model for financial due diligence. My job was to take it further. I led the research, set the design direction, and designed <strong>10 new features</strong> across the platform. This case study follows one of them in depth, the DimMetric Editor, the feature that brought practitioners back from Excel, and ends with the rest of the work.</p>
+    <p class="ed-lede" data-reveal>Deals practitioners in more than 60 territories had a cloud platform that turned client data into structured data cubes and industry-specific analytical outputs. It covered the basics of building a data model for financial due diligence. My job was to take it further: I led the research, set the design direction and designed <strong>10 new features</strong>. This case study follows one of them in depth, the DimMetric Editor, which brought practitioners back from Excel.</p>
     <ol class="ed-index" data-reveal data-stagger>
       <li><a href="#gap" data-story-jump><span class="ed-index__no">01</span><span class="ed-index__t">Finding the step that kept practitioners in Excel</span><span class="ed-index__go" aria-hidden="true">&darr;</span></a></li>
       <li><a href="#align" data-story-jump><span class="ed-index__no">02</span><span class="ed-index__t">Getting product, tech and the business to one answer</span><span class="ed-index__go" aria-hidden="true">&darr;</span></a></li>
@@ -3485,7 +3494,7 @@
         <p>I ran a workshop with the Product Owners to turn what I&rsquo;d learnt into a full set of requirements, then took them to the tech team to test against their proof of concept and find the gaps early.</p>
         <p>There was more than one release&rsquo;s worth of work, so I led a prioritisation of every requirement by technical effort and user impact. It gave product and tech one shared view of what mattered most, and it became the agreed scope for the MVP.</p>
       </div>
-      <figure class="cs-figure ed-fig ed-fig--wide ed-fig--scaled ed-panel" style="--w: 1000px; --ar: 1.7434" data-reveal>
+      <figure class="cs-figure ed-fig ed-fig--wide ed-fig--scaled ed-fig--board" style="--w: 1000px; --ar: 1.7434" data-reveal>
         <img src="/assets/dmt-prioritise-1120.7ad193d5.webp"
              srcset="/assets/dmt-prioritise-1120.7ad193d5.webp 1120w,
                  /assets/dmt-prioritise-1680.7ad193d5.webp 1680w,
@@ -3503,7 +3512,7 @@
       <div class="ed-body" data-reveal data-stagger>
         <p>Financial hierarchies follow strict rules. A design that felt intuitive but broke those rules would be worse than Excel, because practitioners would stop trusting it. I ran working sessions with product, tech and business stakeholders to co-define the target journey, and worked with the product owner to make sure the logic matched exactly how Deals defines hierarchies.</p>
       </div>
-      <figure class="cs-figure ed-fig ed-fig--wide ed-fig--scaled ed-panel" style="--w: 1000px; --ar: 2.0884" data-reveal>
+      <figure class="cs-figure ed-fig ed-fig--wide ed-fig--scaled ed-fig--board" style="--w: 1000px; --ar: 2.0884" data-reveal>
         <img src="/assets/dmt-journey-1120.52ccb4b7.webp"
              srcset="/assets/dmt-journey-1120.52ccb4b7.webp 1120w,
                  /assets/dmt-journey-1680.52ccb4b7.webp 1680w,
@@ -3560,17 +3569,14 @@
         <p>Before formal testing, I ran light-touch sessions with super users to catch territory-specific needs early. Because the feature was complex, I led the discussion guide, so our researcher could probe exactly how practitioners reasoned through the hierarchy logic rather than just whether they could click through it.</p>
         <p>We tested with eight practitioners in the UK, India, Germany and the US, both new and experienced users of the platform.</p>
       </div>
-      <figure class="cs-figure ed-fig ed-fig--wide ed-fig--scaled ed-panel" style="--w: 1000px; --ar: 2.0510" data-reveal>
-        <img src="/assets/dmt-guide-1120.441013bc.webp"
-             srcset="/assets/dmt-guide-1120.441013bc.webp 1120w,
-                 /assets/dmt-guide-1680.441013bc.webp 1680w,
-                 /assets/dmt-guide-2240.441013bc.webp 2240w"
-             sizes="(min-width: 1300px) 1000px, 92vw"
-             width="8926" height="4352"
-             alt="Three columns of questions from the discussion guide, for the mapping page, the DimMetric Editor and master mapping, each paired with what the researcher was looking out for."
-             loading="lazy" decoding="async">
-        <figcaption><span class="cs-figure__text">An excerpt of the discussion guide: every question paired with what we were looking out for.</span></figcaption>
-      </figure>
+      <div class="ed-guide">
+        <p class="ed-k" data-reveal>From the discussion guide</p>
+        <ol class="ed-list" data-reveal data-stagger>
+          <li><span class="ed-k">01</span><div><p class="ed-guide__where">DimMetric Editor</p><h4>&ldquo;Could you describe the differences between &lsquo;Master Mapping&rsquo; and &lsquo;Hierarchy Template&rsquo;, based on what you see? What do you expect to do by clicking on the two buttons?&rdquo;</h4><p>Looking out for: do the features meet the expectations?</p></div></li>
+          <li><span class="ed-k">02</span><div><p class="ed-guide__where">Master mapping</p><h4>&ldquo;What is your understanding of &lsquo;idMetric&rsquo; and &lsquo;L1&ndash;L6&rsquo;?&rdquo;</h4><p>Looking out for: practitioner understanding of the terminology.</p></div></li>
+          <li><span class="ed-k">03</span><div><p class="ed-guide__where">Mapping page</p><h4>&ldquo;From this page, if you wanted to edit your account mapping table, what would you do?&rdquo;</h4><p>Looking out for: whether practitioners can interact with the file intuitively, noticing the buttons and links available for action.</p></div></li>
+        </ol>
+      </div>
     </section>
 
     <aside class="ed-insight ed-grid" data-reveal>
@@ -3630,7 +3636,7 @@
           <span class="ed-embed__go"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Explore in Figma</span>
         </button>
       </figure>
-      <p class="ed-cap" data-reveal>Loads Figma&rsquo;s viewer. Or <a href="https://www.figma.com/design/h1Zrgj3hqnJL9CU4wG4g87/DimMetric?node-id=0-1" target="_blank" rel="noopener">open the file in Figma&nbsp;&#8599;</a></p>
+      <p class="ed-cap" data-reveal>Opens Figma&rsquo;s viewer here, or <a href="https://www.figma.com/design/h1Zrgj3hqnJL9CU4wG4g87/DimMetric?node-id=0-1" target="_blank" rel="noopener">open the file in Figma&nbsp;&#8599;</a></p>
     </section>
   </section>
 
@@ -3643,7 +3649,7 @@
       <ol class="ed-list ed-list--impact" data-reveal data-stagger>
         <li><span class="ed-k">01</span><div><h4>+24% deployment rate</h4><p>With a notable reduction in projects being abandoned.</p></div></li>
         <li><span class="ed-k">02</span><div><h4>Four new territories onboarded</h4><p>And engagement up among existing users.</p></div></li>
-        <li><span class="ed-k">03</span><div><h4>The engagement extended and further investment</h4><p>At the end of our contracted phase, the work was extended and the platform secured further global investment because of its success and usage.</p></div></li>
+        <li><span class="ed-k">03</span><div><h4>Extended, with further global investment</h4><p>At the end of our contracted phase, the work was extended and the platform secured further global investment because of its success and usage.</p></div></li>
       </ol>
     </div>
   </section>
