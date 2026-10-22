@@ -1867,6 +1867,10 @@
     .st-band > div + div { border-left: 0; border-top: 1px solid var(--st-line); }
   }
   @media (prefers-reduced-motion: reduce) { .st-band::before { transition: none; transform: none !important; } }
+  /* the hero's guides carry on down the page and become the numbers' lines,
+     so it reads as one drawing rather than lines everywhere */
+  .st-morph .st-glance .st-band::before { opacity: 0; }
+  .st-morph .st-glance .st-band > div + div { border-left-color: transparent; }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -3283,6 +3287,57 @@
       });
     }, { threshold: 0.6 });
     [].forEach.call(els, function(el) { io.observe(el); });
+  })();
+</script>
+<script>
+  // As you scroll, the four guides round the hero picture travel down and
+  // settle as the numbers' hairline and dividers: the bottom guide becomes the
+  // top rule, the side guides become the dividers, and any guide left over
+  // fades. On a phone, where the numbers stack, the band keeps its own lines.
+  (function() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var fig = document.querySelector('.cs-hero .cs-figure');
+    var band = document.querySelector('.st-glance .st-band');
+    if (!fig || !band) return;
+    var root = document.documentElement, on = false, raf = 0;
+    function lerp(a, b, k) { return a + (b - a) * k; }
+    function base(ln) {
+      if (!ln.dataset.b) ln.dataset.b = ['x1', 'y1', 'x2', 'y2'].map(function(a) { return ln.getAttribute(a); }).join(',');
+      return ln.dataset.b.split(',').map(Number);
+    }
+    function frame() {
+      raf = 0;
+      var lines = fig.querySelectorAll('.cs-ed-guides line');
+      var cells = band.children;
+      var row = cells.length > 1 && Math.abs(cells[0].getBoundingClientRect().top - cells[1].getBoundingClientRect().top) < 2;
+      if (lines.length !== 4 || !row) { if (on) { root.classList.remove('st-morph'); on = false; } return; }
+      var fr = fig.getBoundingClientRect(), br = band.getBoundingClientRect(), vh = window.innerHeight;
+      // 0 while the band is below the fold, 1 once its top reaches 55% of the screen
+      var p = Math.min(1, Math.max(0, (vh - br.top) / (vh * 0.45)));
+      p = p * p * (3 - 2 * p);
+      if (!on) { root.classList.add('st-morph'); on = true; }
+      var bl = br.left - fr.left, bt = br.top - fr.top, bw = br.width, bh = br.height;
+      // where each guide ends up: [x1, y1, x2, y2], or null to fade out
+      var divs = [];
+      for (var i = 1; i < cells.length; i++) { var x = cells[i].getBoundingClientRect().left - fr.left; divs.push([x, bt, x, bt + bh]); }
+      var to = [null, [bl, bt, bl + bw, bt], divs[0] || null, divs[1] || null];
+      [].forEach.call(lines, function(ln, i) {
+        var b = base(ln), t = to[i];
+        if (p > 0) ln.style.strokeDasharray = 'none';
+        if (t) {
+          ln.setAttribute('x1', lerp(b[0], t[0], p)); ln.setAttribute('y1', lerp(b[1], t[1], p));
+          ln.setAttribute('x2', lerp(b[2], t[2], p)); ln.setAttribute('y2', lerp(b[3], t[3], p));
+          ln.style.opacity = '';
+        } else {
+          ln.style.opacity = Math.max(0, 1 - p * 1.8);
+        }
+      });
+    }
+    function ask() { if (!raf) raf = requestAnimationFrame(frame); }
+    window.addEventListener('scroll', ask, { passive: true });
+    window.addEventListener('resize', function() { setTimeout(ask, 200); });
+    window.addEventListener('load', ask);
+    ask();
   })();
 </script>
 </body>
