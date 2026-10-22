@@ -188,7 +188,7 @@
        brightness reads as a mistake and one that is slightly less saturated
        reads as this colour. At 58.8% the composite chroma is just inside the
        range the other four already span, and the lift lands on target. */
-    --glow-tint: rgba(202,80,30,0.30);   /* the card's orange, as PwC's page takes its card's */
+    --glow-tint: rgba(202,80,30,0.30);
 
     --pad-x: clamp(28px, 6vw, 110px);
     --shell: 1560px;
@@ -2891,424 +2891,30 @@
   .cs-hero .cs-figure { margin-top: clamp(104px, 13vh, 168px); }
 
 
-  /* ================= EDITORIAL LAYOUT =================
-     One left edge for everything: the title, the writing, every picture
-     and every number start on the same line, and the guides' left hairline
-     runs down it. Pictures and numbers widen to the right of the writing;
-     the whole block sits centred under the nav. Nothing sits in a side
-     margin. The homepage's language throughout: straight hairlines rather
-     than boxes, the build's guides drawn round every picture and every
-     number (they draw in as each arrives), mono small print for labels,
-     Manrope for anything set large. A short type scale, used one way:
-       display   part titles, insights, the quote, the big numbers
-       title     section titles, list titles
-       body      the writing
-       note      list text, captions' neighbours
-       label     mono small print */
-  .ed {
-    --fp: clamp(12px, 1.5vw, 20px);
-    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
-    --line: rgba(255,255,255,0.26);
-    --ext: clamp(12px, 3vw, 40px);
-    position: relative;
-    z-index: 1;
-  }
-  .ed-grid,
-  .cs-hero > .cs-col.ed-hero {
-    display: grid;
-    grid-template-columns:
-      [full-start] minmax(var(--pad-x), 1fr)
-      [wide-start body-start] minmax(clamp(280px, 66vw, 700px), 700px) [body-end]
-      minmax(0, 420px) [wide-end]
-      minmax(var(--pad-x), 1fr) [full-end];
-    align-items: start;
-  }
-  .ed-grid > * { grid-column: body; min-width: 0; }
-  :where(.ed) :where(p, dl, dd, ol, ul, h2, h3, h4, blockquote, figure) { margin: 0; }
-  :where(.ed) :where(ol, ul) { padding: 0; list-style: none; }
-  .ed p, .ed dd, .ed li, .ed h4 { text-wrap: pretty; }
+  /* the Figma file: a still until asked for */
+  .cs-embed { margin: clamp(64px, 9vh, 108px) 0 0; grid-column: 1 / -1; }
+  .cs-embed__poster, .cs-embed iframe { display: block; width: 100%; max-width: 720px; margin: 0 auto; aspect-ratio: 16 / 10; border: 0; border-radius: 12px; }
+  .cs-embed__poster { position: relative; padding: 0; overflow: hidden; background: #0f0f12; cursor: pointer; }
+  .cs-embed__poster img { width: 100%; height: 100%; object-fit: cover; object-position: top left; opacity: 0.55; transition: opacity 0.4s ease; }
+  .cs-embed__poster:hover img { opacity: 0.72; }
+  .cs-embed__go { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; border-radius: 999px; background: #fff; color: #0a0a0c; font: 600 15px/1 var(--ff-display); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+  .cs-embed__go svg { width: 16px; height: 16px; }
+  .cs-embed figcaption { max-width: 720px; margin: 16px auto 0; }
+  .cs-embed figcaption a { color: inherit; text-underline-offset: 3px; }
+  /* the last study: no Up next, so the impact closes the page */
+  .cs-impact { padding-bottom: clamp(160px, 22vh, 260px); }
 
-  /* the hero on the same grid: its words on the writing's edge, its picture wide */
-  .cs-hero > .cs-col.ed-hero {
-    max-width: none;
-    column-gap: 0;
-    grid-template-columns:
-      [full-start] minmax(0, 1fr)
-      [wide-start body-start] minmax(clamp(280px, 66vw, 700px), 700px) [body-end]
-      minmax(0, 420px) [wide-end]
-      minmax(0, 1fr) [full-end];
+  /* six short decisions, two by two, under the screen they're marked on */
+  .cs-decisions {
+    grid-column: 1 / -1; list-style: none; padding: 0;
+    width: 100%; max-width: 720px; margin: 40px auto 0;
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 36px;
   }
-  .cs-hero > .cs-col.ed-hero > .cs-hero__text { grid-column: body-start / wide-end; }
-  .cs-hero > .cs-col.ed-hero > .cs-figure { grid-column: wide; }
-
-  /* ---------- Type ---------- */
-  .ed-k, .ed-label {
-    display: block;
-    font: 500 12.5px/1.4 var(--mono);
-    letter-spacing: 0.02em;
-    color: var(--ink-3);
-  }
-  .ed-body > p {
-    font-size: clamp(17px, 1.15vw, 18.5px);
-    line-height: 1.7;
-    color: var(--ink-1);
-  }
-  .ed-body > p + p { margin-top: 1.1em; }
-  .ed-body strong { color: var(--ink); font-weight: 600; }
-
-  /* ---------- Pictures in soft containers ----------
-     One quiet panel for a picture or a group of screens: the same inset,
-     corner and hairline everywhere. The guides below are kept for numbers. */
-  .ed-panel.ed-shots, .ed-panel.ed-grid4,
-  .ed-fig.ed-panel .cs-figure__open {
-    padding: var(--fp);
-    background: rgba(255,255,255,0.035);
-    border: 1px solid var(--rule);
-    border-radius: 18px;
-  }
-  .ed .ed-panel img { border-radius: 6px; }
-  /* No picture runs taller than about two thirds of the window. A long,
-     scrolling screen shows its top, cut cleanly at the frame like a device
-     window; the viewer still opens all of it. Ones that fit are untouched. */
-  .ed .ed-panel .cs-figure__open { max-height: none; }
-  .ed .ed-shot .cs-figure__open,
-  .ed .ed-fig.ed-panel .cs-figure__open img { max-height: var(--cap); }
-  .ed { --cap: min(66vh, 600px); }
-  .ed .ed-shot .cs-figure__open { overflow: hidden; border-radius: 6px; }
-  .ed .ed-shot img { object-fit: cover; object-position: top; }
-  .ed .ed-fig.ed-panel .cs-figure__open img { width: 100%; object-fit: cover; object-position: top; }
-  .ed-panel.ed-shots { width: min(100%, calc(var(--row, 100%) + 2 * var(--fp) + 2px)); }
-
-  /* ---------- The guides ----------
-     Two hairlines across the top and bottom and two down the sides, each
-     running past the corner, exactly as round the hero picture. Drawn on the
-     element itself (or a picture's button) so nothing extra is in the markup,
-     and drawn in from the middle as the element arrives. */
-  .ed-framed { position: relative; }
-  .ed-framed::before,
-  .ed-framed::after {
-    content: ""; position: absolute; pointer-events: none;
-    transition: transform 1.2s cubic-bezier(.65,0,.35,1);
-  }
-  .ed-framed::before {
-    left: calc(-1 * var(--ext)); right: calc(-1 * var(--ext)); top: 0; bottom: 0;
-    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-  }
-  .ed-framed::after {
-    top: calc(-1 * var(--ext)); bottom: calc(-1 * var(--ext)); left: 0; right: 0;
-    border-left: 1px solid var(--line); border-right: 1px solid var(--line);
-    transition-delay: 0.12s;
-  }
-  .cs-motion .ed-framed:not(.is-in)::before { transform: scaleX(0); }
-  .cs-motion .ed-framed:not(.is-in)::after { transform: scaleY(0); }
-  @media (prefers-reduced-motion: reduce) { .ed-framed::before, .ed-framed::after, .ed-framed .cs-figure__open::before, .ed-framed .cs-figure__open::after { transition: none; } }
-
-  /* ---------- Pictures ---------- */
-  .ed .cs-figure { margin: 0; }
-  .ed .cs-figure img, .ed .cs-figure__open { max-width: none; width: 100%; }
-  .ed .cs-figure__open { display: block; padding: 0; background: none; border: 0; border-radius: 0; }
-  .ed .cs-figure figcaption { max-width: 62ch; margin-top: 16px; }
-  .ed-fig--wide { grid-column: wide; }
-  .ed-fig--template { max-width: 520px; }
-  /* a board drawn larger than the screens round it, brought to their scale */
-  .ed-fig--scaled { grid-column: wide; justify-self: start; width: min(100%, calc(var(--w) + 2 * var(--fp) + 2px)); }
-  .ed-cap {
-    max-width: 62ch;
-    font: 500 clamp(12.5px, 0.95vw, 14px)/1.55 var(--mono); letter-spacing: 0.01em;
-    color: rgba(255,255,255,0.5);
-  }
-  .ed .ed-framed + .ed-cap { margin-top: 16px; }
-
-  /* screens side by side, one frame round the group; each screen's share of
-     the row is its proportion, so a row of different shapes is one height */
-  /* every screen at one scale, whatever device it is: the frame hugs the
-     group and sits centred, so a phone reads at the size a desktop does */
-  .ed-shots { grid-column: wide; justify-self: start; width: min(100%, var(--row, 100%)); display: flex; align-items: flex-start; justify-content: center; gap: clamp(12px, 1.4vw, 20px); }
-  .ed-shots > .ed-shot { flex: 0 1 var(--w, 490px); min-width: 0; }
-  .ed-saved { grid-column: wide; justify-self: start; width: fit-content; max-width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 490px)); gap: clamp(12px, 1.4vw, 20px); align-items: center; }
-  .ed-saved__stack { display: grid; gap: clamp(12px, 1.4vw, 20px); }
-
-  /* four screens to compare, two by two in one frame, numbered beneath */
-  .ed-grid4 {
-    grid-column: wide; justify-self: start; width: min(100%, 980px);
-    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(28px, 4vh, 40px) clamp(16px, 2vw, 28px);
-    align-items: start;
-  }
-  .ed-g figcaption { margin-top: 12px; text-align: left; }
-  /* every screen hangs from the top of its row, so the same header sits on
-     the same line across a pair; labels start on the screen's own edge */
-  .ed-grid4 { align-items: start; }
-  .ed-grid4 .ed-g .cs-figure__open { align-self: start; }
-  .ed .ed-grid4 .ed-g figcaption, .ed .ed-grid4 .ed-g .cs-figure__text { text-align: left; display: block; padding: 0; margin-left: 0; margin-right: 0; max-width: none; width: auto; }
-  .ed .cs-figure figcaption, .ed .cs-figure .cs-figure__text { margin-left: 0; margin-right: 0; text-align: left; }
-  /* picture and label on two shared rows, so labels stay level across a pair */
-  @supports (grid-template-rows: subgrid) {
-    .ed-grid4 > .ed-g { display: grid; grid-row: span 2; grid-template-rows: subgrid; row-gap: 12px; }
-    .ed-grid4 > .ed-g figcaption { margin-top: 0; }
-  }
-  /* close-ups: one panel height for all four, each crop fitted inside it */
-  .ed-g--detail .cs-figure__open { display: grid; place-items: center; height: clamp(220px, 26vw, 340px); padding: 18px; background: rgba(255,255,255,0.03); }
-  .ed .ed-g--detail img { width: auto; max-width: 100%; height: auto; max-height: 100%; aspect-ratio: auto; object-fit: contain; min-height: 0; }
-
-  /* ---------- At a glance: the numbers, framed ---------- */
-  .ed-glance { padding-top: clamp(88px, 12vh, 140px); }
-  /* the hero picture goes without the guides: they are the numbers' */
-  .cs-hero .cs-ed-guides { display: none; }
-  .ed-glance__who {
-    grid-column: wide;
-    display: flex; flex-wrap: wrap; gap: 6px 28px;
-    margin-bottom: clamp(28px, 4vh, 40px);
-    font: 500 12.5px/1.4 var(--mono); letter-spacing: 0.02em; color: var(--ink-2);
-  }
-  .ed-glance__who span + span::before { content: "·"; margin-right: 28px; color: var(--ink-3); }
-  .ed-band {
-    grid-column: wide;
-    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-  .ed-band > div { padding: clamp(28px, 4vh, 44px) clamp(20px, 2.6vw, 40px); }
-  .ed-band > div + div { border-left: 1px solid var(--line); }
-  .ed-band dt {
-    font-family: var(--ff-display); font-weight: 600;
-    font-size: clamp(44px, 5.2vw, 80px); line-height: 0.95; letter-spacing: -0.05em;
-    color: var(--ink); white-space: nowrap;
-  }
-  .ed-band dd { margin-top: 14px; font-size: 16px; line-height: 1.45; color: var(--ink-2); }
-
-  /* ---------- Overview ---------- */
-  .ed-overview { padding-top: clamp(120px, 16vh, 190px); }
-  .ed-label { margin-bottom: 20px; }
-  .ed-lede {
-    font-family: var(--ff-display); font-weight: 500;
-    font-size: clamp(21px, 1.8vw, 27px); line-height: 1.4; letter-spacing: -0.015em;
-    color: var(--ink);
-  }
-  .ed-lede strong { font-weight: 700; }
-  .ed .ed-index { margin-top: clamp(44px, 6vh, 64px); border-bottom: 1px solid var(--rule); }
-  .ed-index a {
-    display: grid; grid-template-columns: 3em minmax(0, 1fr) auto; align-items: baseline; gap: 12px;
-    padding: 20px 0; border-top: 1px solid var(--rule);
-    color: var(--ink-1); text-decoration: none; transition: color 0.2s ease;
-  }
-  .ed-index__no { font: 500 12.5px/1 var(--mono); color: var(--ink-3); }
-  .ed-index__t { font-family: var(--ff-display); font-weight: 500; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.35; }
-  .ed-index__go { color: var(--ink-3); transition: transform 0.25s cubic-bezier(.2,.7,.2,1), color 0.2s ease; }
-  .ed-index a:hover { color: var(--ink); }
-  .ed-index a:hover .ed-index__go { color: var(--ink); transform: translateY(3px); }
-
-  /* ---------- A part opens ---------- */
-  .ed-part { scroll-margin-top: 40px; }
-  .ed-open { padding-top: clamp(150px, 22vh, 260px); }
-  .ed-open__no {
-    grid-column: wide;
-    display: flex; gap: 10px; padding-top: 16px;
-    border-top: 1px solid var(--line);
-    font: 500 13px/1 var(--mono); letter-spacing: 0.02em; color: var(--ink);
-  }
-  .ed-open__of { color: var(--ink-3); }
-  .ed .ed-open__title {
-    margin-top: clamp(44px, 7vh, 80px);
-    font-family: var(--ff-display); font-weight: 600;
-    font-size: clamp(34px, 4vw, 58px); line-height: 1.05; letter-spacing: -0.035em;
-    text-wrap: balance; color: var(--ink);
-  }
-  .ed .ed-open__why { margin-top: clamp(24px, 3.5vh, 36px); font-size: clamp(18px, 1.3vw, 20px); line-height: 1.6; color: var(--ink-2); }
-
-  /* ---------- A section ---------- */
-  .ed-sec { padding-top: clamp(96px, 13vh, 150px); }
-  .ed-sec__title {
-    font-family: var(--ff-display); font-weight: 600;
-    font-size: clamp(23px, 2vw, 30px); line-height: 1.2; letter-spacing: -0.02em;
-    text-wrap: balance; color: var(--ink);
-  }
-  .ed .ed-sec > * + * { margin-top: clamp(40px, 5.5vh, 60px); }
-  .ed .ed-sec > .ed-sec__title + * { margin-top: 24px; }
-
-  /* ---------- Two routes, side by side, alike ---------- */
-  .ed-vs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 3vw, 40px); }
-  .ed-vs > div { border-top: 1px solid var(--line); padding-top: 18px; }
-  .ed-vs dt { font-family: var(--ff-display); font-weight: 600; font-size: 19px; line-height: 1.3; color: var(--ink); }
-  .ed-vs .ed-k { margin-bottom: 10px; }
-  .ed-vs dd { margin-top: 10px; font-size: 16px; line-height: 1.65; color: var(--ink-2); }
-
-  /* ---------- Rows: owners, directions, decisions, the close ---------- */
-  .ed-list { border-bottom: 1px solid var(--rule); }
-  .ed-list > li {
-    display: grid; grid-template-columns: 3em minmax(0, 1fr); align-items: baseline;
-    padding: clamp(20px, 3vh, 26px) 0; border-top: 1px solid var(--rule);
-  }
-  .ed-list .ed-k { color: var(--ink); }
-  .ed-list h4 { font-family: var(--ff-display); font-weight: 600; font-size: 19px; line-height: 1.3; letter-spacing: -0.01em; color: var(--ink); }
-  .ed-list h4 + p { margin-top: 8px; }
-  .ed-list p { font-size: 16.5px; line-height: 1.65; color: var(--ink-2); }
-  .ed-asks { counter-reset: ask; border-bottom: 1px solid var(--rule); }
-  .ed-asks li {
-    counter-increment: ask;
-    display: grid; grid-template-columns: 3em minmax(0, 1fr); align-items: baseline;
-    padding: 16px 0; border-top: 1px solid var(--rule);
-    font-family: var(--ff-display); font-weight: 500; font-size: clamp(17px, 1.3vw, 19px); line-height: 1.4; color: var(--ink);
-  }
-  .ed-asks li::before { content: counter(ask, decimal-leading-zero); font: 500 12.5px/1 var(--mono); color: var(--ink); }
-
-  /* ---------- Insights and the quote: set large, nothing round them ---------- */
-  .ed-insight { padding-top: clamp(110px, 15vh, 170px); }
-  .ed-insight > .ed-k { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-  .ed-insight > .ed-k::before {
-    content: ""; width: 7px; height: 7px; border-radius: 50%; flex: none;
-    background: #f08a24; box-shadow: 0 0 10px rgba(240,138,36,0.6);
-  }
-  .ed-insight__line, .ed-quote p {
-    font-family: var(--ff-display); font-weight: 500;
-    font-size: clamp(28px, 3vw, 44px); line-height: 1.14; letter-spacing: -0.03em;
-    text-wrap: balance; color: var(--ink);
-  }
-  .ed .ed-insight__more { margin-top: clamp(24px, 3.5vh, 36px); font-size: clamp(17px, 1.15vw, 18.5px); line-height: 1.7; color: var(--ink-1); }
-  .ed-insight__finds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 3vw, 40px); margin-top: clamp(36px, 5vh, 52px); }
-  .ed-insight__finds > div { border-top: 1px solid var(--line); padding-top: 18px; }
-  .ed-insight__find { font-family: var(--ff-display); font-weight: 600; font-size: 18px; line-height: 1.3; color: var(--ink); }
-  .ed-insight__finds p + p { margin-top: 10px; font-size: 16px; line-height: 1.65; color: var(--ink-2); }
-  .ed-quote p { text-indent: -0.42em; }
-
-  /* ---------- A number, framed ---------- */
-  .ed-stat {
-    grid-column: wide;
-    display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center;
-    gap: clamp(28px, 4vw, 64px);
-    padding: clamp(36px, 5vh, 56px) clamp(24px, 3vw, 48px);
-  }
-  .ed-stat__num {
-    font-family: var(--ff-display); font-weight: 600;
-    font-size: clamp(64px, 8.4vw, 128px); line-height: 0.9; letter-spacing: -0.05em;
-    color: var(--ink); white-space: nowrap;
-  }
-  .ed-stat__what { max-width: 26em; font-family: var(--ff-display); font-weight: 500; font-size: clamp(19px, 1.5vw, 22px); line-height: 1.35; letter-spacing: -0.01em; color: var(--ink); }
-  .ed-stat__copy p + p { margin-top: 10px; max-width: 44em; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
-
-  /* ---------- The close ---------- */
-  .ed-impact { padding-left: 0; padding-right: 0; }
-  .ed-impact__title { font-family: var(--ff-display); font-weight: 800; font-size: clamp(40px, 4.6vw, 64px); line-height: 1.02; letter-spacing: -0.045em; color: var(--ink); }
-  .ed .ed-impact__lede { margin-top: clamp(24px, 3.5vh, 36px); font-size: clamp(18px, 1.3vw, 20px); line-height: 1.6; color: var(--ink-1); }
-  .ed .ed-list--impact { margin-top: clamp(48px, 7vh, 72px); }
-  .ed .ed-impact__close { margin-top: clamp(48px, 7vh, 72px); font-size: clamp(17px, 1.15vw, 18.5px); line-height: 1.7; color: var(--ink-1); }
-
-  /* ---------- Up next ---------- */
-  .cs-next.ed-next, .cs-impact + .cs-next.ed-next {
-    display: grid; width: auto; max-width: none; padding: 0;
-    margin: clamp(140px, 20vh, 240px) 0 clamp(120px, 16vh, 176px);
-    text-decoration: none; color: inherit;
-  }
-  .ed-next { --ink: #0a0a0c; --ink-3: rgba(10,10,12,0.58); --line: rgba(10,10,12,0.3); }
-  .ed-next__in { grid-column: wide; display: block; }
-  .ed-next__title, .ed-next__art { display: block; }
-  .ed-next__label {
-    display: flex; justify-content: space-between; align-items: baseline;
-    padding-top: 16px; margin-bottom: clamp(20px, 3vh, 28px);
-    border-top: 1px solid var(--line);
-    font: 500 13px/1 var(--mono); letter-spacing: 0.02em; color: var(--ink);
-  }
-  .ed-next__label span + span { color: var(--ink-3); }
-  .ed-next__card {
-    position: relative; overflow: hidden;
-    display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-    min-height: clamp(320px, 34vw, 460px);
-    border-radius: 24px; background: #11b67a; color: #020814;
-  }
-  .ed-next__copy { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 32px; padding: clamp(28px, 4vw, 56px); }
-  .ed-next__tags { display: flex; flex-wrap: wrap; gap: 8px; }
-  .ed-next__tags span { padding: 7px 12px; border-radius: 999px; border: 1px solid rgba(2,8,20,0.22); font: 500 13px/1 var(--ff-body); }
-  .ed-next__title { max-width: 17em; font-family: var(--ff-display); font-weight: 500; font-size: clamp(24px, 2.6vw, 40px); line-height: 1.12; letter-spacing: -0.025em; text-wrap: balance; }
-  .ed-next__title strong { font-weight: 800; }
-  .ed-next__go { display: inline-flex; align-items: center; gap: 10px; font: 600 15px/1 var(--ff-display); }
-  .ed-next__go svg { width: 18px; height: 18px; transition: transform 0.5s cubic-bezier(.32,.72,0,1); }
-  .ed-next__art {
-    position: absolute; right: 0; bottom: 0; width: 64%; height: 100%;
-    background: url(/assets/next-saddle-1280.136bbe91.webp) right bottom / auto 100% no-repeat;
-    transition: transform 0.8s cubic-bezier(.32,.72,0,1);
-  }
-  @media (min-resolution: 1.5dppx) { .ed-next__art { background-image: url(/assets/next-saddle-2240.136bbe91.webp); } }
-  .ed-next:hover .ed-next__art { transform: translateY(-10px); }
-  .ed-next:hover .ed-next__go svg { transform: translate(4px, -4px); }
-  .ed-next:focus-visible .ed-next__card { outline: 2px solid #11b67a; outline-offset: 4px; }
-
-  /* ---------- Narrower ---------- */
-  @media (max-width: 900px) {
-    .ed-band { grid-template-columns: minmax(0, 1fr); }
-    .ed-band > div + div { border-left: 0; border-top: 1px solid var(--line); }
-    .ed-stat { grid-template-columns: minmax(0, 1fr); gap: 18px; }
-    .ed-vs, .ed-insight__finds { grid-template-columns: minmax(0, 1fr); }
-    .ed-next__card { grid-template-columns: minmax(0, 1fr); min-height: 0; }
-    .ed-next__art { position: relative; width: 100%; height: 260px; }
-  }
-  @media (max-width: 600px) {
-    .ed { --pad-x: 22px; --ext: 10px; }
-    .ed-grid { grid-template-columns: [full-start] var(--pad-x) [wide-start body-start] minmax(0, 1fr) [body-end wide-end] var(--pad-x) [full-end]; }
-    .cs-hero > .cs-col.ed-hero { grid-template-columns: [full-start wide-start body-start] minmax(0, 1fr) [body-end wide-end full-end]; }
-    /* a row of screens swipes sideways rather than stacking taller than
-       the phone, and every screen keeps the page's one scale */
-    .ed-panel.ed-shots { width: 100%; justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
-    .ed-panel.ed-shots::-webkit-scrollbar { display: none; }
-    .ed-shots > .ed-shot { flex: 0 0 var(--w); scroll-snap-align: start; }
-    .ed-saved { grid-template-columns: minmax(0, 1fr); width: 100%; }
-    .ed-grid4 { display: flex; gap: 14px; width: 100%; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; }
-    .ed-grid4::-webkit-scrollbar { display: none; }
-    .ed-grid4 > .ed-g { flex: 0 0 82%; display: block; scroll-snap-align: start; }
-    .ed-grid4 > .ed-g figcaption { margin-top: 10px; }
-    .ed-list > li, .ed-asks li, .ed-index a { grid-template-columns: 2.4em minmax(0, 1fr); }
-    .ed-index a { grid-template-columns: 2.4em minmax(0, 1fr) auto; }
-  }
-
-
-  /* ---------- Mock-up: picture slots until the Figma screens arrive ---------- */
-  .ed-ph {
-    display: grid; place-items: center; text-align: center;
-    width: min(100%, 640px); aspect-ratio: 16 / 10; padding: 24px;
-    background: rgba(255,255,255,0.035); border: 1px dashed var(--rule-2); border-radius: 18px;
-    font: 500 12.5px/1.5 var(--mono, ui-monospace, monospace); letter-spacing: 0.02em; color: var(--ink-3);
-  }
-  .ed-ph--wide { grid-column: wide; width: min(100%, 900px); }
-  .ed-ph--video { aspect-ratio: 16 / 9; }
-  .ed-ph { margin: 0; }
-  .ed-ph--hero { grid-column: wide; width: 100%; aspect-ratio: 16 / 9; margin-top: clamp(104px, 13vh, 168px); }
-  .ed-next--dark { --ink: #0a0a0c; }
-  .ed-next--dark .ed-next__tags span { border-color: rgba(255,255,255,0.3); }
-  /* Boots, as the Boots page shows Sofa to Saddle: its screen rising out of
-     the bottom right of the card, cut by the card's edge */
-  .ed-next__art--boots {
-    width: 56%; height: auto; aspect-ratio: 1.498; right: -3%; bottom: auto; top: 22%;
-    background: url(/assets/next-boots-1280.77519bad.webp) left top / 100% auto no-repeat;
-    border-radius: 10px 0 0 0;
-  }
-  @media (min-resolution: 1.5dppx) { .ed-next__art--boots { background-image: url(/assets/next-boots-2240.77519bad.webp); } }
-  @media (max-width: 900px) { .ed-next__art--boots { position: relative; width: 92%; top: auto; right: auto; margin: 0 0 -24% auto; } }
-
-  /* ---------- The Figma file: a still until asked for ---------- */
-  .ed-embed { grid-column: wide; width: min(100%, 1000px); margin: 0; }
-  .ed-embed__poster, .ed-embed iframe { display: block; width: 100%; aspect-ratio: 16 / 10; border: 0; border-radius: 8px; }
-  .ed-embed__poster { position: relative; padding: 0; overflow: hidden; background: #0f0f12; cursor: pointer; }
-  .ed-embed__poster img { width: 100%; height: 100%; object-fit: cover; object-position: top left; opacity: 0.55; transition: opacity 0.4s ease, transform 0.8s cubic-bezier(.2,.8,.2,1); }
-  .ed-embed__poster:hover img { opacity: 0.7; transform: scale(1.01); }
-  .ed-embed__go {
-    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 14px 22px; border-radius: 999px;
-    background: #fff; color: #0a0a0c; font: 600 15px/1 var(--ff-display);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-  }
-  .ed-embed__go svg { width: 16px; height: 16px; }
-  .ed .ed-embed + .ed-cap { margin-top: 16px; }
-  .ed-cap a { color: var(--ink); text-underline-offset: 3px; }
-
-  /* the last study: the impact closes the page, so it gets the room Up next had */
-  .cs-impact.ed-impact { padding-bottom: clamp(160px, 22vh, 260px); }
-
-  /* boards exported with their own slide ground: no container round them */
-  .ed-fig--board .cs-figure__open { padding: 0; background: none; border: 0; }
-  .ed .ed-fig--board img { border-radius: 14px; max-height: none; }
-  .ed-fig--board { width: min(100%, var(--w)); }
-  /* the discussion guide: the questions as written */
-  .ed-guide > .ed-k { margin-bottom: 18px; }
-  .ed-guide__where { font: 500 12.5px/1.4 var(--mono); letter-spacing: 0.02em; color: var(--ink-3); margin-bottom: 8px !important; }
-  .ed-guide h4 { font-weight: 500; font-size: clamp(18px, 1.4vw, 21px); line-height: 1.38; }
+  .cs-decisions li { display: grid; grid-template-columns: 2.2em minmax(0, 1fr); align-items: baseline; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px; }
+  .cs-decisions span { font: 500 12px/1 ui-monospace, "SF Mono", Menlo, monospace; color: rgba(255,255,255,0.5); }
+  .cs-decisions h3 { margin: 0; font-family: var(--ff-display); font-weight: 600; font-size: 16.5px; line-height: 1.3; color: #fff; }
+  .cs-decisions p { grid-column: 2; margin: 6px 0 0; font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.6); }
+  @media (max-width: 600px) { .cs-decisions { grid-template-columns: minmax(0, 1fr); } }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -3383,7 +2989,7 @@
   <div class="cs-glow" aria-hidden="true"></div>
 
   <header class="cs-hero cs-wrap">
-    <div class="cs-col ed-hero">
+    <div class="cs-col">
       <!-- The eyebrow went once, at the owner's request, and is back at hers:
            the other case pages kept theirs and this one now matches. It is not
            part of the view transition — the card has nothing for it to come
@@ -3419,7 +3025,7 @@
                      /assets/dmt-hero-1680.f63074a8.webp 1680w,
                      /assets/dmt-hero-2240.f63074a8.webp 2240w,
                      /assets/dmt-hero-3360.f63074a8.webp 3360w"
-             sizes="(min-width: 1300px) 1120px, 92vw"
+             sizes="(min-width: 1000px) 924px, 92vw"
              width="3738" height="1868"
              alt="Two laptops back to back: the DimMetric Editor mapping accounts into a profit and loss hierarchy, and the preview of the outputs by financial year."
              fetchpriority="high" decoding="async">
@@ -3427,234 +3033,256 @@
     </div>
   </header>
 
-  <div class="ed">
+  <div class="cs-read">
 
-  <section class="ed-glance ed-grid" aria-label="At a glance">
-    <dl class="ed-band ed-framed" data-reveal>
-      <div><dt>60+</dt><dd>territories on one platform</dd></div>
-      <div><dt>+24%</dt><dd>deployment rate after launch</dd></div>
-      <div><dt>4</dt><dd>new territories onboarded</dd></div>
-    </dl>
-  </section>
-
-  <section class="ed-overview ed-grid" id="overview" aria-label="Overview">
-    <p class="ed-label" data-reveal>Overview</p>
-    <p class="ed-lede" data-reveal>Deals practitioners in more than 60 territories had a cloud platform that turned client data into structured data cubes and industry-specific analytical outputs. It covered the basics of building a data model for financial due diligence. My job was to take it further: I led the research, set the design direction and designed <strong>10 new features</strong>. This case study follows one of them in depth, the DimMetric Editor, which brought practitioners back from Excel.</p>
-    <ol class="ed-index" data-reveal data-stagger>
-      <li><a href="#gap" data-story-jump><span class="ed-index__no">01</span><span class="ed-index__t">Finding the step that kept practitioners in Excel</span><span class="ed-index__go" aria-hidden="true">&darr;</span></a></li>
-      <li><a href="#align" data-story-jump><span class="ed-index__no">02</span><span class="ed-index__t">Getting product, tech and the business to one answer</span><span class="ed-index__go" aria-hidden="true">&darr;</span></a></li>
-      <li><a href="#prove" data-story-jump><span class="ed-index__no">03</span><span class="ed-index__t">Proving it with practitioners across four countries</span><span class="ed-index__go" aria-hidden="true">&darr;</span></a></li>
-    </ol>
-  </section>
-
-  <!-- ================= PART 01 ================= -->
-  <section class="ed-part" id="gap" aria-labelledby="gap-h">
-    <header class="ed-open ed-grid">
-      <p class="ed-open__no" data-reveal><span>01</span><span class="ed-open__of">/ 03</span></p>
-      <h2 class="ed-open__title" id="gap-h" data-reveal>Finding the step that kept practitioners in Excel</h2>
-      <p class="ed-open__why" data-reveal>The platform combined data well. But financial statements are built on hierarchies, and the platform couldn&rsquo;t define them. So at the most important step, practitioners left the tool and mapped accounts to data points by hand in Excel.</p>
-    </header>
-
-    <section class="ed-sec ed-grid">
-      <h3 class="ed-sec__title">Starting with how the work is really done.</h3>
-      <div class="ed-body" data-reveal data-stagger>
-        <p>I spent a day shadowing Deals practitioners and interviewing them informally, to see exactly where mapping happened, how it varied from person to person, and where the time went.</p>
-        <p>The cost wasn&rsquo;t only speed. Mapping by hand meant every team did it differently, so the platform&rsquo;s whole promise, one consistent approach to due diligence, broke at exactly the point it mattered.</p>
+  <section class="cs-overview" id="overview" aria-label="Overview">
+    <div class="cs-col">
+      <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Overview</span>
+      <div class="cs-overview__body" data-reveal data-stagger>
+        <p>Deals practitioners in more than 60 territories had a cloud platform that turned client data into structured data cubes and industry-specific analytical outputs. It covered the basics of building a data model for financial due diligence. As <strong>lead designer</strong>, my job was to take it further: I led the research, set the design direction and designed 10 new features. This case study follows one of them in depth, the DimMetric Editor, which brought practitioners back from Excel. It came together in three parts:</p>
       </div>
-      <dl class="ed-vs" data-reveal data-stagger>
-        <div>
-          <dt><span class="ed-k">Before</span>Mapped by hand in Excel</dt>
-          <dd>Practitioners left the platform to build financial hierarchies manually. Slow, and done differently by every team.</dd>
-        </div>
-        <div>
-          <dt><span class="ed-k">After</span>Built in the platform</dt>
-          <dd>Practitioners create and manage hierarchies in the tool, with accounts tagged to the right data points the same way everywhere.</dd>
-        </div>
-      </dl>
-    </section>
 
-    <aside class="ed-insight ed-grid" data-reveal>
-      <p class="ed-k">The goal</p>
-      <p class="ed-insight__line">A platform built to standardise due diligence couldn&rsquo;t standardise its most important step.</p>
-      <p class="ed-insight__more">So the aim was simple to state: practitioners should be able to prepare their financial data from start to finish without leaving the tool.</p>
-    </aside>
-  </section>
+      <div class="cs-paths">
+        <article class="cs-path" data-reveal>
+          <div class="cs-path__body">
+            <p class="cs-path__no">01</p>
+            <h2 class="cs-path__title"><a href="#gap" data-story-jump>Finding the step that kept practitioners in Excel</a></h2>
+          </div>
+          <div class="cs-path__note">
+            <p>The platform combined data well, but financial statements are built on hierarchies and the platform couldn&rsquo;t define them. At the most important step, practitioners left the tool and mapped accounts by hand in Excel, and every team did it differently.</p>
+            <a class="cs-path__more" href="#gap" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+          </div>
+        </article>
 
-  <!-- ================= PART 02 ================= -->
-  <section class="ed-part" id="align" aria-labelledby="align-h">
-    <header class="ed-open ed-grid">
-      <p class="ed-open__no" data-reveal><span>02</span><span class="ed-open__of">/ 03</span></p>
-      <h2 class="ed-open__title" id="align-h" data-reveal>Getting product, tech and the business to one answer</h2>
-      <p class="ed-open__why" data-reveal>Three groups each owned part of the answer: product owned the roadmap, tech owned what was feasible, and the business owned the financial logic. The feature only worked if all three agreed.</p>
-    </header>
+        <article class="cs-path" data-reveal>
+          <div class="cs-path__body">
+            <p class="cs-path__no">02</p>
+            <h2 class="cs-path__title"><a href="#align" data-story-jump>Getting product, tech and the business to one answer</a></h2>
+          </div>
+          <div class="cs-path__note">
+            <p>Product owned the roadmap, tech owned what was feasible, and the business owned the financial logic. The feature only worked if all three agreed on what it had to do and how it had to behave.</p>
+            <a class="cs-path__more" href="#align" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+          </div>
+        </article>
 
-    <section class="ed-sec ed-grid">
-      <h3 class="ed-sec__title">Turning research into a scope everyone signed up to.</h3>
-      <div class="ed-body" data-reveal data-stagger>
-        <p>I ran a workshop with the Product Owners to turn what I&rsquo;d learnt into a full set of requirements, then took them to the tech team to test against their proof of concept and find the gaps early.</p>
-        <p>There was more than one release&rsquo;s worth of work, so I led a prioritisation of every requirement by technical effort and user impact. It gave product and tech one shared view of what mattered most, and it became the agreed scope for the MVP.</p>
+        <article class="cs-path" data-reveal>
+          <div class="cs-path__body">
+            <p class="cs-path__no">03</p>
+            <h2 class="cs-path__title"><a href="#prove" data-story-jump>Proving it with practitioners across four countries</a></h2>
+          </div>
+          <div class="cs-path__note">
+            <p>A tool used in 60+ territories can&rsquo;t be validated in one office. Testing had to show whether the feature worked for practitioners whose processes, language and experience differed.</p>
+            <a class="cs-path__more" href="#prove" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+          </div>
+        </article>
       </div>
-      <figure class="cs-figure ed-fig ed-fig--wide ed-fig--scaled ed-fig--board" style="--w: 1000px; --ar: 1.7434" data-reveal>
-        <img src="/assets/dmt-prioritise-1120.7ad193d5.webp"
-             srcset="/assets/dmt-prioritise-1120.7ad193d5.webp 1120w,
-                 /assets/dmt-prioritise-1680.7ad193d5.webp 1680w,
-                 /assets/dmt-prioritise-2240.7ad193d5.webp 2240w"
-             sizes="(min-width: 1300px) 1000px, 92vw"
-             width="8926" height="5120"
-             alt="A matrix of user needs plotted from high to low impact and high to low effort, beside the prioritised list, highest first: more editable mapping tables, adding columns and rows, filtering, standard or custom hierarchies, linking hierarchy lines to tagging columns, default sorting, previewing changes, mapping on the platform, separate mapping files, saving hierarchies, and managing the file."
-             loading="lazy" decoding="async">
-        <figcaption><span class="cs-figure__text">Every requirement plotted by user impact and technical effort, and the prioritised list that became the MVP.</span></figcaption>
-      </figure>
-    </section>
-
-    <section class="ed-sec ed-grid">
-      <h3 class="ed-sec__title">Designing to the financial logic, not around it.</h3>
-      <div class="ed-body" data-reveal data-stagger>
-        <p>Financial hierarchies follow strict rules. A design that felt intuitive but broke those rules would be worse than Excel, because practitioners would stop trusting it. I ran working sessions with product, tech and business stakeholders to co-define the target journey, and worked with the product owner to make sure the logic matched exactly how Deals defines hierarchies.</p>
-      </div>
-      <figure class="cs-figure ed-fig ed-fig--wide ed-fig--scaled ed-fig--board" style="--w: 1000px; --ar: 2.0884" data-reveal>
-        <img src="/assets/dmt-journey-1120.52ccb4b7.webp"
-             srcset="/assets/dmt-journey-1120.52ccb4b7.webp 1120w,
-                 /assets/dmt-journey-1680.52ccb4b7.webp 1680w,
-                 /assets/dmt-journey-2240.52ccb4b7.webp 2240w"
-             sizes="(min-width: 1300px) 1000px, 92vw"
-             width="8926" height="4274"
-             alt="The target-state journey as ten steps, from uploading flat files and importing a mapping file to selecting a hierarchy, filtering, validating, previewing and sorting, with indicative screens under each step and the user needs each one meets."
-             loading="lazy" decoding="async">
-        <figcaption><span class="cs-figure__text">The target-state journey we co-defined, with indicative screens and the requirements each step meets.</span></figcaption>
-      </figure>
-      <div class="ed-body" data-reveal data-stagger>
-        <p>After several rounds of exploration and feedback, I designed the DimMetric Editor within the existing design system, so it felt native to the platform, and built a full prototype in Figma to test the end-to-end experience.</p>
-      </div>
-    </section>
-
-    <section class="ed-sec ed-grid">
-      <h3 class="ed-sec__title">Six decisions in the editor.</h3>
-      <div class="ed-body" data-reveal data-stagger>
-        <p>The DimMetric Editor is the core screen of the data modelling process, where practitioners build financial hierarchies and assign accounts to each level.</p>
-      </div>
-      <figure class="cs-figure ed-fig ed-fig--wide ed-fig--scaled ed-panel" style="--w: 900px; --ar: 1.5404" data-reveal>
-        <img src="/assets/dmt-editor-1120.32b9dc14.webp"
-             srcset="/assets/dmt-editor-1120.32b9dc14.webp 1120w,
-                 /assets/dmt-editor-1680.32b9dc14.webp 1680w,
-                 /assets/dmt-editor-2240.32b9dc14.webp 2240w"
-             sizes="(min-width: 1300px) 900px, 92vw"
-             width="5114" height="3320"
-             alt="The DimMetric Editor with six numbered markers: the Mapping, Flags and Sort tabs; the Master mapping and Hierarchy template buttons; the Display, PL and MetricR controls; the mapping tags; the MetricPs column; and the hierarchy panel with its counters and a floating Assign to class bar."
-             loading="lazy" decoding="async">
-        <figcaption><span class="cs-figure__text">The DimMetric Editor, with the six decisions below marked on the screen.</span></figcaption>
-      </figure>
-      <ol class="ed-list" data-reveal data-stagger>
-        <li><span class="ed-k">01</span><div><h4>Three tabs for three parts of the job</h4><p>Mapping, Flags and Sort each cover a different part of data preparation. Flags and Sort are optional, so keeping them separate leaves practitioners in control and keeps the load down: Flags assigns columns from the data file to a blueprint, and Sort orders the hierarchy.</p></div></li>
-        <li><span class="ed-k">02</span><div><h4>Two ways to bring in a hierarchy</h4><p>Practitioners can upload a master mapping or start from a standard template. A tick confirms when a master mapping has been uploaded.</p></div></li>
-        <li><span class="ed-k">03</span><div><h4>Grouped controls for the table</h4><p>Display filters the visible columns, PL switches between financial statements, and MetricR switches between versions.</p></div></li>
-        <li><span class="ed-k">04</span><div><h4>Tags for the lowest level</h4><p>Accounts tagged at the lowest level get their own style, so they&rsquo;re easy to scan.</p></div></li>
-        <li><span class="ed-k">05</span><div><h4>Earlier mappings alongside</h4><p>The MetricP column compares mapping structures across versions. On a first mapping it&rsquo;s empty, because there&rsquo;s nothing to compare yet.</p></div></li>
-        <li><span class="ed-k">06</span><div><h4>A panel that shows progress</h4><p>Practitioners select accounts on the left and assign them to a level through a floating action bar. Counters on every level, and a total for the whole statement, show what&rsquo;s left and where it sits.</p></div></li>
-      </ol>
-    </section>
-  </section>
-
-  <!-- ================= PART 03 ================= -->
-  <section class="ed-part" id="prove" aria-labelledby="prove-h">
-    <header class="ed-open ed-grid">
-      <p class="ed-open__no" data-reveal><span>03</span><span class="ed-open__of">/ 03</span></p>
-      <h2 class="ed-open__title" id="prove-h" data-reveal>Proving it with practitioners across four countries</h2>
-      <p class="ed-open__why" data-reveal>A tool used in 60+ territories can&rsquo;t be validated in one office. The testing had to find out whether the feature worked for practitioners whose processes, language and experience differed.</p>
-    </header>
-
-    <section class="ed-sec ed-grid">
-      <h3 class="ed-sec__title">Designing the research, not just running it.</h3>
-      <div class="ed-body" data-reveal data-stagger>
-        <p>Before formal testing, I ran light-touch sessions with super users to catch territory-specific needs early. Because the feature was complex, I led the discussion guide, so our researcher could probe exactly how practitioners reasoned through the hierarchy logic rather than just whether they could click through it.</p>
-        <p>We tested with eight practitioners in the UK, India, Germany and the US, both new and experienced users of the platform.</p>
-      </div>
-      <div class="ed-guide">
-        <p class="ed-k" data-reveal>From the discussion guide</p>
-        <ol class="ed-list" data-reveal data-stagger>
-          <li><span class="ed-k">01</span><div><p class="ed-guide__where">DimMetric Editor</p><h4>&ldquo;Could you describe the differences between &lsquo;Master Mapping&rsquo; and &lsquo;Hierarchy Template&rsquo;, based on what you see? What do you expect to do by clicking on the two buttons?&rdquo;</h4><p>Looking out for: do the features meet the expectations?</p></div></li>
-          <li><span class="ed-k">02</span><div><p class="ed-guide__where">Master mapping</p><h4>&ldquo;What is your understanding of &lsquo;idMetric&rsquo; and &lsquo;L1&ndash;L6&rsquo;?&rdquo;</h4><p>Looking out for: practitioner understanding of the terminology.</p></div></li>
-          <li><span class="ed-k">03</span><div><p class="ed-guide__where">Mapping page</p><h4>&ldquo;From this page, if you wanted to edit your account mapping table, what would you do?&rdquo;</h4><p>Looking out for: whether practitioners can interact with the file intuitively, noticing the buttons and links available for action.</p></div></li>
-        </ol>
-      </div>
-    </section>
-
-    <aside class="ed-insight ed-grid" data-reveal>
-      <p class="ed-k">Insight</p>
-      <p class="ed-insight__line">Practitioners knew their process. What they needed was confidence in a new interface.</p>
-      <p class="ed-insight__more">The design was well received. Three changes came out of testing, and each one was about helping practitioners trust what they were looking at.</p>
-    </aside>
-
-    <section class="ed-sec ed-grid">
-      <h3 class="ed-sec__title">What changed.</h3>
-      <ol class="ed-list" data-reveal data-stagger>
-        <li><span class="ed-k">01</span><div><h4>Show people where to start</h4><p>The new interface overwhelmed many practitioners at first, so on-screen guidance now shows where to begin.</p></div></li>
-        <li><span class="ed-k">02</span><div><h4>Show earlier mappings alongside new ones</h4><p>Practitioners map more than once, so prior mappings now sit beside new ones in the same interface, as a reference.</p></div></li>
-        <li><span class="ed-k">03</span><div><h4>Let people collapse the hierarchy</h4><p>Collapsible levels in the preview let practitioners scan the core financials at a glance.</p></div></li>
-      </ol>
-      <div class="ed-shots ed-panel" style="--row: 980px" data-reveal>
-          <figure class="cs-figure ed-shot" style="--w: 480px; --ar: 1.8000">
-            <img src="/assets/dmt-empty-1200.37df89f8.webp"
-             srcset="/assets/dmt-empty-800.37df89f8.webp 800w, /assets/dmt-empty-1200.37df89f8.webp 1200w, /assets/dmt-empty-1800.37df89f8.webp 1800w, /assets/dmt-empty-2880.37df89f8.webp 2880w"
-             sizes="(min-width: 1100px) 480px, 92vw"
-             width="2880" height="1600"
-             alt="The DimMetric Editor before a hierarchy exists. The panel says &lsquo;You don&rsquo;t have a hierarchy yet&rsquo; and lists three ways to create one: upload a master mapping, start from a hierarchy template, or build a custom hierarchy level by level, with a link to open guidance."
-             loading="lazy" decoding="async">
-          </figure>
-          <figure class="cs-figure ed-shot" style="--w: 480px; --ar: 1.8000">
-            <img src="/assets/dmt-preview-1200.489d5f5f.webp"
-             srcset="/assets/dmt-preview-800.489d5f5f.webp 800w, /assets/dmt-preview-1200.489d5f5f.webp 1200w, /assets/dmt-preview-1800.489d5f5f.webp 1800w, /assets/dmt-preview-2880.489d5f5f.webp 2880w"
-             sizes="(min-width: 1100px) 480px, 92vw"
-             width="2880" height="1600"
-             alt="Preview outputs: the profit and loss by financial year, FY20 to LTM, with gross profit, operating expenses and EBITDA levels that expand and collapse."
-             loading="lazy" decoding="async">
-          </figure>
-      </div>
-      <p class="ed-cap" data-reveal>Where to start when there&rsquo;s no hierarchy yet, with three ways to begin and a link to guidance; and the preview, with levels that collapse to the core financials.</p>
-      <div class="ed-body" data-reveal data-stagger>
-        <p>Several smaller usability fixes went in alongside them.</p>
-      </div>
-    </section>
-
-    <section class="ed-sec ed-grid">
-      <h3 class="ed-sec__title">What I&rsquo;d tell another designer.</h3>
-      <ol class="ed-list" data-reveal data-stagger>
-        <li><span class="ed-k">01</span><div><h4>In complex tools, guidance beats minimalism</h4><p>I started with a clean, minimal design and changed my mind when the evidence said otherwise: practitioners valued confidence over polish, and on-screen guidance gave them that.</p></div></li>
-        <li><span class="ed-k">02</span><div><h4>Plain language scales; jargon doesn&rsquo;t</h4><p>Feature names that made sense to one team confused another. Switching to terms everyone understood made a visible difference to adoption across territories.</p></div></li>
-        <li><span class="ed-k">03</span><div><h4>Prototype for the test, not the trend</h4><p>Figma variables and variants made the prototype slow, which threw users off in testing. Going back to separate screens for each state kept the sessions about the design, not the tool.</p></div></li>
-      </ol>
-    </section>
-
-    <section class="ed-sec ed-grid">
-      <h3 class="ed-sec__title">Explore the file.</h3>
-      <div class="ed-body" data-reveal data-stagger>
-        <p>The full set of DimMetric screens and components, from mapping to flags, sorting and the preview, live from Figma.</p>
-      </div>
-      <figure class="ed-embed ed-panel" data-reveal>
-        <button class="ed-embed__poster" type="button" data-figma="https://embed.figma.com/design/h1Zrgj3hqnJL9CU4wG4g87/DimMetric?node-id=0-1&amp;embed-host=share" aria-label="Load the DimMetric Figma file">
-          <img src="/assets/dmt-editor-1120.32b9dc14.webp" alt="" loading="lazy" decoding="async">
-          <span class="ed-embed__go"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Explore in Figma</span>
-        </button>
-      </figure>
-      <p class="ed-cap" data-reveal>Opens Figma&rsquo;s viewer here, or <a href="https://www.figma.com/design/h1Zrgj3hqnJL9CU4wG4g87/DimMetric?node-id=0-1" target="_blank" rel="noopener">open the file in Figma&nbsp;&#8599;</a></p>
-    </section>
-  </section>
-
-  </div>
-
-  <section class="cs-impact ed ed-impact" aria-label="The impact">
-    <div class="ed-grid">
-      <h2 class="ed-impact__title" data-reveal>The impact.</h2>
-      <p class="ed-impact__lede" data-reveal>This feature, alongside the others I designed, turned the platform into one Partners chose to champion. They agreed to promote it within their teams, seeing the benefit for practitioners and for their clients.</p>
-      <ol class="ed-list ed-list--impact" data-reveal data-stagger>
-        <li><span class="ed-k">01</span><div><h4>+24% deployment rate</h4><p>With a notable reduction in projects being abandoned.</p></div></li>
-        <li><span class="ed-k">02</span><div><h4>Four new territories onboarded</h4><p>And engagement up among existing users.</p></div></li>
-        <li><span class="ed-k">03</span><div><h4>Extended, with further global investment</h4><p>At the end of our contracted phase, the work was extended and the platform secured further global investment because of its success and usage.</p></div></li>
-      </ol>
     </div>
   </section>
 
+  <div class="cs-stories">
+    <div class="cs-col">
 
+      <section class="cs-story" id="gap" aria-labelledby="gap-h">
+        <p class="cs-path__no" data-reveal>01</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="gap-h" data-reveal>Finding the step that kept practitioners in Excel</h2>
+        <section class="cs-chapter cs-chapter--even">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <p>I spent a day shadowing Deals practitioners and interviewing them informally, to see exactly where mapping happened, how it varied from person to person, and where the time went.</p>
+            <p>The cost wasn&rsquo;t only speed. Mapping by hand meant every team did it differently, so the platform&rsquo;s whole promise, one consistent approach to due diligence, broke at exactly the point it mattered.</p>
+            <div class="cs-trial">
+              <dl class="cs-pair cs-pair--plain">
+                <div>
+                  <dt><span class="cs-pair__k">Before</span>Mapped by hand in Excel</dt>
+                  <dd>Practitioners left the platform to build financial hierarchies manually. Slow, and done differently by every team.</dd>
+                </div>
+                <div>
+                  <dt><span class="cs-pair__k">After</span>Built in the platform</dt>
+                  <dd>Practitioners create and manage hierarchies in the tool, with accounts tagged to the right data points the same way everywhere.</dd>
+                </div>
+              </dl>
+              <p class="cs-trial__finding"><span class="cs-pair__k">The goal</span>Practitioners should be able to prepare their financial data from start to finish without leaving the tool.</p>
+            </div>
+          </div>
+        </section>
+        </div>
+      </section>
+
+      <section class="cs-story" id="align" aria-labelledby="align-h">
+        <p class="cs-path__no" data-reveal>02</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="align-h" data-reveal>Getting product, tech and the business to one answer</h2>
+        <section class="cs-chapter">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <h2 class="cs-chapter__title">Turning research into a scope everyone signed up to.</h2>
+            <p>I ran a workshop with the Product Owners to turn what I&rsquo;d learnt into a full set of requirements, then took them to the tech team to test against their proof of concept and find the gaps early.</p>
+            <p>There was more than one release&rsquo;s worth of work, so I led a prioritisation of every requirement by technical effort and user impact. It gave product and tech one shared view of what mattered most, and it became the agreed scope for the MVP.</p>
+          </div>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.7434" data-reveal>
+            <img src="/assets/dmt-prioritise-1120.7ad193d5.webp"
+             srcset="/assets/dmt-prioritise-1120.7ad193d5.webp 1120w,
+                 /assets/dmt-prioritise-1680.7ad193d5.webp 1680w,
+                 /assets/dmt-prioritise-2240.7ad193d5.webp 2240w"
+             sizes="(min-width: 900px) 720px, 92vw"
+             width="8926" height="5120"
+             alt="A matrix of user needs plotted from high to low impact and high to low effort, beside the prioritised list, highest first: more editable mapping tables, adding columns and rows, filtering, standard or custom hierarchies, linking hierarchy lines to tagging columns, default sorting, previewing changes, mapping on the platform, separate mapping files, saving hierarchies, and managing the file."
+             loading="lazy" decoding="async">
+            <figcaption><span class="cs-figure__text">Every requirement plotted by user impact and technical effort, and the prioritised list that became the MVP.</span></figcaption>
+          </figure>
+        </section>
+
+        <section class="cs-chapter">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <h2 class="cs-chapter__title">Designing to the financial logic, not around it.</h2>
+            <p>Financial hierarchies follow strict rules. A design that felt intuitive but broke them would be worse than Excel, because practitioners would stop trusting it. I ran working sessions with product, tech and business stakeholders to co-define the target journey, and worked with the product owner to make sure the logic matched exactly how Deals defines hierarchies.</p>
+          </div>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.9639" data-reveal>
+            <img src="/assets/dmt-journey-1120.52ea62b9.webp"
+             srcset="/assets/dmt-journey-1120.52ea62b9.webp 1120w,
+                 /assets/dmt-journey-1680.52ea62b9.webp 1680w,
+                 /assets/dmt-journey-2240.52ea62b9.webp 2240w"
+             sizes="(min-width: 900px) 720px, 92vw"
+             width="8926" height="4545"
+             alt="The target-state journey as ten steps, from uploading flat files and importing a mapping file to selecting a hierarchy, filtering, validating, previewing and sorting, with indicative screens under each step and the user needs each one meets."
+             loading="lazy" decoding="async">
+            <figcaption><span class="cs-figure__text">The target-state journey we co-defined, with indicative screens and the requirements each step meets.</span></figcaption>
+          </figure>
+        </section>
+
+        <section class="cs-chapter">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <h2 class="cs-chapter__title">Six decisions in the editor.</h2>
+            <p>After several rounds of exploration and feedback, I designed the DimMetric Editor within the existing design system, so it felt native to the platform, and built a full prototype in Figma to test the end-to-end experience. It&rsquo;s the core screen of the data modelling process, where practitioners build financial hierarchies and assign accounts to each level.</p>
+          </div>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.5404" data-reveal>
+            <img src="/assets/dmt-editor-1120.32b9dc14.webp"
+             srcset="/assets/dmt-editor-1120.32b9dc14.webp 1120w,
+                 /assets/dmt-editor-1680.32b9dc14.webp 1680w,
+                 /assets/dmt-editor-2240.32b9dc14.webp 2240w"
+             sizes="(min-width: 900px) 720px, 92vw"
+             width="5114" height="3320"
+             alt="The DimMetric Editor with six numbered markers: the Mapping, Flags and Sort tabs; the Master mapping and Hierarchy template buttons; the Display, PL and MetricR controls; the mapping tags; the MetricPs column; and the hierarchy panel with its counters and a floating Assign to class bar."
+             loading="lazy" decoding="async">
+            <figcaption><span class="cs-figure__text">The DimMetric Editor, with the six decisions below marked on the screen.</span></figcaption>
+          </figure>
+          <ol class="cs-decisions" data-reveal data-stagger>
+            <li><span>01</span><h3>Three tabs for three parts of the job</h3><p>Mapping, Flags and Sort each cover a different part of data preparation. Flags and Sort are optional, so keeping them apart leaves practitioners in control.</p></li>
+            <li><span>02</span><h3>Two ways to bring in a hierarchy</h3><p>Upload a master mapping or start from a standard template. A tick confirms the upload.</p></li>
+            <li><span>03</span><h3>Grouped controls for the table</h3><p>Display filters columns, PL switches financial statement, MetricR switches version.</p></li>
+            <li><span>04</span><h3>Tags for the lowest level</h3><p>Accounts tagged at the lowest level get their own style, so they&rsquo;re easy to scan.</p></li>
+            <li><span>05</span><h3>Earlier mappings alongside</h3><p>The MetricP column compares mapping structures across versions.</p></li>
+            <li><span>06</span><h3>A panel that shows progress</h3><p>Assign accounts to levels from a floating action bar, with counters showing what&rsquo;s left and where it sits.</p></li>
+          </ol>
+        </section>
+        </div>
+      </section>
+
+      <section class="cs-story" id="prove" aria-labelledby="prove-h">
+        <p class="cs-path__no" data-reveal>03</p>
+        <div class="cs-story__main">
+          <h2 class="cs-story__title" id="prove-h" data-reveal>Proving it with practitioners across four countries</h2>
+        <section class="cs-chapter">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <h2 class="cs-chapter__title">Designing the research, not just running it.</h2>
+            <p>Before formal testing, I ran light-touch sessions with super users to catch territory-specific needs early. Because the feature was complex, I led the discussion guide, so our researcher could probe exactly how practitioners reasoned through the hierarchy logic rather than just whether they could click through it.</p>
+            <dl class="cs-owners">
+              <div class="cs-owner"><dt>DimMetric Editor.</dt><dd>&ldquo;Could you describe the differences between &lsquo;Master Mapping&rsquo; and &lsquo;Hierarchy Template&rsquo;, based on what you see? What do you expect to do by clicking on the two buttons?&rdquo; Looking out for: do the features meet the expectations?</dd></div>
+              <div class="cs-owner"><dt>Master mapping.</dt><dd>&ldquo;What is your understanding of &lsquo;idMetric&rsquo; and &lsquo;L1&ndash;L6&rsquo;?&rdquo; Looking out for: practitioner understanding of the terminology.</dd></div>
+              <div class="cs-owner"><dt>Mapping page.</dt><dd>&ldquo;From this page, if you wanted to edit your account mapping table, what would you do?&rdquo; Looking out for: whether practitioners can interact with the file intuitively, noticing the buttons and links available for action.</dd></div>
+            </dl>
+            <p>We tested with eight practitioners in the UK, India, Germany and the US, both new and experienced users of the platform.</p>
+          </div>
+        </section>
+
+        <section class="cs-chapter cs-chapter--turn">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <div class="cs-trial">
+              <p class="cs-pair__k">Insight</p>
+              <div class="cs-trial__lines">
+                <p>Practitioners knew their process. What they needed was confidence in a new interface.</p>
+              </div>
+            </div>
+            <h2 class="cs-chapter__title">What changed.</h2>
+            <p>The design was well received. Three changes came out of testing, and each one was about helping practitioners trust what they were looking at.</p>
+            <ul class="cs-points">
+              <li><p>Show people where to start. The new interface overwhelmed many practitioners at first, so on-screen guidance now shows where to begin.</p></li>
+              <li><p>Show earlier mappings alongside new ones. Practitioners map more than once, so prior mappings now sit beside new ones in the same interface, as a reference.</p></li>
+              <li><p>Let people collapse the hierarchy. Collapsible levels in the preview let practitioners scan the core financials at a glance.</p></li>
+            </ul>
+            <p>Several smaller usability fixes went in alongside them.</p>
+          </div>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.8" data-reveal>
+            <img src="/assets/dmt-empty-1200.37df89f8.webp"
+                 srcset="/assets/dmt-empty-800.37df89f8.webp 800w, /assets/dmt-empty-1200.37df89f8.webp 1200w, /assets/dmt-empty-1800.37df89f8.webp 1800w, /assets/dmt-empty-2880.37df89f8.webp 2880w"
+                 sizes="(min-width: 900px) 720px, 92vw"
+                 width="2880" height="1600"
+                 alt="The DimMetric Editor before a hierarchy exists, saying &lsquo;You don&rsquo;t have a hierarchy yet&rsquo; and listing three ways to create one, with a link to open guidance."
+                 loading="lazy" decoding="async">
+            <figcaption><span class="cs-figure__text">Where to start when there&rsquo;s no hierarchy yet: three ways in, and a link to guidance.</span></figcaption>
+          </figure>
+          <figure class="cs-figure cs-figure--plate" style="--ar: 1.8" data-reveal>
+            <img src="/assets/dmt-preview-1200.489d5f5f.webp"
+                 srcset="/assets/dmt-preview-800.489d5f5f.webp 800w, /assets/dmt-preview-1200.489d5f5f.webp 1200w, /assets/dmt-preview-1800.489d5f5f.webp 1800w, /assets/dmt-preview-2880.489d5f5f.webp 2880w"
+                 sizes="(min-width: 900px) 720px, 92vw"
+                 width="2880" height="1600"
+                 alt="Preview outputs: the profit and loss by financial year, FY20 to LTM, with levels that expand and collapse."
+                 loading="lazy" decoding="async">
+            <figcaption><span class="cs-figure__text">The preview, with levels that collapse to the core financials.</span></figcaption>
+          </figure>
+        </section>
+
+        <section class="cs-chapter">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <h2 class="cs-chapter__title">What I&rsquo;d tell another designer.</h2>
+            <dl class="cs-owners">
+              <div class="cs-owner"><dt>In complex tools, guidance beats minimalism.</dt><dd>I started with a clean, minimal design and changed my mind when the evidence said otherwise: practitioners valued confidence over polish, and on-screen guidance gave them that.</dd></div>
+              <div class="cs-owner"><dt>Plain language scales; jargon doesn&rsquo;t.</dt><dd>Feature names that made sense to one team confused another. Switching to terms everyone understood made a visible difference to adoption across territories.</dd></div>
+              <div class="cs-owner"><dt>Prototype for the test, not the trend.</dt><dd>Figma variables and variants made the prototype slow, which threw users off in testing. Going back to separate screens for each state kept the sessions about the design, not the tool.</dd></div>
+            </dl>
+          </div>
+        </section>
+
+        <section class="cs-chapter">
+          <div class="cs-chapter__body" data-reveal data-stagger>
+            <h2 class="cs-chapter__title">Explore the file.</h2>
+            <p>The full set of DimMetric screens and components, from mapping to flags, sorting and the preview, live from Figma.</p>
+          </div>
+          <figure class="cs-embed cs-figure--plate" data-reveal>
+            <button class="cs-embed__poster" type="button" data-figma="https://embed.figma.com/design/h1Zrgj3hqnJL9CU4wG4g87/DimMetric?node-id=0-1&amp;embed-host=share" aria-label="Load the DimMetric Figma file">
+              <img src="/assets/dmt-editor-1120.32b9dc14.webp" alt="" loading="lazy" decoding="async">
+              <span class="cs-embed__go"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Explore in Figma</span>
+            </button>
+            <figcaption><span class="cs-figure__text">Opens Figma&rsquo;s viewer here, or <a href="https://www.figma.com/design/h1Zrgj3hqnJL9CU4wG4g87/DimMetric?node-id=0-1" target="_blank" rel="noopener">open the file in Figma&nbsp;&#8599;</a></span></figcaption>
+          </figure>
+        </section>
+        </div>
+      </section>
+    </div>
+  </div>
+  </div>
+
+  <section class="cs-impact" aria-label="The impact">
+    <div class="cs-col">
+      <section class="cs-chapter">
+        <div class="cs-chapter__body" data-reveal data-stagger>
+          <h2 class="cs-chapter__title">The impact.</h2>
+          <p>This feature, alongside the others I designed, turned the platform into one Partners chose to champion. They agreed to promote it within their teams, seeing the benefit for practitioners and for their clients.</p>
+          <ul class="cs-points">
+            <li>
+              <p class="cs-points__title">+24% deployment rate</p>
+              <p>With a notable reduction in projects being abandoned.</p>
+            </li>
+            <li>
+              <p class="cs-points__title">Four new territories onboarded</p>
+              <p>And engagement up among existing users.</p>
+            </li>
+            <li>
+              <p class="cs-points__title">Extended, with further global investment</p>
+              <p>At the end of our contracted phase, the work was extended and the platform secured further global investment because of its success and usage.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
 
 </article>
 
