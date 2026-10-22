@@ -2977,6 +2977,81 @@
   .st .cs-trial__finding .cs-pair__k { display: flex; margin-bottom: 14px; font: 500 12.5px/1 var(--st-mono); letter-spacing: 0.02em; color: var(--ink-3); }
 
   .st .st-close strong { color: var(--ink); font-weight: 700; }
+
+  /* ---------- Who I led the work with ---------- */
+  .st-people { margin-top: clamp(80px, 11vh, 120px); }
+  .st-people__k { margin: 0 0 22px; font: 500 12.5px/1.4 var(--st-mono); letter-spacing: 0.02em; color: var(--ink-3); }
+  .st-people__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 0; border-top: 1px solid var(--st-line); }
+  .st-people__grid > div { padding: 22px 24px 26px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .st-people__grid > div:nth-child(3n+2), .st-people__grid > div:nth-child(3n) { padding-left: 24px; border-left: 1px solid rgba(255,255,255,0.08); }
+  .st-people__grid dt { font-family: var(--ff-display); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; color: var(--ink); }
+  .st-people__grid dd { margin: 8px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+
+  /* ---------- Impact as a chain: each result leading to the next ---------- */
+  .st-chain {
+    position: relative; list-style: none; padding: 0;
+    margin: clamp(40px, 5vh, 56px) 0 0;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0;
+  }
+  .st-chain::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
+    background: var(--st-line); transform-origin: left;
+    transition: transform 1.6s cubic-bezier(.65,0,.35,1);
+  }
+  .cs-motion .st-chain:not(.is-in)::before { transform: scaleX(0); }
+  .st-chain li { position: relative; padding: 26px 22px 0 0; }
+  .st-chain li::before {
+    content: ""; position: absolute; left: 0; top: -4px; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--ink); transition: transform 0.5s cubic-bezier(.34,1.56,.64,1);
+  }
+  .st-chain li:nth-child(2)::before { transition-delay: 0.4s; }
+  .st-chain li:nth-child(3)::before { transition-delay: 0.8s; }
+  .st-chain li:nth-child(4)::before { transition-delay: 1.2s; }
+  .cs-motion .st-chain:not(.is-in) li::before { transform: scale(0); }
+  .st-chain__n { margin: 0; font-family: var(--ff-display); font-weight: 600; font-size: clamp(34px, 3.4vw, 50px); line-height: 1; letter-spacing: -0.045em; color: var(--ink); white-space: nowrap; }
+  .st-chain__n--word { font-size: clamp(24px, 2.2vw, 32px); letter-spacing: -0.03em; padding-top: 0.28em; }
+  .st-chain__t { margin: 12px 0 0 !important; font-family: var(--ff-display); font-weight: 600; font-size: 16px; line-height: 1.3; color: var(--ink); }
+  .st-chain__d { margin: 8px 0 0 !important; font-size: 14.5px !important; line-height: 1.5; color: var(--ink-2); }
+  @media (max-width: 900px) {
+    .st-people__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .st-people__grid > div:nth-child(n) { padding-left: 0; border-left: 0; }
+    .st-people__grid > div:nth-child(2n) { padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.08); }
+    .st-chain { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; }
+  }
+  @media (max-width: 600px) {
+    .st-people__grid { grid-template-columns: minmax(0, 1fr); }
+    .st-people__grid > div:nth-child(n) { padding-left: 0; border-left: 0; }
+    .st-chain { grid-template-columns: minmax(0, 1fr); padding-left: 22px; }
+    .st-chain::before { left: 3px; right: auto; top: 0; bottom: 0; width: 1px; height: auto; transform-origin: top; }
+    .cs-motion .st-chain:not(.is-in)::before { transform: scaleY(0); }
+    .st-chain li { padding: 0 0 4px; }
+    .st-chain li::before { left: -23px; top: 6px; }
+  }
+
+  /* ---------- Across the platform: the rest of the work, at one scale ---------- */
+  .st-gallery { position: relative; z-index: 1; padding-top: clamp(140px, 20vh, 220px); }
+  .st-gallery__title {
+    margin: clamp(20px, 3vh, 28px) 0 0; max-width: 24em;
+    font-family: var(--ff-display); font-weight: 600;
+    font-size: clamp(24px, 2.4vw, 34px); line-height: 1.15; letter-spacing: -0.03em;
+    color: var(--ink); text-wrap: balance;
+  }
+  .st-gallery__grid {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(40px, 6vh, 64px) clamp(20px, 2.6vw, 32px);
+    margin-top: clamp(48px, 7vh, 72px);
+  }
+  .st .st-gallery__item { margin: 0; }
+  .st .st-gallery__item img, .st .st-gallery__item .cs-figure__open { max-width: none; width: 100%; }
+  .st .st-gallery__item img { border-radius: 8px; aspect-ratio: 1440 / 900; height: auto; }
+  .st .st-gallery__item figcaption { margin-top: 14px; }
+  .st .st-gallery__item figcaption strong { color: var(--ink); font-weight: 600; }
+  @media (max-width: 600px) {
+    /* a row that swipes, rather than ten screens stacked */
+    .st-gallery__grid { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; margin-right: calc(-1 * var(--pad-x)); padding-right: var(--pad-x); }
+    .st-gallery__grid::-webkit-scrollbar { display: none; }
+    .st-gallery__item { flex: 0 0 82%; scroll-snap-align: start; }
+  }
   @media (max-width: 700px) {
     .st-band { grid-template-columns: minmax(0, 1fr); }
     .st-band > div + div { border-left: 0; border-top: 1px solid var(--st-line); }
@@ -3155,6 +3230,18 @@
             <a class="cs-path__more" href="#prove" data-story-jump>Jump to this part<span class="cs-path__arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
           </div>
         </article>
+      </div>
+
+      <div class="st-people" data-reveal>
+        <p class="st-people__k">Who I led the work with</p>
+        <dl class="st-people__grid" data-reveal data-stagger>
+          <div><dt>Product owners</dt><dd>Ran the requirements workshop, and led the prioritisation that set the MVP.</dd></div>
+          <div><dt>Tech</dt><dd>Tested the requirements against their proof of concept to find the gaps early.</dd></div>
+          <div><dt>The business</dt><dd>Co-defined the target journey, and the hierarchy logic with Deals.</dd></div>
+          <div><dt>Research</dt><dd>Led the discussion guide our researcher tested with.</dd></div>
+          <div><dt>Super users</dt><dd>Ran light-touch sessions to catch territory-specific needs.</dd></div>
+          <div><dt>Practitioners</dt><dd>Shadowed and interviewed them, then tested with eight across four countries.</dd></div>
+        </dl>
       </div>
     </div>
   </section>
@@ -3345,17 +3432,117 @@
   </div>
   </div>
 
+  <section class="st-gallery cs-wrap" aria-labelledby="gallery-h">
+    <div class="cs-col">
+      <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Across the platform</span>
+      <h2 class="st-gallery__title" id="gallery-h" data-reveal>The DimMetric Editor was one part of the platform I designed. Here&rsquo;s more of it.</h2>
+      <div class="st-gallery__grid">
+        <figure class="cs-figure st-gallery__item" data-reveal>
+          <img src="/assets/dmt-gal-project-overview-1080.8e65e6ef.webp"
+               srcset="/assets/dmt-gal-project-overview-720.8e65e6ef.webp 720w, /assets/dmt-gal-project-overview-1080.8e65e6ef.webp 1080w, /assets/dmt-gal-project-overview-1440.8e65e6ef.webp 1440w"
+               sizes="(min-width: 1000px) 450px, (min-width: 601px) 46vw, 80vw"
+               width="1440" height="900"
+               alt="The project overview: progress through each stage, the team, and the latest jobs and activity."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__text"><strong>Project overview.</strong> Progress through each stage, the team, and the latest jobs and activity.</span></figcaption>
+        </figure>
+        <figure class="cs-figure st-gallery__item" data-reveal>
+          <img src="/assets/dmt-gal-data-setup-1080.3300a006.webp"
+               srcset="/assets/dmt-gal-data-setup-720.3300a006.webp 720w, /assets/dmt-gal-data-setup-1080.3300a006.webp 1080w, /assets/dmt-gal-data-setup-1440.3300a006.webp 1440w"
+               sizes="(min-width: 1000px) 450px, (min-width: 601px) 46vw, 80vw"
+               width="1440" height="900"
+               alt="Data setup: the financial year, data centre and project duration that shape everything downstream."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__text"><strong>Data setup.</strong> The financial year, data centre and project duration that shape everything downstream.</span></figcaption>
+        </figure>
+        <figure class="cs-figure st-gallery__item" data-reveal>
+          <img src="/assets/dmt-gal-flat-files-1080.329ebbc1.webp"
+               srcset="/assets/dmt-gal-flat-files-720.329ebbc1.webp 720w, /assets/dmt-gal-flat-files-1080.329ebbc1.webp 1080w, /assets/dmt-gal-flat-files-1440.329ebbc1.webp 1440w"
+               sizes="(min-width: 1000px) 450px, (min-width: 601px) 46vw, 80vw"
+               width="1440" height="900"
+               alt="Flat files grouped by source of data, with upload status and actions by permission."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__text"><strong>Flat files.</strong> Grouped by source of data, with upload status and actions by permission.</span></figcaption>
+        </figure>
+        <figure class="cs-figure st-gallery__item" data-reveal>
+          <img src="/assets/dmt-gal-file-errors-1080.ca63ca4c.webp"
+               srcset="/assets/dmt-gal-file-errors-720.ca63ca4c.webp 720w, /assets/dmt-gal-file-errors-1080.ca63ca4c.webp 1080w, /assets/dmt-gal-file-errors-1440.ca63ca4c.webp 1440w"
+               sizes="(min-width: 1000px) 450px, (min-width: 601px) 46vw, 80vw"
+               width="1440" height="900"
+               alt="A flat file&rsquo;s settings, with errors and warnings explained where they occur."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__text"><strong>File settings and errors.</strong> Errors and warnings explained where they occur.</span></figcaption>
+        </figure>
+        <figure class="cs-figure st-gallery__item" data-reveal>
+          <img src="/assets/dmt-gal-mapping-files-1080.a4e04f35.webp"
+               srcset="/assets/dmt-gal-mapping-files-720.a4e04f35.webp 720w, /assets/dmt-gal-mapping-files-1080.a4e04f35.webp 1080w, /assets/dmt-gal-mapping-files-1440.a4e04f35.webp 1440w"
+               sizes="(min-width: 1000px) 450px, (min-width: 601px) 46vw, 80vw"
+               width="1440" height="900"
+               alt="Mapping files: upload, version history, locking and replacement."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__text"><strong>Mapping files.</strong> Upload, version history, locking and replacement.</span></figcaption>
+        </figure>
+        <figure class="cs-figure st-gallery__item" data-reveal>
+          <img src="/assets/dmt-gal-analysis-diagram-1080.e7517df8.webp"
+               srcset="/assets/dmt-gal-analysis-diagram-720.e7517df8.webp 720w, /assets/dmt-gal-analysis-diagram-1080.e7517df8.webp 1080w, /assets/dmt-gal-analysis-diagram-1440.e7517df8.webp 1440w"
+               sizes="(min-width: 1000px) 450px, (min-width: 601px) 46vw, 80vw"
+               width="1440" height="900"
+               alt="The data model as a diagram, in basic mode."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__text"><strong>Analysis, diagram view.</strong> The data model as a diagram, in basic mode.</span></figcaption>
+        </figure>
+        <figure class="cs-figure st-gallery__item" data-reveal>
+          <img src="/assets/dmt-gal-analysis-dax-1080.722f5ea7.webp"
+               srcset="/assets/dmt-gal-analysis-dax-720.722f5ea7.webp 720w, /assets/dmt-gal-analysis-dax-1080.722f5ea7.webp 1080w, /assets/dmt-gal-analysis-dax-1440.722f5ea7.webp 1440w"
+               sizes="(min-width: 1000px) 450px, (min-width: 601px) 46vw, 80vw"
+               width="1440" height="900"
+               alt="Advanced mode: the model&rsquo;s tables with a calculated column open for editing in DAX."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__text"><strong>Analysis, DAX editor.</strong> Advanced mode, with a calculated column open for editing.</span></figcaption>
+        </figure>
+        <figure class="cs-figure st-gallery__item" data-reveal>
+          <img src="/assets/dmt-gal-jobs-1080.3941bd05.webp"
+               srcset="/assets/dmt-gal-jobs-720.3941bd05.webp 720w, /assets/dmt-gal-jobs-1080.3941bd05.webp 1080w, /assets/dmt-gal-jobs-1440.3941bd05.webp 1440w"
+               sizes="(min-width: 1000px) 450px, (min-width: 601px) 46vw, 80vw"
+               width="1440" height="900"
+               alt="Jobs, with a clearer breakdown of what failed and why."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__text"><strong>Jobs.</strong> A clearer breakdown of what failed and why.</span></figcaption>
+        </figure>
+        <figure class="cs-figure st-gallery__item" data-reveal>
+          <img src="/assets/dmt-gal-deploy-1080.a79c15a3.webp"
+               srcset="/assets/dmt-gal-deploy-720.a79c15a3.webp 720w, /assets/dmt-gal-deploy-1080.a79c15a3.webp 1080w, /assets/dmt-gal-deploy-1440.a79c15a3.webp 1440w"
+               sizes="(min-width: 1000px) 450px, (min-width: 601px) 46vw, 80vw"
+               width="1440" height="900"
+               alt="Deploying to workspaces, with progress shown as it runs."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__text"><strong>Deploy.</strong> Deploying to workspaces, with progress shown as it runs.</span></figcaption>
+        </figure>
+        <figure class="cs-figure st-gallery__item" data-reveal>
+          <img src="/assets/dmt-gal-team-1080.d60ffd77.webp"
+               srcset="/assets/dmt-gal-team-720.d60ffd77.webp 720w, /assets/dmt-gal-team-1080.d60ffd77.webp 1080w, /assets/dmt-gal-team-1440.d60ffd77.webp 1440w"
+               sizes="(min-width: 1000px) 450px, (min-width: 601px) 46vw, 80vw"
+               width="1440" height="900"
+               alt="Team members: owners and editors, and reassigning permissions in bulk."
+               loading="lazy" decoding="async">
+          <figcaption><span class="cs-figure__text"><strong>Team members.</strong> Owners and editors, and reassigning permissions in bulk.</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <section class="cs-impact" aria-label="The impact">
     <div class="cs-col">
       <section class="cs-chapter">
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The impact.</h2>
-          <p>This feature, alongside the others I designed, turned the platform into one Partners chose to champion. They agreed to promote it within their teams, seeing the benefit for practitioners and for their clients.</p>
-          <dl class="st-band" style="--n: 2" data-reveal>
-            <div><dt data-count>+24%</dt><dd>deployment rate<small>With a notable reduction in projects being abandoned.</small></dd></div>
-            <div><dt data-count>4</dt><dd>new territories onboarded<small>And engagement up among existing users.</small></dd></div>
-          </dl>
-          <p class="st-close"><strong>Extended, with further global investment.</strong> At the end of our contracted phase, the work was extended and the platform secured further global investment because of its success and usage.</p>
+          <p>This feature, alongside the others I designed, turned the platform into one Partners chose to champion, seeing the benefit for practitioners and for their clients. One result led to the next:</p>
+          <ol class="st-chain" data-reveal>
+            <li><p class="st-chain__n" data-count>+24%</p><p class="st-chain__t">deployment rate</p><p class="st-chain__d">With a notable reduction in projects being abandoned.</p></li>
+            <li><p class="st-chain__n" data-count>4</p><p class="st-chain__t">new territories onboarded</p><p class="st-chain__d">And engagement up among existing users.</p></li>
+            <li><p class="st-chain__n st-chain__n--word">Partners</p><p class="st-chain__t">championed it</p><p class="st-chain__d">They agreed to promote it within their teams.</p></li>
+            <li><p class="st-chain__n st-chain__n--word">Extended</p><p class="st-chain__t">with further global investment</p><p class="st-chain__d">Because of its success and usage, at the end of our contracted phase.</p></li>
+          </ol>
         </div>
       </section>
 
