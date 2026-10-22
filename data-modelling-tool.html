@@ -2915,7 +2915,9 @@
     width: 100%; max-width: 720px; margin: 40px auto 0;
     display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 36px;
   }
-  .cs-decisions li { display: grid; grid-template-columns: 2.2em minmax(0, 1fr); align-items: baseline; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px; }
+  .cs-decisions li { display: grid; grid-template-columns: 2.2em minmax(0, 1fr); align-items: baseline; align-content: start; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px; }
+  .cs-decisions p.cs-decisions__need { margin-top: 12px; font: 500 12px/1.4 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: 0.01em; color: rgba(255,255,255,0.45); }
+  .cs-decisions p.cs-decisions__need::before { content: "\2192\00a0"; color: #f08a24; }
   .cs-decisions span { font: 500 12px/1 ui-monospace, "SF Mono", Menlo, monospace; color: rgba(255,255,255,0.5); }
   .cs-decisions h3 { margin: 0; font-family: var(--ff-display); font-weight: 600; font-size: 16.5px; line-height: 1.3; color: #fff; }
   .cs-decisions p { grid-column: 2; margin: 6px 0 0; font-size: 15px; line-height: 1.55; color: rgba(255,255,255,0.6); }
@@ -2987,6 +2989,8 @@
   .st-people__grid dt { font-family: var(--ff-display); font-weight: 600; font-size: 17px; letter-spacing: -0.01em; color: var(--ink); }
   .st-people__grid dd { margin: 8px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
 
+  /* the discussion guide: what each part had to prove, with the question asked set small beneath it */
+  .cs-guide .cs-guide__ask { display: block; margin-top: 12px; padding-left: 14px; border-left: 1px solid rgba(255,255,255,0.18); font: 500 12.5px/1.55 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: 0.005em; color: rgba(255,255,255,0.5); }
   /* each part opens with one framing line under its title, a step up from body */
   .st .st-lead {
     margin: calc(-1 * clamp(24px, 3.6vh, 40px)) 0 clamp(56px, 8vh, 88px);
@@ -3347,23 +3351,23 @@
             <p>After several rounds of exploration and feedback, I designed the DimMetric Editor within the existing design system, so it felt native to the platform, and built a full prototype in Figma to test the whole journey. It&rsquo;s the core screen of data modelling: where practitioners build financial hierarchies and assign accounts to each level.</p>
           </div>
           <figure class="cs-figure cs-figure--plate" style="--ar: 1.5404" data-reveal>
-            <img src="/assets/dmt-editor-1120.32b9dc14.webp"
-             srcset="/assets/dmt-editor-1120.32b9dc14.webp 1120w,
-                 /assets/dmt-editor-1680.32b9dc14.webp 1680w,
-                 /assets/dmt-editor-2240.32b9dc14.webp 2240w"
+            <img src="/assets/dmt-editor-1120.62462c44.webp"
+             srcset="/assets/dmt-editor-1120.62462c44.webp 1120w,
+                 /assets/dmt-editor-1680.62462c44.webp 1680w,
+                 /assets/dmt-editor-2240.62462c44.webp 2240w"
              sizes="(min-width: 900px) 720px, 92vw"
              width="5114" height="3320"
              alt="The DimMetric Editor with six numbered markers: the Mapping, Flags and Sort tabs; the Master mapping and Hierarchy template buttons; the Display, PL and MetricR controls; the mapping tags; the MetricPs column; and the hierarchy panel with its counters and a floating Assign to class bar."
              loading="lazy" decoding="async">
-            <figcaption><span class="cs-figure__text">The DimMetric Editor, with the six decisions below marked on the screen.</span></figcaption>
+            <figcaption><span class="cs-figure__text">The DimMetric Editor, with the six decisions below marked on the screen. Each one answers a need from the prioritised MVP list, or a finding from testing.</span></figcaption>
           </figure>
           <ol class="cs-decisions" data-reveal data-stagger>
-            <li><span>01</span><h3>Three tabs for three parts of the job</h3><p>Mapping, Flags and Sort are different jobs, and only Mapping is required. Giving each its own tab keeps the optional steps out of the way until a practitioner wants them.</p></li>
-            <li><span>02</span><h3>Two ways to bring in a hierarchy</h3><p>Practitioners can upload their own master mapping or start from a standard template, side by side. A tick confirms the upload.</p></li>
-            <li><span>03</span><h3>Grouped controls for the table</h3><p>Display filters columns, PL switches the financial statement and MetricR switches the version, all together above the table.</p></li>
-            <li><span>04</span><h3>Tags for the lowest level</h3><p>Accounts tagged at the lowest level get their own style, so they&rsquo;re easy to scan.</p></li>
-            <li><span>05</span><h3>Earlier mappings alongside</h3><p>Practitioners map more than once, so the MetricP column shows how accounts were mapped in earlier versions, right beside the new mapping.</p></li>
-            <li><span>06</span><h3>A panel that shows progress</h3><p>Assign accounts to levels from a floating action bar, with counters showing what&rsquo;s left and where it sits.</p></li>
+            <li><span>01</span><h3>Three tabs for three parts of the job</h3><p>Mapping, Flags and Sort are separate jobs, and only Mapping is required. Each has its own tab, so the optional steps stay out of the way until a practitioner needs them.</p><p class="cs-decisions__need">Need: Mapping on the platform</p></li>
+            <li><span>02</span><h3>Two ways to bring in a hierarchy</h3><p>Some teams arrive with their own master mapping, and others need somewhere to start. Both routes sit side by side, and a tick confirms the upload worked.</p><p class="cs-decisions__need">Need: Standard or custom hierarchies</p></li>
+            <li><span>03</span><h3>One place to change the view</h3><p>Display filters columns, PL switches the financial statement and MetricR switches the version. Grouping them above the table keeps every way of changing the view in one place.</p><p class="cs-decisions__need">Need: Filtering</p></li>
+            <li><span>04</span><h3>Tags for the lowest level</h3><p>Accounts tagged at the lowest level of the hierarchy get their own style, so practitioners can scan a long table and see what&rsquo;s linked at a glance.</p><p class="cs-decisions__need">Need: Linking hierarchy lines to tagging columns</p></li>
+            <li><span>05</span><h3>Earlier mappings alongside</h3><p>Practitioners map more than once, so the MetricP column shows how accounts were mapped in earlier versions, right beside the new mapping.</p><p class="cs-decisions__need">Came out of testing</p></li>
+            <li><span>06</span><h3>Progress you can see</h3><p>Mapping a full set of accounts is long, repetitive work. Practitioners assign accounts to a level from a floating action bar, while counters show what&rsquo;s left and where each account sits.</p><p class="cs-decisions__need">Need: More editable mapping tables</p></li>
           </ol>
         </section>
         </div>
@@ -3378,10 +3382,11 @@
           <div class="cs-chapter__body" data-reveal data-stagger>
             <h2 class="cs-chapter__title">Research built around the hard part.</h2>
             <p>Before formal testing, I ran light-touch sessions with super users to catch territory-specific needs early. The hierarchy logic was the hardest part of the feature, so I led the research and wrote the discussion guide myself to probe how practitioners reasoned through it, as well as whether they could find their way.</p>
-            <dl class="cs-owners">
-              <div class="cs-owner"><dt>DimMetric Editor.</dt><dd>&ldquo;Could you describe the differences between &lsquo;Master Mapping&rsquo; and &lsquo;Hierarchy Template&rsquo;, based on what you see? What do you expect to do by clicking on the two buttons?&rdquo; Looking out for: do the features meet the expectations?</dd></div>
-              <div class="cs-owner"><dt>Master mapping.</dt><dd>&ldquo;What is your understanding of &lsquo;idMetric&rsquo; and &lsquo;L1&ndash;L6&rsquo;?&rdquo; Looking out for: practitioner understanding of the terminology.</dd></div>
-              <div class="cs-owner"><dt>Mapping page.</dt><dd>&ldquo;From this page, if you wanted to edit your account mapping table, what would you do?&rdquo; Looking out for: whether practitioners can interact with the file intuitively, noticing the buttons and links available for action.</dd></div>
+            <p>I built the guide around three things the design had to get right:</p>
+            <dl class="cs-owners cs-guide">
+              <div class="cs-owner"><dt>Do the two ways in make sense?</dt><dd>Master mapping and Hierarchy template had to read as two different starting points before anyone clicked.<span class="cs-guide__ask">&ldquo;Could you describe the differences between &lsquo;Master Mapping&rsquo; and &lsquo;Hierarchy Template&rsquo;, based on what you see?&rdquo;</span></dd></div>
+              <div class="cs-owner"><dt>Does the language travel?</dt><dd>Terms like idMetric and L1&ndash;L6 made sense to one team. They had to make sense in every territory.<span class="cs-guide__ask">&ldquo;What is your understanding of &lsquo;idMetric&rsquo; and &lsquo;L1&ndash;L6&rsquo;?&rdquo;</span></dd></div>
+              <div class="cs-owner"><dt>Can people find their own way?</dt><dd>Practitioners had to spot how to edit a mapping from the buttons and links on the page, on their own.<span class="cs-guide__ask">&ldquo;From this page, if you wanted to edit your account mapping table, what would you do?&rdquo;</span></dd></div>
             </dl>
             <p>We tested with eight practitioners in the UK, India, Germany and the US, both new and experienced users of the platform.</p>
             <dl class="st-band" style="--n: 2" data-reveal>
@@ -3446,7 +3451,7 @@
           </div>
           <figure class="cs-embed cs-figure--plate" data-reveal>
             <button class="cs-embed__poster" type="button" data-figma="https://embed.figma.com/design/h1Zrgj3hqnJL9CU4wG4g87/DimMetric?node-id=0-1&amp;embed-host=share" aria-label="Load the DimMetric Figma file">
-              <img src="/assets/dmt-editor-1120.32b9dc14.webp" alt="" loading="lazy" decoding="async">
+              <img src="/assets/dmt-editor-1120.62462c44.webp" alt="" loading="lazy" decoding="async">
               <span class="cs-embed__go"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17L17 7M8 7h9v9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Explore in Figma</span>
             </button>
             <figcaption><span class="cs-figure__text">Opens Figma&rsquo;s viewer here, or <a href="https://www.figma.com/design/h1Zrgj3hqnJL9CU4wG4g87/DimMetric?node-id=0-1" target="_blank" rel="noopener">open the file in Figma&nbsp;&#8599;</a></span></figcaption>
