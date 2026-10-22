@@ -793,7 +793,7 @@
     margin-inline: auto;
     aspect-ratio: 16 / 9;
     border: 1px solid var(--rule);
-    border-radius: 12px;
+    border-radius: 0;
     background: var(--wash);
     color: var(--ink-3);
     font-size: 11px;
@@ -977,7 +977,7 @@
     max-width: min(100%, var(--fig-w));
     padding: 18px 22px;
     border: 1px solid var(--rule);
-    border-radius: 10px;
+    border-radius: 0;
     font-size: 14px;
     line-height: 1.5;
     letter-spacing: -0.004em;
@@ -2408,7 +2408,7 @@
        starts to soften; the 3360px copy is the ceiling the build produces. */
     max-width: 1680px;
     height: auto;
-    border-radius: 10px;
+    border-radius: 0;
     cursor: default;
     opacity: 0;
     transform: translateY(14px) scale(0.988);
@@ -2893,7 +2893,7 @@
 
   /* the Figma file: a still until asked for */
   .cs-embed { margin: clamp(64px, 9vh, 108px) 0 0; grid-column: 1 / -1; }
-  .cs-embed__poster, .cs-embed iframe { display: block; width: 100%; max-width: 720px; margin: 0 auto; aspect-ratio: 16 / 10; border: 0; border-radius: 12px; }
+  .cs-embed__poster, .cs-embed iframe { display: block; width: 100%; max-width: 720px; margin: 0 auto; aspect-ratio: 16 / 10; border: 0; border-radius: 0; }
   .cs-embed__poster { position: relative; padding: 0; overflow: hidden; background: #0f0f12; cursor: pointer; }
   .cs-embed__poster img { width: 100%; height: 100%; object-fit: cover; object-position: top left; opacity: 0.55; transition: opacity 0.4s ease; }
   .cs-embed__poster:hover img { opacity: 0.72; }
@@ -3069,7 +3069,7 @@
   .st-gallery__grid:focus-visible { outline: 1px solid var(--ink-3); outline-offset: 8px; }
   .st .st-gallery__item { margin: 0; flex: 0 0 clamp(280px, 44vw, 600px); scroll-snap-align: start; }
   .st .st-gallery__item img, .st .st-gallery__item .cs-figure__open { max-width: none; width: 100%; }
-  .st .st-gallery__item img { border-radius: 8px; aspect-ratio: 1440 / 900; height: auto; -webkit-user-drag: none; }
+  .st .st-gallery__item img { border-radius: 0; aspect-ratio: 1440 / 900; height: auto; -webkit-user-drag: none; }
   .st .st-gallery__item figcaption { margin: 14px 0 0; max-width: 34em; }
   .st .st-gallery__item figcaption strong { color: var(--ink); font-weight: 600; }
   /* the row's own rule: a hairline that fills as you go, a count, and steps */
