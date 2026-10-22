@@ -3061,44 +3061,44 @@
     .st-gallery > .cs-col > *, .st-gallery > .cs-col > .hp-eyebrow { grid-column: 1; grid-row: auto; }
     .st-gallery__title { margin-top: clamp(20px, 3vh, 28px) !important; }
   }
-  /* one row you drag, swipe or step through; it starts on the writing edge
-     and runs off the right of the screen, so there is plainly more of it */
+  /* A divider across the column before the gallery, like the ones between
+     the parts, so it reads as its own interlude. */
+  .st-gallery { padding-top: clamp(120px, 16vh, 180px); }
+  .st-gallery > .cs-col { border-top: 1px solid rgba(255,255,255,0.12); padding-top: clamp(64px, 9vh, 104px); }
+  /* The wall: two full-width rows of screens drifting in opposite
+     directions, edge to edge. Hover pauses a row; a click opens the screen.
+     Each row's track holds its screens twice, so moving it by half loops
+     without a seam. With reduced motion, or before the script runs, the
+     screens sit in one row that scrolls sideways. */
   .st-gallery__grid {
-    display: flex; gap: clamp(16px, 2vw, 28px);
-    margin-top: clamp(48px, 7vh, 72px);
-    --bleed: max(var(--pad-x), calc((100vw - var(--measure)) / 2));
-    margin-right: calc(-1 * var(--bleed)); padding-right: var(--bleed);
-    overflow-x: auto; overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory; scrollbar-width: none;
-    cursor: grab; outline: none;
+    display: flex; gap: clamp(14px, 1.6vw, 24px);
+    margin: clamp(56px, 8vh, 88px) calc(50% - 50vw) 0; padding: 0 var(--pad-x);
+    overflow-x: auto; scrollbar-width: none;
   }
   .st-gallery__grid::-webkit-scrollbar { display: none; }
-  .st-gallery__grid.is-dragging { cursor: grabbing; scroll-snap-type: none; user-select: none; }
-  .st-gallery__grid.is-dragging img { pointer-events: none; }
-  .st-gallery__grid:focus-visible { outline: 1px solid var(--ink-3); outline-offset: 8px; }
-  .st .st-gallery__item { margin: 0; flex: 0 0 clamp(280px, 44vw, 600px); scroll-snap-align: start; }
+  .st-gallery__grid.st-wall { display: grid; row-gap: clamp(14px, 1.6vw, 24px); padding: 0; overflow: hidden; }
+  .st-wall__row { overflow: hidden; }
+  .st-wall__track {
+    display: flex; gap: clamp(14px, 1.6vw, 24px); padding-right: clamp(14px, 1.6vw, 24px);
+    width: max-content; animation: st-wall 90s linear infinite;
+  }
+  .st-wall__row + .st-wall__row .st-wall__track { animation-direction: reverse; animation-duration: 110s; }
+  .st-wall__row:hover .st-wall__track, .st-wall__row:focus-within .st-wall__track { animation-play-state: paused; }
+  @keyframes st-wall { to { transform: translateX(-50%); } }
+  .st .st-gallery__item { margin: 0; flex: 0 0 clamp(250px, 27vw, 440px); }
   .st .st-gallery__item img, .st .st-gallery__item .cs-figure__open { max-width: none; width: 100%; }
   .st .st-gallery__item img { border-radius: 0; aspect-ratio: 1440 / 900; height: auto; -webkit-user-drag: none; }
-  .st .st-gallery__item figcaption { margin: 14px 0 0; max-width: 34em; }
-  .st .st-gallery__item figcaption strong { color: var(--ink); font-weight: 600; }
-  /* the row's own rule: a hairline that fills as you go, a count, and steps */
-  .st-gallery__bar { display: flex; align-items: center; gap: 20px; margin-top: clamp(28px, 4vh, 40px); }
-  .st-gallery__track { position: relative; flex: 1; height: 1px; background: rgba(255,255,255,0.12); }
-  .st-gallery__fill { position: absolute; inset: 0; background: var(--ink-2); transform-origin: left; transform: scaleX(0.1); transition: transform 0.25s ease-out; }
-  .st-gallery__count { font: 500 12.5px/1 var(--st-mono); letter-spacing: 0.02em; color: var(--ink-3); font-variant-numeric: tabular-nums; min-width: 6.5ch; text-align: right; }
-  .st-gallery__count b { color: var(--ink); font-weight: 500; }
-  .st-gallery__btn {
-    display: grid; place-items: center; width: 44px; height: 44px; flex: none;
-    border-radius: 50%; border: 1px solid rgba(255,255,255,0.18); background: transparent; color: var(--ink);
-    cursor: pointer; transition: border-color 0.2s, background-color 0.2s, opacity 0.2s;
+  /* only the screen's name while it moves; the lightbox carries the rest */
+  .st .st-gallery__item figcaption { margin: 12px 0 0; max-width: none; }
+  .st .st-gallery__item figcaption .cs-figure__text { font-size: 0; }
+  .st .st-gallery__item figcaption strong { font-size: 13.5px; line-height: 1.4; color: var(--ink-2); font-weight: 500; }
+  @media (prefers-reduced-motion: reduce) {
+    .st-wall__track { animation: none; }
+    .st-wall__row { overflow-x: auto; scrollbar-width: none; }
+    .st-wall__track [aria-hidden="true"] { display: none; }
   }
-  .st-gallery__btn:hover:not(:disabled) { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
-  .st-gallery__btn:disabled { opacity: 0.3; cursor: default; }
-  .st-gallery__btn svg { width: 18px; height: 18px; }
-  .st-gallery__btns { display: flex; gap: 10px; }
   @media (max-width: 600px) {
-    .st .st-gallery__item { flex-basis: 82%; }
-    .st-gallery__btns { display: none; }
+    .st .st-gallery__item { flex-basis: 68vw; }
   }
   @media (max-width: 700px) {
     .st-band { grid-template-columns: minmax(0, 1fr); }
@@ -3461,107 +3461,99 @@
     <div class="cs-col">
       <span class="hp-eyebrow hp-eyebrow--rule" data-reveal>Across the platform</span>
       <h2 class="st-gallery__title" id="gallery-h" data-reveal>The DimMetric Editor was one part of the platform I designed. Here&rsquo;s more of it.</h2>
-      <div class="st-gallery__grid" tabindex="0" role="region" aria-label="More of the platform: drag, swipe or use the arrow keys" data-lenis-prevent-touch>
-        <figure class="cs-figure st-gallery__item" data-reveal>
-          <img src="/assets/dmt-gal-project-overview-1080.8e65e6ef.webp"
-               srcset="/assets/dmt-gal-project-overview-720.8e65e6ef.webp 720w, /assets/dmt-gal-project-overview-1080.8e65e6ef.webp 1080w, /assets/dmt-gal-project-overview-1440.8e65e6ef.webp 1440w"
-               sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
-               width="1440" height="900"
-               alt="The project overview: progress through each stage, the team, and the latest jobs and activity."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__text"><strong>Project overview.</strong> Progress through each stage, the team, and the latest jobs and activity.</span></figcaption>
-        </figure>
-        <figure class="cs-figure st-gallery__item" data-reveal>
-          <img src="/assets/dmt-gal-data-setup-1080.3300a006.webp"
-               srcset="/assets/dmt-gal-data-setup-720.3300a006.webp 720w, /assets/dmt-gal-data-setup-1080.3300a006.webp 1080w, /assets/dmt-gal-data-setup-1440.3300a006.webp 1440w"
-               sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
-               width="1440" height="900"
-               alt="Data setup: the financial year, data centre and project duration that shape everything downstream."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__text"><strong>Data setup.</strong> The financial year, data centre and project duration that shape everything downstream.</span></figcaption>
-        </figure>
-        <figure class="cs-figure st-gallery__item" data-reveal>
-          <img src="/assets/dmt-gal-flat-files-1080.329ebbc1.webp"
-               srcset="/assets/dmt-gal-flat-files-720.329ebbc1.webp 720w, /assets/dmt-gal-flat-files-1080.329ebbc1.webp 1080w, /assets/dmt-gal-flat-files-1440.329ebbc1.webp 1440w"
-               sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
-               width="1440" height="900"
-               alt="Flat files grouped by source of data, with upload status and actions by permission."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__text"><strong>Flat files.</strong> Grouped by source of data, with upload status and actions by permission.</span></figcaption>
-        </figure>
-        <figure class="cs-figure st-gallery__item" data-reveal>
-          <img src="/assets/dmt-gal-file-errors-1080.ca63ca4c.webp"
-               srcset="/assets/dmt-gal-file-errors-720.ca63ca4c.webp 720w, /assets/dmt-gal-file-errors-1080.ca63ca4c.webp 1080w, /assets/dmt-gal-file-errors-1440.ca63ca4c.webp 1440w"
-               sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
-               width="1440" height="900"
-               alt="A flat file&rsquo;s settings, with errors and warnings explained where they occur."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__text"><strong>File settings and errors.</strong> Errors and warnings explained where they occur.</span></figcaption>
-        </figure>
-        <figure class="cs-figure st-gallery__item" data-reveal>
-          <img src="/assets/dmt-gal-mapping-files-1080.a4e04f35.webp"
-               srcset="/assets/dmt-gal-mapping-files-720.a4e04f35.webp 720w, /assets/dmt-gal-mapping-files-1080.a4e04f35.webp 1080w, /assets/dmt-gal-mapping-files-1440.a4e04f35.webp 1440w"
-               sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
-               width="1440" height="900"
-               alt="Mapping files: upload, version history, locking and replacement."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__text"><strong>Mapping files.</strong> Upload, version history, locking and replacement.</span></figcaption>
-        </figure>
-        <figure class="cs-figure st-gallery__item" data-reveal>
-          <img src="/assets/dmt-gal-analysis-diagram-1080.e7517df8.webp"
-               srcset="/assets/dmt-gal-analysis-diagram-720.e7517df8.webp 720w, /assets/dmt-gal-analysis-diagram-1080.e7517df8.webp 1080w, /assets/dmt-gal-analysis-diagram-1440.e7517df8.webp 1440w"
-               sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
-               width="1440" height="900"
-               alt="The data model as a diagram, in basic mode."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__text"><strong>Analysis, diagram view.</strong> The data model as a diagram, in basic mode.</span></figcaption>
-        </figure>
-        <figure class="cs-figure st-gallery__item" data-reveal>
-          <img src="/assets/dmt-gal-analysis-dax-1080.722f5ea7.webp"
-               srcset="/assets/dmt-gal-analysis-dax-720.722f5ea7.webp 720w, /assets/dmt-gal-analysis-dax-1080.722f5ea7.webp 1080w, /assets/dmt-gal-analysis-dax-1440.722f5ea7.webp 1440w"
-               sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
-               width="1440" height="900"
-               alt="Advanced mode: the model&rsquo;s tables with a calculated column open for editing in DAX."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__text"><strong>Analysis, DAX editor.</strong> Advanced mode, with a calculated column open for editing.</span></figcaption>
-        </figure>
-        <figure class="cs-figure st-gallery__item" data-reveal>
-          <img src="/assets/dmt-gal-jobs-1080.3941bd05.webp"
-               srcset="/assets/dmt-gal-jobs-720.3941bd05.webp 720w, /assets/dmt-gal-jobs-1080.3941bd05.webp 1080w, /assets/dmt-gal-jobs-1440.3941bd05.webp 1440w"
-               sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
-               width="1440" height="900"
-               alt="Jobs, with a clearer breakdown of what failed and why."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__text"><strong>Jobs.</strong> A clearer breakdown of what failed and why.</span></figcaption>
-        </figure>
-        <figure class="cs-figure st-gallery__item" data-reveal>
-          <img src="/assets/dmt-gal-deploy-1080.a79c15a3.webp"
-               srcset="/assets/dmt-gal-deploy-720.a79c15a3.webp 720w, /assets/dmt-gal-deploy-1080.a79c15a3.webp 1080w, /assets/dmt-gal-deploy-1440.a79c15a3.webp 1440w"
-               sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
-               width="1440" height="900"
-               alt="Deploying to workspaces, with progress shown as it runs."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__text"><strong>Deploy.</strong> Deploying to workspaces, with progress shown as it runs.</span></figcaption>
-        </figure>
-        <figure class="cs-figure st-gallery__item" data-reveal>
-          <img src="/assets/dmt-gal-team-1080.d60ffd77.webp"
-               srcset="/assets/dmt-gal-team-720.d60ffd77.webp 720w, /assets/dmt-gal-team-1080.d60ffd77.webp 1080w, /assets/dmt-gal-team-1440.d60ffd77.webp 1440w"
-               sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
-               width="1440" height="900"
-               alt="Team members: owners and editors, and reassigning permissions in bulk."
-               loading="lazy" decoding="async">
-          <figcaption><span class="cs-figure__text"><strong>Team members.</strong> Owners and editors, and reassigning permissions in bulk.</span></figcaption>
-        </figure>
-      </div>
-      <div class="st-gallery__bar" data-reveal>
-        <div class="st-gallery__track" aria-hidden="true"><span class="st-gallery__fill"></span></div>
-        <p class="st-gallery__count" aria-live="polite"><b>01</b> / 10</p>
-        <div class="st-gallery__btns">
-          <button type="button" class="st-gallery__btn" data-gal="-1" aria-label="Previous screen"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <button type="button" class="st-gallery__btn" data-gal="1" aria-label="Next screen"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-        </div>
-      </div>
     </div>
+    <div class="st-gallery__grid" role="region" aria-label="More of the platform">
+      <figure class="cs-figure st-gallery__item">
+        <img src="/assets/dmt-gal-project-overview-1080.8e65e6ef.webp"
+             srcset="/assets/dmt-gal-project-overview-720.8e65e6ef.webp 720w, /assets/dmt-gal-project-overview-1080.8e65e6ef.webp 1080w, /assets/dmt-gal-project-overview-1440.8e65e6ef.webp 1440w"
+             sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
+             width="1440" height="900"
+             alt="The project overview: progress through each stage, the team, and the latest jobs and activity."
+             loading="lazy" decoding="async">
+        <figcaption><span class="cs-figure__text"><strong>Project overview.</strong> Progress through each stage, the team, and the latest jobs and activity.</span></figcaption>
+      </figure>
+      <figure class="cs-figure st-gallery__item">
+        <img src="/assets/dmt-gal-data-setup-1080.3300a006.webp"
+             srcset="/assets/dmt-gal-data-setup-720.3300a006.webp 720w, /assets/dmt-gal-data-setup-1080.3300a006.webp 1080w, /assets/dmt-gal-data-setup-1440.3300a006.webp 1440w"
+             sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
+             width="1440" height="900"
+             alt="Data setup: the financial year, data centre and project duration that shape everything downstream."
+             loading="lazy" decoding="async">
+        <figcaption><span class="cs-figure__text"><strong>Data setup.</strong> The financial year, data centre and project duration that shape everything downstream.</span></figcaption>
+      </figure>
+      <figure class="cs-figure st-gallery__item">
+        <img src="/assets/dmt-gal-flat-files-1080.329ebbc1.webp"
+             srcset="/assets/dmt-gal-flat-files-720.329ebbc1.webp 720w, /assets/dmt-gal-flat-files-1080.329ebbc1.webp 1080w, /assets/dmt-gal-flat-files-1440.329ebbc1.webp 1440w"
+             sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
+             width="1440" height="900"
+             alt="Flat files grouped by source of data, with upload status and actions by permission."
+             loading="lazy" decoding="async">
+        <figcaption><span class="cs-figure__text"><strong>Flat files.</strong> Grouped by source of data, with upload status and actions by permission.</span></figcaption>
+      </figure>
+      <figure class="cs-figure st-gallery__item">
+        <img src="/assets/dmt-gal-file-errors-1080.ca63ca4c.webp"
+             srcset="/assets/dmt-gal-file-errors-720.ca63ca4c.webp 720w, /assets/dmt-gal-file-errors-1080.ca63ca4c.webp 1080w, /assets/dmt-gal-file-errors-1440.ca63ca4c.webp 1440w"
+             sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
+             width="1440" height="900"
+             alt="A flat file&rsquo;s settings, with errors and warnings explained where they occur."
+             loading="lazy" decoding="async">
+        <figcaption><span class="cs-figure__text"><strong>File settings and errors.</strong> Errors and warnings explained where they occur.</span></figcaption>
+      </figure>
+      <figure class="cs-figure st-gallery__item">
+        <img src="/assets/dmt-gal-mapping-files-1080.a4e04f35.webp"
+             srcset="/assets/dmt-gal-mapping-files-720.a4e04f35.webp 720w, /assets/dmt-gal-mapping-files-1080.a4e04f35.webp 1080w, /assets/dmt-gal-mapping-files-1440.a4e04f35.webp 1440w"
+             sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
+             width="1440" height="900"
+             alt="Mapping files: upload, version history, locking and replacement."
+             loading="lazy" decoding="async">
+        <figcaption><span class="cs-figure__text"><strong>Mapping files.</strong> Upload, version history, locking and replacement.</span></figcaption>
+      </figure>
+      <figure class="cs-figure st-gallery__item">
+        <img src="/assets/dmt-gal-analysis-diagram-1080.e7517df8.webp"
+             srcset="/assets/dmt-gal-analysis-diagram-720.e7517df8.webp 720w, /assets/dmt-gal-analysis-diagram-1080.e7517df8.webp 1080w, /assets/dmt-gal-analysis-diagram-1440.e7517df8.webp 1440w"
+             sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
+             width="1440" height="900"
+             alt="The data model as a diagram, in basic mode."
+             loading="lazy" decoding="async">
+        <figcaption><span class="cs-figure__text"><strong>Analysis, diagram view.</strong> The data model as a diagram, in basic mode.</span></figcaption>
+      </figure>
+      <figure class="cs-figure st-gallery__item">
+        <img src="/assets/dmt-gal-analysis-dax-1080.722f5ea7.webp"
+             srcset="/assets/dmt-gal-analysis-dax-720.722f5ea7.webp 720w, /assets/dmt-gal-analysis-dax-1080.722f5ea7.webp 1080w, /assets/dmt-gal-analysis-dax-1440.722f5ea7.webp 1440w"
+             sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
+             width="1440" height="900"
+             alt="Advanced mode: the model&rsquo;s tables with a calculated column open for editing in DAX."
+             loading="lazy" decoding="async">
+        <figcaption><span class="cs-figure__text"><strong>Analysis, DAX editor.</strong> Advanced mode, with a calculated column open for editing.</span></figcaption>
+      </figure>
+      <figure class="cs-figure st-gallery__item">
+        <img src="/assets/dmt-gal-jobs-1080.3941bd05.webp"
+             srcset="/assets/dmt-gal-jobs-720.3941bd05.webp 720w, /assets/dmt-gal-jobs-1080.3941bd05.webp 1080w, /assets/dmt-gal-jobs-1440.3941bd05.webp 1440w"
+             sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
+             width="1440" height="900"
+             alt="Jobs, with a clearer breakdown of what failed and why."
+             loading="lazy" decoding="async">
+        <figcaption><span class="cs-figure__text"><strong>Jobs.</strong> A clearer breakdown of what failed and why.</span></figcaption>
+      </figure>
+      <figure class="cs-figure st-gallery__item">
+        <img src="/assets/dmt-gal-deploy-1080.a79c15a3.webp"
+             srcset="/assets/dmt-gal-deploy-720.a79c15a3.webp 720w, /assets/dmt-gal-deploy-1080.a79c15a3.webp 1080w, /assets/dmt-gal-deploy-1440.a79c15a3.webp 1440w"
+             sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
+             width="1440" height="900"
+             alt="Deploying to workspaces, with progress shown as it runs."
+             loading="lazy" decoding="async">
+        <figcaption><span class="cs-figure__text"><strong>Deploy.</strong> Deploying to workspaces, with progress shown as it runs.</span></figcaption>
+      </figure>
+      <figure class="cs-figure st-gallery__item">
+        <img src="/assets/dmt-gal-team-1080.d60ffd77.webp"
+             srcset="/assets/dmt-gal-team-720.d60ffd77.webp 720w, /assets/dmt-gal-team-1080.d60ffd77.webp 1080w, /assets/dmt-gal-team-1440.d60ffd77.webp 1440w"
+             sizes="(min-width: 1364px) 600px, (min-width: 601px) 44vw, 82vw"
+             width="1440" height="900"
+             alt="Team members: owners and editors, and reassigning permissions in bulk."
+             loading="lazy" decoding="async">
+        <figcaption><span class="cs-figure__text"><strong>Team members.</strong> Owners and editors, and reassigning permissions in bulk.</span></figcaption>
+      </figure>
+    </div> 
   </section>
 
   <section class="cs-impact" aria-label="The impact">
@@ -3577,6 +3569,8 @@
           </ol>
         </div>
       </section>
+    </div>
+  </section>
 
 </article>
 
@@ -4862,72 +4856,29 @@
   })();
 </script>
 <script>
-  // The gallery row: drag it with a mouse, swipe or scroll it sideways, or
-  // step through with the buttons or arrow keys. The hairline fills and the
-  // count follows. A drag never opens the lightbox.
+  // The gallery wall: the screens split into two rows, each row's screens
+  // repeated once (the copies hidden from assistive tech and the tab order)
+  // so the drift loops without a seam.
   (function() {
-    var row = document.querySelector('.st-gallery__grid');
-    if (!row) return;
-    var items = row.querySelectorAll('.st-gallery__item');
-    var fill = document.querySelector('.st-gallery__fill');
-    var count = document.querySelector('.st-gallery__count b');
-    var btns = document.querySelectorAll('[data-gal]');
-    var n = items.length;
-    function step() { return items.length > 1 ? items[1].offsetLeft - items[0].offsetLeft : row.clientWidth; }
-    function index() { return Math.max(0, Math.min(n - 1, Math.round(row.scrollLeft / step()))); }
-    function update() {
-      var max = row.scrollWidth - row.clientWidth;
-      var k = max > 0 ? row.scrollLeft / max : 1;
-      var seen = Math.min(1, (row.clientWidth - (parseFloat(getComputedStyle(row).paddingRight) || 0)) / (step() * n));
-      if (fill) fill.style.transform = 'scaleX(' + (seen + (1 - seen) * k) + ')';
-      var i = k > 0.995 ? n - 1 : index();
-      if (count) count.textContent = (i + 1 < 10 ? '0' : '') + (i + 1);
-      if (btns[0]) btns[0].disabled = row.scrollLeft < 4;
-      if (btns[1]) btns[1].disabled = row.scrollLeft > max - 4;
-    }
-    function go(d) {
-      var smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      row.scrollTo({ left: (index() + d) * step(), behavior: smooth ? 'smooth' : 'auto' });
-    }
-    [].forEach.call(btns, function(b) { b.addEventListener('click', function() { go(+b.getAttribute('data-gal')); }); });
-    row.addEventListener('keydown', function(e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
-      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+    var grid = document.querySelector('.st-gallery__grid');
+    if (!grid) return;
+    var items = [].slice.call(grid.querySelectorAll('.st-gallery__item'));
+    if (items.length < 4) return;
+    var half = Math.ceil(items.length / 2);
+    grid.classList.add('st-wall');
+    grid.innerHTML = '';
+    [items.slice(0, half), items.slice(half)].forEach(function(set) {
+      var row = document.createElement('div'), track = document.createElement('div');
+      row.className = 'st-wall__row'; track.className = 'st-wall__track';
+      set.forEach(function(it) { track.appendChild(it); });
+      set.forEach(function(it) {
+        var copy = it.cloneNode(true);
+        copy.setAttribute('aria-hidden', 'true');
+        [].forEach.call(copy.querySelectorAll('button, a, [tabindex]'), function(el) { el.setAttribute('tabindex', '-1'); });
+        track.appendChild(copy);
+      });
+      row.appendChild(track); grid.appendChild(row);
     });
-    // sideways wheel and trackpad swipes belong to the row, not the page
-    row.addEventListener('wheel', function(e) {
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) e.stopPropagation();
-    }, { passive: true });
-    // mouse drag, with a little glide on release before it snaps
-    var down = false, moved = false, x0 = 0, s0 = 0, lastX = 0, lastT = 0, v = 0;
-    row.addEventListener('pointerdown', function(e) {
-      if (e.pointerType !== 'mouse' || e.button !== 0) return;
-      down = true; moved = false; x0 = lastX = e.clientX; s0 = row.scrollLeft; lastT = performance.now(); v = 0;
-    });
-    window.addEventListener('pointermove', function(e) {
-      if (!down) return;
-      var dx = e.clientX - x0;
-      if (!moved && Math.abs(dx) > 5) { moved = true; row.classList.add('is-dragging'); }
-      if (!moved) return;
-      var t = performance.now();
-      v = (e.clientX - lastX) / Math.max(1, t - lastT); lastX = e.clientX; lastT = t;
-      row.scrollLeft = s0 - dx;
-    });
-    window.addEventListener('pointerup', function() {
-      if (!down) return; down = false;
-      if (!moved) return;
-      var target = row.scrollLeft - v * 260;
-      var i = Math.max(0, Math.min(n - 1, Math.round(target / step())));
-      row.classList.remove('is-dragging');
-      row.scrollTo({ left: i * step(), behavior: 'smooth' });
-    });
-    row.addEventListener('click', function(e) {
-      if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
-    }, true);
-    var raf = 0;
-    row.addEventListener('scroll', function() { if (!raf) raf = requestAnimationFrame(function() { raf = 0; update(); }); }, { passive: true });
-    window.addEventListener('resize', update);
-    update();
   })();
 </script>
 </body>
