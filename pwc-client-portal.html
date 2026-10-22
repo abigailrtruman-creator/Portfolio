@@ -1933,8 +1933,10 @@
     .st-band > div + div { border-left: 0; border-top: 1px solid var(--st-line); }
   }
   @media (prefers-reduced-motion: reduce) { .st-band::before { transition: none; transform: none !important; } }
-  /* as you scroll, the hero's guides fade away and the numbers' lines grow in
-     their own place: the rule across from the left, then the dividers down */
+  /* as you scroll, the hero's side guides travel down their own edges, turn
+     the corner and become the numbers' rule; the dividers grow down as the
+     rule passes them. Where the edges don't meet, the guides fade and the
+     rule draws across instead. */
   .st-morph .st-glance .st-band::before { transition: none; transform: scaleX(var(--st-rule, 0)); }
   .st-morph .st-glance .st-band > div { position: relative; }
   .st-morph .st-glance .st-band > div + div { border-left-color: transparent; }
@@ -1942,6 +1944,8 @@
     content: ""; position: absolute; left: -1px; top: 0; bottom: 0; width: 1px;
     background: var(--st-line); transform-origin: top; transform: scaleY(var(--st-div, 0));
   }
+  .cs-ed-guides--travel { position: absolute; inset: 0; pointer-events: none; overflow: visible; }
+  .cs-ed-guides--travel path { fill: none; stroke-width: 1; }
 </style>
 
 <!-- Vercel Web Analytics, the same line that is on the other five pages: page views
@@ -3304,31 +3308,55 @@
   })();
 </script>
 <script>
-  // As you scroll past the hero, its guides fade away, and the numbers'
-  // lines grow in where they belong: the rule draws across from the left, then
-  // the dividers draw down. A spring carries the progress, so it moves with
-  // the scroll but settles softly. On a phone, where the numbers stack, the
-  // band simply draws in on its own.
+  // As you scroll past the hero, its two side guides travel down their own
+  // edges, turn the corner at the numbers and run along to meet in the
+  // middle, so the frame becomes the band's rule as one line. Each divider
+  // grows down as the rule passes over it. The guides across the picture
+  // fade. A spring carries the progress, so it moves with the scroll but
+  // settles softly. Where the picture and the band don't share edges, the
+  // guides fade and the rule draws across instead. On a phone, where the
+  // numbers stack, the band simply draws in on its own.
   (function() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     var fig = document.querySelector('.cs-hero .cs-figure');
     var band = document.querySelector('.st-glance .st-band');
     if (!fig || !band) return;
+    var NS = 'http://www.w3.org/2000/svg';
     var root = document.documentElement, on = false, raf = 0, last = 0;
-    var pos = -1, vel = 0, K = 60, C = 2 * Math.sqrt(60);
+    var pos = -1, vel = 0, K = 55, C = 2 * Math.sqrt(55);
+    var trail = document.createElementNS(NS, 'svg'), strands = [];
+    trail.setAttribute('class', 'cs-ed-guides--travel');
+    trail.setAttribute('aria-hidden', 'true');
+    for (var s = 0; s < 2; s++) { strands.push(document.createElementNS(NS, 'path')); trail.appendChild(strands[s]); }
+    fig.appendChild(trail);
+    function lerp(a, b, k) { return a + (b - a) * k; }
     function seg(p, a, b) { return Math.min(1, Math.max(0, (p - a) / (b - a))); }
     function ease(k) { return 0.5 - 0.5 * Math.cos(Math.PI * k); }
+    function at(x, y0, yc, xe, d) {
+      // a point d along the route: down the edge from y0 to yc, then across toward xe
+      var down = yc - y0;
+      if (d <= down) return [x, y0 + d];
+      return [x + Math.sign(xe - x) * Math.min(Math.abs(xe - x), d - down), yc];
+    }
+    function route(x, y0, yc, xe, a, b) {
+      var p = at(x, y0, yc, xe, a), q = at(x, y0, yc, xe, b), d = 'M' + p[0] + ' ' + p[1];
+      if (a < yc - y0 && b > yc - y0) d += 'L' + x + ' ' + yc;
+      return d + 'L' + q[0] + ' ' + q[1];
+    }
     function off() {
       root.classList.remove('st-morph'); on = false; pos = -1;
-      var svg = fig.querySelector('.cs-ed-guides'); if (svg) svg.style.opacity = '';
+      var svg = fig.querySelector('.cs-ed-guides');
+      if (svg) [].forEach.call(svg.querySelectorAll('line'), function(ln) { ln.style.opacity = ''; });
+      strands.forEach(function(p) { p.setAttribute('d', ''); });
     }
     function frame(now) {
       raf = 0;
       var svg = fig.querySelector('.cs-ed-guides');
+      var lines = svg ? svg.querySelectorAll('line') : [];
       var cells = band.children;
       var row = cells.length > 1 && Math.abs(cells[0].getBoundingClientRect().top - cells[1].getBoundingClientRect().top) < 2;
-      if (!svg || !row) { if (on) off(); return; }
-      var br = band.getBoundingClientRect(), vh = window.innerHeight;
+      if (lines.length !== 4 || !row) { if (on) off(); return; }
+      var fr = fig.getBoundingClientRect(), br = band.getBoundingClientRect(), vh = window.innerHeight;
       // 0 while the band is below the fold, 1 once its top reaches 40% of the screen
       var target = Math.min(1, Math.max(0, (vh - br.top) / (vh * 0.6)));
       var dt = Math.min(0.05, ((now - (last || now)) / 1000) || 0.016); last = now;
@@ -3337,9 +3365,43 @@
       var settled = Math.abs(target - pos) < 0.0005 && Math.abs(vel) < 0.001;
       if (settled) { pos = target; vel = 0; }
       if (!on) { root.classList.add('st-morph'); on = true; }
-      svg.style.opacity = 1 - ease(seg(pos, 0, 0.45));
-      band.style.setProperty('--st-rule', ease(seg(pos, 0.35, 0.85)));
-      band.style.setProperty('--st-div', ease(seg(pos, 0.6, 1)));
+      var P = pos;
+      var L = lines[2], R = lines[3];
+      var lx = +L.getAttribute('x1'), rx = +R.getAttribute('x1'), y0 = +L.getAttribute('y1'), y1 = +L.getAttribute('y2');
+      var bl = br.left - fr.left, bw = br.width, bt = br.top - fr.top, mid = bl + bw / 2;
+      var shared = Math.abs(lx - bl) < 3 && Math.abs(rx - (bl + bw)) < 3;
+      // the guides across the picture fade either way
+      var fade = 1 - ease(seg(P, 0, 0.4));
+      lines[0].style.opacity = lines[1].style.opacity = P > 0 ? fade : '';
+      if (!shared) {
+        L.style.opacity = R.style.opacity = P > 0 ? fade : '';
+        strands.forEach(function(p) { p.setAttribute('d', ''); });
+        band.style.setProperty('--st-rule', ease(seg(P, 0.35, 0.85)));
+        [].forEach.call(cells, function(c) { c.style.setProperty('--st-div', ease(seg(P, 0.6, 1))); });
+      } else {
+        band.style.setProperty('--st-rule', 0);
+        var down = bt - y0, len0 = y1 - y0;
+        // head and tail of each strand, measured along its route; the head
+        // leads so the line stretches a little round the corner, then the
+        // tail catches up
+        var head = lerp(len0, down + bw / 2, ease(seg(P, 0, 0.85)));
+        var tail = lerp(0, down, ease(seg(P, 0.1, 1)));
+        var show = P > 0;
+        L.style.opacity = R.style.opacity = show ? 0 : '';
+        var tone = 'rgba(255,255,255,' + lerp(0.32, 0.26, P).toFixed(3) + ')';
+        strands[0].setAttribute('d', show ? route(lx, y0, bt, mid, tail, head) : '');
+        strands[1].setAttribute('d', show ? route(rx, y0, bt, mid, tail, head) : '');
+        strands[0].style.stroke = strands[1].style.stroke = tone;
+        // a divider grows once the rule has run past it
+        var run = Math.max(0, head - down);
+        [].forEach.call(cells, function(c, i) {
+          if (!i) return;
+          var x = c.getBoundingClientRect().left - fr.left;
+          var from = Math.min(x - bl, bl + bw - x);
+          var g = Math.max(seg(run, from, from + 160), seg(P, 0.85, 1));
+          c.style.setProperty('--st-div', ease(g));
+        });
+      }
       if (!settled) raf = requestAnimationFrame(frame);
     }
     function ask() { if (!raf) raf = requestAnimationFrame(frame); }
