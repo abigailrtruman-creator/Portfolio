@@ -2999,35 +2999,55 @@
     font-size: clamp(18px, 1.45vw, 22px); line-height: 1.5; letter-spacing: -0.01em;
     color: var(--ink-2); text-wrap: pretty;
   }
-  /* ---------- Impact: a results list ----------
-     One row per result: the figure on the left, what it means on the right,
-     a hairline between rows and one that draws across the top. Numbers and
-     words share one size, so the rows read as a set. Scoped under .st so the
-     chapter's paragraph sizes can't shrink it. */
-  .st .st-results { position: relative; list-style: none; padding: 0; margin: clamp(48px, 7vh, 72px) 0 0; }
-  .st .st-results::before {
-    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
-    background: var(--st-line); transform-origin: left;
-    transition: transform 1.4s cubic-bezier(.65,0,.35,1);
+  /* ---------- Impact, visualised ----------
+     Each result is one row: the figure and what it measures read as a single
+     phrase, a line of context beneath, and beside it a small drawing of the
+     result that draws in as it arrives. Scoped under .st so the chapter's
+     paragraph sizes can't reach it. */
+  .st .st-impact { margin-top: clamp(48px, 7vh, 72px); border-top: 1px solid var(--st-line); }
+  .st .st-imp {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: clamp(28px, 4vw, 64px);
+    align-items: center; padding: clamp(32px, 5vh, 52px) 0; border-bottom: 1px solid var(--st-line);
   }
-  .cs-motion .st .st-results:not(.is-in)::before { transform: scaleX(0); }
-  .st .st-results li {
-    display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(24px, 3vw, 48px);
-    align-items: start; margin: 0; padding: clamp(28px, 4vh, 40px) 0;
-  }
-  /* the title's cap height meets the figure's, rather than its baseline */
-  .st .st-results li > div { padding-top: clamp(4px, 0.5vw, 8px); }
-  .st .st-results li + li { border-top: 1px solid var(--st-line); }
-  .st .st-results li::before { content: none; }
-  .st .st-results .st-results__n {
-    margin: 0; font-family: var(--ff-display); font-weight: 600;
-    font-size: clamp(44px, 4.6vw, 68px); line-height: 0.95; letter-spacing: -0.05em;
-    color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums;
-  }
-  .st .st-results .st-results__t { margin: 0; font-family: var(--ff-display); font-weight: 600; font-size: clamp(17px, 1.3vw, 19px); line-height: 1.3; letter-spacing: -0.01em; color: var(--ink); }
-  .st .st-results .st-results__d { margin: 6px 0 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2); max-width: 30em; }
-  @media (max-width: 600px) {
-    .st .st-results li { grid-template-columns: minmax(0, 1fr); row-gap: 14px; }
+  .st .st-imp__head { margin: 0; font-family: var(--ff-display); color: var(--ink); line-height: 1.05; }
+  .st .st-imp__n { display: block; font-weight: 600; font-size: clamp(44px, 4.6vw, 66px); letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+  .st .st-imp__t { display: block; margin-top: 10px; font-weight: 600; font-size: clamp(18px, 1.4vw, 21px); letter-spacing: -0.015em; }
+  .st .st-imp__d { margin: 12px 0 0; font-size: 15.5px; line-height: 1.55; color: var(--ink-2); max-width: 30em; }
+  .st-imp__viz { --accent: #ca501e; --muted: rgba(10,10,12,0.16); font: 500 12px/1.3 var(--st-mono); letter-spacing: 0.01em; color: var(--ink-3); }
+  .st-imp__viz span, .st-imp__viz i { transition: transform 1.1s cubic-bezier(.65,0,.35,1), opacity 0.6s ease; }
+  /* deployment: before against after, the second drawn 24% longer */
+  .st-bars { display: grid; gap: 14px; }
+  .st-bars__row { display: grid; grid-template-columns: 7.5em minmax(0, 1fr); align-items: center; gap: 14px; }
+  .st-bars__bar { display: block; height: 14px; width: calc(var(--v) * 100%); background: var(--muted); transform-origin: left; }
+  .st-bars__row--after .st-bars__bar { background: var(--accent); transition-delay: 0.25s; }
+  .st-bars__row--after .st-bars__k { color: var(--ink); }
+  .cs-motion .st-imp:not(.is-in) .st-bars__bar { transform: scaleX(0); }
+  /* reach: the platform's territories as a line, four new ones joining it */
+  .st-reach { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 10px; row-gap: 12px; }
+  .st-reach__line { display: block; height: 2px; background: var(--muted); transform-origin: left; }
+  .st-reach__dots { display: flex; gap: 8px; }
+  .st-reach__dots i { display: block; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); }
+  .st-reach__dots i:nth-child(2) { transition-delay: 0.15s; } .st-reach__dots i:nth-child(3) { transition-delay: 0.3s; } .st-reach__dots i:nth-child(4) { transition-delay: 0.45s; }
+  .st-reach__k--new { color: var(--accent); justify-self: start; }
+  .cs-motion .st-imp:not(.is-in) .st-reach__line { transform: scaleX(0); }
+  .cs-motion .st-imp:not(.is-in) .st-reach__dots i { transform: scale(0); }
+  /* investment: the contracted phase running on into its extension */
+  .st-time__bar { position: relative; display: grid; grid-template-columns: 3fr 2fr; height: 14px; }
+  .st-time__seg { display: block; background: var(--muted); transform-origin: left; }
+  .st-time__seg--ext { background: var(--accent); transition-delay: 0.5s; }
+  .st-time__mark { position: absolute; left: 60%; top: -18px; bottom: -8px; width: 2px; margin-left: -1px; background: var(--ink); transition-delay: 0.9s; }
+  .st-time__labels { position: relative; display: grid; grid-template-columns: 3fr 2fr; margin-top: 14px; }
+  .st-time__top { display: grid; grid-template-columns: 3fr 2fr; margin-bottom: 14px; color: var(--ink); white-space: nowrap; }
+  .st-time__top span + span { transition: opacity 0.6s ease 1s; }
+  .cs-motion .st-imp:not(.is-in) .st-time__top span + span { opacity: 0; }
+  .st-time__k--ext { color: var(--accent); }
+  .cs-motion .st-imp:not(.is-in) .st-time__seg { transform: scaleX(0); }
+  .cs-motion .st-imp:not(.is-in) .st-time__mark { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) { .st-imp__viz span, .st-imp__viz i { transition: none; } }
+  @media (max-width: 700px) {
+    .st .st-imp { grid-template-columns: minmax(0, 1fr); row-gap: 28px; }
+    .st-time__top { grid-template-columns: minmax(0, 1fr); text-align: right; }
+    .st-time__top span:first-child { display: none; }
   }
   @media (max-width: 900px) {
     .st-people__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -3563,11 +3583,41 @@
         <div class="cs-chapter__body" data-reveal data-stagger>
           <h2 class="cs-chapter__title">The impact.</h2>
           <p>The DimMetric Editor launched alongside the other features I designed. Together, they changed how much the platform was used, how far it reached, and how the business backed it.</p>
-          <ol class="st-results" data-reveal>
-            <li><p class="st-results__n" data-count>+24%</p><div><p class="st-results__t">Deployment rate</p><p class="st-results__d">With a notable reduction in projects being abandoned.</p></div></li>
-            <li><p class="st-results__n" data-count>4</p><div><p class="st-results__t">New territories onboarded</p><p class="st-results__d">And engagement up among existing users.</p></div></li>
-            <li><p class="st-results__n">Extended</p><div><p class="st-results__t">Championed by Partners, with further global investment</p><p class="st-results__d">Partners agreed to promote it within their teams, and because of its success and usage, the work was extended at the end of our contracted phase.</p></div></li>
-          </ol>
+          <div class="st-impact">
+            <section class="st-imp" data-reveal>
+              <div class="st-imp__copy">
+                <p class="st-imp__head"><span class="st-imp__n" data-count>+24%</span> <span class="st-imp__t">deployment rate</span></p>
+                <p class="st-imp__d">More projects made it to deployment after launch, with a notable reduction in projects being abandoned.</p>
+              </div>
+              <div class="st-imp__viz st-bars" aria-hidden="true">
+                <div class="st-bars__row"><span class="st-bars__k">Before</span><span class="st-bars__bar" style="--v: 0.806"></span></div>
+                <div class="st-bars__row st-bars__row--after"><span class="st-bars__k">After launch</span><span class="st-bars__bar" style="--v: 1"></span></div>
+              </div>
+            </section>
+            <section class="st-imp" data-reveal>
+              <div class="st-imp__copy">
+                <p class="st-imp__head"><span class="st-imp__n" data-count>4</span> <span class="st-imp__t">new territories onboarded</span></p>
+                <p class="st-imp__d">The platform reached further, and engagement went up among existing users.</p>
+              </div>
+              <div class="st-imp__viz st-reach" aria-hidden="true">
+                <span class="st-reach__line"></span>
+                <span class="st-reach__dots"><i></i><i></i><i></i><i></i></span>
+                <span class="st-reach__k">60+ territories on the platform</span>
+                <span class="st-reach__k st-reach__k--new">+4 new</span>
+              </div>
+            </section>
+            <section class="st-imp" data-reveal>
+              <div class="st-imp__copy">
+                <p class="st-imp__head"><span class="st-imp__n">Extended</span> <span class="st-imp__t">with further global investment</span></p>
+                <p class="st-imp__d">Partners championed it and agreed to promote it within their teams. Because of its success and usage, the work was extended at the end of our contracted phase.</p>
+              </div>
+              <div class="st-imp__viz st-time" aria-hidden="true">
+                <div class="st-time__top"><span></span><span>Partners champion it</span></div>
+                <div class="st-time__bar"><span class="st-time__seg"></span><span class="st-time__seg st-time__seg--ext"></span><span class="st-time__mark"></span></div>
+                <div class="st-time__labels"><span>Contracted phase</span><span class="st-time__k--ext">Extended</span></div>
+              </div>
+            </section>
+          </div>
         </div>
       </section>
     </div>
