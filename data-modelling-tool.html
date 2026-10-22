@@ -2925,7 +2925,6 @@
      One set of pieces for every case study, switched on by .st on the
      article, that changes how the copy is shown and never the copy itself:
        .st-band     the numbers, under one hairline that draws across; they count up
-       story titles a hairline draws across above each part as it arrives
        insights     the finding set large, after an orange point
      The guides are for numbers only. Nothing sticks, nothing lights up. */
   .st { --st-line: rgba(255,255,255,0.26); --st-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace; }
@@ -2961,15 +2960,6 @@
   .cs-chapter__body .st-band { margin: clamp(40px, 5vh, 56px) 0; }
   .cs-chapter__body .st-band dt { font-size: clamp(40px, 4.2vw, 60px); }
 
-  /* ---------- A part arrives ---------- */
-  .st .cs-story__title { position: relative; padding-top: 22px; }
-  .st .cs-story__title::before {
-    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px;
-    background: var(--st-line); transform-origin: left;
-    transition: transform 1.1s cubic-bezier(.65,0,.35,1) 0.1s;
-  }
-  .cs-motion .st .cs-story__title:not(.is-in)::before { transform: scaleX(0); }
-
   /* ---------- Insights, set large ---------- */
   .st .cs-chapter--turn .cs-trial__lines > p,
   .st .cs-trial__finding {
@@ -2992,7 +2982,7 @@
     .st-band > div { padding-left: 0; padding-right: 0; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .st-band::before, .st .cs-story__title::before { transition: none; transform: none !important; }
+    .st-band::before { transition: none; transform: none !important; }
   }
 </style>
 
